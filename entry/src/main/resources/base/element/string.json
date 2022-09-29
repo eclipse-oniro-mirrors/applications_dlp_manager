@@ -1,0 +1,104 @@
+{
+  "string": [
+    {
+      "name": "entry_desc",
+      "value": "description"
+    },
+    {
+      "name": "MainAbility_desc",
+      "value": "DLPManager"
+    },
+    {
+      "name": "MainAbility_label",
+      "value": "DLPManager"
+    },
+    {
+      "name": "ViewAbility_desc",
+      "value": "DLPViewer"
+    },
+    {
+      "name": "AlertAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "AlertAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "ban",
+      "value": "取消"
+    },
+    {
+      "name": "typeface",
+      "value": "HarmonyHeiTi"
+    },
+    {
+      "name": "save",
+      "value": "保存"
+    },
+    {
+      "name": "sure",
+      "value": "确定"
+    },
+    {
+      "name": "header_title",
+      "value": "加密保护"
+    },
+    {
+      "name": "toggle_title",
+      "value": "保护此文件"
+    },
+    {
+      "name": "toggle_tip",
+      "value": "开启保护后，将在您选择的位置生成一个新的\".dlp\"格式加密文件。"
+    },
+    {
+      "name": "perm_panel_title",
+      "value": "授权其他用户可访问："
+    },
+    {
+      "name": "perm_list_title_user_name",
+      "value": "用户名"
+    },
+    {
+      "name": "perm_list_title_read_only",
+      "value": "只读"
+    },
+    {
+      "name": "perm_list_title_full_control",
+      "value": "完全控制"
+    },
+    {
+      "name": "button_add_user",
+      "value": "添加用户"
+    },
+    {
+      "name": "add",
+      "value": "添加"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "authorizer_panel_title",
+      "value": "允许向以下用户申请权限："
+    },
+    {
+      "name": "del_usr",
+      "value": "删除用户"
+    },
+    {
+      "name": "del_text1",
+      "value": "删除后此用户将无法访问这个文件，如需恢复请重新添加此用户。是否删除？"
+    },
+    {
+      "name": "button_del",
+      "value": "删除"
+    },
+    {
+      "name": "da_buttion",
+      "value": "知道了"
+    }
+  ]
+}

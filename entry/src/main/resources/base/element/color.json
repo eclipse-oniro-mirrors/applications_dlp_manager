@@ -1,0 +1,76 @@
+{
+  "color": [
+    {
+      "name": "white",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "text_color",
+      "value": "#182431"
+    },
+    {
+      "name": "divider_color",
+      "value": "#f3f4f6"
+    },
+    {
+      "name": "default_background_color",
+      "value": "#ffffff"
+    },
+    {
+      "name": "button_color",
+      "value": "#FF007DFF"
+    },
+    {
+      "name": "button_background_color",
+      "value": "#FFF"
+    },
+    {
+      "name": "toggle_color",
+      "value": "#007DFF"
+    },
+    {
+      "name": "index_background_color",
+      "value": "#FFF"
+    },
+    {
+      "name": "footer_line_background_color",
+      "value": "#18243133"
+    },
+    {
+      "name": "pp_line_background_color",
+      "value": "#18243133"
+    },
+    {
+      "name": "pp_text_fontcolor",
+      "value": "#182431"
+    },
+    {
+      "name": "pp_button_background_color",
+      "value": "#fff"
+    },
+    {
+      "name": "pp_row_background_color",
+      "value": "#fff"
+    },
+    {
+      "name": "del_scroll_font_color",
+      "value": "#E6000000"
+    },
+    {
+      "name": "del_button_font_color",
+      "value": "#FA2A2D"
+    },
+    {
+      "name": "da_font_color",
+      "value": "#182431"
+    },
+    {
+      "name": "da_scroll_font_color",
+      "value": "#E6000000"
+    },
+    {
+      "name": "da_background_color",
+      "value": "#fff"
+    }
+  ]
+}

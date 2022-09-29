@@ -1,0 +1,66 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "srcEntrance": "./ets/Application/AbilityStage.ts",
+    "description": "$string:entry_desc",
+    "mainElement": "MainAbility",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "uiSyntax": "ets",
+    "abilities": [
+      {
+        "name": "MainAbility",
+        "srcEntrance": "./ets/MainAbility/MainAbility.ts",
+        "description": "$string:MainAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:MainAbility_label",
+        "startWindowIcon": "$media:icon",
+        "startWindowBackground": "$color:white",
+        "visible": true
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "ViewAbility",
+        "srcEntrance": "./ets/ViewAbility/ViewAbility.ts",
+        "icon": "$media:icon",
+        "description": "$string:ViewAbility_desc",
+        "type": "service",
+        "visible": true
+      },
+      {
+        "name": "DataAbility",
+        "srcEntrance": "./ets/DataAbility/DataAbility.ts",
+        "icon": "$media:icon",
+        "description": "$string:ViewAbility_desc",
+        "type": "service"
+      }
+    ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.READ_MEDIA"
+      },
+      {
+        "name": "ohos.permission.WRITE_MEDIA"
+      },
+      {
+        "name": "ohos.permission.ACCESS_DLP_FILE"
+      },
+      {
+        "name": "ohos.permission.MANAGE_LOCAL_ACCOUNTS"
+      },
+      {
+        "name":"ohos.permission.FILE_ACCESS_MANAGER"
+      },
+      {
+        "name":"ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
+      }
+    ]
+  }
+}
