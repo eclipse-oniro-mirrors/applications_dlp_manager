@@ -3,6 +3,9 @@ import fileio from "@ohos.fileio";
 import dataShare from '@ohos.data.dataShare';
 import datafile from '@ohos.data.fileAccess';
 import Constants from '../constant'
+import hiTraceMeter from '@ohos.hiTraceMeter';
+import hiSysEvent from '@ohos.hiSysEvent'
+import {getOsAccountInfo, getUserId, getAuthPerm, startAlertAbility} from '../utils'
 
 var TAG: string = "DLPManager: "
 
@@ -75,6 +78,44 @@ struct Footer {
     }
   }
 
+  async sendDlpFileCreateFault(code:number, reason:string) {
+    var event: hiSysEvent.SysEventInfo = {
+      domain: 'DLP',
+      name: 'DLP_FILE_CREATE',
+      eventType: hiSysEvent.EventType.FAULT,
+      params: {
+        'CODE': code,
+        'REASON': reason
+      }
+    };
+
+    try {
+      var userId = await getUserId();
+      event.params['USER_ID'] = userId;
+      await hiSysEvent.write(event);
+    } catch (err) {
+      console.log(TAG + "sendDlpFileOpenEvent failed")
+    }
+  }
+
+  async sendDlpFileCreateEvent(code:number) {
+    var event: hiSysEvent.SysEventInfo = {
+      domain: 'DLP',
+      name: 'DLP_FILE_CREATE_EVENT',
+      eventType: hiSysEvent.EventType.BEHAVIOR,
+      params: {
+        'CODE': code,
+      }
+    };
+    try {
+      var userId = await getUserId();
+      event.params['USER_ID'] = userId;
+      await hiSysEvent.write(event);
+    } catch (err) {
+      console.log(TAG + "sendDlpFileOpenEvent failed")
+    }
+  }
+
   postProcessForEncrypting() {
     if (!this.needProtect || this.srcFilename == undefined || this.srcFilename.length == 0) {
       console.log("DlpManager no need to be protected")
@@ -100,12 +141,17 @@ struct Footer {
         console.error(TAG + "openFile error: " + JSON.stringify(err))
         return
       }
+      hiTraceMeter.startTrace("DlpGenerateDlpFileJs", this.srcFd);
       try {
         this.dlpFile = await dlpPermission.generateDlpFile(this.srcFd, dstFd, this.dlpFile.dlpProperty)
       } catch (err) {
+        await this.sendDlpFileCreateFault(102, err.data); // 102: DLP_FILE_CREATE_ERORR
+        hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
         console.error(TAG + "generateDlpFile error: " + JSON.stringify(err))
         return
       }
+      await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
+      hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
       try {
         await this.dlpFile.closeDlpFile()
         globalThis.context.terminateSelf()
