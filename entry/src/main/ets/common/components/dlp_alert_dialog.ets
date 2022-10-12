@@ -42,7 +42,7 @@ struct DlpAlertDialog {
           .fontFamily($r('app.string.typeface'))
           .fontWeight(FontWeight.Medium)
           .fontColor($r("app.color.button_color"))
-          .backgroundColor($r('app.color.da_background_color'))
+          .backgroundColor($r('app.color.da_button_color'))
           .onClick(() => {
             this.controller.close()
             if (this.action != null) {
@@ -57,9 +57,9 @@ struct DlpAlertDialog {
       .height(Constants.DA_ROW_HEIGHT)
     }
     .width(Constants.DA_COLOUM_WIDTH)
-    .backgroundColor($r('app.color.da_background_color'))
     .borderRadius(Constants.DA_COLOUM_RADIUS)
     .alignItems(HorizontalAlign.Center)
+    .backgroundColor($r('app.color.da_background_color'))
   }
 }
 

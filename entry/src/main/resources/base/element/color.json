@@ -71,6 +71,10 @@
     {
       "name": "da_background_color",
       "value": "#fff"
+    },
+    {
+      "name": "da_button_color",
+      "value": "#00FFFFFF"
     }
   ]
 }

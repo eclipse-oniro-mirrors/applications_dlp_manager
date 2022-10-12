@@ -41,7 +41,7 @@ struct DelUserAlertDialog {
           .fontFamily($r('app.string.typeface'))
           .fontWeight(FontWeight.Medium)
           .fontColor($r("app.color.button_color"))
-          .backgroundColor($r('app.color.pp_button_background_color'))
+          .backgroundColor($r('app.color.da_button_color'))
           .onClick(() => {
             this.controller.close()
           })
@@ -57,7 +57,7 @@ struct DelUserAlertDialog {
           .fontFamily($r('app.string.typeface'))
           .fontWeight(FontWeight.Medium)
           .fontColor($r('app.color.del_button_font_color'))
-          .backgroundColor($r('app.color.pp_button_background_color'))
+          .backgroundColor($r('app.color.da_button_color'))
           .onClick(() => {
             this.controller.close()
             this.confirm()

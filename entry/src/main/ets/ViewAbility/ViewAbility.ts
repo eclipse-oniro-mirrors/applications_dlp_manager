@@ -151,7 +151,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
             this.dlpFile = await dlpPermission.openDlpFile(srcFd)
         } catch (err) {
             console.log(TAG + "openDlpFile failed, error: " + JSON.stringify(err))
-            if (err.code == 1 && err.extra != undefined) {
+            if (err.code > 0 && err.extra != undefined) {
                 startAlertAbility(Constants.APP_VISIT_FILE_ERROR,
                     Constants.APP_NOT_HAVE_PERM_VISIT + err.extra)
             } else {

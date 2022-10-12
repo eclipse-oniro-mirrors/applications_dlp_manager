@@ -13,7 +13,7 @@ struct Index {
       globalThis.context.terminateSelf()
     },
     alignment: DialogAlignment.Center,
-    customStyle: true
+    customStyle: true,
   })
 
   aboutToAppear() {

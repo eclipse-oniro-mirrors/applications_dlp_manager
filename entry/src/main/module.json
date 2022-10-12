@@ -15,6 +15,16 @@
     "uiSyntax": "ets",
     "abilities": [
       {
+        "name": "AlertAbility",
+        "srcEntrance": "./ets/AlertAbility/AlertAbility.ts",
+        "description": "$string:MainAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:MainAbility_label",
+        "startWindowIcon": "$media:icon",
+        "startWindowBackground": "$color:white",
+        "visible": true
+      },
+      {
         "name": "MainAbility",
         "srcEntrance": "./ets/MainAbility/MainAbility.ts",
         "description": "$string:MainAbility_desc",

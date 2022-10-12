@@ -62,7 +62,7 @@ struct DlpDialog {
       this.dlpFile = await dlpPermission.openDlpFile(fd)
     } catch (err) {
       console.error(TAG + "openDlpFile error: " + JSON.stringify(err))
-      if (err.code == 1 && err.extra != undefined) {
+      if (err.code > 0 && err.extra != undefined) {
         this.showDlpAlertDialog(Constants.APP_VISIT_FILE_ERROR, Constants.APP_NOT_HAVE_PERM_VISIT + err.extra)
       } else {
         this.showDlpAlertDialog(Constants.APP_DLP_ERROR, Constants.APP_FILE_PARAM_ERROR)
