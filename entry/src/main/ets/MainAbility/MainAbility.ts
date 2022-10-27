@@ -1,4 +1,5 @@
 import Ability from '@ohos.application.Ability'
+import datafile from '@ohos.data.fileAccess';
 import window from '@ohos.window';
 
 var TAG = "[DLPManager]"
@@ -13,6 +14,7 @@ export default class MainAbility extends Ability {
         console.log("[DLPManager] MainAbility onCreate")
         globalThis.abilityWant = want;
         globalThis.context = this.context
+        globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context)
     }
 
     onDestroy() {

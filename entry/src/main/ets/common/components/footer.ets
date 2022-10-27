@@ -1,7 +1,5 @@
 import dlpPermission from '@ohos.dlpPermission'
 import fileio from "@ohos.fileio";
-import dataShare from '@ohos.data.dataShare';
-import datafile from '@ohos.data.fileAccess';
 import Constants from '../constant'
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import hiSysEvent from '@ohos.hiSysEvent'
@@ -54,12 +52,7 @@ struct Footer {
         console.log(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
         var uri = data.want.parameters.result
         try {
-          var dsHelper = await datafile.createFileAccessHelper(globalThis.context)
-        } catch (err) {
-          console.error(TAG + "createFileAccessHelper error: " + JSON.stringify(err))
-        }
-        try {
-          var dstFd = await dsHelper.openFile(uri, 0o2)
+          var dstFd = await globalThis.dsHelper.openFile(uri, 0o2)
         } catch (err) {
           console.error(TAG + "openFile error: " + JSON.stringify(err))
         }
@@ -130,13 +123,7 @@ struct Footer {
         return
       }
       try {
-        var dsHelper = await datafile.createFileAccessHelper(globalThis.context)
-      } catch (err) {
-        console.error(TAG + "createFileAccessHelper error: " + JSON.stringify(err))
-        return
-      }
-      try {
-        var dstFd = await dsHelper.openFile(uri, 0o2)
+        var dstFd = await globalThis.dsHelper.openFile(uri, 0o2)
       } catch (err) {
         console.error(TAG + "openFile error: " + JSON.stringify(err))
         return
