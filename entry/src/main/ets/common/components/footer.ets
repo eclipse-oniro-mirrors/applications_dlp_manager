@@ -38,6 +38,8 @@ struct Footer {
         await this.dlpFile.recoverDlpFile(tempFd)
         console.info(TAG + "filePath" + filePath + ", DlpProperty: " + JSON.stringify(this.dlpFile.dlpProperty))
         await this.dlpFile.closeDlpFile()
+        var accountInfo = await getOsAccountInfo();
+        this.dlpFile.dlpProperty.ownerAccount = accountInfo.distributedInfo.name
         this.dlpFile = await dlpPermission.generateDlpFile(tempFd, this.srcFd, this.dlpFile.dlpProperty)
         fileio.closeSync(tempFd)
         fileio.unlinkSync(filePath)
