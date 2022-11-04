@@ -79,7 +79,6 @@ struct DlpDialog {
     console.info(TAG + "aboutToAppear")
     try {
       globalThis.accountInfo = await getOsAccountInfo()
-      console.log(TAG + "accountInfo: " + JSON.stringify(globalThis.accountInfo))
     } catch (err) {
       console.info(TAG + "getOsAccountInfo error: " + JSON.stringify(err))
       terminateSelfWithResult(100, "get account info failed")

@@ -1,9 +1,11 @@
 import dlpPermission from '@ohos.dlpPermission'
-import fileio from "@ohos.fileio";
+import fileio from '@ohos.fileio';
 import Constants from '../constant'
 import hiTraceMeter from '@ohos.hiTraceMeter';
+import { DlpAlertDialog } from '../components/dlp_alert_dialog'
 import hiSysEvent from '@ohos.hiSysEvent'
-import {getOsAccountInfo, getUserId, getAuthPerm, startAlertAbility} from '../utils'
+import mediaLibrary from '@ohos.multimedia.mediaLibrary'
+import { getAuthPerm, getOsAccountInfo, getUserId, startAlertAbility } from '../utils'
 
 var TAG: string = "DLPManager: "
 
@@ -16,64 +18,150 @@ var filePickerWant = {
   }
 }
 
+var abilityResult = {
+  "resultCode": 0,
+  "want": {}
+}
+
 var filePickerOptions = {
   windowMode: 102
 }
 var suffix_length = 4;
+
 @Component
 struct Footer {
   srcFilename: string
   srcFd: number
   isDlpFile: boolean
+  dlpAlertDialog: CustomDialogController
   @Link isChanged: boolean
   @Link dlpFile: dlpPermission.DlpFile
   @Link needProtect: boolean
 
+  async getFileAssetFromUri(uri) {
+    let fileAssetUriFetchOp = {
+      selections: "",
+      selectionArgs: [],
+      uri: uri.toString(),
+    };
+    let context: any = getContext(this)
+    let media = mediaLibrary.getMediaLibrary(context);
+    let uriFetchResult = await media.getFileAssets(fileAssetUriFetchOp);
+    let uriFileAsset = await uriFetchResult.getFirstObject();
+    return uriFileAsset;
+  }
+
+  dlpErrorDialog(title: string, message: string) {
+    this.dlpAlertDialog = new CustomDialogController({
+      builder: DlpAlertDialog({
+        title: title,
+        message: message,
+        action: () => {
+        }
+      }),
+      autoCancel: false,
+      customStyle: true,
+    })
+    this.dlpAlertDialog.open()
+  }
+
   async postProcessForSetting() {
     var filename = this.srcFilename.substr(0, this.srcFilename.length - suffix_length)
     if (this.needProtect) {
+      var filePath = globalThis.context.filesDir + "/" + filename + (new Date().getTime())
       try {
-        var filePath = globalThis.context.filesDir + "/" + filename + (new Date().getTime())
         var tempFd = fileio.openSync(filePath, 0o102, 0o666)
+      } catch (err) {
+        console.error(TAG + "openSync error: " + JSON.stringify(err))
+        this.dlpErrorDialog(Constants.APP_ERROR, Constants.APP_INSIDE_ERROR)
+        return
+      }
+      try {
         await this.dlpFile.recoverDlpFile(tempFd)
-        console.info(TAG + "filePath" + filePath + ", DlpProperty: " + JSON.stringify(this.dlpFile.dlpProperty))
+      } catch (err) {
+        console.error(TAG + "recoverDlpFile error: " + JSON.stringify(err))
+        fileio.closeSync(tempFd)
+        fileio.unlinkSync(filePath)
+        this.dlpErrorDialog(Constants.APP_ERROR, Constants.RECOVER_DLP_ERROR)
+        return
+      }
+      console.info(TAG + "filePath" + filePath + ", DlpProperty: " + JSON.stringify(this.dlpFile.dlpProperty))
+      try {
         await this.dlpFile.closeDlpFile()
+      } catch (err) {
+        console.error(TAG + "closeDlpFile error: " + JSON.stringify(err))
+      }
+      try {
         var accountInfo = await getOsAccountInfo();
-        this.dlpFile.dlpProperty.ownerAccount = accountInfo.distributedInfo.name
+      } catch (err) {
+        console.error(TAG + "getOsAccountInfo error: " + JSON.stringify(err))
+        fileio.closeSync(tempFd)
+        fileio.unlinkSync(filePath)
+        this.dlpErrorDialog(Constants.APP_ERROR, Constants.APP_GET_ACCOUNT_ERROR)
+        return
+      }
+      this.dlpFile.dlpProperty.ownerAccount = accountInfo.distributedInfo.name
+      try {
         this.dlpFile = await dlpPermission.generateDlpFile(tempFd, this.srcFd, this.dlpFile.dlpProperty)
+      } catch (err) {
+        console.error(TAG + "generateDlpFile error: " + JSON.stringify(err))
         fileio.closeSync(tempFd)
         fileio.unlinkSync(filePath)
         await this.dlpFile.closeDlpFile()
-        globalThis.context.terminateSelf()
-      } catch (err) {
-        console.error(TAG + "error: " + JSON.stringify(err))
+        this.dlpErrorDialog(Constants.APP_ERROR, Constants.GENERATE_DLP_ERROR)
+        return
       }
+      try {
+        await this.dlpFile.closeDlpFile()
+      } catch (err) {
+        console.error(TAG + "closeDlpFile error: " + JSON.stringify(err))
+      }
+      fileio.closeSync(tempFd)
+      fileio.unlinkSync(filePath)
+      abilityResult.resultCode = 0
+      globalThis.context.terminateSelfWithResult(abilityResult)
+      return
     } else {
       filePickerWant.parameters.saveFile = filename
       globalThis.context.startAbilityForResult(filePickerWant, filePickerOptions, async (error, data) => {
         console.log(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
         var uri = data.want.parameters.result
+        if (uri == undefined || uri.length == 0) {
+          console.error(TAG + "fail to get uri")
+          return;
+        }
         try {
-          var dstFd = await globalThis.dsHelper.openFile(uri, 0o2)
+          var uriFileAsset = await this.getFileAssetFromUri(uri);
+          var dstFd = await uriFileAsset.open('w');
         } catch (err) {
           console.error(TAG + "openFile error: " + JSON.stringify(err))
+          await globalThis.dsHelper.delete(uri)
+          this.dlpErrorDialog(Constants.APP_ERROR, Constants.APP_INSIDE_ERROR)
+          return;
         }
         try {
           await this.dlpFile.recoverDlpFile(dstFd)
         } catch (err) {
           console.error(TAG + "recoverDlpFile error: " + JSON.stringify(err))
+          await uriFileAsset.close(dstFd)
+          await globalThis.dsHelper.delete(uri)
+          this.dlpErrorDialog(Constants.APP_ERROR, Constants.RECOVER_DLP_ERROR)
+          return;
         }
         try {
+          await uriFileAsset.close(dstFd);
           await this.dlpFile.closeDlpFile()
-          globalThis.context.terminateSelf()
         } catch (err) {
           console.error(TAG + "closeDlpFile error: " + JSON.stringify(err))
         }
+        abilityResult.resultCode = 0
+        globalThis.context.terminateSelfWithResult(abilityResult)
+        return;
       })
     }
   }
 
-  async sendDlpFileCreateFault(code:number, reason:string) {
+  async sendDlpFileCreateFault(code: number, reason: string) {
     var event: hiSysEvent.SysEventInfo = {
       domain: 'DLP',
       name: 'DLP_FILE_CREATE',
@@ -93,7 +181,7 @@ struct Footer {
     }
   }
 
-  async sendDlpFileCreateEvent(code:number) {
+  async sendDlpFileCreateEvent(code: number) {
     var event: hiSysEvent.SysEventInfo = {
       domain: 'DLP',
       name: 'DLP_FILE_CREATE_EVENT',
@@ -113,7 +201,7 @@ struct Footer {
 
   postProcessForEncrypting() {
     if (!this.needProtect || this.srcFilename == undefined || this.srcFilename.length == 0) {
-      console.log("DlpManager no need to be protected")
+      console.log(TAG + "no need to be protected")
       globalThis.context.terminateSelf()
       return
     }
@@ -121,14 +209,18 @@ struct Footer {
     globalThis.context.startAbilityForResult(filePickerWant, filePickerOptions, async (error, data) => {
       console.log(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
       var uri: string = data.want.parameters.result
-      if (uri.length == 0) {
-        return
+      if (uri == undefined || uri.length == 0) {
+        console.error(TAG + "fail to get uri")
+        return;
       }
       try {
-        var dstFd = await globalThis.dsHelper.openFile(uri, 0o2)
+        var uriFileAsset = await this.getFileAssetFromUri(uri);
+        var dstFd = await uriFileAsset.open('w');
       } catch (err) {
         console.error(TAG + "openFile error: " + JSON.stringify(err))
-        return
+        await globalThis.dsHelper.delete(uri)
+        this.dlpErrorDialog(Constants.APP_ERROR, Constants.APP_INSIDE_ERROR)
+        return;
       }
       hiTraceMeter.startTrace("DlpGenerateDlpFileJs", this.srcFd);
       try {
@@ -137,16 +229,21 @@ struct Footer {
         await this.sendDlpFileCreateFault(102, err.data); // 102: DLP_FILE_CREATE_ERORR
         hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
         console.error(TAG + "generateDlpFile error: " + JSON.stringify(err))
-        return
+        await uriFileAsset.close(dstFd)
+        await globalThis.dsHelper.delete(uri)
+        this.dlpErrorDialog(Constants.APP_ERROR, Constants.GENERATE_DLP_ERROR)
+        return;
       }
       await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
       hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
       try {
         await this.dlpFile.closeDlpFile()
-        globalThis.context.terminateSelf()
+        await uriFileAsset.close(dstFd);
       } catch (err) {
         console.error(TAG + "closeDlpFile error: " + JSON.stringify(err))
       }
+      abilityResult.resultCode = 0
+      globalThis.context.terminateSelfWithResult(abilityResult)
     })
   }
 
@@ -181,7 +278,7 @@ struct Footer {
         .focusable(false)
         .enabled((this.needProtect || this.isDlpFile))
         .opacity((this.needProtect || this.isDlpFile) ?
-            Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
+        Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
         .height(Constants.FOOTER_BUTTON_HEIGHT)
         .onClick((event) => {
           if (this.dlpFile.dlpProperty.contractAccount.length == 0) {

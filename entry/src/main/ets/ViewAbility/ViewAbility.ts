@@ -59,7 +59,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
                     fileio.closeSync(this.linkFd)
                     await this.dlpFile.deleteDlpLinkFile(this.linkFileName)
                     this.dlpFile.closeDlpFile()
-                    startAlertAbility(Constants.APP_ERROR, Constants.APP_SANDBOX_ERROR)
+                    startAlertAbility(Constants.APP_ERROR, Constants.APP_OPEN_DLP_ERROR)
                 } catch (err) {
                     console.log(TAG + "deleteDlpLinkFile failed, error" + JSON.stringify(err))
                 }
@@ -164,6 +164,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
         }
         hiTraceMeter.finishTrace("DlpOpenDlpFileJs", startId);
         this.authPerm = getAuthPerm(accountInfo.distributedInfo.name, this.dlpFile.dlpProperty)
+        if (this.authPerm < dlpPermission.AuthPermType.READ_ONLY ||
+            this.authPerm > dlpPermission.AuthPermType.FULL_CONTROL) {
+            startAlertAbility(Constants.APP_ERROR, Constants.APP_PERMISSION_ERROR)
+            return
+        }
         hiTraceMeter.startTrace("DlpInstallSandboxJs", startId);
         try {
             this.sandboxIndex = await dlpPermission.installDlpSandbox(this.sandboxBundleName,
@@ -171,11 +176,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         } catch (err) {
             console.log(TAG + "installDlpSandbox failed, error: " + JSON.stringify(err))
             this.dlpFile.closeDlpFile()
-            if (err.code == 8519807) {
-                startAlertAbility(Constants.APP_ERROR, Constants.APP_SANDBOX_LIMIT_MAX)
-            } else {
-                startAlertAbility(Constants.APP_ERROR, Constants.APP_INSTALL_SANDBOX_ERROR)
-            }
+            startAlertAbility(Constants.APP_ERROR, Constants.APP_OPEN_DLP_ERROR)
             hiTraceMeter.finishTrace("DlpInstallSandboxJs", startId);
             hiTraceMeter.finishTrace("DlpOpenFileJs", startId);
             await this.sendDlpFileOpenFault(104, this.sandboxBundleName, -1, err.data); // 104:DLP_INSTALL_SANDBOX_ERROR
@@ -194,7 +195,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         } catch (err) {
             console.log(TAG + "addDlpLinkFile failed, error: " + JSON.stringify(err))
             this.dlpFile.closeDlpFile()
-            startAlertAbility(Constants.APP_ERROR, Constants.APP_LINK_FILE_ERROR)
+            startAlertAbility(Constants.APP_ERROR, Constants.APP_OPEN_DLP_ERROR)
             hiTraceMeter.finishTrace("DlpAddLinkFileJs", startId);
             hiTraceMeter.finishTrace("DlpOpenFileJs", startId);
             return
