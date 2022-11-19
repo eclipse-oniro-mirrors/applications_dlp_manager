@@ -1,6 +1,6 @@
-import ServiceExtensionAbility from '@ohos.application.ServiceExtensionAbility'
+import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility'
 import commonEvent from '@ohos.commonEvent'
-import Want from '@ohos.application.Want'
+import Want from '@ohos.app.ability.Want'
 import fileio from '@ohos.fileio';
 import dlpPermission from '@ohos.dlpPermission'
 

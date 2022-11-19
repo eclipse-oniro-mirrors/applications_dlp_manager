@@ -1,8 +1,8 @@
-import ServiceExtensionAbility from '@ohos.application.ServiceExtensionAbility'
+import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility'
 import dlpPermission from '@ohos.dlpPermission'
 import { getOsAccountInfo, getUserId, getAuthPerm, startAlertAbility } from '../common/utils'
 import fileio from '@ohos.fileio';
-import Want from '@ohos.application.Want';
+import Want from '@ohos.app.ability.Want';
 import commonEvent from '@ohos.commonEvent';
 import Constants from '../common/constant'
 import hiTraceMeter from '@ohos.hiTraceMeter'

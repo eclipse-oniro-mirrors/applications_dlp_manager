@@ -1,4 +1,4 @@
-import Ability from '@ohos.application.Ability'
+import UIAbility from '@ohos.app.ability.UIAbility'
 import datafile from '@ohos.data.fileAccess';
 import window from '@ohos.window';
 
@@ -9,7 +9,7 @@ let permissionList: Array<string> = [
     "ohos.permission.FILE_ACCESS_MANAGER"
 ]
 
-export default class MainAbility extends Ability {
+export default class MainAbility extends UIAbility {
     async onCreate(want, launchParam) {
         console.log("[DLPManager] MainAbility onCreate")
         globalThis.abilityWant = want;
