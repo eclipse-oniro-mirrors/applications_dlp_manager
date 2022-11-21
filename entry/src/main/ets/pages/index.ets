@@ -79,6 +79,10 @@ struct DlpDialog {
     console.info(TAG + "aboutToAppear")
     try {
       globalThis.accountInfo = await getOsAccountInfo()
+      if (globalThis.accountInfo.distributedInfo.name == "ohosAnonymousName" && globalThis.accountInfo.distributedInfo.id == "ohosAnonymousUid") {
+        this.showDlpAlertDialog(Constants.APP_ERROR, Constants.APP_NO_ACCOUNT_ERROR)
+        return
+      }
     } catch (err) {
       console.info(TAG + "getOsAccountInfo error: " + JSON.stringify(err))
       terminateSelfWithResult(100, "get account info failed")

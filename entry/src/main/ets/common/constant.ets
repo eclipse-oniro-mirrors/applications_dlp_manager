@@ -154,6 +154,7 @@ export default class Constants {
   static RECOVER_DLP_ERROR = '删除文档权限失败，请重试。';
   static APP_INSIDE_ERROR = '应用内部错误，请重试。';
   static APP_GET_ACCOUNT_ERROR = '获取帐号信息失败，请重试。';
+  static APP_NO_ACCOUNT_ERROR = '帐号未登录，请登录账号后重试。';
   static APP_OPEN_DLP_ERROR= '打开加密文件失败，请重试。';
   static APP_PERMISSION_ERROR= '权限拒绝，请重试。';
   static APP_VISIT_FILE_ERROR= '无法访问此文件';

@@ -146,6 +146,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
             return
         }
         hiTraceMeter.finishTrace("DlpGetOsAccountJs", startId);
+        if (accountInfo.distributedInfo.name == "ohosAnonymousName" && accountInfo.distributedInfo.id == "ohosAnonymousUid") {
+            startAlertAbility(Constants.APP_ERROR, Constants.APP_NO_ACCOUNT_ERROR)
+            hiTraceMeter.finishTrace("DlpOpenFileJs", startId);
+            return
+        }
         hiTraceMeter.startTrace("DlpOpenDlpFileJs", startId);
         try {
             this.dlpFile = await dlpPermission.openDlpFile(srcFd)
