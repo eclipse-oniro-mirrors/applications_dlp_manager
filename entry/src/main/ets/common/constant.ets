@@ -148,20 +148,45 @@ export default class Constants {
   static ROW_MARGIN_TOP= 8;
   static DA_COLOUM_WIDTH = 336;
   static DA_COLOUM_RADIUS = 24;
-  static APP_PARAM_ERROR = '参数异常，请重试。';
-  static APP_ERROR = '应用异常';
-  static GENERATE_DLP_ERROR = '设置文档权限失败，请重试。';
-  static RECOVER_DLP_ERROR = '删除文档权限失败，请重试。';
-  static APP_INSIDE_ERROR = '应用内部错误，请重试。';
-  static APP_GET_ACCOUNT_ERROR = '获取帐号信息失败，请重试。';
-  static APP_NO_ACCOUNT_ERROR = '帐号未登录，请登录账号后重试。';
-  static APP_OPEN_DLP_ERROR= '打开加密文件失败，请重试。';
-  static APP_PERMISSION_ERROR= '权限拒绝，请重试。';
-  static APP_VISIT_FILE_ERROR= '无法访问此文件';
-  static APP_NOT_HAVE_PERM_VISIT = '您没有访问权限。请向下列用户申请授权：\n';
-  static APP_DLP_ERROR = 'DLP格式错误';
-  static APP_FILE_PARAM_ERROR = '您打开的文档格式不正确，请重试。';
+
+  static TITLE_APP_ERROR = '应用异常';
+  // message for 应用异常
+  static MESSAGE_APP_PARAM_ERROR = '参数异常，请重试。';
+  static MESSAGE_APP_INSIDE_ERROR = '应用内部错误，请重试。';
+  static MESSAGE_APP_GET_ACCOUNT_ERROR = '获取帐号信息失败，请重试。';
+  static MESSAGE_APP_NO_ACCOUNT_ERROR = '帐号未登录，请登录账号后重试。';
+
+  static TITLE_SERVICE_ERROR = '服务异常';
+  // message for 服务异常
+  static MESSAGE_SERVICE_INSIDE_ERROR = '服务内部错误，请重试。';
+  static MESSAGE_DLP_CREDENTIAL_SERVER_ERROR = '连接凭据服务器失败，请检查服务器后重试。';
+  static MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR = '服务响应超时，请重试。';
+  static MESSAGE_GENERATE_DLP_ERROR = '设置文档权限失败，请重试。';
+  static MESSAGE_RECOVER_DLP_ERROR = '删除文档权限失败，请重试。';
+
+  static TITLE_APP_VISIT_FILE_ERROR= '无法访问此文件';
+  // message for 无法访问此文件
+  static MESSAGE_APP_NOT_HAVE_PERM_VISIT = '您没有访问权限。请向下列用户申请授权：\n';
+
+  static TITLE_APP_DLP_ERROR = 'DLP格式错误';
+  // message for DLP格式错误
+  static MESSAGE_APP_FILE_PARAM_ERROR = '您打开的文档格式不正确，请重试。';
+
+  static TITLE_OPERATE_DENY = '拒绝操作';
+  // message for 拒绝操作
+  static MESSAGE_DLP_READ_ONLY = '当前是只读文件，您没有操作权限，请申请权限后重试。';
+
   static FOOTER_OPACITY_ONE = 1;
   static FOOTER_OPACITY_SEPC= 0.6;
   static ACCOUNT_LENGTH_MAX = 1024;
+  static ERR_JS_INVALID_PARAMETER = 19100001;
+  static ERR_JS_BEGIN_CREDENTIAL_FAIL = 19100002;
+  static ERR_JS_CREDENTIAL_TIMEOUT = 19100003;
+  static ERR_JS_CREDENTIAL_SERVICE_ERROR = 19100004;
+  static ERR_JS_CREDENTIAL_SERVER_ERROR = 19100005;
+  static ERR_JS_NOT_DLP_FILE = 19100008;
+  static ERR_JS_OPERATE_DLP_FILE_FAIL = 19100009;
+  static ERR_JS_DLP_FILE_READ_ONLY = 19100010;
+  static ERR_JS_SYSTEM_SERVICE_EXCEPTION = 19100011;
+  static ERR_JS_OUT_OF_MEMORY = 19100012;
 }

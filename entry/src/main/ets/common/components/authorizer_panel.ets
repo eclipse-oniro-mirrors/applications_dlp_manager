@@ -14,6 +14,7 @@ struct AuthorizerPanel {
   @State contacts: { [key: string]: string} = {}
   @Link dlpFile : dlpPermission.DlpFile
   @State contactList: string[] = []
+  @Link processing : boolean
 
   updateContactList () {
     this.contactList = []
@@ -48,7 +49,9 @@ struct AuthorizerPanel {
             .padding({right: Constants.AP_TEXT_PAD_RIGHT})
             .align(Alignment.Start)
           Image($r('app.media.ic_public_delete'))
-            .enabled(this.authPerm == 2 ? true : false)
+            .enabled((!this.processing) && (this.authPerm == 2))
+            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .width(Constants.PP_IMAGE_WIDTH)
             .height(Constants.PP_IMAGE_HEIGHT)
             .padding(Constants.PP_IMAGE_PAD)
@@ -101,7 +104,9 @@ struct AuthorizerPanel {
         }
         Row() {
           Button($r('app.string.button_add_user'))
-            .enabled(this.authPerm == 2 ? true : false)
+            .enabled((!this.processing) && (this.authPerm == 2))
+            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .fontSize(Constants.AP_TEXT_FONT_SIZE)
             .fontColor($r('app.color.button_color'))
             .fontFamily($r('app.string.typeface'))
@@ -125,6 +130,7 @@ struct AuthorizerPanel {
             .fontSize(Constants.AP_TEXT_FONT_SIZE)
             .borderRadius(Constants.AP_ROW_RADIUS)
             .backgroundColor($r('app.color.pp_row_background_color'))
+            .enabled(!this.processing)
             .fontFamily($r('app.string.typeface'))
             .fontWeight(FontWeight.Regular)
             .onChange((value: string) => {
@@ -142,6 +148,7 @@ struct AuthorizerPanel {
             .fontColor($r('app.color.button_color'))
             .fontFamily('app.string.HarmonyHeiTi')
             .fontWeight(FontWeight.Medium)
+            .enabled(!this.processing)
             .height(Constants.AP_BUTTON_HEIGHT)
             .padding(Constants.AP_BUTTON_PAD)
             .backgroundColor($r('app.color.button_background_color'))
@@ -171,6 +178,7 @@ struct AuthorizerPanel {
             .fontColor($r('app.color.button_color'))
             .fontFamily('app.string.HarmonyHeiTi')
             .fontWeight(FontWeight.Medium)
+            .enabled(!this.processing)
             .height(Constants.AP_BUTTON_HEIGHT)
             .padding(Constants.AP_BUTTON_PAD)
             .margin({left: Constants.AP_BUTTON_MARGIN_LEFT})

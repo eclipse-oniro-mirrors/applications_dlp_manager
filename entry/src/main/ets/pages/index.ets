@@ -1,9 +1,10 @@
 import { Header } from '../common/components/header'
 import { PermissionPanel } from '../common/components/permission_panel'
 import { AuthorizerPanel } from '../common/components/authorizer_panel'
+import { ProcessingPanel } from '../common/components/processing_panel';
 import { Footer } from '../common/components/footer'
 import dlpPermission from '@ohos.dlpPermission'
-import { getAuthPerm } from '../common/utils'
+import { getAuthPerm, getAlertMessage } from '../common/utils'
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog'
 import { KeyCode } from '@ohos.multimodalInput.keyCode'
 import { getOsAccountInfo, terminateSelfWithResult } from '../common/utils'
@@ -35,6 +36,7 @@ struct DlpDialog {
   @State isChanged: boolean = false
   @State dlpFile: dlpPermission.DlpFile = defaultDlpFile
   @State needProtect: boolean = false
+  @State processing: boolean = false
 
   showDlpAlertDialog(title, message) {
     this.dlpAlertDialog = new CustomDialogController({
@@ -61,12 +63,9 @@ struct DlpDialog {
     try {
       this.dlpFile = await dlpPermission.openDlpFile(fd)
     } catch (err) {
-      console.error(TAG + "openDlpFile error: " + JSON.stringify(err))
-      if (err.code > 0 && err.extra != undefined) {
-        this.showDlpAlertDialog(Constants.APP_VISIT_FILE_ERROR, Constants.APP_NOT_HAVE_PERM_VISIT + err.extra)
-      } else {
-        this.showDlpAlertDialog(Constants.APP_DLP_ERROR, Constants.APP_FILE_PARAM_ERROR)
-      }
+      console.error(TAG + "openDlpFile error: " + err.message + ", code: " + err.code)
+      var errorInfo = getAlertMessage(err, Constants.TITLE_APP_DLP_ERROR,Constants.MESSAGE_APP_FILE_PARAM_ERROR)
+      this.showDlpAlertDialog(errorInfo.title, errorInfo.msg)
       return
     }
     this.authPerm = getAuthPerm(globalThis.accountInfo.distributedInfo.name, this.dlpFile.dlpProperty)
@@ -80,7 +79,7 @@ struct DlpDialog {
     try {
       globalThis.accountInfo = await getOsAccountInfo()
       if (globalThis.accountInfo.distributedInfo.name == "ohosAnonymousName" && globalThis.accountInfo.distributedInfo.id == "ohosAnonymousUid") {
-        this.showDlpAlertDialog(Constants.APP_ERROR, Constants.APP_NO_ACCOUNT_ERROR)
+        this.showDlpAlertDialog(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_NO_ACCOUNT_ERROR)
         return
       }
     } catch (err) {
@@ -99,36 +98,42 @@ struct DlpDialog {
   }
 
   build() {
-    if (this.isShow) {
-      Column() {
-        Row() {
-          Header({ authPerm: $authPerm, needProtect: $needProtect })
-        }
-
-        if (this.needProtect) {
+    Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center}) {
+      ProcessingPanel( {processing: $processing} )
+      if (this.isShow) {
+        Column() {
           Row() {
-            PermissionPanel({ authPerm: $authPerm, dlpFile: $dlpFile, isChanged: $isChanged })
+            Header({ authPerm: $authPerm, needProtect: $needProtect, processing: $processing })
           }
 
+          if (this.needProtect) {
+            Row() {
+              PermissionPanel({ authPerm: $authPerm, dlpFile: $dlpFile, isChanged: $isChanged, processing: $processing })
+            }
+
+            Row() {
+              AuthorizerPanel({ authPerm: $authPerm, dlpFile: $dlpFile, isChanged: $isChanged, processing: $processing })
+            }
+          }
           Row() {
-            AuthorizerPanel({ authPerm: $authPerm, dlpFile: $dlpFile, isChanged: $isChanged })
+            Footer({
+              srcFilename: globalThis.srcFilename,
+              srcFd: globalThis.srcFd,
+              isDlpFile: this.isDlpFile,
+              isChanged: $isChanged,
+              dlpFile: $dlpFile,
+              needProtect: $needProtect,
+              processing: $processing
+            })
           }
         }
-        Row() {
-          Footer({
-            srcFilename: globalThis.srcFilename,
-            srcFd: globalThis.srcFd,
-            isDlpFile: this.isDlpFile,
-            isChanged: $isChanged,
-            dlpFile: $dlpFile,
-            needProtect: $needProtect
-          })
-        }
+        .width(Constants.INDEX_COLUMN_WIDTH)
+        .backgroundColor($r('app.color.index_background_color'))
+        .borderRadius(Constants.INDEX_BORDER_RADIUS)
       }
-      .width(Constants.INDEX_COLUMN_WIDTH)
-      .backgroundColor($r('app.color.index_background_color'))
-      .borderRadius(Constants.INDEX_BORDER_RADIUS)
     }
+    .width('100%')
+    .height('100%')
   }
 }
 

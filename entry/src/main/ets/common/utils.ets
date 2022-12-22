@@ -1,5 +1,6 @@
 import account_distributedAccount from '@ohos.account.distributedAccount';
 import account_osAccount from '@ohos.account.osAccount';
+import Constants from '../common/constant'
 import dlpPermission from '@ohos.dlpPermission';
 
 var TAG = "[DLPManager]"
@@ -48,6 +49,34 @@ function terminateSelfWithResult(resultCode: number, result: string) : void {
   globalThis.context.terminateSelfWithResult(abilityResult)
 }
 
+function getAlertMessage(err, defaultTitle, defaultMessage) {
+  switch (err.code) {
+    case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
+      return { 'title': Constants.TITLE_SERVICE_ERROR, 'msg': Constants.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR }
+    case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
+      return { 'title': Constants.TITLE_SERVICE_ERROR, 'msg': Constants.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR }
+      break
+    case Constants.ERR_JS_NOT_DLP_FILE:
+      return { 'title': Constants.TITLE_APP_DLP_ERROR, 'msg': Constants.MESSAGE_APP_FILE_PARAM_ERROR }
+      break
+    case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
+      return { 'title': Constants.TITLE_APP_ERROR, 'msg': Constants.MESSAGE_APP_NO_ACCOUNT_ERROR }
+      break
+    case Constants.ERR_JS_DLP_FILE_READ_ONLY:
+      return { 'title': Constants.TITLE_OPERATE_DENY, 'msg': Constants.MESSAGE_DLP_READ_ONLY }
+      break
+    default:
+      if (err.extra != undefined) {
+        return {
+          'title': Constants.TITLE_APP_VISIT_FILE_ERROR,
+          'msg': Constants.MESSAGE_APP_NOT_HAVE_PERM_VISIT + err.extra
+        }
+      } else {
+        return { 'title': defaultTitle, 'msg': defaultMessage }
+      }
+  }
+}
+
 function startAlertAbility(title, message) {
   globalThis.context.startAbility({
     bundleName: "com.ohos.dlpmanager",
@@ -62,4 +91,4 @@ function startAlertAbility(title, message) {
   })
 }
 
-export {getDistributedAccountInfo, getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility}
+export {getDistributedAccountInfo, getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage}

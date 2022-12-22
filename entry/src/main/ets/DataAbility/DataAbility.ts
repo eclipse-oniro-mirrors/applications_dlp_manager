@@ -25,8 +25,16 @@ export default class DataAbility extends ServiceExtensionAbility {
                 var linkFile = globalThis.sandbox2linkFile[key]
                 fileio.closeSync(linkFile[0])
                 var dlpFile = linkFile[1]
-                dlpFile.deleteDlpLinkFile(linkFile[2])
-                dlpFile.closeDlpFile()
+                try {
+                    dlpFile.deleteDlpLinkFile(linkFile[2])
+                } catch (err) {
+                    console.error(TAG + "deleteDlpLinkFile error: " + err.message + ", code: " + err.code)
+                }
+                try {
+                    dlpFile.closeDlpFile()
+                } catch (err) {
+                    console.error(TAG + "closeDlpFile error: " + err.message + ", code: " + err.code)
+                }
                 delete globalThis.sandbox2linkFile[key]
                 console.error(TAG + "release resource successfully")
             }

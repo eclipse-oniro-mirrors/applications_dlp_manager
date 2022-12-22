@@ -17,6 +17,7 @@ struct PermissionPanel {
   @State authUserMap: { [key: string] : dlpPermission.AuthUser } = {}
   @State authUsers: Array<dlpPermission.AuthUser> = []
   @State showAuthUsers : boolean = true
+  @Link processing : boolean
 
   updateAuthUsers() {
     this.authUsers = []
@@ -50,7 +51,9 @@ struct PermissionPanel {
             .width(Constants.PP_TEXT_WIDTH)
             .padding({right: Constants.PP_TEXT_PAD_RIGHT})
           Image(this.radioImg[2 - item.authPerm])
-            .enabled(this.authPerm == 2 ? true : false)
+            .enabled((!this.processing) && (this.authPerm == 2))
+            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .width(Constants.PP_IMAGE_WIDTH)
             .height(Constants.PP_IMAGE_HEIGHT)
             .padding(Constants.PP_IMAGE_PAD)
@@ -62,7 +65,9 @@ struct PermissionPanel {
             })
           Column() {
             Image(this.radioImg[item.authPerm - 1])
-              .enabled(this.authPerm == 2 ? true : false)
+              .enabled((!this.processing) && (this.authPerm == 2))
+              .opacity(((!this.processing) && (this.authPerm == 2)) ?
+              Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
               .width(Constants.PP_IMAGE_WIDTH)
               .height(Constants.PP_IMAGE_HEIGHT)
               .padding(Constants.PP_IMAGE_PAD)
@@ -77,7 +82,9 @@ struct PermissionPanel {
           .width(Constants.PP_COLUMN_WIDTH)
           .margin({ left: Constants.PP_COLUMN_MARGIN_LEFT, right: Constants.PP_COLUMN_MARGIN_RIGHT })
           Image($r('app.media.ic_public_delete'))
-            .enabled(this.authPerm == 2 ? true : false)
+            .enabled((!this.processing) && (this.authPerm == 2))
+            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .width(Constants.PP_IMAGE_WIDTH)
             .height(Constants.PP_IMAGE_HEIGHT)
             .padding(Constants.PP_IMAGE_PAD)
@@ -176,7 +183,9 @@ struct PermissionPanel {
         .constraintSize({maxHeight: Constants.PP_SCROLL_MAX_HEIGHT})
         Row() {
           Button($r('app.string.button_add_user'))
-            .enabled(this.authPerm == 2 ? true : false)
+            .enabled((!this.processing) && (this.authPerm == 2))
+            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .fontSize(Constants.PP_BUTTON_FONT_SIZE)
             .fontColor($r('app.color.button_color'))
             .fontFamily($r('app.string.typeface'))
@@ -200,6 +209,7 @@ struct PermissionPanel {
             .fontSize(Constants.PP_TEXT_FONT_SIZE)
             .fontFamily($r('app.string.typeface'))
             .fontWeight(FontWeight.Regular)
+            .enabled(!this.processing)
             .borderRadius(Constants.PP_ROW_RADIUS)
             .backgroundColor($r('app.color.pp_row_background_color'))
             .onChange((value: string) => {
@@ -217,6 +227,7 @@ struct PermissionPanel {
             .fontColor($r('app.color.button_color'))
             .fontFamily($r('app.string.typeface'))
             .fontWeight(FontWeight.Medium)
+            .enabled(!this.processing)
             .height(Constants.PP_BUTTON_HEIGHT)
             .padding(Constants.PP_BUTTON_PAD)
             .backgroundColor($r('app.color.pp_button_background_color'))
@@ -237,7 +248,7 @@ struct PermissionPanel {
                 this.authUserMap[this.account] = {
                   authAccount: this.account,
                   authPerm: dlpPermission.AuthPermType.READ_ONLY,
-                  permExpiryTime: Date.UTC(2023, 1, 1),
+                  permExpiryTime: Date.UTC(2033, 1, 1),
                   authAccountType: dlpPermission.AccountType.CLOUD_ACCOUNT
                 }
                 this.updateAuthUsers()
@@ -251,6 +262,7 @@ struct PermissionPanel {
             .fontColor($r('app.color.button_color'))
             .fontFamily('app.string.HarmonyHeiTi')
             .fontWeight(FontWeight.Medium)
+            .enabled(!this.processing)
             .height(Constants.PP_BUTTON_HEIGHT)
             .padding(Constants.PP_BUTTON_PAD)
             .margin({left: Constants.PP_BUTTON_MARGIN_LEFT})
