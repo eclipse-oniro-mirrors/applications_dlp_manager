@@ -9,12 +9,12 @@ import { getAlertMessage, getAuthPerm, getOsAccountInfo, getUserId, startAlertAb
 
 var TAG: string = "DLPManager: "
 
-var filePickerWant = {
-  bundleName: "com.ohos.filepicker",
-  abilityName: "MainAbility",
+var fileManagerSaveWant = {
+  action: "ohos.want.action.CREATE_FILE",
   parameters: {
-    'startMode': 'save',
-    'saveFile': '',
+    "key_pick_file_name": "",
+    "key_pick_file_location": 0,
+    "key_pick_file_paths": ""
   }
 }
 
@@ -23,8 +23,8 @@ var abilityResult = {
   "want": {}
 }
 
-var filePickerOptions = {
-  windowMode: 102
+var fileManagerOptions = {
+  windowMode: 1
 }
 var suffix_length = 4;
 
@@ -135,11 +135,16 @@ struct Footer {
       globalThis.context.terminateSelfWithResult(abilityResult)
       return
     } else {
-      filePickerWant.parameters.saveFile = filename
-      globalThis.context.startAbilityForResult(filePickerWant, filePickerOptions, async (error, data) => {
+      fileManagerSaveWant.parameters.key_pick_file_name = JSON.stringify([filename])
+      globalThis.context.startAbilityForResult(fileManagerSaveWant, fileManagerOptions, async (error, data) => {
         this.processing = true
         console.log(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
-        var uri = data.want.parameters.result
+        if (data.want.parameters.pick_path_return == undefined) {
+          console.error(TAG + "fail to get pick path")
+          this.processing = false
+          return;
+        }
+        var uri = data.want.parameters.pick_path_return[0]
         if (uri == undefined || uri.length == 0) {
           console.error(TAG + "fail to get uri")
           this.processing = false
@@ -225,11 +230,16 @@ struct Footer {
       globalThis.context.terminateSelf()
       return
     }
-    filePickerWant.parameters.saveFile = this.srcFilename + '.dlp'
-    globalThis.context.startAbilityForResult(filePickerWant, filePickerOptions, async (error, data) => {
+    fileManagerSaveWant.parameters.key_pick_file_name = JSON.stringify([this.srcFilename + '.dlp'])
+    globalThis.context.startAbilityForResult(fileManagerSaveWant, fileManagerOptions, async (error, data) => {
       this.processing = true
       console.log(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
-      var uri: string = data.want.parameters.result
+      if (data.want.parameters.pick_path_return == undefined) {
+        console.error(TAG + "fail to get pick path")
+        this.processing = false
+        return;
+      }
+      var uri = data.want.parameters.pick_path_return[0]
       if (uri == undefined || uri.length == 0) {
         console.error(TAG + "fail to get uri")
         this.processing = false
