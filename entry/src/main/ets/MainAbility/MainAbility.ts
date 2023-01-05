@@ -1,5 +1,5 @@
 import UIAbility from '@ohos.app.ability.UIAbility'
-import datafile from '@ohos.data.fileAccess';
+import datafile from '@ohos.file.fileAccess';
 import window from '@ohos.window';
 
 var TAG = "[DLPManager]"
