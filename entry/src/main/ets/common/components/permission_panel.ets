@@ -22,18 +22,33 @@ struct PermissionPanel {
   updateAuthUsers() {
     this.authUsers = []
     this.dlpFile.dlpProperty.authUsers = []
+    //add current account to first place when changes made
+    let newOwner : dlpPermission.AuthUser = this.authUserMap[globalThis.accountInfo.distributedInfo.name]
+    this.authUsers.push(newOwner)
+    this.dlpFile.dlpProperty.authUsers.push(newOwner)
     for (var item in this.authUserMap) {
       let authUser = this.authUserMap[item]
+      if (authUser.authAccount === globalThis.accountInfo.distributedInfo.name) {
+        continue
+      }
       this.authUsers.push(authUser)
       this.dlpFile.dlpProperty.authUsers.push(authUser)
     }
   }
 
   aboutToAppear() {
-    this.authUsers = this.dlpFile.dlpProperty.authUsers
-    for (var i = 0; i < this.authUsers.length; ++i) {
-      var authUser = this.authUsers[i]
+    for (let i = 0; i < this.dlpFile.dlpProperty.authUsers.length; ++i) {
+      let authUser = this.dlpFile.dlpProperty.authUsers[i]
       this.authUserMap[authUser.authAccount] = authUser
+    }
+    this.authUsers = []
+    this.authUsers.push(this.authUserMap[globalThis.accountInfo.distributedInfo.name])
+    for (let i = 0; i < this.dlpFile.dlpProperty.authUsers.length; ++i) {
+      let authUser = this.dlpFile.dlpProperty.authUsers[i]
+      if (authUser.authAccount === globalThis.accountInfo.distributedInfo.name) {
+        continue
+      }
+      this.authUsers.push(authUser)
     }
   }
 
@@ -51,8 +66,10 @@ struct PermissionPanel {
             .width(Constants.PP_TEXT_WIDTH)
             .padding({right: Constants.PP_TEXT_PAD_RIGHT})
           Image(this.radioImg[2 - item.authPerm])
-            .enabled((!this.processing) && (this.authPerm == 2))
-            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
+            !(item.authAccount == globalThis.accountInfo.distributedInfo.name))
+            .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
+            !(item.authAccount == globalThis.accountInfo.distributedInfo.name)) ?
             Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .width(Constants.PP_IMAGE_WIDTH)
             .height(Constants.PP_IMAGE_HEIGHT)
@@ -60,13 +77,15 @@ struct PermissionPanel {
             .onClick((event) => {
               var authUser = this.authUserMap[item.authAccount]
               authUser.authPerm = dlpPermission.AuthPermType.READ_ONLY
-              authUser.permExpiryTime = Date.UTC(2023, 1, 1)
+              authUser.permExpiryTime = Date.UTC(2024, 1, 1)
               this.updateAuthUsers()
             })
           Column() {
             Image(this.radioImg[item.authPerm - 1])
-              .enabled((!this.processing) && (this.authPerm == 2))
-              .opacity(((!this.processing) && (this.authPerm == 2)) ?
+              .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
+              !(item.authAccount == globalThis.accountInfo.distributedInfo.name))
+              .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
+              !(item.authAccount == globalThis.accountInfo.distributedInfo.name)) ?
               Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
               .width(Constants.PP_IMAGE_WIDTH)
               .height(Constants.PP_IMAGE_HEIGHT)
@@ -74,7 +93,7 @@ struct PermissionPanel {
               .onClick((event) => {
                 var authUser = this.authUserMap[item.authAccount]
                 authUser.authPerm = dlpPermission.AuthPermType.FULL_CONTROL
-                authUser.permExpiryTime = Date.UTC(2023, 1, 1)
+                authUser.permExpiryTime = Date.UTC(2024, 1, 1)
                 this.updateAuthUsers()
               })
           }
@@ -82,8 +101,10 @@ struct PermissionPanel {
           .width(Constants.PP_COLUMN_WIDTH)
           .margin({ left: Constants.PP_COLUMN_MARGIN_LEFT, right: Constants.PP_COLUMN_MARGIN_RIGHT })
           Image($r('app.media.ic_public_delete'))
-            .enabled((!this.processing) && (this.authPerm == 2))
-            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
+            !(item.authAccount == globalThis.accountInfo.distributedInfo.name))
+            .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
+            !(item.authAccount == globalThis.accountInfo.distributedInfo.name)) ?
             Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .width(Constants.PP_IMAGE_WIDTH)
             .height(Constants.PP_IMAGE_HEIGHT)
@@ -183,8 +204,8 @@ struct PermissionPanel {
         .constraintSize({maxHeight: Constants.PP_SCROLL_MAX_HEIGHT})
         Row() {
           Button($r('app.string.button_add_user'))
-            .enabled((!this.processing) && (this.authPerm == 2))
-            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL))
+            .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL)) ?
             Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .fontSize(Constants.PP_BUTTON_FONT_SIZE)
             .fontColor($r('app.color.button_color'))

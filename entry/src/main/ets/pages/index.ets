@@ -57,6 +57,13 @@ struct DlpDialog {
     var isDlpSuffix: boolean = filename.endsWith(".dlp")
     if (!isDlpSuffix) {
       console.info(TAG + "input file is not a dlp file")
+      var ownerAccount : dlpPermission.AuthUser = {
+        authAccount: this.dlpFile.dlpProperty.ownerAccount,
+        authPerm: dlpPermission.AuthPermType.FULL_CONTROL,
+        permExpiryTime: Date.UTC(2024, 1, 1),
+        authAccountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
+      }
+      this.dlpFile.dlpProperty.authUsers.push(ownerAccount)
       this.isShow = true
       return
     }
