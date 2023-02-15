@@ -124,11 +124,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     async onRequest(want: Want, startId: number) {
         hiTraceMeter.startTrace("DlpOpenFileJs", startId);
         try {
-            var srcFd = want.parameters.keyFd.value
-            this.fileName = want.parameters.fileName.name
-            this.sandboxBundleName = want.parameters["ohos.dlp.params.bundleName"]
-            this.sandboxAbilityName = want.parameters["ohos.dlp.params.abilityName"]
-            this.sandboxModuleName = want.parameters["ohos.dlp.params.moduleName"]
+            var srcFd = want.parameters.keyFd["value"]
+            this.fileName = <string>want.parameters.fileName["name"]
+            this.sandboxBundleName = <string>want.parameters["ohos.dlp.params.bundleName"]
+            this.sandboxAbilityName = <string>want.parameters["ohos.dlp.params.abilityName"]
+            this.sandboxModuleName = <string>want.parameters["ohos.dlp.params.moduleName"]
         } catch (err) {
             console.log(TAG + "parse parameters failed, error: " + JSON.stringify(err))
             startAlertAbility(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_PARAM_ERROR)
