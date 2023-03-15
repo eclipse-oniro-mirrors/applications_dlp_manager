@@ -8,9 +8,10 @@ import Constants from '../common/constant'
 import hiTraceMeter from '@ohos.hiTraceMeter'
 import hiSysEvent from '@ohos.hiSysEvent'
 
-var TAG = "[DLPManager ViewAbility]"
+var TAG = "[DLPManager_ViewAbility]"
 export default class ViewAbility extends ServiceExtensionAbility {
     linkFd: number = -1
+    dlpFd: number = -1
     linkFileName: string = ''
     linkFilePath: string = ''
     sandboxIndex: number = -1
@@ -46,7 +47,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
                 keyFd: {
                     type: "FD", value: this.linkFd
                 },
-                "fileName": { "name": this.fileName },
+                "linkFileName": {
+                    "name": this.linkFileName
+                },
+                "fileName": {
+                    "name": this.fileName
+                },
                 "ohos.dlp.params.index": this.sandboxIndex,
                 "ohos.dlp.params.moduleName": this.sandboxModuleName,
                 "ohos.dlp.params.securityFlag": this.authPerm ==
@@ -63,13 +69,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
                     await this.dlpFile.closeDlpFile()
                     startAlertAbility(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_INSIDE_ERROR)
                 } catch (err) {
-                    console.log(TAG + "deleteDlpLinkFile failed, error" + JSON.stringify(err))
+                    console.error(TAG + "deleteDlpLinkFile failed, error" + JSON.stringify(err))
                 }
                 await this.sendDlpFileOpenFault(105, this.sandboxBundleName, this.sandboxIndex, null); // 105: DLP_START_SANDBOX_ERROR
             } else {
                 await this.sendDlpFileOpenEvent(203, this.sandboxBundleName, this.sandboxIndex); // 203: DLP_START_SANDBOX_SUCCESS
                 globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex] =
-                                            [this.linkFd, this.dlpFile, this.linkFileName]
+                    [this.linkFd, this.dlpFile, this.linkFileName, this.dlpFd]
                 await this.startDataAbility()
             }
             globalThis.context.terminateSelf()
@@ -96,7 +102,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         try {
             await hiSysEvent.write(event);
         } catch (err) {
-            console.log(TAG + "sendDlpFileOpenEvent failed")
+            console.error(TAG + "sendDlpFileOpenEvent failed")
         }
     }
 
@@ -117,7 +123,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         try {
             await hiSysEvent.write(event);
         } catch (err) {
-            console.log(TAG + "sendDlpFileOpenEvent failed")
+            console.error(TAG + "sendDlpFileOpenEvent failed")
         }
     }
 
@@ -125,12 +131,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
         hiTraceMeter.startTrace("DlpOpenFileJs", startId);
         try {
             var srcFd = want.parameters.keyFd["value"]
+            this.dlpFd = srcFd
             this.fileName = <string>want.parameters.fileName["name"]
             this.sandboxBundleName = <string>want.parameters["ohos.dlp.params.bundleName"]
             this.sandboxAbilityName = <string>want.parameters["ohos.dlp.params.abilityName"]
             this.sandboxModuleName = <string>want.parameters["ohos.dlp.params.moduleName"]
         } catch (err) {
-            console.log(TAG + "parse parameters failed, error: " + JSON.stringify(err))
+            console.error(TAG + "parse parameters failed, error: " + JSON.stringify(err))
             startAlertAbility(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_PARAM_ERROR)
             hiTraceMeter.finishTrace("DlpOpenFileJs", startId);
             return
@@ -139,10 +146,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
         try {
             var accountInfo = await getOsAccountInfo()
             this.userId = await getUserId()
-            console.log(TAG + "account name: " +
+            console.info(TAG + "account name: " +
                     accountInfo.distributedInfo.name + ", userId: " + this.userId)
         } catch (err) {
-            console.log(TAG + "get account info failed, error: " + JSON.stringify(err))
+            console.error(TAG + "get account info failed, error: " + JSON.stringify(err))
             startAlertAbility(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_GET_ACCOUNT_ERROR)
             hiTraceMeter.finishTrace("DlpGetOsAccountJs", startId);
             hiTraceMeter.finishTrace("DlpOpenFileJs", startId);
@@ -158,7 +165,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         try {
             this.dlpFile = await dlpPermission.openDlpFile(srcFd)
         } catch (err) {
-            console.log(TAG + "openDlpFile error: " + err.message + ", code: " + err.code)
+            console.error(TAG + "openDlpFile error: " + err.message + ", code: " + err.code)
             var errorInfo = getAlertMessage(err, Constants.TITLE_APP_DLP_ERROR,Constants.MESSAGE_APP_FILE_PARAM_ERROR)
             startAlertAbility(errorInfo.title, errorInfo.msg)
             hiTraceMeter.finishTrace("DlpOpenDlpFileJs", startId);
@@ -178,7 +185,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
             this.sandboxIndex = await dlpPermission.installDlpSandbox(this.sandboxBundleName,
                 this.authPerm, this.userId)
         } catch (err) {
-            console.log(TAG + "installDlpSandbox error: " + err.message + ", code: " + err.code)
+            console.error(TAG + "installDlpSandbox error: " + err.message + ", code: " + err.code)
             try {
                 await this.dlpFile.closeDlpFile()
             } catch (err) {
@@ -201,7 +208,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         try {
             await this.dlpFile.addDlpLinkFile(this.linkFileName)
         } catch (err) {
-            console.log(TAG + "addDlpLinkFile error: " + err.message + ", code: " + err.code)
+            console.error(TAG + "addDlpLinkFile error: " + err.message + ", code: " + err.code)
             try {
                 await this.dlpFile.closeDlpFile()
             } catch (err) {

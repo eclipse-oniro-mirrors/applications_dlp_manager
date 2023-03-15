@@ -3,7 +3,7 @@ import {DelUserAlertDialog} from '../components/del_user_alert'
 import {DlpAlertDialog} from '../components/dlp_alert_dialog'
 import Constants from'../constant'
 
-var TAG = "DLPManager: "
+var TAG = "[DLPManager_Permission]"
 @Component
 struct PermissionPanel {
   scroller: Scroller = new Scroller()

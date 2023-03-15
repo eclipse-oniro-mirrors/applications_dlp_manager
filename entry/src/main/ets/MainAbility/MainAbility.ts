@@ -3,7 +3,7 @@ import datafile from '@ohos.file.fileAccess';
 import window from '@ohos.window';
 import abilityAccessCtrl, {Permissions} from '@ohos.abilityAccessCtrl'
 
-var TAG = "[DLPManager]"
+var TAG = "[DLPManager_MAIN]"
 let permissionList: Array<Permissions> = [
     "ohos.permission.READ_MEDIA",
     "ohos.permission.WRITE_MEDIA",
@@ -12,18 +12,18 @@ let permissionList: Array<Permissions> = [
 
 export default class MainAbility extends UIAbility {
     async onCreate(want, launchParam) {
-        console.log("[DLPManager] MainAbility onCreate")
+        console.info("[DLPManager] MainAbility onCreate")
         globalThis.abilityWant = want;
         globalThis.context = this.context
         globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context)
     }
 
     onDestroy() {
-        console.log("[DLPManager] MainAbility onDestroy")
+        console.info(TAG + " onDestroy")
     }
 
     async onWindowStageCreate(windowStage) {
-        console.log("[DLPManager] MainAbility onWindowStageCreate")
+        console.info(TAG + " onWindowStageCreate")
         var atManager = abilityAccessCtrl.createAtManager();
         atManager.requestPermissionsFromUser(globalThis.context, permissionList).then((data) => {
             console.info("[DLPManager] data:" + JSON.stringify(data));
@@ -39,14 +39,14 @@ export default class MainAbility extends UIAbility {
     }
 
     onWindowStageDestroy() {
-        console.log(TAG + "MainAbility onWindowStageDestroy")
+        console.info(TAG + " onWindowStageDestroy")
     }
 
     onForeground() {
-        console.log(TAG + "[DLPManager] MainAbility onForeground")
+        console.info(TAG + " onForeground")
     }
 
     onBackground() {
-        console.log(TAG + "[DLPManager] MainAbility onBackground")
+        console.info(TAG + " onBackground")
     }
 };

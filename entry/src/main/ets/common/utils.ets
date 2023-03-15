@@ -3,7 +3,7 @@ import account_osAccount from '@ohos.account.osAccount';
 import Constants from '../common/constant'
 import dlpPermission from '@ohos.dlpPermission';
 
-var TAG = "[DLPManager]"
+var TAG = "[DLPManager_utils]"
 async function getDistributedAccountInfo() : Promise<account_distributedAccount.DistributedInfo> {
   var distAbility = account_distributedAccount.getDistributedAccountAbility()
   return distAbility.queryOsAccountDistributedInfo()
@@ -86,7 +86,7 @@ function startAlertAbility(title, message) {
       message: message,
     }
   }, async (err, data) => {
-    console.log(TAG + "start AlertAbility err: " + JSON.stringify(err))
+    console.error(TAG + "start AlertAbility err: " + JSON.stringify(err))
     globalThis.context.terminateSelf()
   })
 }

@@ -7,12 +7,12 @@ import hiSysEvent from '@ohos.hiSysEvent'
 import mediaLibrary from '@ohos.multimedia.mediaLibrary'
 import { getAlertMessage, getAuthPerm, getOsAccountInfo, getUserId, startAlertAbility } from '../utils'
 
-var TAG: string = "DLPManager: "
+var TAG: string = "[DLPManager_footer]"
 
 var fileManagerSaveWant = {
   action: "ohos.want.action.CREATE_FILE",
   parameters: {
-    "key_pick_file_name": "",
+    "key_pick_file_name": [],
     "key_pick_file_location": 0,
     "key_pick_file_paths": ""
   }
@@ -34,6 +34,9 @@ struct Footer {
   srcFilename: string
   srcFd: number
   isDlpFile: boolean
+  requestIsFromSandBox: boolean
+  isReadPermission: boolean
+  linkFileName: string
   dlpAlertDialog: CustomDialogController
   @Link isChanged: boolean
   @Link dlpFile: dlpPermission.DlpFile
@@ -66,8 +69,30 @@ struct Footer {
     this.dlpAlertDialog.open()
   }
 
+  async catchProcess(){
+    this.processing = false
+    if (this.requestIsFromSandBox) {
+      try {
+        await this.dlpFile.restartDlpLinkFile(this.linkFileName);
+      } catch (err) {
+        console.error(TAG + "restartDlpLinkFile error: " + err.message + ", code: " + err.code)
+      }
+    }
+  }
+  
   async postProcessForSetting() {
     var filename = this.srcFilename.substr(0, this.srcFilename.length - suffix_length)
+    try {
+      if (this.requestIsFromSandBox) {
+        var res = await this.dlpFile.stopDlpLinkFile(this.linkFileName);
+        console.info(TAG + "stopDlpLinkFile:" + JSON.stringify(res))
+      }
+    } catch (err) {
+      console.error(TAG + "stopDlpLinkFile error: " + JSON.stringify(err))
+      this.dlpErrorDialog(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_INSIDE_ERROR)
+      this.processing = false
+      return
+    }
     if (this.needProtect) {
       this.processing = true
       var filePath = globalThis.context.filesDir + "/" + filename + (new Date().getTime())
@@ -76,7 +101,7 @@ struct Footer {
       } catch (err) {
         console.error(TAG + "openSync error: " + JSON.stringify(err))
         this.dlpErrorDialog(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_INSIDE_ERROR)
-        this.processing = false
+        await this.catchProcess()
         return
       }
       try {
@@ -87,7 +112,7 @@ struct Footer {
         fileio.unlinkSync(filePath)
         var errorInfo = getAlertMessage(err, Constants.TITLE_SERVICE_ERROR, Constants.MESSAGE_RECOVER_DLP_ERROR)
         this.dlpErrorDialog(errorInfo.title, errorInfo.msg)
-        this.processing = false
+        await this.catchProcess()
         return
       }
       console.info(TAG + "filePath" + filePath + ", DlpProperty: " + JSON.stringify(this.dlpFile.dlpProperty))
@@ -103,12 +128,12 @@ struct Footer {
         fileio.closeSync(tempFd)
         fileio.unlinkSync(filePath)
         this.dlpErrorDialog(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_GET_ACCOUNT_ERROR)
-        this.processing = false
+        await this.catchProcess()
         return
       }
       this.dlpFile.dlpProperty.ownerAccount = accountInfo.distributedInfo.name
       try {
-        this.dlpFile = await dlpPermission.generateDlpFile(tempFd, this.srcFd, this.dlpFile.dlpProperty)
+        var newDlpFile = await dlpPermission.generateDlpFile(tempFd, this.srcFd, this.dlpFile.dlpProperty)
       } catch (err) {
         console.error(TAG + "generateDlpFile error: " + err.message + ", code: " + err.code)
         fileio.closeSync(tempFd)
@@ -120,44 +145,54 @@ struct Footer {
         }
         var errorInfo = getAlertMessage(err, Constants.TITLE_SERVICE_ERROR, Constants.MESSAGE_GENERATE_DLP_ERROR)
         this.dlpErrorDialog(errorInfo.title, errorInfo.msg)
-        this.processing = false
+        await this.catchProcess()
         return
       }
       try {
-        await this.dlpFile.closeDlpFile()
+        this.dlpFile = newDlpFile
+        if (this.requestIsFromSandBox) {
+          for (var key in globalThis.sandbox2linkFile) {
+            if (globalThis.sandbox2linkFile[key][2] == this.linkFileName) {
+              globalThis.sandbox2linkFile[key][1] = newDlpFile
+            }
+          }
+          await newDlpFile.replaceDlpLinkFile(this.linkFileName)
+        } else {
+          await newDlpFile.closeDlpFile()
+        }
       } catch (err) {
-        console.error(TAG + "closeDlpFile error: " + err.message + ", code: " + err.code)
+        console.error(TAG + "finish DlpFile error: " + err.message + ", code: " + err.code)
       }
       fileio.closeSync(tempFd)
       fileio.unlinkSync(filePath)
       abilityResult.resultCode = 0
-      this.processing = false
+      await this.catchProcess()
       globalThis.context.terminateSelfWithResult(abilityResult)
       return
     } else {
-      fileManagerSaveWant.parameters.key_pick_file_name = JSON.stringify([filename])
+      fileManagerSaveWant.parameters.key_pick_file_name = [filename]
       globalThis.context.startAbilityForResult(fileManagerSaveWant, fileManagerOptions, async (error, data) => {
         this.processing = true
-        console.log(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
+        console.info(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
         if (data.want.parameters.pick_path_return == undefined) {
           console.error(TAG + "fail to get pick path")
-          this.processing = false
+          await this.catchProcess()
           return;
         }
         var uri = data.want.parameters.pick_path_return[0]
         if (uri == undefined || uri.length == 0) {
           console.error(TAG + "fail to get uri")
-          this.processing = false
+          await this.catchProcess()
           return;
         }
         try {
           var uriFileAsset = await this.getFileAssetFromUri(uri);
           var dstFd = await uriFileAsset.open('w');
         } catch (err) {
-          console.error(TAG + "openFile error: " + err.message + ", code: " + err.code)
+          console.error(TAG + "openFile error: " + err.message + ", code: " + err.code + " uri:" + uri)
           await globalThis.dsHelper.delete(uri)
           this.dlpErrorDialog(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_INSIDE_ERROR)
-          this.processing = false
+          await this.catchProcess()
           return;
         }
         try {
@@ -168,14 +203,18 @@ struct Footer {
           await globalThis.dsHelper.delete(uri)
           var errorInfo = getAlertMessage(err, Constants.TITLE_SERVICE_ERROR, Constants.MESSAGE_RECOVER_DLP_ERROR)
           this.dlpErrorDialog(errorInfo.title, errorInfo.msg)
-          this.processing = false
+          await this.catchProcess()
           return;
         }
         try {
           await uriFileAsset.close(dstFd);
-          await this.dlpFile.closeDlpFile()
+          if (this.requestIsFromSandBox) {
+            await this.dlpFile.restartDlpLinkFile(this.linkFileName)
+          } else {
+            await this.dlpFile.closeDlpFile()
+          }
         } catch (err) {
-          console.error(TAG + "closeDlpFile error: " + err.message + ", code: " + err.code)
+          console.error(TAG + "finish DlpFile error: " + err.message + ", code: " + err.code)
         }
         abilityResult.resultCode = 0
         this.processing = false
@@ -201,7 +240,7 @@ struct Footer {
       event.params['USER_ID'] = userId;
       await hiSysEvent.write(event);
     } catch (err) {
-      console.log(TAG + "sendDlpFileOpenEvent failed")
+      console.error(TAG + "sendDlpFileOpenEvent failed")
     }
   }
 
@@ -219,21 +258,21 @@ struct Footer {
       event.params['USER_ID'] = userId;
       await hiSysEvent.write(event);
     } catch (err) {
-      console.log(TAG + "sendDlpFileOpenEvent failed")
+      console.error(TAG + "sendDlpFileOpenEvent failed")
     }
   }
 
   postProcessForEncrypting() {
     if (!this.needProtect || this.srcFilename == undefined || this.srcFilename.length == 0) {
-      console.log(TAG + "no need to be protected")
+      console.info(TAG + "no need to be protected")
       this.processing = false
       globalThis.context.terminateSelf()
       return
     }
-    fileManagerSaveWant.parameters.key_pick_file_name = JSON.stringify([this.srcFilename + '.dlp'])
+    fileManagerSaveWant.parameters.key_pick_file_name = [this.srcFilename + '.dlp']
     globalThis.context.startAbilityForResult(fileManagerSaveWant, fileManagerOptions, async (error, data) => {
       this.processing = true
-      console.log(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
+      console.info(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
       if (data.want.parameters.pick_path_return == undefined) {
         console.error(TAG + "fail to get pick path")
         this.processing = false
@@ -296,7 +335,7 @@ struct Footer {
         Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
         .height(Constants.FOOTER_HEIGHT)
         .onClick(async (event) => {
-          if (this.isDlpFile) {
+          if (this.isDlpFile && !this.requestIsFromSandBox) {
             try {
               await this.dlpFile.closeDlpFile()
             } catch (err) {
@@ -309,7 +348,9 @@ struct Footer {
         .width(Constants.FOOTER_LINE_WIDTH)
         .height(Constants.FOOTER_LINE_HEIGHT)
         .backgroundColor($r('app.color.footer_line_background_color'))
-      Button(this.needProtect ? $r('app.string.save') : $r('app.string.sure'), { type: ButtonType.Normal })
+      Button(this.needProtect && !this.isReadPermission ? $r('app.string.save') : $r('app.string.sure'), {
+        type: ButtonType.Normal
+      })
         .fontColor($r('app.color.button_color'))
         .fontFamily($r('app.string.typeface'))
         .backgroundColor($r("app.color.button_background_color"))

@@ -2,7 +2,7 @@ import dlpPermission from '@ohos.dlpPermission'
 import {DlpAlertDialog} from '../components/dlp_alert_dialog'
 import Constants from'../constant'
 
-var TAG = "DLPManager: "
+var TAG = "[DLPManager_authorize]"
 @Component
 struct AuthorizerPanel {
   scroller: Scroller = new Scroller()
