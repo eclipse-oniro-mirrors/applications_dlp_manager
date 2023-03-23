@@ -36,6 +36,10 @@ export default class DataAbility extends ServiceExtensionAbility {
                     console.error(TAG + "closeDlpFile error: " + err.message + ", code: " + err.code)
                 }
                 delete globalThis.sandbox2linkFile[key]
+                if (Object.keys(globalThis.sandbox2linkFile).length == 0) {
+                    console.log(TAG + "sandbox2linkFile empty")
+                    globalThis.dataContext.terminateSelf()
+                }
                 console.error(TAG + "release resource successfully")
             }
         } catch (err) {
@@ -60,7 +64,7 @@ export default class DataAbility extends ServiceExtensionAbility {
     }
 
     onCreate(want) {
-        globalThis.context = this.context
+        globalThis.dataContext = this.context
     }
 
     onRequest(want: Want, startId: number) {
