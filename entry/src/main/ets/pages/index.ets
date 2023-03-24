@@ -18,7 +18,8 @@ var defaultDlpProperty: dlpPermission.DlpProperty = {
   ownerAccount: '',
   ownerAccountType: 1,
   authUsers: [],
-  contractAccount: ''
+  contractAccount: '',
+  offlineAccess: true
 }
 
 var defaultDlpFile: dlpPermission.DlpFile = {

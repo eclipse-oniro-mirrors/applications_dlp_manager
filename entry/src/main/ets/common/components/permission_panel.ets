@@ -297,6 +297,25 @@ struct PermissionPanel {
         .width(Constants.PP_TEXT_WIDTH_FULL)
         .height(Constants.PP_ROW_HEIGHT2)
       }
+        Row({space: 10}) {
+        Checkbox({ name: 'checkbox1', group: 'checkboxGroup' })
+          .select(this.dlpFile.dlpProperty.offlineAccess)
+          .selectedColor(0xed6f21)
+          .onChange((value: boolean) => {
+            console.info('DLPManager:  Checkbox1 change is' + value)
+            this.dlpFile.dlpProperty.offlineAccess = value
+          })
+        Text($r('app.string.offline_supported'))
+          .fontColor($r("app.color.text_color"))
+          .fontFamily($r('app.string.typeface'))
+          .fontWeight(FontWeight.Regular)
+          .width(Constants.PP_TEXT_WIDTH_FULL)
+          .lineHeight(Constants.PP_TEXT_LINE_HEIGHT)
+          .fontSize(Constants.PP_TEXT_FONT_SIZE)
+       }
+      .align(Alignment.Start)
+      .width(Constants.PP_TEXT_WIDTH_FULL)
+      .height(Constants.PP_ROW_HEIGHT2)
     }
     .padding({left: Constants.PP_COLUMN_MARGIN_LEFT2, right: Constants.PP_COLUMN_MARGIN_RIGHT2})
     .alignItems(HorizontalAlign.Start)

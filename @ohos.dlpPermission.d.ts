@@ -315,6 +315,12 @@ declare namespace dlpPermission {
          * @since 9
          */
         ownerAccountType: AccountType;
+
+        /**
+         * Offline Access support
+         * @since 9
+         */
+        offlineAccess: boolean;
     }
 
     export interface DlpFile {

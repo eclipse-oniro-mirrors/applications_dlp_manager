@@ -99,6 +99,10 @@
     {
       "name": "da_buttion",
       "value": "知道了"
+    },
+    {
+      "name": "offline_supported",
+      "value": "离线支持"
     }
   ]
 }
