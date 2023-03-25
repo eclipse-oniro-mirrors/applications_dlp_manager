@@ -65,12 +65,12 @@ export default class DataAbility extends ServiceExtensionAbility {
   }
 
   onCreate(want) {
-    globalThis.dataContext = this.context
+    globalThis.dataContext = this.context;
   }
 
   onRequest(want: Want, startId: number) {
-    if(this.subscriber == null) {
-      this.createSubscriber()
+    if (this.subscriber === null) {
+      this.createSubscriber();
     }
   }
 
