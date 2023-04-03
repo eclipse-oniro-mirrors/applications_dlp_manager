@@ -222,7 +222,7 @@ declare namespace dlpPermission {
    * @since 9
    * @return -
    */
-  function off(type: 'uninstallDlpSandbox', listener?: Callback<DlpSandboxStateParam>): void;
+  function off(type: 'uninstallDlpSandbox', listener?: Callback<DlpSandboxStateParam>): boolean;
 
   export enum AccountType {
     /**

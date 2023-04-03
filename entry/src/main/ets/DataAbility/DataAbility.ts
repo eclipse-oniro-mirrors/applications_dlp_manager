@@ -1,32 +1,28 @@
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import commonEvent from '@ohos.commonEvent';
-import Want from '@ohos.app.ability.Want';
+import type Want from '@ohos.app.ability.Want';
 import fileio from '@ohos.fileio';
 import dlpPermission from '@ohos.dlpPermission';
 
 let TAG = '[DLPManager_DataAbility]';
 let DATAEVENT = 'usual.event.SANDBOX_PACKAGE_REMOVED';
+const INDEX_TWO = 2;
+const INDEX_ONE = 1;
+const INDEX_ZERO = 0;
 export default class DataAbility extends ServiceExtensionAbility {
   sandbox2linkFile: {[key: string]: [number, dlpPermission.DlpFile, string, number]} = {};
-  subscriber = null;
-  subscribeCallback(err, data) {
-    if (err.code) {
-      console.error(TAG + ' subscribe failed ' + JSON.stringify(err));
-      return;
-    }
-    if (data.event !== DATAEVENT) {
-      return;
-    }
+  isSubscriber = false;
+  subscribeCallback(data): void {
     let bundleName = data.bundleName;
-    let sandboxAppIndex = data.parameters['sandbox_app_index'];
+    let sandboxAppIndex = data.appIndex;
     let key = bundleName + sandboxAppIndex;
     try {
       if (key in globalThis.sandbox2linkFile) {
         let linkFile = globalThis.sandbox2linkFile[key];
-        fileio.closeSync(linkFile[0]);
-        let dlpFile = linkFile[1];
+        fileio.closeSync(linkFile[INDEX_ZERO]);
+        let dlpFile = linkFile[INDEX_ONE];
         try {
-          dlpFile.deleteDlpLinkFile(linkFile[2]);
+          dlpFile.deleteDlpLinkFile(linkFile[INDEX_TWO]);
         } catch (err) {
           console.error(TAG + 'deleteDlpLinkFile error: ' + err.message + ', code: ' + err.code);
         }
@@ -47,44 +43,39 @@ export default class DataAbility extends ServiceExtensionAbility {
     }
   }
 
-  createSubscriber() {
+  createSubscriber(): void {
     console.info(' createSubscriber');
-    let subscribeInfo = {
-      events: ['usual.event.SANDBOX_PACKAGE_REMOVED'],
-    };
-
-    commonEvent.createSubscriber(subscribeInfo, (err, subscriber) => {
-      if (err.code) {
-        console.error(TAG + 'CreateSubscriberCallBack err =' + JSON.stringify(err));
-      } else {
-        console.info(TAG + 'CreateSubscriber');
-        this.subscriber = subscriber;
-        commonEvent.subscribe(this.subscriber, this.subscribeCallback);
-      }
-    });
+    try {
+      dlpPermission.on('uninstallDlpSandbox', this.subscribeCallback);
+      this.isSubscriber = true;
+    } catch (err) {
+      console.info(TAG + 'on error');
+    }
   }
 
-  onCreate(want) {
+  onCreate(want): void {
     globalThis.dataContext = this.context;
   }
 
-  onRequest(want: Want, startId: number) {
-    if (this.subscriber === null) {
+  onRequest(want: Want, startId: number): void {
+    if (!this.isSubscriber) {
       this.createSubscriber();
     }
   }
 
-  onDestroy() {
+  onDestroy(): void {
     console.info(TAG + 'onDestroy');
-    if (this.subscriber !== null) {
-      commonEvent.unsubscribe(this.subscriber, (err) => {
-        if (err.code) {
-          console.error(TAG + '[CommonEvent]UnsubscribeCallBack err=' + JSON.stringify(err));
-        } else {
-          console.info(TAG + '[CommonEvent]Unsubscribe');
-          this.subscriber = null;
+    if (this.isSubscriber) {
+      console.info(TAG + 'uninstallDlpSandbox');
+      try {
+        let res = dlpPermission.off('uninstallDlpSandbox');
+        console.info(TAG + 'off res:' + JSON.stringify(res));
+        if (res) {
+          this.isSubscriber = false;
         }
-      });
+      } catch (err) {
+        console.info(TAG + 'off error:' + JSON.stringify(err));
+      }
     }
   }
 }
