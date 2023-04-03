@@ -133,7 +133,7 @@ struct Footer {
       }
       this.dlpFile.dlpProperty.ownerAccount = accountInfo.distributedInfo.name
       try {
-        var newDlpFile = await dlpPermission.generateDlpFile(tempFd, this.srcFd, this.dlpFile.dlpProperty)
+        var newDlpFile = await dlpPermission.generateDlpFile(globalThis.context, tempFd, this.srcFd, this.dlpFile.dlpProperty)
       } catch (err) {
         console.error(TAG + "generateDlpFile error: " + err.message + ", code: " + err.code)
         fileio.closeSync(tempFd)
@@ -190,7 +190,6 @@ struct Footer {
           var dstFd = await uriFileAsset.open('w');
         } catch (err) {
           console.error(TAG + "openFile error: " + err.message + ", code: " + err.code + " uri:" + uri)
-          await globalThis.dsHelper.delete(uri)
           this.dlpErrorDialog(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_INSIDE_ERROR)
           await this.catchProcess()
           return;
@@ -200,7 +199,6 @@ struct Footer {
         } catch (err) {
           console.error(TAG + "recoverDlpFile error: " + err.message + ", code: " + err.code)
           await uriFileAsset.close(dstFd)
-          await globalThis.dsHelper.delete(uri)
           var errorInfo = getAlertMessage(err, Constants.TITLE_SERVICE_ERROR, Constants.MESSAGE_RECOVER_DLP_ERROR)
           this.dlpErrorDialog(errorInfo.title, errorInfo.msg)
           await this.catchProcess()
@@ -262,7 +260,7 @@ struct Footer {
     }
   }
 
-  postProcessForEncrypting() {
+  async postProcessForEncrypting() {
     if (!this.needProtect || this.srcFilename == undefined || this.srcFilename.length == 0) {
       console.info(TAG + "no need to be protected")
       this.processing = false
@@ -270,56 +268,33 @@ struct Footer {
       return
     }
     fileManagerSaveWant.parameters.key_pick_file_name = [this.srcFilename + '.dlp']
-    globalThis.context.startAbilityForResult(fileManagerSaveWant, fileManagerOptions, async (error, data) => {
+    hiTraceMeter.startTrace("DlpGenerateDlpFileJs", this.srcFd);
+    try {
       this.processing = true
-      console.info(TAG + JSON.stringify(error) + ", data: " + JSON.stringify(data))
-      if (data.want.parameters.pick_path_return == undefined) {
-        console.error(TAG + "fail to get pick path")
-        this.processing = false
-        return;
-      }
-      var uri = data.want.parameters.pick_path_return[0]
-      if (uri == undefined || uri.length == 0) {
-        console.error(TAG + "fail to get uri")
-        this.processing = false
-        return;
-      }
-      try {
-        var uriFileAsset = await this.getFileAssetFromUri(uri);
-        var dstFd = await uriFileAsset.open('w');
-      } catch (err) {
-        console.error(TAG + "openFile error: " + JSON.stringify(err))
-        await globalThis.dsHelper.delete(uri)
-        this.dlpErrorDialog(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_INSIDE_ERROR)
-        this.processing = false
-        return;
-      }
-      hiTraceMeter.startTrace("DlpGenerateDlpFileJs", this.srcFd);
-      try {
-        this.dlpFile = await dlpPermission.generateDlpFile(this.srcFd, dstFd, this.dlpFile.dlpProperty)
-      } catch (err) {
-        await this.sendDlpFileCreateFault(102, err.data); // 102: DLP_FILE_CREATE_ERORR
-        hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
-        console.error(TAG + "generateDlpFile error: " + err.message + ", code: " + err.code)
-        await uriFileAsset.close(dstFd)
-        await globalThis.dsHelper.delete(uri)
-        var errorInfo = getAlertMessage(err, Constants.TITLE_SERVICE_ERROR, Constants.MESSAGE_GENERATE_DLP_ERROR)
-        this.dlpErrorDialog(errorInfo.title, errorInfo.msg)
-        this.processing = false
-        return;
-      }
-      await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
+      this.dlpFile = await dlpPermission.generateDlpFile(globalThis.context, this.srcFd, this.srcFilename + '.dlp',
+        this.dlpFile.dlpProperty)
+    } catch (err) {
+      await this.sendDlpFileCreateFault(102, err.data); // 102: DLP_FILE_CREATE_ERORR
       hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
-      try {
-        await this.dlpFile.closeDlpFile()
-        await uriFileAsset.close(dstFd);
-      } catch (err) {
-        console.error(TAG + "closeDlpFile error: " + err.message + ", code: " + err.code)
-      }
-      abilityResult.resultCode = 0
+      console.error(TAG + "generateDlpFile error: " + err.message + ", code: " + err.code)
+      var errorInfo = getAlertMessage(err, Constants.TITLE_SERVICE_ERROR, Constants.MESSAGE_GENERATE_DLP_ERROR)
+      this.dlpErrorDialog(errorInfo.title, errorInfo.msg)
       this.processing = false
-      globalThis.context.terminateSelfWithResult(abilityResult)
-    })
+      return;
+    }
+
+    await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
+    hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
+
+    try {
+      await this.dlpFile.closeDlpFile()
+    } catch (err) {
+      console.error(TAG + "closeDlpFile error: " + err.message + ", code: " + err.code)
+    }
+
+    abilityResult.resultCode = 0
+    this.processing = false
+    globalThis.context.terminateSelfWithResult(abilityResult)
   }
 
   build() {
