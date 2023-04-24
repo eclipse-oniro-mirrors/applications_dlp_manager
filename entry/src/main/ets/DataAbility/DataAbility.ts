@@ -11,11 +11,19 @@ const INDEX_ONE = 1;
 const INDEX_ZERO = 0;
 export default class DataAbility extends ServiceExtensionAbility {
   sandbox2linkFile: {[key: string]: [number, dlpPermission.DlpFile, string, number]} = {};
+  fileOpenHistory: {[key:string]: [string, number, string, number]} = {};
+
   isSubscriber = false;
   subscribeCallback(data): void {
     let bundleName = data.bundleName;
     let sandboxAppIndex = data.appIndex;
     let key = bundleName + sandboxAppIndex;
+    for (var item in globalThis.fileOpenHistory) {
+      let tmp = globalThis.fileOpenHistory[item][0] + globalThis.fileOpenHistory[item][1];
+      if (tmp === key) {
+         delete globalThis.fileOpenHistory[item];
+      }
+    }
     try {
       if (key in globalThis.sandbox2linkFile) {
         let linkFile = globalThis.sandbox2linkFile[key];
