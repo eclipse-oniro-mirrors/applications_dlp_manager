@@ -81,6 +81,26 @@ declare namespace dlpPermission {
   function isInSandbox(callback: AsyncCallback<boolean>): void;
 
   /**
+   * Get current system sandbox policy.
+   *
+   * @returns { Promise<boolean> }
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return whether or not.
+   */
+  function getDlpGatheringPolicy(): Promise<boolean>;
+
+  /**
+   * Get current system sandbox policy.
+   *
+   * @param { AsyncCallback<boolean> } callback
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return whether or not.
+   */
+  function getDlpGatheringPolicy(callback: AsyncCallback<boolean>): void;
+
+  /**
    * Get support DLP file type.
    *
    * @returns { Promise<Array<string>> }

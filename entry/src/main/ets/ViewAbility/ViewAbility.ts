@@ -23,6 +23,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   fileName: string = '';
   uri: string = '';
   isCreated: boolean = false;
+  isGathering: boolean = true;
   alreadyOpen: boolean = false;
   userId: number = -1;
   async onCreate(want) {
@@ -32,6 +33,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     if (!globalThis.fileOpenHistory) {
       globalThis.fileOpenHistory = {};
+    }
+    if (!globalThis.authPerm2Sandbox) {
+      globalThis.authPerm2Sandbox = {};
     }
   }
 
@@ -79,11 +83,16 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await this.sendDlpFileOpenFault(105, this.sandboxBundleName, this.sandboxIndex, null); // 105: DLP_START_SANDBOX_ERROR
       } else {
         await this.sendDlpFileOpenEvent(203, this.sandboxBundleName, this.sandboxIndex); // 203: DLP_START_SANDBOX_SUCCESS
-        globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex] =
-        [this.linkFd, this.dlpFile, this.linkFileName, this.dlpFd];
+        if (globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex] == undefined) {
+          globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex] =  new Array;
+        }
+
         if (!this.alreadyOpen) {
+          globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex].push([this.linkFd,
+          this.dlpFile, this.linkFileName, this.dlpFd])
           globalThis.fileOpenHistory[this.uri] =
-            [this.sandboxBundleName, this.sandboxIndex, this.linkFileName, this.linkFd];
+          [this.sandboxBundleName, this.sandboxIndex, this.linkFileName, this.linkFd]
+          globalThis.authPerm2Sandbox[this.authPerm] = [this.sandboxBundleName, this.sandboxIndex]
         }
 
         await this.startDataAbility();
@@ -192,7 +201,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
     }
     hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
+    let sortByAuthPerm: boolean = false;
+    this.alreadyOpen = false;
+
     try {
+      this.isGathering = await dlpPermission.getDlpGatheringPolicy();
+
       if (globalThis.fileOpenHistory[this.uri] !== undefined) {
         console.info(TAG + 'file：' + this.fileName + ' already open');
         this.sandboxIndex = globalThis.fileOpenHistory[this.uri][1];
@@ -200,7 +214,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
         this.linkFd = globalThis.fileOpenHistory[this.uri][3];
         this.alreadyOpen = true;
       }
-      if (!this.alreadyOpen) {
+
+      if (globalThis.authPerm2Sandbox[this.authPerm] !== undefined && this.isGathering) {
+        this.sandboxIndex = globalThis.authPerm2Sandbox[this.authPerm][1];
+        sortByAuthPerm = true;
+      }
+
+      if (!this.alreadyOpen && !sortByAuthPerm) {
         this.sandboxIndex = await dlpPermission.installDlpSandbox(this.sandboxBundleName,
         this.authPerm, this.userId);
       }

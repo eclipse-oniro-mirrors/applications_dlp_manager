@@ -12,6 +12,9 @@ const INDEX_ZERO = 0;
 export default class DataAbility extends ServiceExtensionAbility {
   sandbox2linkFile: {[key: string]: [number, dlpPermission.DlpFile, string, number]} = {};
   fileOpenHistory: {[key:string]: [string, number, string, number]} = {};
+  //uri:bundleName:string, sandboxId:number, linkName:string, linkFd:number
+  authPerm2Sandbox: {[key:string]: [string, number]} = {};
+  //perm : bundlename, sandboxid
 
   isSubscriber = false;
   subscribeCallback(data): void {
@@ -24,23 +27,35 @@ export default class DataAbility extends ServiceExtensionAbility {
          delete globalThis.fileOpenHistory[item];
       }
     }
+
+    for (let item in globalThis.authPerm2Sandbox) {
+      let app = globalThis.authPerm2Sandbox[item][0] + globalThis.authPerm2Sandbox[item][1];
+      if (key == app) {
+        delete globalThis.authPerm2Sandbox[item];
+      }
+    }
+
     try {
       if (key in globalThis.sandbox2linkFile) {
-        let linkFile = globalThis.sandbox2linkFile[key];
-        fileio.closeSync(linkFile[INDEX_ZERO]);
-        let dlpFile = linkFile[INDEX_ONE];
-        try {
-          dlpFile.deleteDlpLinkFile(linkFile[INDEX_TWO]);
-        } catch (err) {
-          console.error(TAG + 'deleteDlpLinkFile error: ' + err.message + ', code: ' + err.code);
+        let fileArray = globalThis.sandbox2linkFile[key];
+        for (let i in fileArray) {
+          let linkFile = fileArray[i];
+          fileio.closeSync(linkFile[INDEX_ZERO]);
+          let dlpFile = linkFile[INDEX_ONE];
+          try {
+            dlpFile.deleteDlpLinkFile(linkFile[INDEX_TWO]);
+          } catch (err) {
+            console.error(TAG + 'deleteDlpLinkFile error: ' + err.message + ', code: ' + err.code);
+          }
+          try {
+            dlpFile.closeDlpFile();
+          } catch (err) {
+            console.error(TAG + 'closeDlpFile error: ' + err.message + ', code: ' + err.code);
+          }
         }
-        try {
-          dlpFile.closeDlpFile();
-        } catch (err) {
-          console.error(TAG + 'closeDlpFile error: ' + err.message + ', code: ' + err.code);
-        }
+
         delete globalThis.sandbox2linkFile[key];
-        console.error(TAG + 'release resource successfully');
+
         if (Object.keys(globalThis.sandbox2linkFile).length === 0) {
           console.info(TAG + 'sandbox2linkFile empty');
           globalThis.dataContext.terminateSelf();

@@ -70,15 +70,16 @@ struct DlpDialog {
       console.info(TAG + "in sandbox")
       try {
         for (var key in globalThis.sandbox2linkFile) {
-          if (globalThis.sandbox2linkFile[key][2] == linkFileName) {
-            var linkFile = globalThis.sandbox2linkFile[key]
-            for (var i = 0; i < linkFile[1].dlpProperty.authUsers.length; ++i) {
-              var authUser = linkFile[1].dlpProperty.authUsers[i]
+          for (var j in globalThis.sandbox2linkFile[key]) {
+            if (globalThis.sandbox2linkFile[key][j][2] == linkFileName) {
+              var linkFile = globalThis.sandbox2linkFile[key][j];
+              for (var i = 0; i < linkFile[1].dlpProperty.authUsers.length; ++i) {
+                var authUser = linkFile[1].dlpProperty.authUsers[i];
               if (authUser.authAccount == globalThis.accountInfo.distributedInfo.name) {
-                this.authPerm = authUser.authPerm
+                this.authPerm = authUser.authPerm;
                 if (authUser.authPerm == dlpPermission.AuthPermType.READ_ONLY) {
-                  console.info(TAG+" dlpPermission.AuthPermType.READ_ONLY")
-                  this.isReadPermission = true
+                  console.info(TAG+" dlpPermission.AuthPermType.READ_ONLY");
+                  this.isReadPermission = true;
                 }
               }
             }
@@ -88,6 +89,7 @@ struct DlpDialog {
             this.needProtect = true
             this.isShow = true
             return
+            }
           }
         }
         console.error(TAG + "requestIsFromSandBox can not find dilFile by linkFileName " + linkFileName)
