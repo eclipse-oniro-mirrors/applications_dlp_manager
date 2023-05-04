@@ -217,6 +217,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
       if (globalThis.authPerm2Sandbox[this.authPerm] !== undefined && this.isGathering) {
         this.sandboxIndex = globalThis.authPerm2Sandbox[this.authPerm][1];
+        console.info(TAG + "Dlp gathering is on, send " + this.fileName + " to " + "sandbox:" +  this.sandboxBundleName
+          + ":" + this.sandboxIndex);
         sortByAuthPerm = true;
       }
 
