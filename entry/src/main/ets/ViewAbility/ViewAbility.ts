@@ -1,6 +1,7 @@
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import dlpPermission from '@ohos.dlpPermission';
-import { getOsAccountInfo, getUserId, getAuthPerm, startAlertAbility, getAlertMessage } from '../common/utils';
+import { getOsAccountInfo, getUserId, getAuthPerm, startAlertAbility, getAlertMessage, terminateSelfWithResult }
+  from '../common/utils';
 import fileio from '@ohos.fileio';
 import Want from '@ohos.app.ability.Want';
 import commonEvent from '@ohos.commonEvent';
@@ -152,10 +153,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.dlpFd = want.parameters.keyFd['value'];
       this.fileName = <string>want.parameters.fileName['name'];
       this.uri = <string>want.uri;
-
       this.sandboxBundleName = <string>want.parameters['ohos.dlp.params.bundleName'];
       this.sandboxAbilityName = <string>want.parameters['ohos.dlp.params.abilityName'];
       this.sandboxModuleName = <string>want.parameters['ohos.dlp.params.moduleName'];
+      if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined
+          || this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined
+          || this.sandboxModuleName === undefined ) {
+        terminateSelfWithResult(100, "get parameters failed");
+      }
     } catch (err) {
       console.error(TAG + 'parse parameters failed, error: ' + JSON.stringify(err));
       startAlertAbility(Constants.TITLE_APP_ERROR, Constants.MESSAGE_APP_PARAM_ERROR);
