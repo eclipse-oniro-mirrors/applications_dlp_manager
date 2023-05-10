@@ -63,6 +63,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'fileName': {
           'name': this.fileName
         },
+        'uri': {
+          'name': this.uri
+        },
         'ohos.dlp.params.index': this.sandboxIndex,
         'ohos.dlp.params.moduleName': this.sandboxModuleName,
         'ohos.dlp.params.securityFlag': this.authPerm ==
@@ -229,7 +232,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
       if (!this.alreadyOpen && !sortByAuthPerm) {
         this.sandboxIndex = await dlpPermission.installDlpSandbox(this.sandboxBundleName,
-        this.authPerm, this.userId);
+          this.authPerm, this.userId, this.uri);
       }
     } catch (err) {
       console.error(TAG + 'installDlpSandbox error: ' + err.message + ', code: ' + err.code);

@@ -101,6 +101,98 @@ declare namespace dlpPermission {
   function getDlpGatheringPolicy(callback: AsyncCallback<boolean>): void;
 
   /**
+   * Set Document Retention Status by dorUri.
+   *
+   * @param { Array<string> } docUris
+   * @param { AsyncCallback<boolean> } callback
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return whether or not.
+   */
+  function setRetentionState(docUris: Array<string>, callback: AsyncCallback<boolean>): void;
+
+  /**
+   *  Set Document Retention Status by dorUri.
+   *
+   * @param { Array<string> } docUris
+   * @returns { Promise<boolean> }
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return whether or not.
+   */
+  function setRetentionState(docUris: Array<string>): Promise<boolean>;
+
+  /**
+   * Set Document Non-Retention Status by dorUri.
+   *
+   * @param { Array<string> } docUris
+   * @param { AsyncCallback<boolean> } callback
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return whether or not.
+   */
+  function setNonRetentionState(docUris: Array<string>, callback: AsyncCallback<boolean>): void;
+
+  /**
+   *  Set Document Non-Retention Status by dorUri.
+   *
+   * @param { Array<string> } docUris
+   * @returns { Promise<boolean> }
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return whether or not.
+   */
+  function setNonRetentionState(docUris: Array<string>): Promise<boolean>;
+
+  export interface RetentionSandboxInfo {
+    /**
+     * appIndex
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 9
+     */
+    appIndex: number;
+
+    /**
+     * bundleName
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 9
+     */
+    bundleName: string;
+
+    /**
+     * Document uri list
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 9
+     */
+    docUris: Array<string>;
+  }
+
+  /**
+   *  get Document uri list.
+   *
+   * @param { string } bundleName
+   * @param { AsyncCallback<Array<RetentionSandboxInfo>> } callback
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return Document uri list.
+   */
+  function getRetentionSandboxList(bundleName: string, callback: AsyncCallback<Array<RetentionSandboxInfo>>): void;
+
+  /**
+   *  get Document uri list.
+   *
+   * @param { string } bundleName
+   * @returns { Promise<Array<RetentionSandboxInfo>> }
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return Document uri list.
+   */
+  function getRetentionSandboxList(bundleName?: string): Promise<Array<RetentionSandboxInfo>>;
+
+  /**
    * Get support DLP file type.
    *
    * @returns { Promise<Array<string>> }
@@ -127,13 +219,14 @@ declare namespace dlpPermission {
    * @param {string} bundleName Indicates the bundle name of the application.
    * @param {AuthPermType} access Indicates the access to DLP file.
    * @param {number} userId Indicates the user ID.
+   * @param { string } uri
    * @returns { Promise<number> }
    * @syscap SystemCapability.Security.DlpPermissionService
    * @systemapi Hide this for inner system use.
    * @since 9
    * @return the appIndex installed application.
    */
-  function installDlpSandbox(bundleName: string, access: AuthPermType, userId: number): Promise<number>;
+  function installDlpSandbox(bundleName: string, access: AuthPermType, userId: number, uri: string): Promise<number>;
 
   /**
    * Install an application in DLP sandbox.
@@ -142,6 +235,7 @@ declare namespace dlpPermission {
    * @param {string} bundleName Indicates the bundle name of the application.
    * @param {AuthPermType} access Indicates the access to DLP file.
    * @param {number} userId Indicates the user ID.
+   * @param { string } uri
    * @param { AsyncCallback<number> } callback
    * @syscap SystemCapability.Security.DlpPermissionService
    * @systemapi Hide this for inner system use.
@@ -152,6 +246,7 @@ declare namespace dlpPermission {
     bundleName: string,
     access: AuthPermType,
     userId: number,
+    uri: string,
     callback: AsyncCallback<number>
   ): void;
 
