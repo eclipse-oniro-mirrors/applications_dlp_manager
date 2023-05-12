@@ -33,6 +33,11 @@ ohos_hap("dlp_manager") {
   part_name = "prebuilt_hap"
   subsystem_name = "applications" 
   module_install_dir = "app/com.ohos.dlpmanager"
+  if (defined(sign_hap_py_path)) {
+    certificate_profile = "signature/hmos_dlpmanager.p7b"
+    key_alias = "dlpmanager"
+    compatible_version = "9"
+  }
 }
 
 ohos_app_scope("dlp_manager_app_profile") { 
