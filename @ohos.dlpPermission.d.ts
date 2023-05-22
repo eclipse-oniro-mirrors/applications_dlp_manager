@@ -312,6 +312,33 @@ declare namespace dlpPermission {
   }
 
   /**
+   * Represents the visited DLP file info.
+   *
+   * @interface VisitedDLPFileInfo
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 4.0.0(10)
+   */
+  export interface VisitedDLPFileInfo {
+    /**
+     * URI of the DLP file.
+     *
+     * @type { string }
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 4.0.0(10)
+     */
+    readonly uri: string;
+
+    /**
+     * Time when the DLP file was last opened.
+     *
+     * @type { number }
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 4.0.0(10)
+     */
+    readonly recentOpenTime: number;
+  }
+
+  /**
    *  get Document uri list.
    *
    * @param { string } bundleName
@@ -332,6 +359,30 @@ declare namespace dlpPermission {
    * @return Document uri list.
    */
   function getRetentionSandboxList(bundleName?: string): Promise<Array<RetentionSandboxInfo>>;
+
+  /**
+   * Obtains the DLP file access records. This method uses a promise to return the result.
+   *
+   * @returns { Promise<Array<VisitedDLPFileInfo>> } Returns a list of DLP files accessed recently.
+   * @throws { BusinessError } 19100001 - Invalid parameter value.
+   * @throws { BusinessError } 19100011 - System service exception.
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 4.0.0(10)
+   */
+  function getDLPFileVisitRecord(): Promise<Array<VisitedDLPFileInfo>>;
+
+  /**
+   * Obtains the DLP file access records. This method uses an asynchronous callback to return the result.
+   *
+   * @param { AsyncCallback<Array<VisitedDLPFileInfo>> } callback - Indicates the callback invoked to return the result.
+   * @throws { BusinessError } 401 - Parameter error.
+   * @throws { BusinessError } 19100001 - Invalid parameter value.
+   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100011 - System service exception.
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 4.0.0(10)
+   */
+  function getDLPFileVisitRecord(callback: AsyncCallback<Array<VisitedDLPFileInfo>>): void;
 
   /**
    * Get support DLP file type.
