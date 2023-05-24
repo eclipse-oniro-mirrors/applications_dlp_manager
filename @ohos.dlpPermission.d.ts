@@ -14,7 +14,6 @@
  */
 
 import type { AsyncCallback } from './basic';
-import type Context from './application/Context';
 
 /**
  * @namespace dlpPermission
@@ -631,28 +630,6 @@ declare namespace dlpPermission {
    * generate the dlp file
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param {context} Current application context.
-   * @param {number} plainTextFd  Indicates the file descriptor of the origin plain file.
-   * @param {string} fileName  Indicates the file fileName of the dlp file.
-   * @param {DlpProperty} property Indicates the property of the dlp file.
-   * @returns { Promise<DlpFile> }
-   * @syscap SystemCapability.Security.DlpPermissionService
-   * @systemapi Hide this for inner system use.
-   * @since 9
-   * @return dlpFile object
-   */
-  function generateDlpFile(
-    context: Context,
-    plainTextFd: number,
-    fileName: string,
-    property: DlpProperty
-  ): Promise<DlpFile>;
-
-  /**
-   * generate the dlp file
-   *
-   * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param {context} Current application context.
    * @param {number} plainTextFd  Indicates the file descriptor of the origin plain file.
    * @param {number} cipherTextFd  Indicates the file descriptor of the dlp file.
    * @param {DlpProperty} property Indicates the property of the dlp file.
@@ -662,40 +639,12 @@ declare namespace dlpPermission {
    * @since 9
    * @return dlpFile object
    */
-  function generateDlpFile(
-    context: Context,
-    plainTextFd: number,
-    cipherTextFd: number,
-    property: DlpProperty
-  ): Promise<DlpFile>;
+  function generateDlpFile(plainTextFd: number, cipherTextFd: number, property: DlpProperty): Promise<DlpFile>;
 
   /**
    * generate the dlp file
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param {context} Current application context.
-   * @param {number} plainTextFd  Indicates the file descriptor of the origin plain file.
-   * @param {string} fileName  Indicates the file fileName of the dlp file.
-   * @param {DlpProperty} property  Indicates the property of the dlp file.
-   * @param { AsyncCallback<DlpFile> } callback
-   * @syscap SystemCapability.Security.DlpPermissionService
-   * @systemapi Hide this for inner system use.
-   * @since 9
-   * @return dlpFile object
-   */
-  function generateDlpFile(
-    context: Context,
-    plainTextFd: number,
-    fileName: string,
-    property: DlpProperty,
-    callback: AsyncCallback<DlpFile>
-  ): void;
-
-  /**
-   * generate the dlp file
-   *
-   * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param {context} Current application context.
    * @param {number} plainTextFd  Indicates the file descriptor of the origin plain file.
    * @param {number} cipherTextFd Indicates the file descriptor of the dlp file.
    * @param {DlpProperty} property  Indicates the property of the dlp file.
@@ -706,7 +655,6 @@ declare namespace dlpPermission {
    * @return dlpFile object
    */
   function generateDlpFile(
-    context: Context,
     plainTextFd: number,
     cipherTextFd: number,
     property: DlpProperty,

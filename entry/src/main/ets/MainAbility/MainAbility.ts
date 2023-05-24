@@ -1,4 +1,5 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
+import datafile from '@ohos.file.fileAccess';
 import abilityAccessCtrl, {Permissions} from '@ohos.abilityAccessCtrl';
 
 var TAG = '[DLPManager_MAIN]';
@@ -13,6 +14,7 @@ export default class MainAbility extends UIAbility {
     console.info('[DLPManager] MainAbility onCreate');
     globalThis.abilityWant = want;
     globalThis.context = this.context;
+    globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context);
   }
 
   onDestroy() {

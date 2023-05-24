@@ -176,10 +176,6 @@ export default class Constants {
   // message for 拒绝操作
   static MESSAGE_DLP_READ_ONLY = '当前是只读文件，您没有操作权限，请申请权限后重试。';
 
-  static TITLE_OPERATE_FAIL = '操作错误';
-  // message for 操作错误
-  static MESSAGE_DLP_CHOOSE_FILE = '未选择目标文件或文件已存在，请重试。';
-
   static FOOTER_OPACITY_ONE = 1;
   static FOOTER_OPACITY_SEPC= 0.6;
   static ACCOUNT_LENGTH_MAX = 1024;
@@ -193,6 +189,4 @@ export default class Constants {
   static ERR_JS_DLP_FILE_READ_ONLY = 19100010;
   static ERR_JS_SYSTEM_SERVICE_EXCEPTION = 19100011;
   static ERR_JS_OUT_OF_MEMORY = 19100012;
-  static ERR_JS_DLP_FILE_OPERATE_FAIL = 19100013;
-  static ERR_JS_DLP_USR_CANCLE_FILEPICK = 19100014;
 }

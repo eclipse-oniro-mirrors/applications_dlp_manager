@@ -65,9 +65,6 @@ function getAlertMessage(err, defaultTitle, defaultMessage) {
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
       return { 'title': Constants.TITLE_OPERATE_DENY, 'msg': Constants.MESSAGE_DLP_READ_ONLY }
       break
-    case Constants.ERR_JS_DLP_USR_CANCLE_FILEPICK:
-      return { 'title': Constants.TITLE_OPERATE_FAIL, 'msg': Constants.MESSAGE_DLP_CHOOSE_FILE }
-      break
     default:
       if (err.extra != undefined) {
         return {
