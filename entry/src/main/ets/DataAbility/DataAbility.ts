@@ -20,26 +20,29 @@ export default class DataAbility extends ServiceExtensionAbility {
   subscribeCallback(data): void {
     let bundleName = data.bundleName;
     let sandboxAppIndex = data.appIndex;
-    let key = bundleName + sandboxAppIndex;
-    for (var item in globalThis.fileOpenHistory) {
+    let key: unknown = bundleName + sandboxAppIndex;
+    for (let item in globalThis.fileOpenHistory) {
       let tmp = globalThis.fileOpenHistory[item][0] + globalThis.fileOpenHistory[item][1];
       if (tmp === key) {
-         delete globalThis.fileOpenHistory[item];
+        delete globalThis.fileOpenHistory[item];
       }
     }
 
     for (let item in globalThis.authPerm2Sandbox) {
-      let app = globalThis.authPerm2Sandbox[item][0] + globalThis.authPerm2Sandbox[item][1];
-      if (key == app) {
+      const app = globalThis.authPerm2Sandbox[item][0] + globalThis.authPerm2Sandbox[item][1];
+      if (key === app) {
         delete globalThis.authPerm2Sandbox[item];
       }
     }
 
     try {
+      // @ts-ignore
       if (key in globalThis.sandbox2linkFile) {
+        // @ts-ignore
         let fileArray = globalThis.sandbox2linkFile[key];
         for (let i in fileArray) {
           let linkFile = fileArray[i];
+          // @ts-ignore
           fileio.closeSync(linkFile[INDEX_ZERO]);
           let dlpFile = linkFile[INDEX_ONE];
           try {
@@ -54,6 +57,7 @@ export default class DataAbility extends ServiceExtensionAbility {
           }
         }
 
+        // @ts-ignore
         delete globalThis.sandbox2linkFile[key];
 
         if (Object.keys(globalThis.sandbox2linkFile).length === 0) {
@@ -77,7 +81,8 @@ export default class DataAbility extends ServiceExtensionAbility {
   }
 
   onCreate(want): void {
-    globalThis.dataContext = this.context;
+    const context = this.context;
+    globalThis.dataContext = context;
   }
 
   onRequest(want: Want, startId: number): void {

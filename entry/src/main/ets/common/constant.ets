@@ -149,7 +149,7 @@ export default class Constants {
   static DA_COLOUM_WIDTH = 336;
   static DA_COLOUM_RADIUS = 24;
 
-  static TITLE_APP_ERROR = '应用异常';
+  static TITLE_APP_ERROR: string = '应用异常';
   // message for 应用异常
   static MESSAGE_APP_PARAM_ERROR = '参数异常，请重试。';
   static MESSAGE_APP_INSIDE_ERROR = '应用内部错误，请重试。';
@@ -189,4 +189,11 @@ export default class Constants {
   static ERR_JS_DLP_FILE_READ_ONLY = 19100010;
   static ERR_JS_SYSTEM_SERVICE_EXCEPTION = 19100011;
   static ERR_JS_OUT_OF_MEMORY = 19100012;
+
+  static DLP_FILE_PARSE_ERROR = 103;
+  static DLP_INSTALL_SANDBOX_SUCCESS = 202;
+  static DLP_GET_PARAMETERS_FAILED = 100;
+  static DLP_START_SANDBOX_ERROR = 105;
+  static DLP_START_SANDBOX_SUCCESS = 203;
+  static DLP_INSTALL_SANDBOX_ERROR = 104;
 }

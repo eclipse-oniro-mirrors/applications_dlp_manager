@@ -135,15 +135,15 @@ struct DlpDialog {
       }
     } catch (err) {
       console.info(TAG + "getOsAccountInfo error: " + JSON.stringify(err))
-      terminateSelfWithResult(100, "get account info failed")
+      terminateSelfWithResult(100, 'get account info failed')
     }
     try {
-      this.srcFileName = globalThis.abilityWant.parameters.fileName.name;
-      this.srcFd = globalThis.abilityWant.parameters.keyFd.value;
-      var callerToken = globalThis.abilityWant.parameters["ohos.aafwk.param.callerToken"];
-      var callerBundleName = globalThis.abilityWant.parameters["ohos.aafwk.param.callerBundleName"];
+      this.srcFileName = globalThis.abilityWant.parameters.fileName.name
+      this.srcFd = globalThis.abilityWant.parameters.keyFd.value
+      var callerToken = globalThis.abilityWant.parameters["ohos.aafwk.param.callerToken"]
+      var callerBundleName = globalThis.abilityWant.parameters["ohos.aafwk.param.callerBundleName"]
       if (this.srcFileName === undefined || this.srcFd === undefined || callerToken === undefined ||
-        callerBundleName === undefined ) {
+      callerBundleName === undefined ) {
         terminateSelfWithResult(100, "get parameters failed");
       }
       globalThis.applicationInfo = await bundleManager.getApplicationInfo(callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT)
