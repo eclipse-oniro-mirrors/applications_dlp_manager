@@ -300,6 +300,9 @@ struct PermissionPanel {
         Row({space: 10}) {
         Checkbox({ name: 'checkbox1', group: 'checkboxGroup' })
           .select(this.dlpFile.dlpProperty.offlineAccess)
+          .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL))
+          .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL)) ?
+          Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
           .selectedColor(0xed6f21)
           .onChange((value: boolean) => {
             console.info('DLPManager:  Checkbox1 change is' + value)
@@ -312,6 +315,9 @@ struct PermissionPanel {
           .width(Constants.PP_TEXT_WIDTH_FULL)
           .lineHeight(Constants.PP_TEXT_LINE_HEIGHT)
           .fontSize(Constants.PP_TEXT_FONT_SIZE)
+          .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL))
+          .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL)) ?
+          Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
        }
       .align(Alignment.Start)
       .width(Constants.PP_TEXT_WIDTH_FULL)
