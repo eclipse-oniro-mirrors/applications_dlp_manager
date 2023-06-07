@@ -1,4 +1,5 @@
 import Constants from '../constant'
+import dlpPermission from '@ohos.dlpPermission'
 
 @Component
 struct Header {
@@ -33,7 +34,7 @@ struct Header {
           }
           .alignItems(VerticalAlign.Center)
           Toggle({ type: ToggleType.Switch, isOn: this.needProtect})
-            .enabled((!this.processing) && (this.authPerm == 2))
+            .enabled((!this.processing) && (this.authPerm === dlpPermission.AuthPermType.FULL_CONTROL))
             .selectedColor($r("app.color.toggle_color"))
             .width(Constants.HEADER_TOGGLE_WIDTH)
             .height(Constants.HEADER_TOGGLE_HEIGHT)

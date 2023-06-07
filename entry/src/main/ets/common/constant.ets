@@ -47,7 +47,7 @@ export default class Constants {
   static PP_TEXT_MAX_LINE = 1;
   static PP_TEXT_FONT_SIZE = 16;
   static PP_TEXT_LINE_HEIGHT = 22;
-  static PP_TEXT_WIDTH = 200;
+  static PP_TEXT_WIDTH = 150;
   static PP_TEXT_PAD_RIGHT= 4;
   static PP_IMAGE_WIDTH = 24;
   static PP_IMAGE_HEIGHT = 24;

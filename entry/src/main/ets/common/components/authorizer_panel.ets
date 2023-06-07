@@ -49,8 +49,8 @@ struct AuthorizerPanel {
             .padding({right: Constants.AP_TEXT_PAD_RIGHT})
             .align(Alignment.Start)
           Image($r('app.media.ic_public_delete'))
-            .enabled((!this.processing) && (this.authPerm == 2))
-            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            .enabled((!this.processing) && (this.authPerm === dlpPermission.AuthPermType.FULL_CONTROL))
+            .opacity(((!this.processing) && (this.authPerm === dlpPermission.AuthPermType.FULL_CONTROL)) ?
             Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .width(Constants.PP_IMAGE_WIDTH)
             .height(Constants.PP_IMAGE_HEIGHT)
@@ -104,8 +104,8 @@ struct AuthorizerPanel {
         }
         Row() {
           Button($r('app.string.button_add_user'))
-            .enabled((!this.processing) && (this.authPerm == 2))
-            .opacity(((!this.processing) && (this.authPerm == 2)) ?
+            .enabled((!this.processing) && (this.authPerm === dlpPermission.AuthPermType.FULL_CONTROL))
+            .opacity(((!this.processing) && (this.authPerm === dlpPermission.AuthPermType.FULL_CONTROL)) ?
             Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .fontSize(Constants.AP_TEXT_FONT_SIZE)
             .fontColor($r('app.color.button_color'))

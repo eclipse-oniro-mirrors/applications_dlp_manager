@@ -65,6 +65,10 @@
       "value": "只读"
     },
     {
+      "name": "perm_list_title_content_edit",
+      "value": "编辑"
+    },
+    {
       "name": "perm_list_title_full_control",
       "value": "完全控制"
     },

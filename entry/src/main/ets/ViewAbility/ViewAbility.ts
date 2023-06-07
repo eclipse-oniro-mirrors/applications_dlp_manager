@@ -72,7 +72,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'ohos.dlp.params.index': this.sandboxIndex,
         'ohos.dlp.params.moduleName': this.sandboxModuleName,
         'ohos.dlp.params.securityFlag': this.authPerm ===
-                                        dlpPermission.AuthPermType.FULL_CONTROL ? false : true
+                                        dlpPermission.AuthPermType.READ_ONLY ? true : false
       }
     };
     globalThis.context.startAbility(want, async (err, data) => {
@@ -222,7 +222,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.isGathering = await dlpPermission.getDlpGatheringPolicy();
 
       if (globalThis.fileOpenHistory[this.uri] !== undefined) {
-        console.info(TAG + 'file：' + this.fileName + ' already open');
+        console.info(TAG + 'file:' + this.fileName + ' already open');
         this.sandboxIndex = globalThis.fileOpenHistory[this.uri][1];
         this.linkFileName = globalThis.fileOpenHistory[this.uri][2];
         this.linkFd = globalThis.fileOpenHistory[this.uri][3];

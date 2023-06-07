@@ -65,7 +65,7 @@ struct PermissionPanel {
             .lineHeight(Constants.PP_TEXT_LINE_HEIGHT)
             .width(Constants.PP_TEXT_WIDTH)
             .padding({right: Constants.PP_TEXT_PAD_RIGHT})
-          Image(this.radioImg[2 - item.authPerm])
+          Image(this.radioImg[Number(item.authPerm === dlpPermission.AuthPermType.READ_ONLY)])
             .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
             !(item.authAccount == globalThis.accountInfo.distributedInfo.name))
             .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
@@ -81,12 +81,29 @@ struct PermissionPanel {
               this.updateAuthUsers()
             })
           Column() {
-            Image(this.radioImg[item.authPerm - 1])
+            Image(this.radioImg[Number(item.authPerm === dlpPermission.AuthPermType.CONTENT_EDIT)])
               .enabled((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
               !(item.authAccount == globalThis.accountInfo.distributedInfo.name))
               .opacity(((!this.processing) && (this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) &&
               !(item.authAccount == globalThis.accountInfo.distributedInfo.name)) ?
               Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
+              .width(Constants.PP_IMAGE_WIDTH)
+              .height(Constants.PP_IMAGE_HEIGHT)
+              .padding(Constants.PP_IMAGE_PAD)
+              .onClick((event) => {
+                var authUser = this.authUserMap[item.authAccount]
+                authUser.authPerm = dlpPermission.AuthPermType.CONTENT_EDIT
+                authUser.permExpiryTime = Date.UTC(2024, 1, 1)
+                this.updateAuthUsers()
+              })
+          }
+          .alignItems(HorizontalAlign.Center)
+          .width(Constants.PP_COLUMN_WIDTH)
+          .margin({ left: Constants.PP_COLUMN_MARGIN_LEFT, right: Constants.PP_COLUMN_MARGIN_RIGHT })
+          Column() {
+            Image(this.radioImg[Number(item.authPerm === dlpPermission.AuthPermType.FULL_CONTROL)])
+              .enabled(Boolean(0))
+              .opacity(Constants.FOOTER_OPACITY_SEPC)
               .width(Constants.PP_IMAGE_WIDTH)
               .height(Constants.PP_IMAGE_HEIGHT)
               .padding(Constants.PP_IMAGE_PAD)
@@ -176,6 +193,14 @@ struct PermissionPanel {
               .fontColor($r('app.color.pp_text_fontcolor'))
               .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
               .width(Constants.PP_IMAGE_WIDTH)
+            Text($r('app.string.perm_list_title_content_edit'))
+              .fontSize(Constants.PP_TEXT_FONT_SIZE2)
+              .fontFamily($r('app.string.typeface'))
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.pp_text_fontcolor'))
+              .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
+              .width(Constants.PP_IMAGE_WIDTH)
+              .margin({ left: Constants.PP_TEXT_MARGIN_LEFT, right: Constants.PP_TEXT_MARGIN_RIGHT })
             Text($r('app.string.perm_list_title_full_control'))
               .fontSize(Constants.PP_TEXT_FONT_SIZE2)
               .fontFamily($r('app.string.typeface'))

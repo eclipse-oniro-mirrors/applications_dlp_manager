@@ -25,8 +25,12 @@ async function getDomainId() : Promise<account_osAccount.OsAccountInfo> {
 }
 
 function getAuthPerm(accountName, dlpProperty) : number {
+  let perm : dlpPermission.AuthPermType = dlpPermission.AuthPermType.DEFAULT_PERM;
   if (accountName == dlpProperty.ownerAccount) {
     return dlpPermission.AuthPermType.FULL_CONTROL
+  }
+  if (dlpProperty.supportEveryone) {
+    perm = dlpProperty.everyonePerm;
   }
   for (var i = 0; i < dlpProperty.authUsers.length; ++i) {
     var authUser = dlpProperty.authUsers[i]
@@ -34,7 +38,7 @@ function getAuthPerm(accountName, dlpProperty) : number {
       return authUser.authPerm
     }
   }
-  return -1
+  return perm
 }
 
 function terminateSelfWithResult(resultCode: number, result: string) : void {

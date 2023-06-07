@@ -21,6 +21,104 @@ import type { AsyncCallback } from './basic';
  * @since 9
  */
 declare namespace dlpPermission {
+  /**
+   * Enumerates for DLP file action types.
+   *
+   * @enum { number } ActionFlags
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 10
+   */
+  export enum ActionFlags {
+    ACTION_INVALID = 0X00000000,
+    /**
+     * Indicates the view action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_VIEW = 0x00000001,
+
+    /**
+     * Indicates the save action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_SAVE = 0x00000002,
+
+    /**
+     * Indicates the save as action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_SAVE_AS = 0x00000004,
+
+    /**
+     * Indicates the edit action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_EDIT = 0x00000008,
+
+    /**
+     * Indicates the screen capture action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_SCREEN_CAPTURE = 0x00000010,
+
+    /**
+     * Indicates the screen share action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_SCREEN_SHARE = 0x00000020,
+
+    /**
+     * Indicates the screen record action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_SCREEN_RECORD = 0x00000040,
+
+    /**
+     * Indicates the copy action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_COPY = 0x00000080,
+
+    /**
+     * Indicates the print action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_PRINT = 0x00000100,
+
+    /**
+     * Indicates the export action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_EXPORT = 0x00000200,
+
+    /**
+     * Indicates the permission change action to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    ACTION_PERMISSION_CHANGE = 0x00000400
+  }
+
   export enum AuthPermType {
     /**
      * Read only access to DLP file.
@@ -31,33 +129,77 @@ declare namespace dlpPermission {
     READ_ONLY = 1,
 
     /**
+     * Content edit access to DLP file.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 9
+     */
+    CONTENT_EDIT = 2,
+
+    /**
      * Full control access to DLP file.
      *
      * @syscap SystemCapability.Security.DlpPermissionService
      * @since 9
      */
-    FULL_CONTROL = 2
+    FULL_CONTROL = 3,
+
+    /**
+     * default permission used for initializing.
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 9
+     */
+    DEFAULT_PERM = 4,
   }
 
   /**
-   * Query access to DLP file from dlp permission service.
+   * Describes the network registration state.
    *
-   * @returns { Promise<AuthPermType> }
+   * @interface DLPPermissionInfo
    * @syscap SystemCapability.Security.DlpPermissionService
-   * @since 9
-   * @return The access to a DLP file.
+   * @since 10
    */
-  function queryFileAccess(): Promise<AuthPermType>;
+  export interface DLPPermissionInfo {
+    /**
+     * Indicates the permission type of DLP file.
+     *
+     * @type { AuthPermType }
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    access: AuthPermType;
+
+    /**
+     * Indicates the permitted action type of DLP file.
+     *
+     * @type { ActionFlags }
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 10
+     */
+    flags: ActionFlags;
+  }
+
 
   /**
    * Query access to DLP file from dlp permission service.
    *
-   * @param { AsyncCallback<AuthPermType> } callback
+   * @returns { Promise<DLPPermissionInfo> }
    * @syscap SystemCapability.Security.DlpPermissionService
    * @since 9
    * @return The access to a DLP file.
    */
-  function queryFileAccess(callback: AsyncCallback<AuthPermType>): void;
+  function queryFileAccess(): Promise<DLPPermissionInfo>;
+
+  /**
+   * Query access to DLP file from dlp permission service.
+   *
+   * @param { AsyncCallback<DLPPermissionInfo> } callback
+   * @syscap SystemCapability.Security.DlpPermissionService
+   * @since 9
+   * @return The access to a DLP file.
+   */
+  function queryFileAccess(callback: AsyncCallback<DLPPermissionInfo>): void;
 
   /**
    * Whether current application is in DLP sandbox.
@@ -436,6 +578,18 @@ declare namespace dlpPermission {
      * @since 9
      */
     offlineAccess: boolean;
+
+    /**
+     * Everyone Access support
+     * @since 9
+     */
+    supportEveryone: boolean;
+
+    /**
+     * Everyone's Access permission
+     * @since 9
+     */
+    everyonePerm: AuthPermType;
   }
 
   export interface DlpFile {

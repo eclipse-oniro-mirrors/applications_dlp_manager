@@ -38,6 +38,7 @@ struct Footer {
   isReadPermission: boolean;
   linkFileName: string;
   dlpAlertDialog: CustomDialogController;
+  @Link authPerm: number;
   @Link isChanged: boolean;
   @Link dlpFile: dlpPermission.DlpFile;
   @Link needProtect: boolean;
@@ -358,8 +359,10 @@ struct Footer {
         .backgroundColor($r("app.color.button_background_color"))
         .width(Constants.FOOTER_BUTTON_WIDTH)
         .focusable(false)
-        .enabled(!this.processing && (this.needProtect || this.isDlpFile))
-        .opacity((!this.processing && (this.needProtect || this.isDlpFile)) ?
+        .enabled(!this.processing && (this.needProtect || this.isDlpFile) &&
+        this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL)
+        .opacity((!this.processing && (this.needProtect || this.isDlpFile) &&
+        this.authPerm == dlpPermission.AuthPermType.FULL_CONTROL) ?
         Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
         .height(Constants.FOOTER_BUTTON_HEIGHT)
         .onClick(async (event) => {

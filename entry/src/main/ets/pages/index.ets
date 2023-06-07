@@ -19,7 +19,9 @@ var defaultDlpProperty: dlpPermission.DlpProperty = {
   ownerAccountType: 1,
   authUsers: [],
   contractAccount: '',
-  offlineAccess: true
+  offlineAccess: true,
+  supportEveryone: false,
+  everyonePerm: dlpPermission.AuthPermType.DEFAULT_PERM,
 }
 
 var defaultDlpFile: dlpPermission.DlpFile = {
@@ -42,7 +44,7 @@ struct DlpDialog {
   isReadPermission: boolean = false
   linkFileName: string = ''
   dlpAlertDialog: CustomDialogController
-  @State authPerm: number = 2
+  @State authPerm: dlpPermission.AuthPermType = dlpPermission.AuthPermType.FULL_CONTROL
   @State isShow: boolean = false
   @State isChanged: boolean = false
   @State dlpFile: dlpPermission.DlpFile = defaultDlpFile
@@ -126,7 +128,7 @@ struct DlpDialog {
   }
 
   async aboutToAppear() {
-    console.info(TAG + "aboutToAppear")
+    console.info(TAG + 'aboutToAppear')
     try {
       globalThis.accountInfo = await getOsAccountInfo()
       if (globalThis.accountInfo.distributedInfo.name == "ohosAnonymousName" && globalThis.accountInfo.distributedInfo.id == "ohosAnonymousUid") {
@@ -183,6 +185,7 @@ struct DlpDialog {
           }
           Row() {
             Footer({
+              authPerm: $authPerm,
               srcFilename: this.srcFileName,
               srcFd: this.srcFd,
               isDlpFile: this.isDlpFile,
