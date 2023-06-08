@@ -16,6 +16,7 @@ var TAG = "[DLPManager_index]"
 
 var defaultDlpProperty: dlpPermission.DlpProperty = {
   ownerAccount: '',
+  ownerAccountId: '',
   ownerAccountType: 1,
   authUsers: [],
   contractAccount: '',
@@ -66,6 +67,7 @@ struct DlpDialog {
   async checkAndOpenDlpFile(filename: string, fd: number, linkFileName: string): Promise<void> {
     console.info(TAG + "checkAndOpenDlpFile")
     this.dlpFile.dlpProperty.ownerAccount = globalThis.accountInfo.distributedInfo.name
+    this.dlpFile.dlpProperty.ownerAccountId = globalThis.accountInfo.distributedInfo.id
     this.dlpFile.dlpProperty.contractAccount = globalThis.accountInfo.distributedInfo.name
     var isDlpSuffix: boolean = filename.endsWith(".dlp")
     if (this.requestIsFromSandBox) {

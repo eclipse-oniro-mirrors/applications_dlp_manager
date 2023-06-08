@@ -550,6 +550,14 @@ declare namespace dlpPermission {
     ownerAccount: string;
 
     /**
+     * Dlp file owner accountId
+     *
+     * @syscap SystemCapability.Security.DlpPermissionService
+     * @since 9
+     */
+    ownerAccountId: string;
+
+    /**
      * Dlp file authorized user list
      *
      * @syscap SystemCapability.Security.DlpPermissionService
