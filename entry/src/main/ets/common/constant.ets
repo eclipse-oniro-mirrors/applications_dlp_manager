@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +36,31 @@ export default class Constants {
   static HEADER_COLUMN_HEIGHT= 56;
   static HEADER_COLUMN_PAD_LEFT= 20;
   static HEADER_COLUMN_PAD_RIGHT= 20;
+  static HEADER_COLUMN_HEIGHT_READONLY= 48;
+  static HEADER_COLUMN_HEIGHT_TITLE= 26;
+  static HEADER_COLUMN_HEIGHT_TIPS= 21;
+  static HEADER_COLUMN_MAR_TOP= 15;
+  static HEADER_COLUMN_PADDING_LEFT= 24;
+  static HEADER_COLUMN_PADDING_RIGHT= 24;
+  static HEADER_COLUMN_PADDING_BOTTOM= 24;
+  static FOOTER_WIDTH_BUTTON = '48%';
+  static ENCRYPTION_SUCCESS_ICON = 64;
+  static HEADER_COLUMN_MESSAGE_TIPS= 242;
+  static ENCRYPTION_SUCCESS_TRANSLATE= 180;
+  static ENCRYPTION_SUCCESS_TRANSLATE_WIDTH= 180;
+  static ENCRYPTION_SUCCESS_CHANGE_TOP= 32;
+  static ENCRYPTION_ADD_STAFF_WIDTH= 120;
+  static ENCRYPTION_LOADING_HEIGHT= 260;
+  static ENCRYPTION_LOADING_ICON_HEIGHT= 72;
   static HEADER_ROW_FONT_SIZE = 16 ;
+  static ENCRYPTION_STAFF_BORDER_RADIUS = 999;
+  static ENCRYPTION_STAFF_MAX_WIDTH = 99;
+  static ENCRYPTION_STAFF_WIDTH = 112;
+  static ENCRYPTION_STAFF_PAD = 6;
+  static ENCRYPTION_PERMISSION_STATUS_HEIGHT = 450;
+  static ENCRYPTION_PERMISSION_STATUS_WIDTH = '70%';
+  static ENCRYPTION_PERMISSION_SCROLL_HEIGHT = 100;
+  static ENCRYPTION_PERMISSION_STATUS_IMAGE = '90%';
   static HEADER_ROW_LINE_HEIGHT = 22 ;
   static HEADER_TOGGLE_WIDTH= 36;
   static HEADER_TOGGLE_HEIGHT= 20;
@@ -47,7 +71,7 @@ export default class Constants {
   static PP_TEXT_MAX_LINE = 1;
   static PP_TEXT_FONT_SIZE = 16;
   static PP_TEXT_LINE_HEIGHT = 22;
-  static PP_TEXT_WIDTH = 150;
+  static PP_TEXT_WIDTH = 200;
   static PP_TEXT_PAD_RIGHT= 4;
   static PP_IMAGE_WIDTH = 24;
   static PP_IMAGE_HEIGHT = 24;
@@ -149,33 +173,6 @@ export default class Constants {
   static DA_COLOUM_WIDTH = 336;
   static DA_COLOUM_RADIUS = 24;
 
-  static TITLE_APP_ERROR: string = '应用异常';
-  // message for 应用异常
-  static MESSAGE_APP_PARAM_ERROR = '参数异常，请重试。';
-  static MESSAGE_APP_INSIDE_ERROR = '应用内部错误，请重试。';
-  static MESSAGE_APP_GET_ACCOUNT_ERROR = '获取帐号信息失败，请重试。';
-  static MESSAGE_APP_NO_ACCOUNT_ERROR = '帐号未登录，请登录账号后重试。';
-
-  static TITLE_SERVICE_ERROR = '服务异常';
-  // message for 服务异常
-  static MESSAGE_SERVICE_INSIDE_ERROR = '服务内部错误，请重试。';
-  static MESSAGE_DLP_CREDENTIAL_SERVER_ERROR = '连接凭据服务器失败，请检查服务器后重试。';
-  static MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR = '服务响应超时，请重试。';
-  static MESSAGE_GENERATE_DLP_ERROR = '设置文档权限失败，请重试。';
-  static MESSAGE_RECOVER_DLP_ERROR = '删除文档权限失败，请重试。';
-
-  static TITLE_APP_VISIT_FILE_ERROR= '无法访问此文件';
-  // message for 无法访问此文件
-  static MESSAGE_APP_NOT_HAVE_PERM_VISIT = '您没有访问权限。请向下列用户申请授权：\n';
-
-  static TITLE_APP_DLP_ERROR = 'DLP格式错误';
-  // message for DLP格式错误
-  static MESSAGE_APP_FILE_PARAM_ERROR = '您打开的文档格式不正确，请重试。';
-
-  static TITLE_OPERATE_DENY = '拒绝操作';
-  // message for 拒绝操作
-  static MESSAGE_DLP_READ_ONLY = '当前是只读文件，您没有操作权限，请申请权限后重试。';
-
   static FOOTER_OPACITY_ONE = 1;
   static FOOTER_OPACITY_SEPC= 0.6;
   static ACCOUNT_LENGTH_MAX = 1024;
@@ -189,11 +186,34 @@ export default class Constants {
   static ERR_JS_DLP_FILE_READ_ONLY = 19100010;
   static ERR_JS_SYSTEM_SERVICE_EXCEPTION = 19100011;
   static ERR_JS_OUT_OF_MEMORY = 19100012;
-
+  static ERR_JS_DLP_FILE_OPERATE_FAIL = 19100013;
+  static ERR_JS_DLP_USR_CANCLE_FILEPICK = 19100014;
   static DLP_FILE_PARSE_ERROR = 103;
   static DLP_INSTALL_SANDBOX_SUCCESS = 202;
   static DLP_GET_PARAMETERS_FAILED = 100;
   static DLP_START_SANDBOX_ERROR = 105;
   static DLP_START_SANDBOX_SUCCESS = 203;
   static DLP_INSTALL_SANDBOX_ERROR = 104;
+
+  static GUTTER = 0;
+  static XS_COLUMNS = 2;
+  static XS_SPAN = 2;
+  static XS_OFFSET = 0;
+  static SM_COLUMNS = 4;
+  static SM_SPAN = 4;
+  static SM_OFFSET = 0;
+  static MD_COLUMNS = 8;
+  static MD_SPAN = 8;
+  static MD_OFFSET = 0;
+  static LG_COLUMNS = 12;
+  static LG_SPAN = 8;
+  static LG_OFFSET = 2;
+
+  static DIALOG_GUTTER = 16;
+  static DIALOG_MARGIN = 16;
+  static DIALOG_MARGIN_VERTICAL = 12;
+  static DIALOG_MD_SPAN = 6;
+  static DIALOG_MD_OFFSET = 1;
+  static DIALOG_LG_SPAN = 6;
+  static DIALOG_LG_OFFSET = 3;
 }

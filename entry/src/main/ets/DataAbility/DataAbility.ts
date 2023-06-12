@@ -1,23 +1,35 @@
+/*
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
-import commonEvent from '@ohos.commonEvent';
 import type Want from '@ohos.app.ability.Want';
 import fileio from '@ohos.fileio';
 import dlpPermission from '@ohos.dlpPermission';
 
 let TAG = '[DLPManager_DataAbility]';
-let DATAEVENT = 'usual.event.SANDBOX_PACKAGE_REMOVED';
 const INDEX_TWO = 2;
 const INDEX_ONE = 1;
 const INDEX_ZERO = 0;
 export default class DataAbility extends ServiceExtensionAbility {
-  sandbox2linkFile: {[key: string]: [number, dlpPermission.DlpFile, string, number]} = {};
-  fileOpenHistory: {[key:string]: [string, number, string, number]} = {};
+  sandbox2linkFile: { [key: string]: [number, dlpPermission.DlpFile, string, number] } = {};
+  fileOpenHistory: { [key: string]: [string, number, string, number] } = {};
   //uri:bundleName:string, sandboxId:number, linkName:string, linkFd:number
-  authPerm2Sandbox: {[key:string]: [string, number]} = {};
+  authPerm2Sandbox: { [key: string]: [string, number] } = {};
   //perm : bundlename, sandboxid
 
   isSubscriber = false;
-  subscribeCallback(data): void {
+  async subscribeCallback(data): Promise<void> {
     let bundleName = data.bundleName;
     let sandboxAppIndex = data.appIndex;
     let key: unknown = bundleName + sandboxAppIndex;
@@ -46,14 +58,14 @@ export default class DataAbility extends ServiceExtensionAbility {
           fileio.closeSync(linkFile[INDEX_ZERO]);
           let dlpFile = linkFile[INDEX_ONE];
           try {
-            dlpFile.deleteDlpLinkFile(linkFile[INDEX_TWO]);
+            await dlpFile.deleteDlpLinkFile(linkFile[INDEX_TWO]);
           } catch (err) {
-            console.error(TAG + 'deleteDlpLinkFile error: ' + err.message + ', code: ' + err.code);
+            console.error(TAG, 'deleteDlpLinkFile failed', err.code, err.message);
           }
           try {
-            dlpFile.closeDlpFile();
+            await dlpFile.closeDlpFile();
           } catch (err) {
-            console.error(TAG + 'closeDlpFile error: ' + err.message + ', code: ' + err.code);
+            console.error(TAG, 'closeDlpFile failed', err.code, err.message);
           }
         }
 
@@ -61,22 +73,22 @@ export default class DataAbility extends ServiceExtensionAbility {
         delete globalThis.sandbox2linkFile[key];
 
         if (Object.keys(globalThis.sandbox2linkFile).length === 0) {
-          console.info(TAG + 'sandbox2linkFile empty');
+          console.info(TAG, 'sandbox2linkFile empty');
           globalThis.dataContext.terminateSelf();
         }
       }
     } catch (err) {
-      console.error(TAG + 'release resource error: ' + JSON.stringify(err));
+      console.error(TAG, 'release resource error', JSON.stringify(err));
     }
   }
 
   createSubscriber(): void {
-    console.info(' createSubscriber');
+    console.info(TAG, 'createSubscriber');
     try {
       dlpPermission.on('uninstallDlpSandbox', this.subscribeCallback);
       this.isSubscriber = true;
     } catch (err) {
-      console.info(TAG + 'on error');
+      console.info(TAG, 'createSubscriber uninstallDlpSandbox failed', err.code, err.message);
     }
   }
 
@@ -92,17 +104,17 @@ export default class DataAbility extends ServiceExtensionAbility {
   }
 
   onDestroy(): void {
-    console.info(TAG + 'onDestroy');
+    console.info(TAG, 'onDestroy');
     if (this.isSubscriber) {
-      console.info(TAG + 'uninstallDlpSandbox');
+      console.info(TAG, 'cancelSubscriber uninstallDlpSandbox');
       try {
         let res = dlpPermission.off('uninstallDlpSandbox');
-        console.info(TAG + 'off res:' + JSON.stringify(res));
+        console.info(TAG, 'cancelSubscriber uninstallDlpSandbox res:', JSON.stringify(res));
         if (res) {
           this.isSubscriber = false;
         }
       } catch (err) {
-        console.info(TAG + 'off error:' + JSON.stringify(err));
+        console.error(TAG, 'cancelSubscriber uninstallDlpSandbox error', JSON.stringify(err));
       }
     }
   }

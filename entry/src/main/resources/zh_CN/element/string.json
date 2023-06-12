@@ -1,0 +1,256 @@
+{
+  "string": [
+    {
+      "name": "entry_desc",
+      "value": "description"
+    },
+    {
+      "name": "MainAbility_desc",
+      "value": "DLPManager"
+    },
+    {
+      "name": "MainAbility_label",
+      "value": "DLPManager"
+    },
+    {
+      "name": "ViewAbility_desc",
+      "value": "DLPViewer"
+    },
+    {
+      "name": "ban",
+      "value": "取消"
+    },
+    {
+      "name": "typeface",
+      "value": "HarmonyHeiTi"
+    },
+    {
+      "name": "save",
+      "value": "保存"
+    },
+    {
+      "name": "save_as",
+      "value": "另存为"
+    },
+    {
+      "name": "screenshot",
+      "value": "截屏"
+    },
+    {
+      "name": "share_the_screen",
+      "value": "共享屏幕"
+    },
+    {
+      "name": "screen_recording",
+      "value": "录屏"
+    },
+    {
+      "name": "duplicate",
+      "value": "复制"
+    },
+    {
+      "name": "print",
+      "value": "打印"
+    },
+    {
+      "name": "export",
+      "value": "导出"
+    },
+    {
+      "name": "modifying_the_permissions_of_a_document",
+      "value": "修改文档的权限"
+    },
+    {
+      "name": "sure",
+      "value": "确定"
+    },
+    {
+      "name": "header_title",
+      "value": "加密保护"
+    },
+    {
+      "name": "perm_list_title_read_only",
+      "value": "只读"
+    },
+    {
+      "name": "perm_list_title_full_control",
+      "value": "完全控制"
+    },
+    {
+      "name": "da_buttion",
+      "value": "知道了"
+    },
+    {
+      "name": "header_title_list",
+      "value": "授权指定用户访问权限，同时限制其编辑、复制等操作。"
+    },
+    {
+      "name": "header_title_readonly",
+      "value": "只读"
+    },
+    {
+      "name": "header_title_edit",
+      "value": "编辑"
+    },
+    {
+      "name": "header_title_readonly_tips",
+      "value": "拥有只读权限的用户可查看此文件，但不能编辑、复制或打印。"
+    },
+    {
+      "name": "header_title_edit_tips",
+      "value": "拥有只读权限的用户可查看此文件，但不能编辑、复制或打印。"
+    },
+    {
+      "name": "header_title_full_control_tips",
+      "value": "拥有完全控制权限的用户可不受限制的操作此文件。"
+    },
+    {
+      "name": "file_encrypted",
+      "value": "文件已加密"
+    },
+    {
+      "name": "viewing_encryption_details",
+      "value": "查看加密详情"
+    },
+    {
+      "name": "stow_away",
+      "value": "收起"
+    },
+    {
+      "name": "storage_path",
+      "value": "储存路径"
+    },
+    {
+      "name": "document_valid_until",
+      "value": "文件有效期至:"
+    },
+    {
+      "name": "permanently",
+      "value": "永久"
+    },
+    {
+      "name": "change_encryption",
+      "value": "更改加密"
+    },
+    {
+      "name": "finished",
+      "value": "完成"
+    },
+    {
+      "name": "permissions_are_restricted",
+      "value": "权限已做限制，只有指定用户才可访问此文件。"
+    },
+    {
+      "name": "unencrypted",
+      "value": "解除加密"
+    },
+    {
+      "name": "enter_a_complete_work_ID",
+      "value": "请输入完整工号后按回车键。示例：a00123456"
+    },
+    {
+      "name": "incorrect_work_ID",
+      "value": "工号错误，请输入有效的工号"
+    },
+    {
+      "name": "encryption_loading_title",
+      "value": "文件加密中…"
+    },
+    {
+      "name": "PERMISSION_TYPE_SELECT_TARGET",
+      "value": "指定用户"
+    },
+    {
+      "name": "PERMISSION_TYPE_SELECT_ALL",
+      "value": "所有人"
+    },
+    {
+      "name": "PERMISSION_TYPE_SELECT_SELF",
+      "value": "仅自己"
+    },
+    {
+      "name": "TITLE_APP_ERROR",
+      "value": "应用异常"
+    },
+    {
+      "name": "MESSAGE_APP_PARAM_ERROR",
+      "value": "参数异常，请重试。"
+    },
+    {
+      "name": "MESSAGE_APP_INSIDE_ERROR",
+      "value": "应用内部错误，请重试。"
+    },
+    {
+      "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
+      "value": "获取帐号信息失败，请重试。"
+    },
+    {
+      "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
+      "value": "帐号未登录，请登录账号后重试。"
+    },
+    {
+      "name": "TITLE_SERVICE_ERROR",
+      "value": "服务异常"
+    },
+    {
+      "name": "MESSAGE_SERVICE_INSIDE_ERROR",
+      "value": "服务内部错误，请重试。"
+    },
+    {
+      "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
+      "value": "连接凭据服务器失败，请检查服务器后重试。"
+    },
+    {
+      "name": "MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR",
+      "value": "服务响应超时，请重试。"
+    },
+    {
+      "name": "MESSAGE_GENERATE_DLP_ERROR",
+      "value": "设置文档权限失败，请重试。"
+    },
+    {
+      "name": "MESSAGE_RECOVER_DLP_ERROR",
+      "value": "删除文档权限失败，请重试。"
+    },
+    {
+      "name": "TITLE_APP_VISIT_FILE_ERROR",
+      "value": "无法访问此文件"
+    },
+    {
+      "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+      "value": "您没有访问权限。请向下列用户申请授权：\\n"
+    },
+    {
+      "name": "TITLE_APP_DLP_ERROR",
+      "value": "DLP格式错误"
+    },
+    {
+      "name": "MESSAGE_APP_FILE_PARAM_ERROR",
+      "value": "您打开的文档格式不正确，请重试。"
+    },
+    {
+      "name": "TITLE_OPERATE_DENY",
+      "value": "拒绝操作"
+    },
+    {
+      "name": "MESSAGE_DLP_READ_ONLY",
+      "value": "当前是只读文件，您没有操作权限，请申请权限后重试。"
+    },
+    {
+      "name": "permission_status_readOnly",
+      "value": "权限已做限制，您拥有“只读”权限。"
+    },
+    {
+      "name": "permission_status_title",
+      "value": "权限已做限制，您拥有“只读”和“编辑”权限。"
+    },
+    {
+      "name": "apply_for_the_permission",
+      "value": "申请权限请联系："
+    },
+    {
+      "name": "colon",
+      "value": "："
+    }
+  ]
+}

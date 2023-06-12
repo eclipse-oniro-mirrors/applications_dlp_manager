@@ -17,16 +17,8 @@
       "value": "DLPViewer"
     },
     {
-      "name": "AlertAbility_desc",
-      "value": "description"
-    },
-    {
-      "name": "AlertAbility_label",
-      "value": "label"
-    },
-    {
       "name": "ban",
-      "value": "取消"
+      "value": "Cancel"
     },
     {
       "name": "typeface",
@@ -34,79 +26,231 @@
     },
     {
       "name": "save",
-      "value": "保存"
+      "value": "Save"
+    },
+    {
+      "name": "save_as",
+      "value": "Save as"
+    },
+    {
+      "name": "screenshot",
+      "value": "Screenshot"
+    },
+    {
+      "name": "share_the_screen",
+      "value": "Share screen"
+    },
+    {
+      "name": "screen_recording",
+      "value": "Record screen"
+    },
+    {
+      "name": "duplicate",
+      "value": "Copy"
+    },
+    {
+      "name": "print",
+      "value": "Print"
+    },
+    {
+      "name": "export",
+      "value": "Export"
+    },
+    {
+      "name": "modifying_the_permissions_of_a_document",
+      "value": "Modify permission"
     },
     {
       "name": "sure",
-      "value": "确定"
+      "value": "Ok"
     },
     {
       "name": "header_title",
-      "value": "加密保护"
-    },
-    {
-      "name": "toggle_title",
-      "value": "保护此文件"
-    },
-    {
-      "name": "toggle_tip",
-      "value": "开启保护后，将在您选择的位置生成一个新的\".dlp\"格式加密文件。"
-    },
-    {
-      "name": "perm_panel_title",
-      "value": "授权其他用户可访问："
-    },
-    {
-      "name": "perm_list_title_user_name",
-      "value": "用户名"
+      "value": "Protect file"
     },
     {
       "name": "perm_list_title_read_only",
-      "value": "只读"
-    },
-    {
-      "name": "perm_list_title_content_edit",
-      "value": "编辑"
+      "value": "Read-only"
     },
     {
       "name": "perm_list_title_full_control",
-      "value": "完全控制"
-    },
-    {
-      "name": "button_add_user",
-      "value": "添加用户"
-    },
-    {
-      "name": "add",
-      "value": "添加"
-    },
-    {
-      "name": "cancel",
-      "value": "取消"
-    },
-    {
-      "name": "authorizer_panel_title",
-      "value": "允许向以下用户申请权限："
-    },
-    {
-      "name": "del_usr",
-      "value": "删除用户"
-    },
-    {
-      "name": "del_text1",
-      "value": "删除后此用户将无法访问这个文件，如需恢复请重新添加此用户。是否删除？"
-    },
-    {
-      "name": "button_del",
-      "value": "删除"
+      "value": "Full control"
     },
     {
       "name": "da_buttion",
-      "value": "知道了"
+      "value": "OK"
     },
     {
-      "name": "offline_supported",
-      "value": "离线支持"
+      "name": "header_title_list",
+      "value": "Protect the file with restricted access."
+    },
+    {
+      "name": "header_title_readonly",
+      "value": "Read-only"
+    },
+    {
+      "name": "header_title_edit",
+      "value": "Change"
+    },
+    {
+      "name": "header_title_readonly_tips",
+      "value": "Users with the read-only permission can view the file, but cannot edit, copy, or print it."
+    },
+    {
+      "name": "header_title_edit_tips",
+      "value": "Users with the change permission can view, edit, copy, record, or save the file, but cannot print it."
+    },
+    {
+      "name": "header_title_full_control_tips",
+      "value": "Users with the full control permission can operate the file without restrictions."
+    },
+    {
+      "name": "file_encrypted",
+      "value": "File protected"
+    },
+    {
+      "name": "viewing_encryption_details",
+      "value": "View details"
+    },
+    {
+      "name": "stow_away",
+      "value": "Hide"
+    },
+    {
+      "name": "storage_path",
+      "value": "Save path"
+    },
+    {
+      "name": "document_valid_until",
+      "value": "File valid until:"
+    },
+    {
+      "name": "permanently",
+      "value": "Permanent"
+    },
+    {
+      "name": "change_encryption",
+      "value": "Change protection"
+    },
+    {
+      "name": "finished",
+      "value": "Finish"
+    },
+    {
+      "name": "permissions_are_restricted",
+      "value": "This file is protected, accessible only to specified users."
+    },
+    {
+      "name": "unencrypted",
+      "value": "Revoke protection"
+    },
+    {
+      "name": "enter_a_complete_work_ID",
+      "value": "Enter an employee ID and press Enter. Example: a00123456"
+    },
+    {
+      "name": "incorrect_work_ID",
+      "value": "Invalid employee ID. Please reenter."
+    },
+    {
+      "name": "encryption_loading_title",
+      "value": "Encrypting the file..."
+    },
+    {
+      "name": "PERMISSION_TYPE_SELECT_TARGET",
+      "value": "Only specified"
+    },
+    {
+      "name": "PERMISSION_TYPE_SELECT_ALL",
+      "value": "Anyone"
+    },
+    {
+      "name": "PERMISSION_TYPE_SELECT_SELF",
+      "value": "Only myself"
+    },
+    {
+      "name": "TITLE_APP_ERROR",
+      "value": "The application is abnormal"
+    },
+    {
+      "name": "MESSAGE_APP_PARAM_ERROR",
+      "value": "参数异常，请重试。"
+    },
+    {
+      "name": "MESSAGE_APP_INSIDE_ERROR",
+      "value": "应用内部错误，请重试。"
+    },
+    {
+      "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
+      "value": "获取帐号信息失败，请重试。"
+    },
+    {
+      "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
+      "value": "The account has not been logged in. Please log in and try again."
+    },
+    {
+      "name": "TITLE_SERVICE_ERROR",
+      "value": "服务异常"
+    },
+    {
+      "name": "MESSAGE_SERVICE_INSIDE_ERROR",
+      "value": "服务内部错误，请重试。"
+    },
+    {
+      "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
+      "value": "连接凭据服务器失败，请检查服务器后重试。"
+    },
+    {
+      "name": "MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR",
+      "value": "服务响应超时，请重试。"
+    },
+    {
+      "name": "MESSAGE_GENERATE_DLP_ERROR",
+      "value": "设置文档权限失败，请重试。"
+    },
+    {
+      "name": "MESSAGE_RECOVER_DLP_ERROR",
+      "value": "删除文档权限失败，请重试。"
+    },
+    {
+      "name": "TITLE_APP_VISIT_FILE_ERROR",
+      "value": "无法访问此文件"
+    },
+    {
+      "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+      "value": "您没有访问权限。请向下列用户申请授权：\\n"
+    },
+    {
+      "name": "TITLE_APP_DLP_ERROR",
+      "value": "DLP格式错误"
+    },
+    {
+      "name": "MESSAGE_APP_FILE_PARAM_ERROR",
+      "value": "您打开的文档格式不正确，请重试。"
+    },
+    {
+      "name": "TITLE_OPERATE_DENY",
+      "value": "Reject operation"
+    },
+    {
+      "name": "MESSAGE_DLP_READ_ONLY",
+      "value": "The file is read-only. You do not have the operation permission. Apply for the permission and try again."
+    },
+    {
+      "name": "permission_status_readOnly",
+      "value": "This file is protected. You have the read-only permission."
+    },
+    {
+      "name": "permission_status_title",
+      "value": "This file is protected. You have the read-only and change permissions."
+    },
+    {
+      "name": "apply_for_the_permission",
+      "value": "To apply for permissions, contact:"
+    },
+    {
+      "name": "colon",
+      "value": ":"
     }
   ]
 }

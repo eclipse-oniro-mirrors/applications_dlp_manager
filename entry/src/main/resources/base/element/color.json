@@ -75,6 +75,18 @@
     {
       "name": "da_button_color",
       "value": "#00FFFFFF"
+    },
+    {
+      "name": "base_button_color",
+      "value": "#0C000000"
+    },
+    {
+      "name": "encryption_cancel",
+      "value": "#0A59F7"
+    },
+    {
+      "name": "encryption_divider_color",
+      "value": "#efefef"
     }
   ]
 }

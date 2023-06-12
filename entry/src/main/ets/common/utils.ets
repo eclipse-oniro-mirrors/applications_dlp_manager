@@ -1,98 +1,117 @@
-import account_distributedAccount from '@ohos.account.distributedAccount';
+/*
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import account_osAccount from '@ohos.account.osAccount';
 import Constants from '../common/constant'
 import dlpPermission from '@ohos.dlpPermission';
+import bundleManager from '@ohos.bundle.bundleManager'
 
-var TAG = "[DLPManager_utils]"
-async function getDistributedAccountInfo() : Promise<account_distributedAccount.DistributedInfo> {
-  var distAbility = account_distributedAccount.getDistributedAccountAbility()
-  return distAbility.queryOsAccountDistributedInfo()
+let TAG = "[DLPManager_Utils]";
+
+async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
+  let accountMgr = account_osAccount.getAccountManager();
+  return await accountMgr.getCurrentOsAccount();
 }
 
-async function getOsAccountInfo() : Promise<account_osAccount.OsAccountInfo> {
-  var accountMgr = account_osAccount.getAccountManager()
-  return accountMgr.queryCurrentOsAccount()
+async function getUserId(): Promise<number> {
+  let accountMgr = account_osAccount.getAccountManager();
+  return await accountMgr.getOsAccountLocalIdFromProcess();
 }
 
-async function getUserId() : Promise<number> {
-  var accountMgr = account_osAccount.getAccountManager()
-  return accountMgr.getOsAccountLocalIdFromProcess()
-}
-
-async function getDomainId() : Promise<account_osAccount.OsAccountInfo> {
-  var accountMgr = account_osAccount.getAccountManager()
-  return accountMgr.queryCurrentOsAccount()
-}
-
-function getAuthPerm(accountName, dlpProperty) : number {
-  let perm : dlpPermission.AuthPermType = dlpPermission.AuthPermType.DEFAULT_PERM;
+function getAuthPerm(accountName, dlpProperty): number {
+  let perm: dlpPermission.AuthPermType = dlpPermission.AuthPermType.DEFAULT_PERM;
   if (accountName == dlpProperty.ownerAccount) {
     return dlpPermission.AuthPermType.FULL_CONTROL
   }
   if (dlpProperty.supportEveryone) {
     perm = dlpProperty.everyonePerm;
   }
-  for (var i = 0; i < dlpProperty.authUsers.length; ++i) {
-    var authUser = dlpProperty.authUsers[i]
+  for (let i = 0; i < dlpProperty.authUsers.length; ++i) {
+    let authUser = dlpProperty.authUsers[i];
     if (authUser.authAccount == accountName) {
-      return authUser.authPerm
+      return authUser.authPerm;
     }
   }
-  return perm
+  return perm;
 }
 
-function terminateSelfWithResult(resultCode: number, result: string) : void {
-  var abilityResult = {
+function terminateSelfWithResult(resultCode: number, result: string): void {
+  let abilityResult = {
     resultCode: resultCode,
     want: {
       parameters: {
         result: result
       }
     }
-  }
-  globalThis.context.terminateSelfWithResult(abilityResult)
+  };
+  globalThis.context.terminateSelfWithResult(abilityResult);
 }
 
 function getAlertMessage(err, defaultTitle, defaultMessage) {
   switch (err.code) {
     case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
-      return { 'title': Constants.TITLE_SERVICE_ERROR, 'msg': Constants.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR }
+      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR') };
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
-      return { 'title': Constants.TITLE_SERVICE_ERROR, 'msg': Constants.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR }
-      break
+      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR') };
     case Constants.ERR_JS_NOT_DLP_FILE:
-      return { 'title': Constants.TITLE_APP_DLP_ERROR, 'msg': Constants.MESSAGE_APP_FILE_PARAM_ERROR }
-      break
+      return { 'title': $r('app.string.TITLE_APP_DLP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') };
     case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
-      return { 'title': Constants.TITLE_APP_ERROR, 'msg': Constants.MESSAGE_APP_NO_ACCOUNT_ERROR }
-      break
+      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') };
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
-      return { 'title': Constants.TITLE_OPERATE_DENY, 'msg': Constants.MESSAGE_DLP_READ_ONLY }
-      break
+      return { 'title': $r('app.string.TITLE_OPERATE_DENY'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') };
     default:
       if (err.extra != undefined) {
         return {
-          'title': Constants.TITLE_APP_VISIT_FILE_ERROR,
-          'msg': Constants.MESSAGE_APP_NOT_HAVE_PERM_VISIT + err.extra
+          'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
+          'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT') + err.extra
         }
       } else {
-        return { 'title': defaultTitle, 'msg': defaultMessage }
+        return { 'title': defaultTitle, 'msg': defaultMessage };
       }
   }
 }
 
-function startAlertAbility(title, message) {
+async function startAlertAbility(title: Resource, message: Resource) {
+  let titleStr = await globalThis.context.resourceManager.getString(title.id)
+  let messageStr = await globalThis.context.resourceManager.getString(message.id)
   globalThis.context.startAbility({
-    bundleName: "com.ohos.dlpmanager",
-    abilityName: "AlertAbility",
+    bundleName: 'com.ohos.dlpmanager',
+    abilityName: 'AlertAbility',
     parameters: {
-      title: title,
-      message: message,
+      title: titleStr,
+      message: messageStr,
     }
   }, async (err, data) => {
-    console.error(TAG + "start AlertAbility err: " + JSON.stringify(err))
+    if (err.code !== 0) {
+      console.error(TAG, 'start AlertAbility failed', err.code, err.message);
+    }
     globalThis.context.terminateSelf()
   })
 }
 
-export {getDistributedAccountInfo, getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage}
+function judgeIsSandBox() {
+  return new Promise(async resolve => {
+    let callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken'];
+    let callerBundleName = globalThis.abilityWant.parameters['ohos.aafwk.param.callerBundleName'];
+    globalThis.applicationInfo = await bundleManager.getApplicationInfo(
+        callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
+    if (callerToken == globalThis.applicationInfo.accessTokenId) {
+      resolve(false);
+    }
+    resolve(true);
+  })
+}
+
+
+export { getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox };
