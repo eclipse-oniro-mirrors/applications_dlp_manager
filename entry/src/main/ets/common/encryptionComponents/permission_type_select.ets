@@ -18,7 +18,7 @@ import Constants from '../constant';
 @Component
 struct permissionTypeSelect {
   @Prop isReadType: boolean;
-  @State permissionTypes: any = [
+  @State permissionTypes: any[] = [
     { value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_ALL'), data: 'all', index: 1 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_SELF'), data: 'self', index: 2 }
@@ -34,7 +34,17 @@ struct permissionTypeSelect {
     id: number
   }[];
 
-  @Prop isDisable: boolean;
+  @Prop @Watch('onCountUpdated') isDisable: boolean;
+
+  onCountUpdated(isDisable: boolean) : void {
+    if (this.isReadType) {
+      if (this.isDisable) {
+        this.selectedItem = this.permissionTypes[1];
+      } else {
+        this.selectedItem = this.permissionTypes[0];
+      }
+    }
+  }
 
   aboutToAppear() {
     if (this.isReadType) {
@@ -45,7 +55,9 @@ struct permissionTypeSelect {
     this.permissionTypes.forEach(async (item, index) => {
       this.permissionTypes[index].value = await globalThis.context.resourceManager.getString(item.value.id)
     })
-    this.selectedItem = this.permissionTypes[0];
+    setTimeout( () =>{
+      this.selectedItem = this.permissionTypes[0];
+    }, 0)
   }
 
   build() {

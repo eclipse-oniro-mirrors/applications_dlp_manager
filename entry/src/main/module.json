@@ -15,7 +15,7 @@
     "metadata": [
       {
         "name": "ArkTSPartialUpdate",
-        "value": "false"
+        "value": "true"
       }
      ],
     "uiSyntax": "ets",

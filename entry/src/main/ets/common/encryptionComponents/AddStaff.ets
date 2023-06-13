@@ -21,6 +21,7 @@ const TAG = "[DLPManager_AddStaff]";
 @Component
 struct staffInput {
   @State inputId: string = ''
+  @State isAccountCheckSuccess: boolean = true;
   @State isInputInvalid: boolean = false
   @State activeStaffIndex: number = -1
   @Link staffArray: {
@@ -43,14 +44,13 @@ struct staffInput {
                 authAccount: item.authAccount,
                 isActive: this.activeStaffIndex === index
               })
-              Text()
-                .width(Constants.HEADER_COLUMN_WIDTH)
-                .height(Constants.HEADER_COLUMN_WIDTH)
+              Text(item.authAccount)
+                .opacity(Constants.PP_ROW_RADIUS)
                 .focusable(true)
                 .focusOnTouch(true)
                 .onKeyEvent((event: KeyEvent) => {
-                  if (event.keyText === 'KEYCODE_FORWARD_DEL' &&
-                    event.keyCode === 2071 && this.activeStaffIndex === index) {
+                  if (event.keyText === 'KEYCODE_DEL' &&
+                    event.keyCode === 2055 && this.activeStaffIndex === index) {
                     this.staffArray = this.staffArray.filter((item,index) => {
                       return index !== this.activeStaffIndex
                     })
@@ -89,6 +89,7 @@ struct staffInput {
             }
           })
           .onSubmit(() => {
+            if (!this.isAccountCheckSuccess) return;
             if (!this.inputId) {
               return
             }
@@ -102,7 +103,9 @@ struct staffInput {
                 accountName: this.inputId
               }
               if (globalThis.domainAccount) {
+                this.isAccountCheckSuccess = false;
                 account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err, res) => {
+                  this.isAccountCheckSuccess = true;
                   if (err) {
                     this.isInputInvalid = true;
                     return;
@@ -110,10 +113,11 @@ struct staffInput {
                     this.staffArray.push({
                       authAccount: this.inputId,
                     })
-                    this.inputId = ''
+                    this.inputId = '';
                   }
                 })
               } else {
+                this.isAccountCheckSuccess = true;
                 this.staffArray.push({
                   authAccount: this.inputId,
                 })
@@ -121,7 +125,8 @@ struct staffInput {
               }
             }
             catch (e) {
-              console.info(e.code);
+              this.isAccountCheckSuccess = true;
+              console.log(e.code);
             }
           })
           .onFocus(() => {

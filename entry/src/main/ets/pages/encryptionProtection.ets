@@ -79,9 +79,8 @@ struct DlpDialog {
   @State handlePopupEdit: boolean = false;
   @State processing: boolean = false;
   @State domainOrCloudAccount: number = globalThis.domainAccount ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
-
-  private permissionDict = [
-     {
+  @State permissionDict: any = [
+    {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as any, data: 'target', index: 0
     },
     {
@@ -655,115 +654,112 @@ build() {
           right: Constants.HEADER_COLUMN_PADDING_RIGHT
         })
 
-        Row() {
-          Text($r('app.string.header_title_readonly'))
-            .fontWeight(FontWeight.Medium)
-            .fontColor($r('sys.color.ohos_id_color_text_primary'))
-            .fontSize($r('sys.float.ohos_id_text_size_body1'))
-          Image($r('app.media.details'))
-            .width(Constants.FOOTER_ROW_PAD_RIGHT)
-            .height(Constants.FOOTER_ROW_PAD_RIGHT)
-            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-            .onClick(() => {
-              this.handlePopupReadOnly = !this.handlePopupReadOnly
-            })
-            .bindPopup(this.handlePopupReadOnly, {
-              builder: this.popupBuilderReadOnly,
-              placement: Placement.Bottom,
-              popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-              enableArrow: true,
-              showInSubWindow: false,
-              onStateChange: (e) => {
-                if (!e.isVisible) {
-                  this.handlePopupReadOnly = false
-                }
-              }
-            })
-          Blank()
-          permissionTypeSelect({
-            selectedItem: $selectedPermissionTypeReadOnly,
-            staffArray: $staffDataArrayReadOnly,
-            isDisable: this.selectedPermissionTypeEdit?.data === 'all',
-            isReadType: true
-          })
-        }
-        .width(Constants.FOOTER_ROW_WIDTH)
-        .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-        .margin({ top: Constants.FOOTER_ROW_MARGIN })
-        .padding({
-          left: Constants.HEADER_COLUMN_PADDING_LEFT,
-          right: Constants.HEADER_COLUMN_PADDING_RIGHT
-        })
-
           Scroll() {
-            Row() {
-              if (!['all', 'self'].includes(this.selectedPermissionTypeReadOnly?.data)) {
-                AddStaff({
+            Column() {
+              Row() {
+                Text($r('app.string.header_title_readonly'))
+                  .fontWeight(FontWeight.Medium)
+                  .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                Image($r('app.media.details'))
+                  .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                  .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                  .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                  .onClick(() => {
+                    this.handlePopupReadOnly = !this.handlePopupReadOnly
+                  })
+                  .bindPopup(this.handlePopupReadOnly, {
+                    builder: this.popupBuilderReadOnly,
+                    placement: Placement.Bottom,
+                    popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                    enableArrow: true,
+                    showInSubWindow: false,
+                    onStateChange: (e) => {
+                      if (!e.isVisible) {
+                        this.handlePopupReadOnly = false
+                      }
+                    }
+                  })
+                Blank()
+                permissionTypeSelect({
+                  selectedItem: $selectedPermissionTypeReadOnly,
                   staffArray: $staffDataArrayReadOnly,
                   isDisable: this.selectedPermissionTypeEdit?.data === 'all',
+                  isReadType: true
                 })
               }
-            }.padding({
-              left: Constants.HEADER_COLUMN_PADDING_LEFT,
-              right: Constants.HEADER_COLUMN_PADDING_RIGHT
-            })
-          }.constraintSize({
-            maxHeight: Constants.ENCRYPTION_PERMISSION_SCROLL_HEIGHT
-          })
+              .width(Constants.FOOTER_ROW_WIDTH)
+              .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+              .margin({ top: Constants.FOOTER_ROW_MARGIN })
+              .padding({
+                left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                right: Constants.HEADER_COLUMN_PADDING_RIGHT
+              })
 
-
-        Row() {
-          Text($r('app.string.header_title_edit'))
-            .fontWeight(FontWeight.Medium)
-            .fontColor($r('sys.color.ohos_id_color_text_primary'))
-            .fontSize($r('sys.float.ohos_id_text_size_body1'))
-          Image($r('app.media.details'))
-            .width(Constants.FOOTER_ROW_PAD_RIGHT)
-            .height(Constants.FOOTER_ROW_PAD_RIGHT)
-            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-            .onClick(() => {
-              this.handlePopupEdit = !this.handlePopupEdit
-            })
-            .bindPopup(this.handlePopupEdit, {
-              builder: this.popupBuilderEdit,
-              placement: Placement.Bottom,
-              popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-              enableArrow: true,
-              showInSubWindow: false,
-              onStateChange: (e) => {
-                if (!e.isVisible) {
-                  this.handlePopupEdit = false
+              Row() {
+                if (!['all', 'self'].includes(this.selectedPermissionTypeReadOnly?.data)) {
+                  AddStaff({
+                    staffArray: $staffDataArrayReadOnly,
+                    isDisable: this.selectedPermissionTypeEdit?.data === 'all',
+                  })
                 }
-              }
-            })
-          Blank()
-          permissionTypeSelect({
-            selectedItem: $selectedPermissionTypeEdit,
-            staffArray: $staffDataArrayEdit,
-            isDisable: false
-          })
-        }
-        .width(Constants.FOOTER_ROW_WIDTH)
-        .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-        .padding({
-          left: Constants.HEADER_COLUMN_PADDING_LEFT,
-          right: Constants.HEADER_COLUMN_PADDING_RIGHT
-        })
+              }.padding({
+                left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                right: Constants.HEADER_COLUMN_PADDING_RIGHT
+              })
 
-          Scroll() {
-            Row() {
-              if (!['all', 'self'].includes(this.selectedPermissionTypeEdit?.data)) {
-                AddStaff({
+              Row() {
+                Text($r('app.string.header_title_edit'))
+                  .fontWeight(FontWeight.Medium)
+                  .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                Image($r('app.media.details'))
+                  .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                  .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                  .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                  .onClick(() => {
+                    this.handlePopupEdit = !this.handlePopupEdit
+                  })
+                  .bindPopup(this.handlePopupEdit, {
+                    builder: this.popupBuilderEdit,
+                    placement: Placement.Bottom,
+                    popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                    enableArrow: true,
+                    showInSubWindow: false,
+                    onStateChange: (e) => {
+                      if (!e.isVisible) {
+                        this.handlePopupEdit = false
+                      }
+                    }
+                  })
+                Blank()
+                permissionTypeSelect({
+                  selectedItem: $selectedPermissionTypeEdit,
                   staffArray: $staffDataArrayEdit,
                   isDisable: false
                 })
               }
-            }.padding({
-              left: Constants.HEADER_COLUMN_PADDING_LEFT,
-              right: Constants.HEADER_COLUMN_PADDING_RIGHT
-            })
+              .width(Constants.FOOTER_ROW_WIDTH)
+              .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+              .padding({
+                left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                right: Constants.HEADER_COLUMN_PADDING_RIGHT
+              })
+
+              Row() {
+                if (!['all', 'self'].includes(this.selectedPermissionTypeEdit?.data)) {
+                  AddStaff({
+                    staffArray: $staffDataArrayEdit,
+                    isDisable: false
+                  })
+                }
+              }.padding({
+                left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                right: Constants.HEADER_COLUMN_PADDING_RIGHT
+              })
+            }
           }.constraintSize({
-            maxHeight: Constants.ENCRYPTION_PERMISSION_SCROLL_HEIGHT
+            maxHeight: Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH
           })
 
         Row() {
