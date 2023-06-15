@@ -44,7 +44,7 @@ export default class MainAbility extends UIAbility {
     console.info(TAG, 'onDestroy');
   }
 
-  async gotoSandbox(windowStage) {
+  async gotoSandbox(windowStage): Promise<void> {
     let accountInfo;
     try {
       accountInfo = await getOsAccountInfo();
@@ -56,9 +56,9 @@ export default class MainAbility extends UIAbility {
     const linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
     for (let key in globalThis.sandbox2linkFile) {
       for (let j in globalThis.sandbox2linkFile[key]) {
-        if (globalThis.sandbox2linkFile[key][j][2] == linkFileName) {
+        if (globalThis.sandbox2linkFile[key][j][Constants.FILE_OPEN_HISTORY_TWO] === linkFileName) {
           let linkFile = globalThis.sandbox2linkFile[key][j];
-          this.dlpFile = linkFile[1]
+          this.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ONE];
         }
       }
     }
@@ -67,7 +67,7 @@ export default class MainAbility extends UIAbility {
     } else {
       this.authPerm = getAuthPerm(accountInfo.distributedInfo.name, this.dlpFile.dlpProperty);
     }
-    console.info(TAG, 'authPerm', JSON.stringify(this.authPerm))
+    console.info(TAG, 'authPerm', JSON.stringify(this.authPerm));
     AppStorage.SetOrCreate('authPerm', this.authPerm);
     AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
     if (this.authPerm < dlpPermission.AuthPermType.READ_ONLY ||
@@ -85,7 +85,7 @@ export default class MainAbility extends UIAbility {
     });
   }
 
-  async goContentPage(windowStage, srcFd) {
+  async goContentPage(windowStage, srcFd): Promise<void> {
     let accountInfo;
     try {
       accountInfo = await getOsAccountInfo();

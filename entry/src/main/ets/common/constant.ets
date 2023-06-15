@@ -173,6 +173,10 @@ export default class Constants {
   static DA_COLOUM_WIDTH = 336;
   static DA_COLOUM_RADIUS = 24;
 
+  static FILE_OPEN_HISTORY_ONE = 1;
+  static FILE_OPEN_HISTORY_TWO = 2;
+  static FILE_OPEN_HISTORY_THREE = 3;
+
   static FOOTER_OPACITY_ONE = 1;
   static FOOTER_OPACITY_SEPC= 0.6;
   static ACCOUNT_LENGTH_MAX = 1024;

@@ -274,9 +274,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.isGathering = await dlpPermission.getDlpGatheringPolicy();
       if (globalThis.fileOpenHistory[this.uri] !== undefined) {
         console.info(TAG, 'file', this.fileName, 'already open');
-        this.sandboxIndex = globalThis.fileOpenHistory[this.uri][1];
-        this.linkFileName = globalThis.fileOpenHistory[this.uri][2];
-        this.linkFd = globalThis.fileOpenHistory[this.uri][3];
+        this.sandboxIndex = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_ONE];
+        this.linkFileName = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_TWO];
+        this.linkFd = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_THREE];
         this.alreadyOpen = true;
       }
 
