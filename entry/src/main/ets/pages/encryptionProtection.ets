@@ -24,7 +24,8 @@ import {
   terminateSelfWithResult,
   getUserId,
   judgeIsSandBox,
-  getAuthPerm
+  getAuthPerm,
+  getFileFd
 } from '../common/utils';
 import Constants from '../common/constant';
 import router from '@ohos.router';
@@ -604,7 +605,8 @@ struct DlpDialog {
         console.info(TAG, 'encryption request from ability')
         console.info(TAG, 'want info', JSON.stringify(globalThis.abilityWant))
         this.srcFileName = globalThis.abilityWant.parameters.fileName.name;
-        this.srcFd = globalThis.abilityWant.parameters.keyFd.value;
+        let uri = <string>globalThis.abilityWant.parameters.uri;
+        this.srcFd = getFileFd(uri);
       }
       let callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken']
       let callerBundleName = globalThis.abilityWant.parameters["ohos.aafwk.param.callerBundleName"]

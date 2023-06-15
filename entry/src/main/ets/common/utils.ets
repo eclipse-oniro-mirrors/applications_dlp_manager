@@ -16,9 +16,30 @@ import account_osAccount from '@ohos.account.osAccount';
 import Constants from '../common/constant'
 import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
-
+import fs from '@ohos.file.fs';
+import fileuri from "@ohos.file.fileuri";
 let TAG = "[DLPManager_Utils]";
 
+function getFileUriByPath(filePath): string {
+  try {
+    let uri = fileuri.getUriFromPath(filePath);
+    return uri;
+    }catch (err){
+    console.info(TAG, 'getUriFromPath error:',JSON.stringify(err));
+    return "";
+  }
+}
+function getFileFd(uri): number {
+  try {
+    console.info(TAG, 'file fd:', uri);
+    let file = fs.openSync(uri, fs.OpenMode.READ_WRITE);
+    console.info(TAG, 'file fd:', file.fd);
+    return file.fd;
+  } catch (e) {
+    console.info(TAG, 'openSync error:' + e);
+    return -1;
+  }
+}
 async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   let accountMgr = account_osAccount.getAccountManager();
   return await accountMgr.getCurrentOsAccount();
@@ -114,4 +135,4 @@ function judgeIsSandBox() {
 }
 
 
-export { getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox };
+export { getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox,getFileFd,getFileUriByPath};

@@ -18,7 +18,8 @@ import router from '@ohos.router';
 import staffItem from '../common/encryptionComponents/staff';
 import dlpPermission from '@ohos.dlpPermission';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
-import { getAlertMessage, getOsAccountInfo, terminateSelfWithResult, judgeIsSandBox } from '../common/utils';
+// @ts-ignore
+import { getAlertMessage, getOsAccountInfo, terminateSelfWithResult, judgeIsSandBox, getFileFd } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import picker from '@ohos.file.picker';
 
@@ -280,7 +281,8 @@ struct changeEncryption {
         this.dlpErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'));
         return;
       }
-      this.dlpFd = globalThis.abilityWant.parameters.keyFd.value;
+      let uri = <string>globalThis.abilityWant.parameters.uri;
+      this.dlpFd = getFileFd(uri);
       this.srcFileName = globalThis.abilityWant.parameters.fileName.name;
     } else { // request from router
       console.info(TAG, 'Change encryption request from router');

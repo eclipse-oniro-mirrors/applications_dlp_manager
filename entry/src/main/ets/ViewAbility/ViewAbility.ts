@@ -21,7 +21,9 @@ import {
   getAuthPerm,
   startAlertAbility,
   getAlertMessage,
-  terminateSelfWithResult
+  terminateSelfWithResult,
+  getFileFd,
+  getFileUriByPath
 } from '../common/utils';
 import fileio from '@ohos.fileio';
 import type Want from '@ohos.app.ability.Want';
@@ -29,6 +31,8 @@ import commonEvent from '@ohos.commonEvent';
 import Constants from '../common/constant';
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import hiSysEvent from '@ohos.hiSysEvent';
+import fileShare from '@ohos.fileshare';
+import wantConstant from '@ohos.app.ability.wantConstant';
 
 const TAG = '[DLPManager_View]';
 
@@ -45,11 +49,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
   sandboxModuleName: string = '';
   fileName: string = '';
   uri: string = '';
+  linkUri:string = '';
   isCreated: boolean = false;
   isGathering: boolean = true;
   alreadyOpen: boolean = false;
   userId: number = -1;
-
+  linkFileWriteable: boolean = false;
 
   async onCreate(want): Promise<void> {
     globalThis.context = this.context;
@@ -79,18 +84,21 @@ export default class ViewAbility extends ServiceExtensionAbility {
     let want: Want = {
       bundleName: this.sandboxBundleName,
       abilityName: this.sandboxAbilityName,
+      uri:this.linkUri,
+      flags: this.linkFileWriteable ? wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION,
       parameters: {
-        keyFd: {
-          type: 'FD', value: this.linkFd
-        },
         'linkFileName': {
           'name': this.linkFileName
         },
         'fileName': {
           'name': this.fileName
         },
-        'uri': {
+        'uri': this.linkUri,
+        'dlpUri': {
           'name': this.uri
+        },
+        'linkFileWriteable':{
+          'name':this.linkFileWriteable
         },
         'ohos.dlp.params.index': this.sandboxIndex,
         'ohos.dlp.params.moduleName': this.sandboxModuleName,
@@ -180,9 +188,23 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async onRequest(want: Want, startId: number): Promise<void> {
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
-    this.dlpFd = want.parameters.keyFd['value'];
     this.fileName = <string> want.parameters.fileName['name'];
-    this.uri = <string> want.uri;
+    this.uri = <string> want.parameters.uri;
+    try {
+      await fileShare.grantUriPermission(this.uri, 'com.ohos.dlpmanager', wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION |
+        wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION).then(function () {
+        console.info(TAG, 'grantUriPermission success!');
+      }).catch(function (error) {
+        console.error(TAG, 'grantUriPermission failed with error:' + error);
+        globalThis.context.terminateSelf();
+      });
+    } catch (error) {
+      console.error('grantUriPermission failed with error:' + error);
+      globalThis.context.terminateSelf();
+    }
+
+    this.dlpFd = getFileFd(this.uri);
+    console.debug(TAG, 'dlpFd:', this.dlpFd);
 
     this.sandboxBundleName = <string> want.parameters['ohos.dlp.params.bundleName'];
     this.sandboxAbilityName = <string> want.parameters['ohos.dlp.params.abilityName'];
@@ -288,7 +310,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       let date = new Date();
       let timestamp = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getMilliseconds()).getTime();
-      this.linkFileName = this.sandboxBundleName + this.sandboxIndex + timestamp + '.dlp.link';
+      this.linkFileName = this.sandboxBundleName + '_' + this.sandboxIndex + '_' + timestamp + '.dlp.link';
       hiTraceMeter.startTrace('DlpAddLinkFileJs', startId);
       try {
         await this.dlpFile.addDlpLinkFile(this.linkFileName);
@@ -305,16 +327,21 @@ export default class ViewAbility extends ServiceExtensionAbility {
         return;
       }
       hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
-      this.linkFilePath = '/data/fuse/' + this.linkFileName;
+      this.linkFilePath = '/mnt/data/fuse/' + this.linkFileName;
       // @ts-ignore
       let stat: fileio.Stat = fileio.statSync(this.linkFilePath);
       const WRITE_ACCESS: number = 0o0200;
       if (stat.mode & WRITE_ACCESS) {
         // @ts-ignore
         this.linkFd = fileio.openSync(this.linkFilePath, 0o2);
+        this.linkUri = getFileUriByPath(this.linkFilePath);
+        this.linkFileWriteable = true;
       } else {
         // @ts-ignore
         this.linkFd = fileio.openSync(this.linkFilePath, 0o0);
+        this.linkUri = getFileUriByPath(this.linkFilePath);
+        this.linkFileWriteable = false;
+
       }
     }
     this.startSandboxApp(startId);

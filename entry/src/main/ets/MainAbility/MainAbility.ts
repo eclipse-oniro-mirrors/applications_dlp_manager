@@ -17,7 +17,9 @@ import datafile from '@ohos.file.fileAccess';
 import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
 import type { Permissions } from '@ohos.abilityAccessCtrl';
 import dlpPermission from '@ohos.dlpPermission';
-import { getAlertMessage, getAuthPerm, startAlertAbility, getOsAccountInfo, judgeIsSandBox } from '../common/utils';
+import Constants from '../common/constant';
+// @ts-ignore
+import { getAlertMessage, getAuthPerm, startAlertAbility, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
 
 const TAG = '[DLPManager_Main]';
 let permissionList: Array<Permissions> = [
@@ -137,12 +139,8 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need name in want.parameters.fileName');
       return false;
     }
-    if (globalThis.abilityWant.parameters.keyFd === undefined) {
-      console.error(TAG, 'need keyFd in want.parameters');
-      return false;
-    }
-    if (globalThis.abilityWant.parameters.keyFd.value === undefined) {
-      console.error(TAG, 'need value in want.parameters.keyFd');
+    if (globalThis.abilityWant.parameters.uri === undefined) {
+      console.error(TAG, 'need uri in want.parameters');
       return false;
     }
     return true;
@@ -175,8 +173,9 @@ export default class MainAbility extends UIAbility {
           win.setBackgroundColor('#00FFFFFF');
         });
       } else {
-        let srcFd = globalThis.abilityWant.parameters.keyFd.value;
-        this.goContentPage(windowStage, srcFd)
+        let uri = globalThis.abilityWant.parameters.uri;
+        let srcFd = getFileFd(uri);
+        this.goContentPage(windowStage, srcFd);
       }
     }
   }
