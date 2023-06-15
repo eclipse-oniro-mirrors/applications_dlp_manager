@@ -80,7 +80,7 @@ struct DlpDialog {
   @State handlePopupEdit: boolean = false;
   @State processing: boolean = false;
   @State domainOrCloudAccount: number = globalThis.domainAccount ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
-  @State permissionDict: any = [
+  @State permissionDict: [any, any, any] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as any, data: 'target', index: 0
     },
