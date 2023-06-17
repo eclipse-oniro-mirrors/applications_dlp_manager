@@ -22,7 +22,7 @@ const INDEX_TWO = 2;
 const INDEX_ONE = 1;
 const INDEX_ZERO = 0;
 export default class DataAbility extends ServiceExtensionAbility {
-  sandbox2linkFile: { [key: string]: [number, dlpPermission.DlpFile, string, number] } = {};
+  sandbox2linkFile: { [key: string]: [number, dlpPermission.DLPFile, string, number] } = {};
   fileOpenHistory: { [key: string]: [string, number, string, number] } = {};
   //uri:bundleName:string, sandboxId:number, linkName:string, linkFd:number
   authPerm2Sandbox: { [key: string]: [string, number] } = {};
@@ -58,14 +58,14 @@ export default class DataAbility extends ServiceExtensionAbility {
           fileio.closeSync(linkFile[INDEX_ZERO]);
           let dlpFile = linkFile[INDEX_ONE];
           try {
-            await dlpFile.deleteDlpLinkFile(linkFile[INDEX_TWO]);
+            await dlpFile.deleteDLPLinkFile(linkFile[INDEX_TWO]);
           } catch (err) {
-            console.error(TAG, 'deleteDlpLinkFile failed', err.code, err.message);
+            console.error(TAG, 'deleteDLPLinkFile failed', err.code, err.message);
           }
           try {
-            await dlpFile.closeDlpFile();
+            await dlpFile.closeDLPFile();
           } catch (err) {
-            console.error(TAG, 'closeDlpFile failed', err.code, err.message);
+            console.error(TAG, 'closeDLPFile failed', err.code, err.message);
           }
         }
 
@@ -85,10 +85,10 @@ export default class DataAbility extends ServiceExtensionAbility {
   createSubscriber(): void {
     console.info(TAG, 'createSubscriber');
     try {
-      dlpPermission.on('uninstallDlpSandbox', this.subscribeCallback);
+      dlpPermission.on('uninstallDLPSandbox', this.subscribeCallback);
       this.isSubscriber = true;
     } catch (err) {
-      console.info(TAG, 'createSubscriber uninstallDlpSandbox failed', err.code, err.message);
+      console.info(TAG, 'createSubscriber uninstallDLPSandbox failed', err.code, err.message);
     }
   }
 
@@ -106,15 +106,12 @@ export default class DataAbility extends ServiceExtensionAbility {
   onDestroy(): void {
     console.info(TAG, 'onDestroy');
     if (this.isSubscriber) {
-      console.info(TAG, 'cancelSubscriber uninstallDlpSandbox');
+      console.info(TAG, 'cancelSubscriber uninstallDLPSandbox');
       try {
-        let res = dlpPermission.off('uninstallDlpSandbox');
-        console.info(TAG, 'cancelSubscriber uninstallDlpSandbox res:', JSON.stringify(res));
-        if (res) {
-          this.isSubscriber = false;
-        }
+        dlpPermission.off('uninstallDLPSandbox');
+        this.isSubscriber = false;
       } catch (err) {
-        console.error(TAG, 'cancelSubscriber uninstallDlpSandbox error', JSON.stringify(err));
+        console.error(TAG, 'cancelSubscriber uninstallDLPSandbox error', JSON.stringify(err));
       }
     }
   }

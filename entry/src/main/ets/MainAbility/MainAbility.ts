@@ -29,8 +29,8 @@ let permissionList: Array<Permissions> = [
 ];
 
 export default class MainAbility extends UIAbility {
-  dlpFile: dlpPermission.DlpFile = null;
-  authPerm: dlpPermission.AuthPermType = dlpPermission.AuthPermType.READ_ONLY;
+  dlpFile: dlpPermission.DLPFile = null;
+  authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
 
   async onCreate(want, launchParam): Promise<void> {
     console.info(TAG, 'onCreate');
@@ -70,12 +70,12 @@ export default class MainAbility extends UIAbility {
     console.info(TAG, 'authPerm', JSON.stringify(this.authPerm));
     AppStorage.SetOrCreate('authPerm', this.authPerm);
     AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
-    if (this.authPerm < dlpPermission.AuthPermType.READ_ONLY ||
-      this.authPerm > dlpPermission.AuthPermType.FULL_CONTROL) {
+    if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
+      this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
       return;
     }
-    if (this.authPerm === dlpPermission.AuthPermType.FULL_CONTROL) {
+    if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
       windowStage.setUIContent(this.context, 'pages/changeEncryption', null);
     } else {
       windowStage.setUIContent(this.context, 'pages/permissionStatus', null);
@@ -95,10 +95,10 @@ export default class MainAbility extends UIAbility {
       return;
     }
     try {
-      console.info(TAG, 'openDlpFile', srcFd);
-      this.dlpFile = await dlpPermission.openDlpFile(srcFd);
+      console.info(TAG, 'openDLPFile', srcFd);
+      this.dlpFile = await dlpPermission.openDLPFile(srcFd);
     } catch (err) {
-      console.error(TAG, 'openDlpFile', srcFd, 'failed', err.code, err.message);
+      console.error(TAG, 'openDLPFile', srcFd, 'failed', err.code, err.message);
       let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_DLP_ERROR'), $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR'));
       await startAlertAbility(errorInfo.title, errorInfo.msg);
       return;
@@ -111,12 +111,12 @@ export default class MainAbility extends UIAbility {
     console.info(TAG, 'authPerm', JSON.stringify(this.authPerm))
     AppStorage.SetOrCreate('authPerm', this.authPerm);
     AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
-    if (this.authPerm < dlpPermission.AuthPermType.READ_ONLY ||
-      this.authPerm > dlpPermission.AuthPermType.FULL_CONTROL) {
+    if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
+      this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
       return;
     }
-    if (this.authPerm === dlpPermission.AuthPermType.FULL_CONTROL) {
+    if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
       windowStage.setUIContent(this.context, 'pages/changeEncryption', null);
     } else {
       windowStage.setUIContent(this.context, 'pages/permissionStatus', null);

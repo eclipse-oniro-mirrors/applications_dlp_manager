@@ -50,18 +50,18 @@ async function getUserId(): Promise<number> {
   return await accountMgr.getOsAccountLocalIdFromProcess();
 }
 
-function getAuthPerm(accountName, dlpProperty): number {
-  let perm: dlpPermission.AuthPermType = dlpPermission.AuthPermType.DEFAULT_PERM;
-  if (accountName == dlpProperty.ownerAccount) {
-    return dlpPermission.AuthPermType.FULL_CONTROL
+function getAuthPerm(accountName: string, dlpProperty: dlpPermission.DLPProperty): number {
+  let perm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.NO_PERMISSION;
+  if (accountName === dlpProperty.ownerAccount) {
+    return dlpPermission.DLPFileAccess.FULL_CONTROL;
   }
   if (dlpProperty.supportEveryone) {
     perm = dlpProperty.everyonePerm;
   }
-  for (let i = 0; i < dlpProperty.authUsers.length; ++i) {
-    let authUser = dlpProperty.authUsers[i];
-    if (authUser.authAccount == accountName) {
-      return authUser.authPerm;
+  for (let i = 0; i < dlpProperty.authUserList.length; ++i) {
+    let authUser = dlpProperty.authUserList[i];
+    if (authUser.authAccount === accountName) {
+      return authUser.dlpFileAccess;
     }
   }
   return perm;
@@ -127,7 +127,7 @@ function judgeIsSandBox() {
     let callerBundleName = globalThis.abilityWant.parameters['ohos.aafwk.param.callerBundleName'];
     globalThis.applicationInfo = await bundleManager.getApplicationInfo(
         callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
-    if (callerToken == globalThis.applicationInfo.accessTokenId) {
+    if (callerToken === globalThis.applicationInfo.accessTokenId) {
       resolve(false);
     }
     resolve(true);
