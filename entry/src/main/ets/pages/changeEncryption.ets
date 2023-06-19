@@ -131,6 +131,18 @@ struct changeEncryption {
     this.dlpAlertDialog.open();
   }
 
+  showDlpAlertDialog(title, message) {
+    this.dlpAlertDialog = new CustomDialogController({
+      builder: DlpAlertDialog({
+        title: title,
+        message: message
+      }),
+      autoCancel: false,
+      customStyle: true
+    })
+    this.dlpAlertDialog.open();
+  }
+
   async catchProcess() {
     if (this.requestIsFromSandBox) {
       try {
@@ -266,13 +278,13 @@ struct changeEncryption {
         if (globalThis.domainAccount) {
           if (globalThis.accountInfo.domainInfo.accountName == '' &&
             globalThis.accountInfo.domainInfo.accountId == '') {
-            this.dlpErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+            this.showDlpAlertDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'))
             return;
           }
         } else {
           if (globalThis.accountInfo.distributedInfo.name == 'ohosAnonymousName' &&
             globalThis.accountInfo.distributedInfo.id == 'ohosAnonymousUid') {
-            this.dlpErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+            this.showDlpAlertDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'))
             return;
           }
         }
@@ -297,7 +309,7 @@ struct changeEncryption {
       console.error(TAG, 'openDlpFile', this.dlpFd, 'failed', err.code, err.message);
       let errorInfo = getAlertMessage(
           err, $r('app.string.TITLE_APP_DLP_ERROR'), $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR'));
-      this.dlpErrorDialog(errorInfo.title, errorInfo.msg);
+      this.showDlpAlertDialog(errorInfo.title, errorInfo.msg)
       return;
     }
 

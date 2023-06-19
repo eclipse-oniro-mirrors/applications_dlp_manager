@@ -167,6 +167,19 @@ struct DlpDialog {
     this.dlpAlertDialog.open();
   }
 
+  showDlpAlertDialog(title, message) {
+    this.dlpAlertDialog = new CustomDialogController({
+      builder: DlpAlertDialog({
+        title: title,
+        message: message
+      }),
+      autoCancel: false,
+      customStyle: true
+    })
+    this.dlpAlertDialog.open();
+  }
+
+
   async sendDlpFileCreateFault(code: number, reason: string) {
     let event: hiSysEvent.SysEventInfo = {
       domain: 'DLP',
@@ -554,20 +567,20 @@ struct DlpDialog {
       globalThis.accountInfo = await getOsAccountInfo();
       if (globalThis.domainAccount) {
         if (globalThis.accountInfo.domainInfo.accountName == '' &&
-        globalThis.accountInfo.domainInfo.accountId == '') {
-          this.dlpErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+          globalThis.accountInfo.domainInfo.accountId == '') {
+          this.showDlpAlertDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'))
           return;
         }
       } else {
         if (globalThis.accountInfo.distributedInfo.name == 'ohosAnonymousName' &&
-        globalThis.accountInfo.distributedInfo.id == 'ohosAnonymousUid') {
-          this.dlpErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+          globalThis.accountInfo.distributedInfo.id == 'ohosAnonymousUid') {
+          this.showDlpAlertDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'))
           return;
         }
       }
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed:', JSON.stringify(err));
-      this.dlpErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+      this.showDlpAlertDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'))
       return;
     }
 
@@ -795,7 +808,6 @@ build() {
             Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
-              // this.processing = !this.processing;
               if (this.isDlpFile) {
                 await this.changeEncrypt()
               } else {

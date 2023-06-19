@@ -348,6 +348,3 @@ export default class ViewAbility extends ServiceExtensionAbility {
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
   }
 }
-function $r(arg0: string): any {
-  throw new Error('Function not implemented.');
-}
