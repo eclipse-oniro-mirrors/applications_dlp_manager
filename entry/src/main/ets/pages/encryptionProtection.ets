@@ -767,7 +767,8 @@ struct DlpDialog {
                 permissionTypeSelect({
                   selectedItem: $selectedPermissionTypeEdit,
                   staffArray: $staffDataArrayEdit,
-                  isDisable: false
+                  isDisable: false,
+                  isReadType: false
                 })
               }
               .width(Constants.FOOTER_ROW_WIDTH)
