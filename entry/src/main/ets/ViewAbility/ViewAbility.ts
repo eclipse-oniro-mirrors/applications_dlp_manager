@@ -288,8 +288,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
 
       if (!this.alreadyOpen && !sortByAuthPerm) {
-        this.sandboxIndex = await dlpPermission.installDLPSandbox(this.sandboxBundleName,
+        let sandboxInfo = await dlpPermission.installDLPSandbox(this.sandboxBundleName,
           this.authPerm, this.userId, this.uri);
+        this.sandboxIndex = sandboxInfo.appIndex;
       }
     } catch (err) {
       console.error(TAG, 'installDLPSandbox failed', err.code, err.message);

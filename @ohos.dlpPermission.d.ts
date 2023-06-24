@@ -189,6 +189,33 @@ declare namespace dlpPermission {
   }
 
   /**
+   * Represents the visited DLP file info.
+   *
+   * @interface VisitedDLPFileInfo
+   * @syscap SystemCapability.Security.DataLossPrevention
+   * @since 10
+   */
+  export interface VisitedDLPFileInfo {
+    /**
+     * URI of the DLP file.
+     *
+     * @type { string }
+     * @syscap SystemCapability.Security.DataLossPrevention
+     * @since 10
+     */
+    uri: string;
+
+    /**
+     * Time when the DLP file was last opened.
+     *
+     * @type { number }
+     * @syscap SystemCapability.Security.DataLossPrevention
+     * @since 10
+     */
+    recentOpenTime: number;
+  }
+
+  /**
    * Represents the retention sandbox info.
    *
    * @interface RetentionSandboxInfo
@@ -298,33 +325,6 @@ declare namespace dlpPermission {
   function getDLPSuffix(): string;
 
   /**
-   * Represents the visited DLP file info.
-   *
-   * @interface VisitedDLPFileInfo
-   * @syscap SystemCapability.Security.DataLossPrevention
-   * @since 10
-   */
-  export interface VisitedDLPFileInfo {
-    /**
-     * URI of the DLP file.
-     *
-     * @type { string }
-     * @syscap SystemCapability.Security.DataLossPrevention
-     * @since 10
-     */
-    uri: string;
-
-    /**
-     * Time when the DLP file was last opened.
-     *
-     * @type { number }
-     * @syscap SystemCapability.Security.DataLossPrevention
-     * @since 10
-     */
-    recentOpenTime: number;
-  }
-
-  /**
    * Subscribes to the event reported when a DLP file is opened by the given application.
    *
    * @param { 'openDLPFile' } type - Indicates the type of the event to subscribe to.
@@ -376,7 +376,7 @@ declare namespace dlpPermission {
   function isInSandbox(callback: AsyncCallback<boolean>): void;
 
   /**
-   * Obtains the supported file types supported by DLP. This method uses a promise to return the result.
+   * Obtains the file types supported by DLP. This method uses a promise to return the result.
    *
    * @returns { Promise<Array<string>> } Returns the list of file types supported.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
@@ -384,10 +384,10 @@ declare namespace dlpPermission {
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function getDlpSupportFileType(): Promise<Array<string>>;
+  function getDLPSupportedFileTypes(): Promise<Array<string>>;
 
   /**
-   * Obtains the supported file types supported by DLP. This method uses an asynchronous callback to return the result.
+   * Obtains the file types supported by DLP. This method uses an asynchronous callback to return the result.
    *
    * @param { AsyncCallback<Array<string>> } callback - Indicates the callback invoked to return the result.
    * @throws { BusinessError } 401 - Parameter error.
@@ -396,7 +396,7 @@ declare namespace dlpPermission {
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function getDlpSupportFileType(callback: AsyncCallback<Array<string>>): void;
+  function getDLPSupportedFileTypes(callback: AsyncCallback<Array<string>>): void;
 
   /**
    * Sets the retention status for the files specified by {@code dorUri}. This method uses an asynchronous callback to return the result.
@@ -494,19 +494,19 @@ declare namespace dlpPermission {
   function getRetentionSandboxList(callback: AsyncCallback<Array<RetentionSandboxInfo>>): void;
 
   /**
-   * Obtains the DLP file access records. This method uses a promise to return the result.
+   * Obtains the DLP file visit records. This method uses a promise to return the result.
    *
-   * @returns { Promise<Array<VisitedDLPFileInfo>> } Returns a list of DLP files accessed recently.
+   * @returns { Promise<Array<VisitedDLPFileInfo>> } Returns a list of DLP files visited recently.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function getDLPFileVisitRecord(): Promise<Array<VisitedDLPFileInfo>>;
+  function getDLPFileVisitRecords(): Promise<Array<VisitedDLPFileInfo>>;
 
   /**
-   * Obtains the DLP file access records. This method uses an asynchronous callback to return the result.
+   * Obtains the DLP file visit records. This method uses an asynchronous callback to return the result.
    *
    * @param { AsyncCallback<Array<VisitedDLPFileInfo>> } callback - Indicates the callback invoked to return the result.
    * @throws { BusinessError } 401 - Parameter error.
@@ -516,7 +516,7 @@ declare namespace dlpPermission {
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function getDLPFileVisitRecord(callback: AsyncCallback<Array<VisitedDLPFileInfo>>): void;
+  function getDLPFileVisitRecords(callback: AsyncCallback<Array<VisitedDLPFileInfo>>): void;
 
   /**
    * Enumerates the gathering policy types for DLP files.
@@ -615,7 +615,7 @@ declare namespace dlpPermission {
    * @param { DLPFileAccess } access - Indicates the access permission for the DLP file.
    * @param { number } userId - Indicates the user ID.
    * @param { string } uri - Indicates the URI of the file.
-   * @returns { Promise<number> } Returns the index of the installed sandbox application.
+   * @returns { Promise<DLPSandboxInfo> } Returns the {@code DLPSandboxInfo} of the installed sandbox application.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
@@ -630,7 +630,7 @@ declare namespace dlpPermission {
     access: DLPFileAccess,
     userId: number,
     uri: string
-  ): Promise<number>;
+  ): Promise<DLPSandboxInfo>;
 
   /**
    * Installs a DLP sandbox application. This method uses an asynchronous callback to return the result.
@@ -640,7 +640,7 @@ declare namespace dlpPermission {
    * @param { DLPFileAccess } access - Indicates the access permission for the DLP file.
    * @param { number } userId - Indicates the user ID.
    * @param { string } uri - Indicates the URI of the file.
-   * @param { AsyncCallback<number> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<DLPSandboxInfo> } callback - Indicates the callback invoked to return the result.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
@@ -655,7 +655,7 @@ declare namespace dlpPermission {
     access: DLPFileAccess,
     userId: number,
     uri: string,
-    callback: AsyncCallback<number>
+    callback: AsyncCallback<DLPSandboxInfo>
   ): void;
 
   /**
