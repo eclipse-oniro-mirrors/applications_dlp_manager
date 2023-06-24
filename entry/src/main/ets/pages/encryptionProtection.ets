@@ -809,7 +809,8 @@ struct DlpDialog {
                     console.error(TAG, 'closeDLPFile failed', err.code, err.message);
                   }
                 }
-                globalThis.context.terminateSelf()
+                abilityResult.resultCode = 0
+                globalThis.context.terminateSelfWithResult(abilityResult);
               })
             Text().width(Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH).height(Constants.FOOTER_BUTTON_HEIGHT)
             Button($r('app.string.sure'), {
