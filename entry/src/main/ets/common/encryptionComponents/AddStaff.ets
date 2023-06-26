@@ -67,6 +67,8 @@ struct staffInput {
                 .onClick(() => {
                   this.activeStaffIndex = index;
                 })
+                .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
+                .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
             }
           },
           (item) => item.authAccount

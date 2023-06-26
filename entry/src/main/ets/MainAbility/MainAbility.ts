@@ -103,7 +103,7 @@ export default class MainAbility extends UIAbility {
     } else {
       this.authPerm = getAuthPerm(accountInfo.distributedInfo.name, this.dlpFile.dlpProperty);
     }
-    console.info(TAG, 'authPerm', JSON.stringify(this.authPerm))
+    console.info(TAG, 'authPerm', JSON.stringify(this.authPerm));
     AppStorage.SetOrCreate('authPerm', this.authPerm);
     AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||

@@ -167,4 +167,52 @@ let removeDuplicate = (arr, arg) => {
 }
 
 
-export { getOsAccountInfo, checkAccountLogin, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox, getFileFd, getFileUriByPath, removeDuplicate };
+let calculate = (newValue, allNames) => {
+  console.log(TAG + '22')
+  console.log(TAG + 'newValue', JSON.stringify(newValue))
+  console.log(TAG + 'newValue', JSON.stringify(allNames))
+  let editLength = allNames.length;
+  let screenWidth = newValue['width'] - Constants.HEADER_COLUMN_PADDING_LEFT;
+  let rowNamesLen = Math.floor(screenWidth / (Constants.ENCRYPTION_STAFF_WIDTH + Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT));
+  console.log(TAG + 'rowNamesLen', JSON.stringify(rowNamesLen))
+  let showNamesArr = editLength > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
+    ? allNames.slice(0, 2 * rowNamesLen - 1)
+    : allNames.slice(0, 2 * rowNamesLen);
+  console.log(TAG + 'showNamesArr', JSON.stringify(showNamesArr))
+  let hideNamesNum = editLength - showNamesArr.length > 0
+    ? String(editLength - showNamesArr.length)
+    : '0';
+  console.log(TAG + 'hideNamesNum', JSON.stringify(hideNamesNum))
+  return { rowNamesLen, showNamesArr, hideNamesNum }
+}
+
+let toggleShow = (allNames, showNamesArr, editFlag, rowNamesLen) => {
+  if (showNamesArr.length < allNames.length) {
+    let showFlag = !editFlag;
+    let showNamesArr = allNames;
+    return { showNamesArr, showFlag};
+  } else {
+    let showFlag = !editFlag;
+    let showNamesArr = allNames.length > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
+      ? allNames.slice(0, Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen - 1)
+      : allNames.slice(0, Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen);
+    return { showNamesArr, showFlag};
+  }
+}
+
+
+export {
+  getOsAccountInfo,
+  checkAccountLogin,
+  getUserId,
+  getAuthPerm,
+  terminateSelfWithResult,
+  startAlertAbility,
+  getAlertMessage,
+  judgeIsSandBox,
+  getFileFd,
+  getFileUriByPath,
+  removeDuplicate,
+  calculate,
+  toggleShow
+};

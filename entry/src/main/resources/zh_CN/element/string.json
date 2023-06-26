@@ -154,11 +154,11 @@
     },
     {
       "name": "enter_a_complete_account",
-      "value": "请输入用户账号"
+      "value": "请输入用户帐号"
     },
     {
       "name": "incorrect_account",
-      "value": "账号错误，请输入有效的账号"
+      "value": "帐号错误，请输入有效的帐号"
     },
     {
       "name": "encryption_loading_title",
@@ -194,7 +194,7 @@
     },
     {
       "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
-      "value": "帐号未登录，请登录账号后重试。"
+      "value": "帐号未登录，请登录帐号后重试。"
     },
     {
       "name": "TITLE_SERVICE_ERROR",

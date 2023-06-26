@@ -19,9 +19,10 @@ import staffItem from '../common/encryptionComponents/staff';
 import dlpPermission from '@ohos.dlpPermission';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 // @ts-ignore
-import { getAlertMessage, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import { getAlertMessage, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd, calculate, toggleShow } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import picker from '@ohos.file.picker';
+import deviceInfo from '@ohos.deviceInfo';
 
 const TAG = '[DLPManager_ModEnc]';
 
@@ -65,6 +66,19 @@ struct changeEncryption {
   @State dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   @State authPerm: number = 2;
   @State routerFlag: boolean = false;
+  @State editFlag: boolean = false;
+  @State ReadOnlyFlag: boolean = false;
+  @State rowNamesLenEdit: number = 0;
+  @State rowNamesLenReadOnly: number = 0;
+  @State hideNamesNumEdit: string = '0';
+  @State hideNamesNumReadOnly: string = '0';
+  @State showNamesArrEdit: {
+    authAccount: string,
+  }[] = [];
+  @State showNamesArrReadOnly: {
+    authAccount: string,
+  }[] = [];
+  @State deviceType: string = '';
   @State staffDataArrayReadOnly: {
     authAccount: string,
   }[] = [];
@@ -512,7 +526,7 @@ struct changeEncryption {
                       }) {
                         if (this.staffDataArrayReadOnly['length'] > 0) {
                           ForEach(
-                          this.staffDataArrayReadOnly,
+                          this.showNamesArrReadOnly,
                             (item, index) => {
                               staffItem({
                                 authAccount: item.authAccount,
@@ -522,8 +536,38 @@ struct changeEncryption {
                             },
                             (item) => item.authAccount
                           )
+                          if (Number(this.hideNamesNumReadOnly) > 0) {
+                            Row() {
+                              if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly['length']) {
+                                Text('+')
+                                Text(this.hideNamesNumReadOnly)
+                              }
+                              Image($r("app.media.icon_change"))
+                                .width(Constants.PP_IMAGE_HEIGHT)
+                                .height(Constants.PP_TEXT_FONT_SIZE2)
+                                .objectFit(ImageFit.Contain)
+                                .rotate({
+                                  angle: !this.ReadOnlyFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                })
+                                .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
+                            }
+                            .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
+                            .onClick(() => {
+                              let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
+                              this.showNamesArrReadOnly = showNamesArr;
+                              this.ReadOnlyFlag = showFlag;
+                            })
+                          }
                         }
                       }
+                      .onAreaChange((oldValue: Area, newValue: Area) => {
+                        if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                          let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayReadOnly);
+                          this.rowNamesLenReadOnly = rowNamesLen;
+                          this.showNamesArrReadOnly = showNamesArr;
+                          this.hideNamesNumReadOnly = hideNamesNum;
+                        }
+                      })
                       .margin({
                         top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                         bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
@@ -615,7 +659,7 @@ struct changeEncryption {
                       }) {
                         if (this.staffDataArrayEdit['length'] > 0) {
                           ForEach(
-                          this.staffDataArrayEdit,
+                          this.showNamesArrEdit,
                             (item, index) => {
                               staffItem({
                                 authAccount: item.authAccount,
@@ -625,8 +669,38 @@ struct changeEncryption {
                             },
                             (item) => item.authAccount
                           )
+                          if (Number(this.hideNamesNumEdit) > 0) {
+                            Row() {
+                              if (this.showNamesArrEdit.length !== this.staffDataArrayEdit['length']) {
+                                Text('+')
+                                Text(this.hideNamesNumEdit)
+                              }
+                              Image($r("app.media.icon_change"))
+                                .width(Constants.PP_IMAGE_HEIGHT)
+                                .height(Constants.PP_TEXT_FONT_SIZE2)
+                                .objectFit(ImageFit.Contain)
+                                .rotate({
+                                  angle: !this.editFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                })
+                                .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
+                            }
+                            .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
+                            .onClick(() => {
+                              let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayEdit, this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
+                              this.showNamesArrEdit = showNamesArr;
+                              this.editFlag = showFlag;
+                            })
+                          }
                         }
                       }
+                      .onAreaChange((oldValue: Area, newValue: Area) => {
+                        if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                          let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayEdit);
+                          this.rowNamesLenEdit = rowNamesLen;
+                          this.showNamesArrEdit = showNamesArr;
+                          this.hideNamesNumEdit = hideNamesNum;
+                        }
+                      })
                       .margin({
                         top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                         bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM

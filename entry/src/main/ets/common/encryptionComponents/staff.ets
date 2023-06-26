@@ -86,8 +86,8 @@ struct staffItem {
       }
     })
     .margin({
-      right: Constants.FOOTER_ROW_MARGIN,
-      bottom: Constants.DU_LINE_MARGIN_TOP2
+      right: Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT,
+      bottom: Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
     })
   }
 }

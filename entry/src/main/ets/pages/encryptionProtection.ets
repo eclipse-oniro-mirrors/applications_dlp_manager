@@ -812,7 +812,7 @@ struct DlpDialog {
                 abilityResult.resultCode = 0
                 globalThis.context.terminateSelfWithResult(abilityResult);
               })
-            Text().width(Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH).height(Constants.FOOTER_BUTTON_HEIGHT)
+              .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
             Button($r('app.string.sure'), {
               type: ButtonType.Capsule, stateEffect: true
             })
@@ -831,6 +831,7 @@ struct DlpDialog {
                   await this.beginEncrypting()
                 }
               })
+              .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
           }
           .margin({
             left: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
