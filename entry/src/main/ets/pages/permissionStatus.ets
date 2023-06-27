@@ -134,6 +134,7 @@ struct PermissionStatus {
     Text(text)
       .fontSize($r('sys.float.ohos_id_text_size_body2'))
       .width(Constants.HEADER_COLUMN_WIDTH)
+      .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
       .fontColor($r('sys.color.ohos_id_color_text_secondary'))
   }
 
@@ -166,30 +167,39 @@ struct PermissionStatus {
           Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
             Column() {
               Column() {
-                Text($r('app.string.header_title'))
-                  .fontWeight(FontWeight.Bold)
-                  .fontFamily($r('app.string.typeface'))
-                  .fontColor($r('app.color.text_color'))
-                  .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
-                  .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
-                  .width(Constants.HEADER_TEXT_WIDTH)
-                  .align(Alignment.Start)
                 Row() {
-                  Text(this.authPerm === Constants.FOOTER_OPACITY_ONE ? $r('app.string.permission_status_readOnly') : $r('app.string.permission_status_title'))
+                  Text($r('app.string.header_title'))
+                    .fontWeight(FontWeight.Medium)
                     .fontFamily($r('app.string.typeface'))
-                    .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                    .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                    .fontColor($r('app.color.text_color'))
+                    .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+                    .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
+                    .width(Constants.HEADER_TEXT_WIDTH)
                     .align(Alignment.Start)
                 }
                 .width(Constants.HEADER_COLUMN_WIDTH)
-                .margin({ top: Constants.DU_LINE_MARGIN_TOP2, bottom: Constants.DU_LINE_MARGIN_TOP2 })
+                .height(Constants.HEADER_COLUMN_HEIGHT)
+                .padding({
+                  left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                  right: Constants.HEADER_COLUMN_PADDING_RIGHT
+                })
+
+                Row() {
+                  Text(this.authPerm === Constants.FOOTER_OPACITY_ONE ? $r('app.string.permission_status_readOnly') : $r('app.string.permission_status_title'))
+                    .fontWeight(FontWeight.Regular)
+                    .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                    .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                    .width(Constants.HEADER_TEXT_WIDTH)
+                    .align(Alignment.Start)
+                }
+                .width(Constants.HEADER_COLUMN_WIDTH)
+                .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
+                .margin({ bottom: Constants.DU_LINE_MARGIN_TOP2 })
+                .padding({
+                  left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                  right: Constants.HEADER_COLUMN_PADDING_RIGHT
+                })
               }
-              .width(Constants.HEADER_COLUMN_WIDTH)
-              .margin({ top: Constants.HEADER_COLUMN_MAR_TOP })
-              .padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
 
               Column() {
                 List() {
@@ -203,9 +213,10 @@ struct PermissionStatus {
                               .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
                               .fontSize($r('sys.float.ohos_id_text_size_body1'))
                               .textAlign(TextAlign.Start)
-                              Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
-                                .width(Constants.PP_IMAGE_WIDTH)
-                                .height(Constants.PP_IMAGE_HEIGHT)
+                              .fontWeight(FontWeight.Medium)
+                            Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
+                              .width(Constants.PP_IMAGE_WIDTH)
+                              .height(Constants.PP_IMAGE_HEIGHT)
                           }
                         }
                       }, item => JSON.stringify(item))
@@ -227,39 +238,40 @@ struct PermissionStatus {
                 Text($r('app.string.apply_for_the_permission'))
                   .fontFamily($r('app.string.typeface'))
                   .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                  .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
                   .align(Alignment.Start)
+                  .fontWeight(FontWeight.Regular)
                 Text(this.accountId)
                   .fontFamily($r('app.string.typeface'))
                   .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                  .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                  .fontWeight(FontWeight.Regular)
               }
               .width(Constants.HEADER_COLUMN_WIDTH)
               .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
-              .margin({ top: Constants.DU_LINE_MARGIN_TOP2, bottom: Constants.DU_LINE_MARGIN_TOP2 })
+              .margin({ top: Constants.DA_MARGIN_TOP, bottom: Constants.DU_LINE_MARGIN_TOP2 })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
               })
 
               Row() {
-                Row() {
-                  Button($r('app.string.da_buttion'), { type: ButtonType.Capsule, stateEffect: true })
-                    .backgroundColor($r('app.color.base_button_color'))
-                    .fontColor($r('app.color.encryption_cancel'))
-                    .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
-                    .height(Constants.FOOTER_BUTTON_HEIGHT)
-                    .onClick(() => {
-                      globalThis.context.terminateSelf()
-                    })
-                }
-                .justifyContent(FlexAlign.Center)
-                .padding({
-                  bottom: Constants.FOOTER_ROW_PAD_BOTTOM,
-                  left: Constants.FOOTER_ROW_PAD_LEFT,
-                  right: Constants.FOOTER_ROW_PAD_RIGHT
-                })
+                Button($r('app.string.da_buttion'), { type: ButtonType.Capsule, stateEffect: true })
+                  .backgroundColor($r('app.color.base_button_color'))
+                  .fontColor($r('app.color.encryption_cancel'))
+                  .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
+                  .height(Constants.FOOTER_BUTTON_HEIGHT)
+                  .onClick(() => {
+                    globalThis.context.terminateSelf()
+                  })
               }
+              .justifyContent(FlexAlign.Center)
+              .padding({
+                top: Constants.FOOTER_ROW_PAD_LEFT,
+                bottom: Constants.HEADER_COLUMN_PADDING_BOTTOM,
+                left: Constants.FOOTER_ROW_PAD_LEFT,
+                right: Constants.FOOTER_ROW_PAD_RIGHT
+              })
             }
             .width(Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('app.color.index_background_color'))

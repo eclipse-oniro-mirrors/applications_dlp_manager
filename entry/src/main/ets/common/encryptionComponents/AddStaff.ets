@@ -42,7 +42,8 @@ struct staffInput {
             Stack() {
               staffItem({
                 authAccount: item.authAccount,
-                isActive: this.activeStaffIndex === index
+                isActive: this.activeStaffIndex === index,
+                changeIndex: Number(index),
               })
               Text(item.authAccount)
                 .opacity(Constants.PP_ROW_RADIUS)
@@ -71,7 +72,7 @@ struct staffInput {
           .backgroundColor(Color.White)
           .borderRadius(Constants.PP_ROW_RADIUS)
           .fontSize($r('sys.float.ohos_id_text_size_body1'))
-          .fontColor(this.isInputInvalid && 'RGB(232,64,38)')
+          .fontColor(this.isInputInvalid ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_primary'))
           .padding({
             top: Constants.PP_BUTTON_PAD,
             bottom: Constants.PP_BUTTON_PAD,
@@ -81,7 +82,7 @@ struct staffInput {
           .width(
             this.staffArray.length ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.FOOTER_ROW_WIDTH
           )
-          .height(22)
+          .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
           .onChange((value) => {
             this.inputId = value
             if (this.isInputInvalid) {
@@ -133,13 +134,14 @@ struct staffInput {
             this.activeStaffIndex = -1;
           })
       }
-      Divider()
-        .margin({
-          top: Constants.PP_TEXT_MARGIN_RIGHT,
-          right: Constants.PP_BUTTON_PAD,
-          bottom: Constants.PP_TEXT_MARGIN_RIGHT,
-          left: Constants.PP_BUTTON_PAD
-        })
+      .padding({
+        top: Constants.ENCRYPTION_ADD_STAFF_PADDING_TOP,
+        bottom: Constants.ENCRYPTION_ADD_STAFF_PADDING_BOTTOM
+      })
+      .border({
+        width: { bottom: Constants.ENCRYPTION_ADD_STAFF_BORDER },
+        color: this.isInputInvalid ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'),
+      })
       if (this.isInputInvalid) {
         Text($r('app.string.incorrect_work_ID'))
           .alignSelf(ItemAlign.Start)

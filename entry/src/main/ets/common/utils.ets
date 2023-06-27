@@ -134,5 +134,15 @@ function judgeIsSandBox() {
   })
 }
 
+let removeDuplicate = (arr, arg) => {
+  let map = new Map();
+  for (let item of arr) {
+    if (!map.has(item[arg])) {
+      map.set(item[arg], item);
+    }
+  }
+  return [...map.values()];
+}
 
-export { getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox,getFileFd,getFileUriByPath};
+
+export { getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox, getFileFd, getFileUriByPath, removeDuplicate };

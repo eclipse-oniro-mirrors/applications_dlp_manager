@@ -20,19 +20,42 @@ struct staffItem {
   @Prop authAccount: string;
   @Prop isActive: boolean;
   @State containerBackgroundColor: string = '#0D000000';
+  @State color: any[] = [
+    $r('sys.color.ohos_id_color_special1'),
+    $r('sys.color.ohos_id_color_special1'),
+    $r('sys.color.ohos_id_color_special2'),
+    $r('sys.color.ohos_id_color_special3'),
+    $r('sys.color.ohos_id_color_special4'),
+    $r('sys.color.ohos_id_color_special5'),
+    $r('sys.color.ohos_id_color_special6'),
+    $r('sys.color.ohos_id_color_special7'),
+    $r('sys.color.ohos_id_color_special8'),
+    $r('sys.color.ohos_id_color_special9'),
+    $r('sys.color.ohos_id_color_special10'),
+    $r('sys.color.ohos_id_color_special11'),
+  ];
+  @Prop changeIndex: number;
+
+  private rollColor() {
+    while (this.changeIndex > this.color.length - 1) {
+      this.changeIndex = this.changeIndex - this.color.length
+    }
+    return this.color[this.changeIndex]
+  }
+
   build() {
     Row() {
       Text(this.authAccount?.[0]?.toLocaleUpperCase())
-        .fontSize($r('sys.float.ohos_id_text_size_button2'))
+        .fontSize($r('sys.float.ohos_id_text_size_body3'))
         .fontWeight(FontWeight.Regular)
         .width(Constants.HEADER_ROW_FONT_SIZE)
         .height(Constants.HEADER_ROW_FONT_SIZE)
         .borderRadius(Constants.ENCRYPTION_STAFF_BORDER_RADIUS)
-        .backgroundColor('#BBB2C8')
+        .backgroundColor(this.rollColor())
         .fontColor(Color.White)
         .textAlign(TextAlign.Center)
         .margin({
-          right: Constants.PP_IMAGE_PAD,
+          right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
         })
       Text(this.authAccount)
         .constraintSize({
@@ -65,7 +88,7 @@ struct staffItem {
     })
     .margin({
       right: Constants.FOOTER_ROW_MARGIN,
-      bottom: Constants.PP_TEXT_PAD_RIGHT
+      bottom: Constants.DU_LINE_MARGIN_TOP2
     })
   }
 }

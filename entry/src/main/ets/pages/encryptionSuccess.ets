@@ -130,11 +130,12 @@ struct encryptionSuccess {
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              }) // 24 24
+              })
 
               Image($r('app.media.finished'))
                 .width(Constants.ENCRYPTION_SUCCESS_ICON)
                 .height(Constants.ENCRYPTION_SUCCESS_ICON)
+                .margin({ top: Constants.ENCRYPTION_SUCCESS_IMAGE_MARGIN_TOP})
               Column() {
                 Row() {
                   Text($r('app.string.file_encrypted'))
@@ -156,19 +157,19 @@ struct encryptionSuccess {
                     .textAlign(TextAlign.Center)
                 }
                 .width(Constants.HEADER_COLUMN_WIDTH)
-                .height(Constants.AP_MARGIN_TOP)
+                .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
               }
               .width(Constants.HEADER_COLUMN_WIDTH)
               .padding({
                 top: Constants.HEADER_COLUMN_PADDING_LEFT,
                 bottom: Constants.HEADER_COLUMN_PADDING_RIGHT
-              }) // 24 24
-
+              })
 
               Row() {
                 Text(!this.flag ? $r('app.string.viewing_encryption_details') : $r('app.string.stow_away'))
-                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body2'))
                   .fontColor($r('sys.color.ohos_id_color_secondary'))
+                  .fontWeight(FontWeight.Regular)
                   .textAlign(TextAlign.Center)
                 Image($r("app.media.icon_change"))
                   .width(Constants.PP_IMAGE_HEIGHT)
@@ -181,188 +182,249 @@ struct encryptionSuccess {
               }
               .onClick(() => this.onFlagChange())
               .width(Constants.ENCRYPTION_SUCCESS_TRANSLATE_WIDTH)
-              .height(Constants.AP_MARGIN_TOP)
+              .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
               .justifyContent(FlexAlign.Center)
+              .margin({ bottom: Constants.ENCRYPTION_SUCCESS_ROTATE_MARGIN_BOTTOM})
 
-              Column() {
-                if (this.flag) {
-                  Row() {
-                    Text($r('app.string.header_title_readonly'))
-                      .fontWeight(FontWeight.Medium)
-                      .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                    Text(`(${this.staffDataArrayReadOnly['length']}):`)
-                      .fontFamily($r('app.string.typeface'))
-                      .fontWeight(FontWeight.Regular)
-                      .fontColor($r('app.color.text_color'))
-                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                    Image($r('app.media.details'))
-                      .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                      .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                      .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                      .onClick(() => {
-                        this.handlePopupReadOnly = !this.handlePopupReadOnly
-                      })
-                      .bindPopup(this.handlePopupReadOnly, {
-                        builder: this.popupBuilderReadOnly,
-                        placement: Placement.Bottom,
-                        popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-                        enableArrow: true,
-                        showInSubWindow: false,
-                        onStateChange: (e) => {
-                          if (!e.isVisible) {
-                            this.handlePopupReadOnly = false
-                          }
-                        }
-                      })
-                  }
-                  .width(Constants.FOOTER_ROW_WIDTH)
-                  .height(Constants.FOOTER_ROW_HEIGHT)
-                  .margin({ top: Constants.FOOTER_ROW_MARGIN })
-                  .padding({
-                    left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                    right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                  })
-                  Flex({
-                    direction: FlexDirection.Row,
-                    wrap: FlexWrap.Wrap,
-                  }) {
-                    if (this.staffDataArrayReadOnly['length'] > 0) {
-                      ForEach(
-                        this.staffDataArrayReadOnly,
-                        (item, index) => {
-                          staffItem({
-                            authAccount: item.authAccount,
-                            isActive: false
+              Scroll() {
+                Column() {
+                  if (this.flag) {
+                    if (this.routerParams['selectedPermissionTypeReadOnly'].data === 'all') {
+                      Row() {
+                        Text($r('app.string.header_title_readonly'))
+                          .fontWeight(FontWeight.Medium)
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(` : ${$r('app.string.PERMISSION_TYPE_SELECT_ALL')}`)
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Image($r('app.media.details'))
+                          .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                          .onClick(() => {
+                            this.handlePopupReadOnly = !this.handlePopupReadOnly
                           })
-                        },
-                        (item) => item.authAccount
-                      )
-                    }
-                  }.padding({
-                    left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                    right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                  })
-
-                  Row() {
-                    Text($r('app.string.header_title_edit'))
-                      .fontWeight(FontWeight.Medium)
-                      .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                    Text(`(${this.staffDataArrayEdit['length']}):`)
-                      .fontFamily($r('app.string.typeface'))
-                      .fontWeight(FontWeight.Regular)
-                      .fontColor($r('app.color.text_color'))
-                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                    Image($r('app.media.details'))
-                      .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                      .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                      .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                      .onClick(() => {
-                        this.handlePopupEdit = !this.handlePopupEdit
-                      })
-                      .bindPopup(this.handlePopupEdit, {
-                        builder: this.popupBuilderEdit,
-                        placement: Placement.Bottom,
-                        popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-                        enableArrow: true,
-                        showInSubWindow: false,
-                        onStateChange: (e) => {
-                          if (!e.isVisible) {
-                            this.handlePopupEdit = false
-                          }
-                        }
-                      })
-                  }
-                  .justifyContent(FlexAlign.Start)
-                  .width(Constants.FOOTER_ROW_WIDTH)
-                  .height(Constants.FOOTER_ROW_HEIGHT)
-                  .margin({ top: Constants.FOOTER_ROW_MARGIN })
-                  .padding({
-                    left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                    right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                  })
-                  Flex({
-                    direction: FlexDirection.Row,
-                    wrap: FlexWrap.Wrap,
-                  }) {
-                    if (this.staffDataArrayEdit['length'] > 0) {
-                      ForEach(
-                        this.staffDataArrayEdit,
-                        (item, index) => {
-                          staffItem({
-                            authAccount: item.authAccount,
-                            isActive: false
+                          .bindPopup(this.handlePopupReadOnly, {
+                            builder: this.popupBuilderReadOnly,
+                            placement: Placement.Bottom,
+                            popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                            enableArrow: true,
+                            showInSubWindow: false,
+                            onStateChange: (e) => {
+                              if (!e.isVisible) {
+                                this.handlePopupReadOnly = false
+                              }
+                            }
                           })
-                        },
-                        (item) => item.authAccount
-                      )
+                      }
+                      .width(Constants.FOOTER_ROW_WIDTH)
+                      .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
+                      .margin({ top: Constants.FOOTER_ROW_MARGIN })
                     }
-                  }.padding({
-                    left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                    right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                  })
+                    if (this.staffDataArrayReadOnly['length']) {
+                      Row() {
+                        Text($r('app.string.header_title_readonly'))
+                          .fontWeight(FontWeight.Medium)
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(` (${this.staffDataArrayReadOnly['length']}):`)
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Image($r('app.media.details'))
+                          .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                          .onClick(() => {
+                            this.handlePopupReadOnly = !this.handlePopupReadOnly
+                          })
+                          .bindPopup(this.handlePopupReadOnly, {
+                            builder: this.popupBuilderReadOnly,
+                            placement: Placement.Bottom,
+                            popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                            enableArrow: true,
+                            showInSubWindow: false,
+                            onStateChange: (e) => {
+                              if (!e.isVisible) {
+                                this.handlePopupReadOnly = false
+                              }
+                            }
+                          })
+                      }
+                      .width(Constants.FOOTER_ROW_WIDTH)
+                      .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
 
-                  Column({ space: Constants.HEADER_ROW_FONT_SIZE }) {
+                      Flex({
+                        direction: FlexDirection.Row,
+                        wrap: FlexWrap.Wrap,
+                      }) {
+                        if (this.staffDataArrayReadOnly['length'] > 0) {
+                          ForEach(
+                            this.staffDataArrayReadOnly,
+                            (item, index) => {
+                              staffItem({
+                                authAccount: item.authAccount,
+                                isActive: false,
+                                changeIndex: Number(index),
+                              })
+                            },
+                            (item) => item.authAccount
+                          )
+                        }
+                      }
+                      .margin({
+                        top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                        bottom:Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+                      })
+                    }
 
-                    Row() {
-                      Text($r('app.string.document_valid_until'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                        .fontWeight(FontWeight.Medium)
-                        .textAlign(TextAlign.Start)
-                      Text($r('app.string.permanently'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                        .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                        .fontWeight(FontWeight.Regular)
-                        .width(Constants.HEADER_COLUMN_WIDTH)
-                        .textAlign(TextAlign.Start)
-                        .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                    if (this.routerParams['selectedPermissionTypeEdit'].data !== 'target') {
+                      Row() {
+                        Text($r('app.string.header_title_edit'))
+                          .fontWeight(FontWeight.Medium)
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(` : ${this.routerParams['selectedPermissionTypeEdit'].data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF')}`)
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Image($r('app.media.details'))
+                          .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                          .onClick(() => {
+                            this.handlePopupEdit = !this.handlePopupEdit
+                          })
+                          .bindPopup(this.handlePopupEdit, {
+                            builder: this.popupBuilderEdit,
+                            placement: Placement.Bottom,
+                            popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                            enableArrow: true,
+                            showInSubWindow: false,
+                            onStateChange: (e) => {
+                              if (!e.isVisible) {
+                                this.handlePopupEdit = false
+                              }
+                            }
+                          })
+                      }
+                      .justifyContent(FlexAlign.Start)
+                      .width(Constants.FOOTER_ROW_WIDTH)
+                      .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
+                    }
+                    if (this.staffDataArrayEdit['length']) {
+                      Row() {
+                        Text($r('app.string.header_title_edit'))
+                          .fontWeight(FontWeight.Medium)
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(` (${this.staffDataArrayEdit['length']}):`)
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Image($r('app.media.details'))
+                          .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                          .onClick(() => {
+                            this.handlePopupEdit = !this.handlePopupEdit
+                          })
+                          .bindPopup(this.handlePopupEdit, {
+                            builder: this.popupBuilderEdit,
+                            placement: Placement.Bottom,
+                            popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                            enableArrow: true,
+                            showInSubWindow: false,
+                            onStateChange: (e) => {
+                              if (!e.isVisible) {
+                                this.handlePopupEdit = false
+                              }
+                            }
+                          })
+                      }
+                      .justifyContent(FlexAlign.Start)
+                      .width(Constants.FOOTER_ROW_WIDTH)
+                      .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
+
+                      Flex({
+                        direction: FlexDirection.Row,
+                        wrap: FlexWrap.Wrap,
+                      }) {
+                        if (this.staffDataArrayEdit['length'] > 0) {
+                          ForEach(
+                            this.staffDataArrayEdit,
+                            (item, index) => {
+                              staffItem({
+                                authAccount: item.authAccount,
+                                isActive: false,
+                                changeIndex: Number(index),
+                              })
+                            },
+                            (item) => item.authAccount
+                          )
+                        }
+                      }
+                      .margin({
+                        top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                        bottom:Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+                      })
+                    }
+
+                    Column({ space: Constants.HEADER_ROW_FONT_SIZE }) {
+                      Row() {
+                        Text($r('app.string.document_valid_until'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontWeight(FontWeight.Medium)
+                          .textAlign(TextAlign.Start)
+                        Text($r('app.string.permanently'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                          .fontWeight(FontWeight.Regular)
+                          .width(Constants.HEADER_COLUMN_WIDTH)
+                          .textAlign(TextAlign.Start)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                      }
+                      .width(Constants.HEADER_COLUMN_WIDTH)
+
+                      Row() {
+                        Text($r('app.string.change_encryption'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+                          .fontWeight(FontWeight.Medium)
+                          .width(Constants.HEADER_COLUMN_WIDTH)
+                          .textAlign(TextAlign.Start)
+                          .onClick(() => {
+                            let routerParams = {
+                              displayName: this.routerParams['displayName'],
+                              dlpFd: this.routerParams['dlpFd']
+                            }
+                            router.replaceUrl({
+                              url: 'pages/changeEncryption',
+                              params: routerParams
+                            })
+                          })
+                      }
+                      .width(Constants.HEADER_COLUMN_WIDTH)
                     }
                     .width(Constants.HEADER_COLUMN_WIDTH)
-                    .height(Constants.AP_MARGIN_TOP)
-                    .padding({
-                      left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                      right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                    })
-
-                    Row() {
-                      Text($r('app.string.change_encryption'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                        .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-                        .fontWeight(FontWeight.Medium)
-                        .width(Constants.HEADER_COLUMN_WIDTH)
-                        .textAlign(TextAlign.Start)
-                        .onClick(() => {
-                          let routerParams = {
-                            displayName: this.routerParams['displayName'],
-                            dlpFd: this.routerParams['dlpFd']
-                          }
-                          router.replaceUrl({
-                            url: 'pages/changeEncryption',
-                            params: routerParams
-                          })
-                        })
-                    }
-                    .width(Constants.HEADER_COLUMN_WIDTH)
-                    .height(Constants.AP_MARGIN_TOP)
-                    .padding({
-                      left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                      right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                    })
+                    .margin({ bottom: Constants.ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM})
                   }
-                  .width(Constants.HEADER_COLUMN_WIDTH)
-                  .padding({
-                    top: Constants.HEADER_COLUMN_PADDING_LEFT
-                  })
                 }
-              }
-              .clip(true)
-              .constraintSize({
-                maxHeight: this.flag ? Constants.HEADER_COLUMN_WIDTH : Constants.PP_BUTTON_PAD
+              }.constraintSize({
+                maxHeight: Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
+              })
+              .padding({
+                left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                right: Constants.HEADER_COLUMN_PADDING_RIGHT
               })
 
-              Row() {
                 Row() {
                   Button($r('app.string.finished'), { type: ButtonType.Capsule, stateEffect: true })
                     .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
@@ -371,19 +433,18 @@ struct encryptionSuccess {
                     .height(Constants.FOOTER_HEIGHT)
                     .onClick(async (event) => {
                       abilityResult.resultCode = 0
-                      globalThis.context.terminateSelfWithResult(abilityResult)
+                      globalThis.context.terminateSelfWithResult(abilityResult);
                     })
                 }
                 .justifyContent(FlexAlign.Center)
                 .margin({
-                  top: this.flag ? Constants.HEADER_COLUMN_PADDING_LEFT : Constants.ENCRYPTION_SUCCESS_CHANGE_TOP
+                  top: this.flag ? Constants.ENCRYPTION_BUTTON_PADDING_TOP : Constants.ENCRYPTION_SUCCESS_CHANGE_TOP,
+                  bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM
                 })
                 .padding({
-                  bottom: Constants.FOOTER_ROW_PAD_BOTTOM,
                   left: Constants.FOOTER_ROW_PAD_LEFT,
                   right: Constants.FOOTER_ROW_PAD_RIGHT
                 })
-              }
             }
             .width(Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('app.color.index_background_color'))

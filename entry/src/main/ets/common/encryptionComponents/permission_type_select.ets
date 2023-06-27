@@ -76,7 +76,7 @@ struct permissionTypeSelect {
       .selected(this.selectedItem.index)
       .value(`${this.selectedItem.value}${
               this.selectedItem?.data === 'target' && this.staffArray.length > 0 ?
-              `(${this.staffArray.length})` :
+              ` (${this.staffArray.length})` :
               ''
       }`)
       .onSelect((index:number) => {

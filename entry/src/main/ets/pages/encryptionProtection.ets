@@ -25,6 +25,7 @@ import {
   getUserId,
   judgeIsSandBox,
   getAuthPerm,
+  removeDuplicate,
   getFileFd
 } from '../common/utils';
 import Constants from '../common/constant';
@@ -296,6 +297,9 @@ struct DlpDialog {
       property.ownerAccount = accountInfo.distributedInfo.name;
       property.ownerAccountID = accountInfo.distributedInfo.id;
     }
+    property.authUserList = []
+    property.supportEveryone = false;
+    property.everyonePerm = dlpPermission.DLPFileAccess.FULL_CONTROL;
     if (this.selectedPermissionTypeEdit.data === 'all') {
       property.supportEveryone = true;
       property.everyonePerm = dlpPermission.DLPFileAccess.CONTENT_EDIT;
@@ -306,8 +310,13 @@ struct DlpDialog {
         property.supportEveryone = true;
         property.everyonePerm = dlpPermission.DLPFileAccess.READ_ONLY;
       }
+      if (this.selectedPermissionTypeReadOnly.data === 'all') {
+        this.staffDataArrayReadOnly = []
+      }
+      if (this.selectedPermissionTypeEdit.data !== 'target') {
+        this.staffDataArrayEdit = [];
+      }
       // foreach
-      property.authUserList = []
       this.staffDataArrayReadOnly && this.staffDataArrayReadOnly.forEach(item => {
         property.authUserList.push({
           authAccount: item.authAccount,
@@ -364,12 +373,15 @@ struct DlpDialog {
     fileio.closeSync(tempFd);
     fileio.unlinkSync(filePath);
     await this.catchProcess();
+    let sendStaffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
+    let sendStaffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
+    let newStaffDataArrayReadOnly = sendStaffDataArrayReadOnly.filter((item) =>!sendStaffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
     this.processing = false;
     router.replaceUrl({
       url: 'pages/encryptionSuccess',
       params: {
-        staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-        staffDataArrayEdit: this.staffDataArrayEdit,
+        staffDataArrayReadOnly: newStaffDataArrayReadOnly,
+        staffDataArrayEdit: sendStaffDataArrayEdit,
         selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
         selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
         displayName: this.srcFileName,
@@ -420,6 +432,12 @@ struct DlpDialog {
             this.dlpFile.dlpProperty.everyonePerm = dlpPermission.DLPFileAccess.READ_ONLY
           }
           // foreach
+          if (this.selectedPermissionTypeReadOnly.data === 'all') {
+            this.staffDataArrayReadOnly = []
+          }
+          if (this.selectedPermissionTypeEdit.data !== 'target') {
+            this.staffDataArrayEdit = [];
+          }
           this.dlpFile.dlpProperty.authUserList = []
           this.staffDataArrayReadOnly && this.staffDataArrayReadOnly.forEach(item => {
             this.dlpFile.dlpProperty.authUserList.push({
@@ -464,12 +482,15 @@ struct DlpDialog {
         } catch (err) {
           console.error(TAG, 'closeDLPFile failed', err.code, err.message);
         }
+        let sendStaffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
+        let sendStaffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
+        let newStaffDataArrayReadOnly = sendStaffDataArrayReadOnly.filter((item) =>!sendStaffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
         this.processing = false;
         router.replaceUrl({
           url: 'pages/encryptionSuccess',
           params: {
-            staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-            staffDataArrayEdit: this.staffDataArrayEdit,
+            staffDataArrayReadOnly: newStaffDataArrayReadOnly,
+            staffDataArrayEdit: sendStaffDataArrayEdit,
             selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
             selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
             displayName: uriFileAsset.displayName,
@@ -536,10 +557,10 @@ struct DlpDialog {
       this.permissionDict[index].value = await globalThis.context.resourceManager.getString(item.value.id)
     })
     let readOnlyData = defaultDlpProperty.authUserList.filter(item => {
-      return item.authPerm === 1;
+      return item.dlpFileAccess === 1;
     })
     let editData = defaultDlpProperty.authUserList.filter(item => {
-      return item.authPerm === 2;
+      return item.dlpFileAccess === 2;
     })
     const filterEditFilter = () => {
       if (editData.length === 0) {
@@ -549,10 +570,10 @@ struct DlpDialog {
       }
     }
     if (defaultDlpProperty.supportEveryone) {
-      if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.CONTENT_EDIT) { // 编辑 2
+      if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
         this.selectedPermissionTypeEdit = this.permissionDict[1];
         this.staffDataArrayReadOnly = readOnlyData;
-      } else if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.READ_ONLY) { // 只读1
+      } else if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.READ_ONLY) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
         this.staffDataArrayReadOnly = [];
         filterEditFilter()
@@ -633,42 +654,42 @@ struct DlpDialog {
     await this.checkAndOpenDlpFile(this.srcFileName, this.srcFd, this.linkFileName);
   }
 
-build() {
-  Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-    EncryptingPanel({ processing: $processing })
-    if (!this.processing) {
-      Column() {
-        Row() {
-          Text($r('app.string.header_title'))
-            .fontWeight(FontWeight.Bold)
-            .fontFamily($r('app.string.typeface'))
-            .fontColor($r('app.color.text_color'))
-            .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
-            .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
-            .width(Constants.HEADER_TEXT_WIDTH)
-            .align(Alignment.Start)
-        }
-        .width(Constants.HEADER_COLUMN_WIDTH)
-        .height(Constants.HEADER_COLUMN_HEIGHT)
-        .padding({
-          left: Constants.HEADER_COLUMN_PADDING_LEFT,
-          right: Constants.HEADER_COLUMN_PADDING_RIGHT
-        })
+  build() {
+    Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
+      EncryptingPanel({ processing: $processing })
+      if (!this.processing) {
+        Column() {
+          Row() {
+            Text($r('app.string.header_title'))
+              .fontWeight(FontWeight.Medium)
+              .fontFamily($r('app.string.typeface'))
+              .fontColor($r('app.color.text_color'))
+              .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+              .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
+              .width(Constants.HEADER_TEXT_WIDTH)
+              .align(Alignment.Start)
+          }
+          .width(Constants.HEADER_COLUMN_WIDTH)
+          .height(Constants.HEADER_COLUMN_HEIGHT)
+          .padding({
+            left: Constants.HEADER_COLUMN_PADDING_LEFT,
+            right: Constants.HEADER_COLUMN_PADDING_RIGHT
+          })
 
-        Row() {
-          Text($r('app.string.header_title_list'))
-            .fontWeight(FontWeight.Regular)
-            .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-            .fontSize($r('sys.float.ohos_id_text_size_body1'))
-            .width(Constants.HEADER_TEXT_WIDTH)
-            .align(Alignment.Start)
-        }
-        .width(Constants.HEADER_COLUMN_WIDTH)
-        .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
-        .padding({
-          left: Constants.HEADER_COLUMN_PADDING_LEFT,
-          right: Constants.HEADER_COLUMN_PADDING_RIGHT
-        })
+          Row() {
+            Text($r('app.string.header_title_list'))
+              .fontWeight(FontWeight.Regular)
+              .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+              .fontSize($r('sys.float.ohos_id_text_size_body1'))
+              .width(Constants.HEADER_TEXT_WIDTH)
+              .align(Alignment.Start)
+          }
+          .width(Constants.HEADER_COLUMN_WIDTH)
+          .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
+          .padding({
+            left: Constants.HEADER_COLUMN_PADDING_LEFT,
+            right: Constants.HEADER_COLUMN_PADDING_RIGHT
+          })
 
           Scroll() {
             Column() {
@@ -707,10 +728,6 @@ build() {
               .width(Constants.FOOTER_ROW_WIDTH)
               .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
               .margin({ top: Constants.FOOTER_ROW_MARGIN })
-              .padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
 
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeReadOnly?.data)) {
@@ -719,10 +736,8 @@ build() {
                     isDisable: this.selectedPermissionTypeEdit?.data === 'all',
                   })
                 }
-              }.padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
+              }
+              .margin({ bottom: Constants.ENCRYPTION_STAFF_ITEM_MARGIN_BOTTOM })
 
               Row() {
                 Text($r('app.string.header_title_edit'))
@@ -757,10 +772,6 @@ build() {
               }
               .width(Constants.FOOTER_ROW_WIDTH)
               .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-              .padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
 
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeEdit?.data)) {
@@ -769,67 +780,68 @@ build() {
                     isDisable: false
                   })
                 }
-              }.padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
+              }
+              .margin({ bottom: Constants.ENCRYPTION_STAFF_ITEM_MARGIN_BOTTOM })
             }
           }.constraintSize({
-            maxHeight: Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH
+            maxHeight: Constants.CHANGE_MAX_HEIGHT
+          })
+          .padding({
+            left: Constants.HEADER_COLUMN_PADDING_LEFT,
+            right: Constants.HEADER_COLUMN_PADDING_RIGHT
           })
 
-        Row() {
-          Button($r('app.string.ban'), { type: ButtonType.Capsule, stateEffect: true })
-            .backgroundColor($r('app.color.base_button_color'))
-            .width(Constants.FOOTER_WIDTH_BUTTON)
-            .focusable(false)
-            .fontColor($r('app.color.encryption_cancel'))
-            .height(Constants.FOOTER_HEIGHT)
-            .onClick(async (event) => {
-              if (this.isDlpFile && !this.requestIsFromSandBox) {
-                try {
-                  console.info(TAG, 'closeDLPFile', this.srcFd);
-                  await this.dlpFile.closeDLPFile()
-                } catch (err) {
-                  console.error(TAG, 'closeDLPFile failed', err.code, err.message);
+          Flex({ direction: FlexDirection.Row }) {
+            Button($r('app.string.ban'), { type: ButtonType.Capsule, stateEffect: true })
+              .backgroundColor($r('app.color.base_button_color'))
+              .width(Constants.HEADER_TEXT_WIDTH)
+              .focusable(false)
+              .fontColor($r('app.color.encryption_cancel'))
+              .height(Constants.FOOTER_HEIGHT)
+              .onClick(async (event) => {
+                if (this.isDlpFile && !this.requestIsFromSandBox) {
+                  try {
+                    console.info(TAG, 'closeDLPFile', this.srcFd);
+                    await this.dlpFile.closeDLPFile()
+                  } catch (err) {
+                    console.error(TAG, 'closeDLPFile failed', err.code, err.message);
+                  }
                 }
-              }
-              globalThis.context.terminateSelf()
+                globalThis.context.terminateSelf()
+              })
+            Text().width(Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH).height(Constants.FOOTER_BUTTON_HEIGHT)
+            Button($r('app.string.sure'), {
+              type: ButtonType.Capsule, stateEffect: true
             })
-          Blank()
-          Button($r('app.string.sure'), {
-            type: ButtonType.Capsule, stateEffect: true
+              .backgroundColor($r('app.color.base_button_color'))
+              .width(Constants.HEADER_TEXT_WIDTH)
+              .focusable(false)
+              .fontColor($r('app.color.encryption_cancel'))
+              .enabled((this.staffDataArrayReadOnly.length > 0 || this.staffDataArrayEdit.length > 0 || ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data) || ['all', 'self'].includes(this.selectedPermissionTypeEdit.data)))
+              .opacity((this.staffDataArrayReadOnly.length > 0 || this.staffDataArrayEdit.length > 0 || ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data) || ['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) ?
+              Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
+              .height(Constants.FOOTER_BUTTON_HEIGHT)
+              .onClick(async (event) => {
+                if (this.isDlpFile) {
+                  await this.changeEncrypt()
+                } else {
+                  await this.beginEncrypting()
+                }
+              })
+          }
+          .margin({
+            left: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
+            right: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
+            bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM,
+            top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
           })
-            .backgroundColor($r('app.color.base_button_color'))
-            .width(Constants.FOOTER_WIDTH_BUTTON)
-            .focusable(false)
-            .fontColor($r('app.color.encryption_cancel'))
-            .enabled((this.staffDataArrayReadOnly.length > 0 || this.staffDataArrayEdit.length > 0 || ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data) || ['all', 'self'].includes(this.selectedPermissionTypeEdit.data)))
-            .opacity((this.staffDataArrayReadOnly.length > 0 || this.staffDataArrayEdit.length > 0 || ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data) || ['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) ?
-            Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
-            .height(Constants.FOOTER_BUTTON_HEIGHT)
-            .onClick(async (event) => {
-              if (this.isDlpFile) {
-                await this.changeEncrypt()
-              } else {
-                await this.beginEncrypting()
-              }
-            })
         }
         .width(Constants.FOOTER_ROW_WIDTH)
-        .margin({ top: Constants.PP_ROW_MARGIN_TOP })
-        .padding({
-          bottom: Constants.HEADER_COLUMN_PADDING_BOTTOM,
-          left: Constants.FOOTER_ROW_PAD_LEFT,
-          right: Constants.FOOTER_ROW_PAD_RIGHT
-        })
+        .backgroundColor($r('app.color.index_background_color'))
+        .borderRadius(Constants.INDEX_BORDER_RADIUS)
       }
-      .width(Constants.FOOTER_ROW_WIDTH)
-      .backgroundColor($r('app.color.index_background_color'))
-      .borderRadius(Constants.INDEX_BORDER_RADIUS)
     }
   }
-}
 }
 
 @Entry

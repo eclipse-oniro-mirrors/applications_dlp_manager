@@ -50,7 +50,7 @@ struct EncryptingPanel {
               Column() {
                 Column() {
                   Text($r('app.string.header_title'))
-                    .fontWeight(FontWeight.Bold)
+                    .fontWeight(FontWeight.Medium)
                     .fontFamily($r('app.string.typeface'))
                     .fontColor($r('app.color.text_color'))
                     .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
