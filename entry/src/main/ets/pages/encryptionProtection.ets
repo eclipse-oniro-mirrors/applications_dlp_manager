@@ -304,6 +304,7 @@ struct DlpDialog {
       property.supportEveryone = true;
       property.everyonePerm = dlpPermission.DLPFileAccess.CONTENT_EDIT;
       this.staffDataArrayReadOnly = [];
+      this.staffDataArrayEdit = [];
     } else {
       let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all';
       if (isReadyOnlyAll) {

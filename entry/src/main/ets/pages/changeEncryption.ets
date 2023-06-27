@@ -429,7 +429,7 @@ struct changeEncryption {
               }
               .width(Constants.HEADER_COLUMN_WIDTH)
               .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
-              .margin({ bottom: Constants.ENCRYPTION_CHANGE_TIPS_MARGIN_BOTTOM})
+              .margin({ bottom: Constants.ENCRYPTION_CHANGE_TIPS_MARGIN_BOTTOM })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
@@ -443,7 +443,12 @@ struct changeEncryption {
                         .fontWeight(FontWeight.Medium)
                         .fontColor($r('sys.color.ohos_id_color_text_primary'))
                         .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text(` : ${$r('app.string.PERMISSION_TYPE_SELECT_ALL')}`)
+                      Text(' : ')
+                        .fontFamily($r('app.string.typeface'))
+                        .fontWeight(FontWeight.Regular)
+                        .fontColor($r('app.color.text_color'))
+                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                      Text($r('app.string.PERMISSION_TYPE_SELECT_ALL'))
                         .fontFamily($r('app.string.typeface'))
                         .fontWeight(FontWeight.Regular)
                         .fontColor($r('app.color.text_color'))
@@ -470,65 +475,69 @@ struct changeEncryption {
                     }
                     .width(Constants.FOOTER_ROW_WIDTH)
                     .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-                    .margin({ top: Constants.FOOTER_ROW_MARGIN })
-                  }
-                  if (this.staffDataArrayReadOnly['length']) {
-                    Row() {
-                      Text($r('app.string.header_title_readonly'))
-                        .fontWeight(FontWeight.Medium)
-                        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text(` (${this.staffDataArrayReadOnly['length']}):`)
-                        .fontFamily($r('app.string.typeface'))
-                        .fontWeight(FontWeight.Regular)
-                        .fontColor($r('app.color.text_color'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Image($r('app.media.details'))
-                        .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                        .onClick(() => {
-                          this.handlePopupReadOnly = !this.handlePopupReadOnly
-                        })
-                        .bindPopup(this.handlePopupReadOnly, {
-                          builder: this.popupBuilderReadOnly,
-                          placement: Placement.Bottom,
-                          popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-                          enableArrow: true,
-                          showInSubWindow: false,
-                          onStateChange: (e) => {
-                            if (!e.isVisible) {
-                              this.handlePopupReadOnly = false
-                            }
-                          }
-                        })
-                    }
-                    .width(Constants.FOOTER_ROW_WIDTH)
-                    .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-                    .margin({ top: Constants.FOOTER_ROW_MARGIN })
-
-                    Flex({
-                      direction: FlexDirection.Row,
-                      wrap: FlexWrap.Wrap,
-                    }) {
-                      if (this.staffDataArrayReadOnly['length'] > 0) {
-                        ForEach(
-                          this.staffDataArrayReadOnly,
-                          (item, index) => {
-                            staffItem({
-                              authAccount: item.authAccount,
-                              isActive: false,
-                              changeIndex: Number(index),
-                            })
-                          },
-                          (item) => item.authAccount
-                        )
-                      }
-                    }
                     .margin({
                       top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
-                      bottom:Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+                      bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
                     })
+                  } else {
+                    if (this.staffDataArrayReadOnly['length']) {
+                      Row() {
+                        Text($r('app.string.header_title_readonly'))
+                          .fontWeight(FontWeight.Medium)
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(` (${this.staffDataArrayReadOnly['length']}):`)
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Image($r('app.media.details'))
+                          .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                          .onClick(() => {
+                            this.handlePopupReadOnly = !this.handlePopupReadOnly
+                          })
+                          .bindPopup(this.handlePopupReadOnly, {
+                            builder: this.popupBuilderReadOnly,
+                            placement: Placement.Bottom,
+                            popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                            enableArrow: true,
+                            showInSubWindow: false,
+                            onStateChange: (e) => {
+                              if (!e.isVisible) {
+                                this.handlePopupReadOnly = false
+                              }
+                            }
+                          })
+                      }
+                      .width(Constants.FOOTER_ROW_WIDTH)
+                      .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
+                      .margin({ top: Constants.FOOTER_ROW_MARGIN })
+
+                      Flex({
+                        direction: FlexDirection.Row,
+                        wrap: FlexWrap.Wrap,
+                      }) {
+                        if (this.staffDataArrayReadOnly['length'] > 0) {
+                          ForEach(
+                          this.staffDataArrayReadOnly,
+                            (item, index) => {
+                              staffItem({
+                                authAccount: item.authAccount,
+                                isActive: false,
+                                changeIndex: Number(index),
+                              })
+                            },
+                            (item) => item.authAccount
+                          )
+                        }
+                      }
+                      .margin({
+                        top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                        bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+                      })
+                    }
                   }
                   if (this.selectedPermissionTypeEdit.data !== 'target') {
                     Row() {
@@ -536,7 +545,12 @@ struct changeEncryption {
                         .fontWeight(FontWeight.Medium)
                         .fontColor($r('sys.color.ohos_id_color_text_primary'))
                         .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text(` : ${this.selectedPermissionTypeEdit.data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF')}`)
+                      Text(' : ')
+                        .fontFamily($r('app.string.typeface'))
+                        .fontWeight(FontWeight.Regular)
+                        .fontColor($r('app.color.text_color'))
+                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                      Text(this.selectedPermissionTypeEdit.data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                         .fontFamily($r('app.string.typeface'))
                         .fontWeight(FontWeight.Regular)
                         .fontColor($r('app.color.text_color'))
@@ -564,65 +578,69 @@ struct changeEncryption {
                     .justifyContent(FlexAlign.Start)
                     .width(Constants.FOOTER_ROW_WIDTH)
                     .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-                    .margin({ top: Constants.FOOTER_ROW_MARGIN })
-                  }
-                  if (this.staffDataArrayEdit['length']) {
-                    Row() {
-                      Text($r('app.string.header_title_edit'))
-                        .fontWeight(FontWeight.Medium)
-                        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text(` (${this.staffDataArrayEdit['length']}):`)
-                        .fontFamily($r('app.string.typeface'))
-                        .fontWeight(FontWeight.Regular)
-                        .fontColor($r('app.color.text_color'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Image($r('app.media.details'))
-                        .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                        .onClick(() => {
-                          this.handlePopupEdit = !this.handlePopupEdit
-                        })
-                        .bindPopup(this.handlePopupEdit, {
-                          builder: this.popupBuilderEdit,
-                          placement: Placement.Bottom,
-                          popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-                          enableArrow: true,
-                          showInSubWindow: false,
-                          onStateChange: (e) => {
-                            if (!e.isVisible) {
-                              this.handlePopupEdit = false
-                            }
-                          }
-                        })
-                    }
-                    .justifyContent(FlexAlign.Start)
-                    .width(Constants.FOOTER_ROW_WIDTH)
-                    .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-
-                    Flex({
-                      direction: FlexDirection.Row,
-                      wrap: FlexWrap.Wrap,
-                    }) {
-                      if (this.staffDataArrayEdit['length'] > 0) {
-                        ForEach(
-                          this.staffDataArrayEdit,
-                          (item, index) => {
-                            staffItem({
-                              authAccount: item.authAccount,
-                              isActive: false,
-                              changeIndex: Number(index),
-                            })
-                          },
-                          (item) => item.authAccount
-                        )
-                      }
-                    }
                     .margin({
                       top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                       bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
                     })
+                  } else {
+                    if (this.staffDataArrayEdit['length']) {
+                      Row() {
+                        Text($r('app.string.header_title_edit'))
+                          .fontWeight(FontWeight.Medium)
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(` (${this.staffDataArrayEdit['length']}):`)
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Image($r('app.media.details'))
+                          .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                          .onClick(() => {
+                            this.handlePopupEdit = !this.handlePopupEdit
+                          })
+                          .bindPopup(this.handlePopupEdit, {
+                            builder: this.popupBuilderEdit,
+                            placement: Placement.Bottom,
+                            popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                            enableArrow: true,
+                            showInSubWindow: false,
+                            onStateChange: (e) => {
+                              if (!e.isVisible) {
+                                this.handlePopupEdit = false
+                              }
+                            }
+                          })
+                      }
+                      .justifyContent(FlexAlign.Start)
+                      .width(Constants.FOOTER_ROW_WIDTH)
+                      .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
+
+                      Flex({
+                        direction: FlexDirection.Row,
+                        wrap: FlexWrap.Wrap,
+                      }) {
+                        if (this.staffDataArrayEdit['length'] > 0) {
+                          ForEach(
+                          this.staffDataArrayEdit,
+                            (item, index) => {
+                              staffItem({
+                                authAccount: item.authAccount,
+                                isActive: false,
+                                changeIndex: Number(index),
+                              })
+                            },
+                            (item) => item.authAccount
+                          )
+                        }
+                      }
+                      .margin({
+                        top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                        bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+                      })
+                    }
                   }
                   Column({ space: Constants.HEADER_ROW_FONT_SIZE }) {
                     Row() {

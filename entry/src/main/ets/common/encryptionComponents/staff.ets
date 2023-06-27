@@ -22,7 +22,6 @@ struct staffItem {
   @State containerBackgroundColor: string = '#0D000000';
   @State color: any[] = [
     $r('sys.color.ohos_id_color_special1'),
-    $r('sys.color.ohos_id_color_special1'),
     $r('sys.color.ohos_id_color_special2'),
     $r('sys.color.ohos_id_color_special3'),
     $r('sys.color.ohos_id_color_special4'),

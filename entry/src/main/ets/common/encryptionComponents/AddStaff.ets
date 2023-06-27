@@ -22,8 +22,8 @@ const TAG = "[DLPManager_AddStaff]";
 struct staffInput {
   @State inputId: string = ''
   @State isAccountCheckSuccess: boolean = true;
-  @State isInputInvalid: boolean = false
-  @State activeStaffIndex: number = -1
+  @State isInputInvalid: boolean = false;
+  @State activeStaffIndex: number = -1;
   @Link staffArray: {
     authAccount: string,
   }[];
@@ -56,6 +56,12 @@ struct staffInput {
                       return index !== this.activeStaffIndex
                     })
                     this.activeStaffIndex = -1;
+                  }
+                  if (event.keyText === 'KEYCODE_FORWARD_DEL' && event.keyCode === 2071 && this.activeStaffIndex === index) {
+                    this.staffArray = this.staffArray.filter((item,index) => {
+                      return index !== this.activeStaffIndex
+                    })
+                    this.activeStaffIndex = -1
                   }
                 })
                 .onClick(() => {
@@ -136,7 +142,7 @@ struct staffInput {
       }
       .padding({
         top: Constants.ENCRYPTION_ADD_STAFF_PADDING_TOP,
-        bottom: Constants.ENCRYPTION_ADD_STAFF_PADDING_BOTTOM
+        // bottom: Constants.ENCRYPTION_ADD_STAFF_PADDING_BOTTOM
       })
       .border({
         width: { bottom: Constants.ENCRYPTION_ADD_STAFF_BORDER },
@@ -149,6 +155,7 @@ struct staffInput {
           .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
           .fontColor('RGB(232,64,38)')
           .fontWeight(FontWeight.Medium)
+          .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP})
       }
     }
     .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
