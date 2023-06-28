@@ -75,6 +75,7 @@ struct staffInput {
           text: this.inputId,
           placeholder: !this.staffArray.length && (globalThis.domainAccount ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')),
         })
+          .flexGrow(Constants.ENCRYPTION_ADD_STAFF_FLEX_GROW)
           .backgroundColor(Color.White)
           .borderRadius(Constants.PP_ROW_RADIUS)
           .fontSize($r('sys.float.ohos_id_text_size_body1'))
