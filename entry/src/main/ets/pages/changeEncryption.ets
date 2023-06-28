@@ -19,7 +19,7 @@ import staffItem from '../common/encryptionComponents/staff';
 import dlpPermission from '@ohos.dlpPermission';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 // @ts-ignore
-import { getAlertMessage, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import { getAlertMessage, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import picker from '@ohos.file.picker';
 
@@ -284,25 +284,16 @@ struct changeEncryption {
       console.info(TAG, 'Change encryption request from ability')
       try {
         globalThis.accountInfo = await getOsAccountInfo();
-        if (globalThis.domainAccount) {
-          if (globalThis.accountInfo.domainInfo.accountName === '' &&
-            globalThis.accountInfo.domainInfo.accountId === '') {
-            this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-            return;
-          }
-        } else {
-          if (globalThis.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
-            globalThis.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-            this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-            return;
-          }
-        }
       } catch (err) {
         console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
         this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'));
         return;
       }
-      let uri = <string>globalThis.abilityWant.parameters.uri;
+      if (!checkAccountLogin(globalThis.accountInfo)) {
+        this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+        return;
+      }
+      let uri = <string>globalThis.uri;
       this.dlpFd = getFileFd(uri);
       this.srcFileName = globalThis.abilityWant.parameters.fileName.name;
     } else { // request from router

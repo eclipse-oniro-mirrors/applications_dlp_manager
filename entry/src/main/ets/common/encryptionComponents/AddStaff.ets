@@ -73,7 +73,7 @@ struct staffInput {
         )
         TextInput({
           text: this.inputId,
-          placeholder: !this.staffArray.length && $r('app.string.enter_a_complete_work_ID'),
+          placeholder: !this.staffArray.length && (globalThis.domainAccount ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')),
         })
           .backgroundColor(Color.White)
           .borderRadius(Constants.PP_ROW_RADIUS)
@@ -149,7 +149,7 @@ struct staffInput {
         color: this.isInputInvalid ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'),
       })
       if (this.isInputInvalid) {
-        Text($r('app.string.incorrect_work_ID'))
+        Text(globalThis.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
           .alignSelf(ItemAlign.Start)
           .fontSize($r('sys.float.ohos_fa_text_size_body'))
           .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)

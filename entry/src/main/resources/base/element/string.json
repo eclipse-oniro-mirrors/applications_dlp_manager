@@ -153,6 +153,14 @@
       "value": "Invalid employee ID. Please reenter."
     },
     {
+      "name": "enter_a_complete_account",
+      "value": "Enter an account name"
+    },
+    {
+      "name": "incorrect_account",
+      "value": "Invalid account name"
+    },
+    {
       "name": "encryption_loading_title",
       "value": "Encrypting the file..."
     },
@@ -174,15 +182,15 @@
     },
     {
       "name": "MESSAGE_APP_PARAM_ERROR",
-      "value": "参数异常，请重试。"
+      "value": "Failed to start the DLP application. Check the parameters and try again."
     },
     {
       "name": "MESSAGE_APP_INSIDE_ERROR",
-      "value": "应用内部错误，请重试。"
+      "value": "Internal application error. Please try again."
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
-      "value": "获取帐号信息失败，请重试。"
+      "value": "Failed to obtain the account information. Please try again."
     },
     {
       "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
@@ -190,43 +198,43 @@
     },
     {
       "name": "TITLE_SERVICE_ERROR",
-      "value": "服务异常"
+      "value": "The service is abnormal"
     },
     {
       "name": "MESSAGE_SERVICE_INSIDE_ERROR",
-      "value": "服务内部错误，请重试。"
+      "value": "Internal service error. Please try again."
     },
     {
       "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
-      "value": "连接凭据服务器失败，请检查服务器后重试。"
+      "value": "Failed to connect to the credential server. Check the server and try again."
     },
     {
       "name": "MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR",
-      "value": "服务响应超时，请重试。"
+      "value": "Service response timed out. Please try again."
     },
     {
       "name": "MESSAGE_GENERATE_DLP_ERROR",
-      "value": "设置文档权限失败，请重试。"
+      "value": "Failed to set the document permission. Please try again."
     },
     {
       "name": "MESSAGE_RECOVER_DLP_ERROR",
-      "value": "删除文档权限失败，请重试。"
+      "value": "Failed to delete the document permission. Please try again."
     },
     {
       "name": "TITLE_APP_VISIT_FILE_ERROR",
-      "value": "无法访问此文件"
+      "value": "Cannot access this file"
     },
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-      "value": "您没有访问权限。请向下列用户申请授权：\\n"
+      "value": "You do not have access. Please apply for authorization from the following users:\n%s"
     },
     {
       "name": "TITLE_APP_DLP_ERROR",
-      "value": "DLP格式错误"
+      "value": "DLP format error"
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
-      "value": "您打开的文档格式不正确，请重试。"
+      "value": "The document you opened is not in the correct format. Please try again."
     },
     {
       "name": "TITLE_OPERATE_DENY",

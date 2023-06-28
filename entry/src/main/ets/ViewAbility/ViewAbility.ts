@@ -18,9 +18,9 @@ import dlpPermission from '@ohos.dlpPermission';
 import {
   getOsAccountInfo,
   getUserId,
+  checkAccountLogin,
   getAuthPerm,
   startAlertAbility,
-  getAlertMessage,
   terminateSelfWithResult,
   getFileFd,
   getFileUriByPath
@@ -33,8 +33,17 @@ import hiTraceMeter from '@ohos.hiTraceMeter';
 import hiSysEvent from '@ohos.hiSysEvent';
 import fileShare from '@ohos.fileshare';
 import wantConstant from '@ohos.app.ability.wantConstant';
+import deviceInfo from '@ohos.deviceInfo';
+import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
+import type { Permissions } from '@ohos.abilityAccessCtrl';
 
 const TAG = '[DLPManager_View]';
+const PHONE = 'phone';
+let permissionList: Array<Permissions> = [
+  'ohos.permission.READ_MEDIA',
+  'ohos.permission.WRITE_MEDIA',
+  'ohos.permission.FILE_ACCESS_MANAGER'
+];
 
 export default class ViewAbility extends ServiceExtensionAbility {
   linkFd: number = -1;
@@ -67,7 +76,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (!globalThis.authPerm2Sandbox) {
       globalThis.authPerm2Sandbox = {};
     }
-    globalThis.domainAccount = true;
+    globalThis.domainAccount = deviceInfo.deviceType === PHONE ? false : true;
+    let atManager = abilityAccessCtrl.createAtManager();
+    try {
+      await atManager.requestPermissionsFromUser(globalThis.context, permissionList);
+    } catch (err) {
+      console.error(TAG, 'requestPermissionsFromUser failed', err.code, err.message);
+    }
   }
 
   async startDataAbility(): Promise<void> {
@@ -115,7 +130,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           fileio.closeSync(this.linkFd);
           await this.dlpFile.deleteDLPLinkFile(this.linkFileName);
           await this.dlpFile.closeDLPFile();
-          await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+          await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
         } catch (err) {
           console.error(TAG, 'deleteDLPLinkFile failed', err.code, err.message);
         }
@@ -189,7 +204,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
     this.fileName = <string> want.parameters.fileName['name'];
-    this.uri = <string> want.parameters.uri;
+    if (globalThis.domainAccount) {
+      this.uri = <string> want.parameters.uri;
+    } else {
+      this.uri = <string> want.uri;
+    }
     try {
       await fileShare.grantUriPermission(this.uri, 'com.ohos.dlpmanager', wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION |
         wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION).then(function () {
@@ -219,27 +238,18 @@ export default class ViewAbility extends ServiceExtensionAbility {
     try {
       accountInfo = await getOsAccountInfo();
       this.userId = await getUserId();
-      console.info(TAG, 'account name:', accountInfo.distributedInfo.name, 'userId:', this.userId);
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
-      await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'));
       hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+      await startAlertAbility({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR });
       return;
     }
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
-    if (globalThis.domainAccount) {
-      if (accountInfo.domainInfo.accountName === '' && accountInfo.domainInfo.accountId === '') {
-        await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-        hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
-        return;
-      }
-    } else {
-      if (accountInfo.distributedInfo.name === 'ohosAnonymousName' && accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-        await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-        hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
-        return;
-      }
+    if (!checkAccountLogin(accountInfo)) {
+      hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+      await startAlertAbility({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR });
+      return;
     }
 
     hiTraceMeter.startTrace('DlpOpenDlpFileJs', startId);
@@ -248,11 +258,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd);
     } catch (err) {
       console.error(TAG, 'openDLPFile', this.dlpFd, 'failed', err.code, err.message);
-      let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_DLP_ERROR'), $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR'));
-      await startAlertAbility(errorInfo.title, errorInfo.msg);
       hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await this.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, err.data); // 103:DLP_FILE_PARSE_ERROR
+      await startAlertAbility(err);
       return;
     }
     hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
@@ -263,7 +272,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+      await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
       return;
     }
     hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
@@ -300,10 +309,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (err) {
         console.error(TAG, 'closeDLPFile failed', err.code, err.message);
       }
-      await startAlertAbility($r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
       hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await this.sendDlpFileOpenFault(Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, err.data); // 104:DLP_INSTALL_SANDBOX_ERROR
+      await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
       return;
     }
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
@@ -316,34 +325,38 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.startTrace('DlpAddLinkFileJs', startId);
       try {
         await this.dlpFile.addDLPLinkFile(this.linkFileName);
-      } catch (err) {
-        console.error(TAG, 'addDLPLinkFile failed', err.code, err.message);
+      } catch (error) {
+        console.error(TAG, 'addDLPLinkFile failed', error.code, error.message);
         try {
           await this.dlpFile.closeDLPFile();
         } catch (err) {
           console.error(TAG, 'closeDLPFile failed', err.code, err.message);
         }
-        await startAlertAbility($r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+        await startAlertAbility(error);
         hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         return;
       }
       hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
-      this.linkFilePath = '/mnt/data/fuse/' + this.linkFileName;
-      // @ts-ignore
-      let stat: fileio.Stat = fileio.statSync(this.linkFilePath);
-      const WRITE_ACCESS: number = 0o0200;
-      if (stat.mode & WRITE_ACCESS) {
+      try {
+        this.linkFilePath = '/mnt/data/fuse/' + this.linkFileName;
         // @ts-ignore
-        this.linkFd = fileio.openSync(this.linkFilePath, 0o2);
-        this.linkUri = getFileUriByPath(this.linkFilePath);
-        this.linkFileWriteable = true;
-      } else {
-        // @ts-ignore
-        this.linkFd = fileio.openSync(this.linkFilePath, 0o0);
-        this.linkUri = getFileUriByPath(this.linkFilePath);
-        this.linkFileWriteable = false;
+        let stat: fileio.Stat = fileio.statSync(this.linkFilePath);
+        const WRITE_ACCESS: number = 0o0200;
+        if (stat.mode & WRITE_ACCESS) {
+          // @ts-ignore
+          this.linkFd = fileio.openSync(this.linkFilePath, 0o2);
+          this.linkUri = getFileUriByPath(this.linkFilePath);
+          this.linkFileWriteable = true;
+        } else {
+          // @ts-ignore
+          this.linkFd = fileio.openSync(this.linkFilePath, 0o0);
+          this.linkUri = getFileUriByPath(this.linkFilePath);
+          this.linkFileWriteable = false;
 
+        }
+      } catch (e) {
+        console.error(TAG, 'file error', e);
       }
     }
     this.startSandboxApp(startId);

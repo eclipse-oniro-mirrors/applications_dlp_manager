@@ -21,6 +21,7 @@ import { DlpAlertDialog } from '../common/components/dlp_alert_dialog'
 import {
   getAlertMessage,
   getOsAccountInfo,
+  checkAccountLogin,
   terminateSelfWithResult,
   getUserId,
   judgeIsSandBox,
@@ -35,6 +36,7 @@ import permissionTypeSelect from '../common/encryptionComponents/permission_type
 import picker from '@ohos.file.picker';
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import fileio from '@ohos.fileio';
+import deviceInfo from '@ohos.deviceInfo';
 
 const TAG = "[DLPManager_Encrypt]"
 let suffix_length = 4;
@@ -279,6 +281,13 @@ struct DlpDialog {
       fileio.closeSync(tempFd);
       fileio.unlinkSync(filePath);
       this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any, $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') as any);
+      await this.catchProcess();
+      return;
+    }
+    if (!checkAccountLogin(accountInfo)) {
+      fileio.closeSync(tempFd);
+      fileio.unlinkSync(filePath);
+      this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any, $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') as any);
       await this.catchProcess();
       return;
     }
@@ -588,22 +597,13 @@ struct DlpDialog {
   async aboutToAppear() {
     try {
       globalThis.accountInfo = await getOsAccountInfo();
-      if (globalThis.domainAccount) {
-        if (globalThis.accountInfo.domainInfo.accountName === '' &&
-        globalThis.accountInfo.domainInfo.accountId === '') {
-          this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-          return;
-        }
-      } else {
-        if (globalThis.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
-        globalThis.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-          this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-          return;
-        }
-      }
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed:', JSON.stringify(err));
-      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'))
+      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
+      return;
+    }
+    if (!checkAccountLogin(globalThis.accountInfo)) {
+      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
       return;
     }
 
@@ -641,7 +641,7 @@ struct DlpDialog {
         console.info(TAG, 'encryption request from ability')
         console.info(TAG, 'want info', JSON.stringify(globalThis.abilityWant))
         this.srcFileName = globalThis.abilityWant.parameters.fileName.name;
-        let uri = <string>globalThis.abilityWant.parameters.uri;
+        let uri = <string>globalThis.uri;
         this.srcFd = getFileFd(uri);
       }
       let callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken']

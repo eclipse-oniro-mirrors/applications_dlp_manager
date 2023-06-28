@@ -98,7 +98,7 @@
     },
     {
       "name": "header_title_edit_tips",
-      "value": "拥有只读权限的用户可查看此文件，但不能编辑、复制或打印。"
+      "value": "拥有编辑权限的用户可查看、编辑、复制、录屏或保存，但不能打印文件。"
     },
     {
       "name": "header_title_full_control_tips",
@@ -153,6 +153,14 @@
       "value": "工号错误，请输入有效的工号"
     },
     {
+      "name": "enter_a_complete_account",
+      "value": "请输入用户账号"
+    },
+    {
+      "name": "incorrect_account",
+      "value": "账号错误，请输入有效的账号"
+    },
+    {
       "name": "encryption_loading_title",
       "value": "文件加密中…"
     },
@@ -174,7 +182,7 @@
     },
     {
       "name": "MESSAGE_APP_PARAM_ERROR",
-      "value": "参数异常，请重试。"
+      "value": "拉起DLP应用失败，请检查参数后重试。"
     },
     {
       "name": "MESSAGE_APP_INSIDE_ERROR",
@@ -218,7 +226,7 @@
     },
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-      "value": "您没有访问权限。请向下列用户申请授权：\\n"
+      "value": "您没有访问权限。请向下列用户申请授权：\n%s"
     },
     {
       "name": "TITLE_APP_DLP_ERROR",

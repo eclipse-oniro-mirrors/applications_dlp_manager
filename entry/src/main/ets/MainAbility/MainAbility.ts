@@ -19,8 +19,10 @@ import type { Permissions } from '@ohos.abilityAccessCtrl';
 import dlpPermission from '@ohos.dlpPermission';
 import Constants from '../common/constant';
 // @ts-ignore
-import { getAlertMessage, getAuthPerm, startAlertAbility, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import { getAuthPerm, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import deviceInfo from '@ohos.deviceInfo';
 
+const PHONE = 'phone';
 const TAG = '[DLPManager_Main]';
 let permissionList: Array<Permissions> = [
   'ohos.permission.READ_MEDIA',
@@ -36,7 +38,12 @@ export default class MainAbility extends UIAbility {
     console.info(TAG, 'onCreate');
     globalThis.abilityWant = want;
     globalThis.context = this.context;
-    globalThis.domainAccount = true;
+    globalThis.domainAccount = deviceInfo.deviceType === PHONE ? false : true;
+    if (globalThis.domainAccount) {
+      globalThis.uri = <string> globalThis.abilityWant.parameters.uri;
+    } else {
+      globalThis.uri = <string> globalThis.abilityWant.uri;
+    }
     globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context);
   }
 
@@ -44,15 +51,12 @@ export default class MainAbility extends UIAbility {
     console.info(TAG, 'onDestroy');
   }
 
-  async gotoSandbox(windowStage): Promise<void> {
-    let accountInfo;
-    try {
-      accountInfo = await getOsAccountInfo();
-    } catch (err) {
-      console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
-      await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'));
-      return;
-    }
+  async showErrorDialogAndExit(error): Promise<void> {
+    globalThis.abilityWant.parameters.error = error;
+    globalThis.windowStage.setUIContent(globalThis.context, 'pages/alert', null);
+  }
+
+  async gotoSandbox(windowStage, accountInfo): Promise<void> {
     const linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
     for (let key in globalThis.sandbox2linkFile) {
       for (let j in globalThis.sandbox2linkFile[key]) {
@@ -72,7 +76,7 @@ export default class MainAbility extends UIAbility {
     AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
@@ -85,22 +89,13 @@ export default class MainAbility extends UIAbility {
     });
   }
 
-  async goContentPage(windowStage, srcFd): Promise<void> {
-    let accountInfo;
-    try {
-      accountInfo = await getOsAccountInfo();
-    } catch (err) {
-      console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
-      await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'));
-      return;
-    }
+  async goContentPage(windowStage, srcFd, accountInfo): Promise<void> {
     try {
       console.info(TAG, 'openDLPFile', srcFd);
       this.dlpFile = await dlpPermission.openDLPFile(srcFd);
     } catch (err) {
       console.error(TAG, 'openDLPFile', srcFd, 'failed', err.code, err.message);
-      let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_DLP_ERROR'), $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR'));
-      await startAlertAbility(errorInfo.title, errorInfo.msg);
+      await this.showErrorDialogAndExit(err);
       return;
     }
     if (globalThis.domainAccount) {
@@ -113,7 +108,7 @@ export default class MainAbility extends UIAbility {
     AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
@@ -139,7 +134,7 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need name in want.parameters.fileName');
       return false;
     }
-    if (globalThis.abilityWant.parameters.uri === undefined) {
+    if (globalThis.uri === undefined) {
       console.error(TAG, 'need uri in want.parameters');
       return false;
     }
@@ -148,20 +143,34 @@ export default class MainAbility extends UIAbility {
 
   async onWindowStageCreate(windowStage): Promise<void> {
     console.info(TAG, 'onWindowStageCreate');
-    let atManager = abilityAccessCtrl.createAtManager();
+    globalThis.windowStage = windowStage;
     try {
+      let atManager = abilityAccessCtrl.createAtManager();
       await atManager.requestPermissionsFromUser(globalThis.context, permissionList);
     } catch (err) {
       console.error(TAG, 'requestPermissionsFromUser failed', err.code, err.message);
+      return;
     }
     if (!this.checkValidWant()) {
-      await startAlertAbility($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_PARAM_ERROR'));
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_PARAM_ERROR });
+      return;
+    }
+    let accountInfo;
+    try {
+      accountInfo = await getOsAccountInfo();
+    } catch (err) {
+      console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR });
+      return;
+    }
+    if (!checkAccountLogin(accountInfo)) {
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR });
       return;
     }
     let requestIsFromSandBox = await judgeIsSandBox();
     console.info(TAG, 'judgeIsSandBox', requestIsFromSandBox);
     if (requestIsFromSandBox) {
-      this.gotoSandbox(windowStage);
+      this.gotoSandbox(windowStage, accountInfo);
       return;
     } else {
       let fileName = globalThis.abilityWant.parameters.fileName.name;
@@ -173,9 +182,9 @@ export default class MainAbility extends UIAbility {
           win.setBackgroundColor('#00FFFFFF');
         });
       } else {
-        let uri = globalThis.abilityWant.parameters.uri;
+        let uri = globalThis.uri;
         let srcFd = getFileFd(uri);
-        this.goContentPage(windowStage, srcFd);
+        this.goContentPage(windowStage, srcFd, accountInfo);
       }
     }
   }

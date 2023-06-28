@@ -17,8 +17,8 @@ import Constants from '../constant';
 @CustomDialog
 struct DlpAlertDialog {
   controller : CustomDialogController
-  title: string | Resource
-  message: string | Resource
+  title: Resource
+  message: Resource
   action: () => void = null
   build() {
     Column() {

@@ -14,25 +14,37 @@
  */
 
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
+import { getAlertMessage } from '../common/utils';
+const TAG = '[DLPManager_Alert]';
 
 @Entry
 @Component
 struct Index {
-  alertDialogController: CustomDialogController = new CustomDialogController({
-    builder: DlpAlertDialog({
-      title: globalThis.abilityWant.parameters.title,
-      message: globalThis.abilityWant.parameters.message
-    }),
-    autoCancel: false,
-    cancel: () => {
-      globalThis.context.terminateSelf();
-    },
-    alignment: DialogAlignment.Center,
-    customStyle: true,
-  })
+  dlpAlertDialog: CustomDialogController;
 
-  aboutToAppear() {
-    this.alertDialogController.open();
+  showErrorDialogAndExit(title: Resource, message: Resource) {
+    this.dlpAlertDialog = new CustomDialogController({
+      builder: DlpAlertDialog({
+        title: title,
+        message: message
+      }),
+      autoCancel: false,
+      cancel: () => {
+        globalThis.context.terminateSelf();
+      },
+      alignment: DialogAlignment.Center,
+      customStyle: true,
+    })
+    this.dlpAlertDialog.open();
+  }
+
+  async aboutToAppear() {
+    try {
+      let errInfo = getAlertMessage(globalThis.abilityWant.parameters.error)
+      this.showErrorDialogAndExit(errInfo.title, errInfo.msg);
+    } catch (err) {
+      console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err))
+    }
   }
 
   build() { }

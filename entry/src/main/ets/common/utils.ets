@@ -24,11 +24,12 @@ function getFileUriByPath(filePath): string {
   try {
     let uri = fileuri.getUriFromPath(filePath);
     return uri;
-    }catch (err){
-    console.info(TAG, 'getUriFromPath error:',JSON.stringify(err));
+  } catch (err) {
+    console.info(TAG, 'getUriFromPath error:', JSON.stringify(err));
     return "";
   }
 }
+
 function getFileFd(uri): number {
   try {
     console.info(TAG, 'file fd:', uri);
@@ -40,9 +41,25 @@ function getFileFd(uri): number {
     return -1;
   }
 }
+
 async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   let accountMgr = account_osAccount.getAccountManager();
   return await accountMgr.getCurrentOsAccount();
+}
+
+function checkAccountLogin(accountInfo: account_osAccount.OsAccountInfo): boolean {
+  if (globalThis.domainAccount) {
+    if (accountInfo.domainInfo.accountName === '' &&
+      accountInfo.domainInfo.accountId === '') {
+      return false;
+    }
+  } else {
+    if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+      accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+      return false;
+    }
+  }
+  return true;
 }
 
 async function getUserId(): Promise<number> {
@@ -79,39 +96,44 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
   globalThis.context.terminateSelfWithResult(abilityResult);
 }
 
-function getAlertMessage(err, defaultTitle, defaultMessage) {
+function getAlertMessage(err, defaultTitle?: Resource, defaultMessage?: Resource) {
   switch (err.code) {
-    case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
-      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR') };
+    case Constants.ERR_JS_APP_INSIDE_ERROR:
+      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') };
+    case Constants.ERR_JS_GET_ACCOUNT_ERROR:
+      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') };
+    case Constants.ERR_JS_APP_NO_ACCOUNT_ERROR:
+      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') };
+    case Constants.ERR_JS_APP_PARAM_ERROR:
+      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_PARAM_ERROR') };
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR') };
     case Constants.ERR_JS_NOT_DLP_FILE:
       return { 'title': $r('app.string.TITLE_APP_DLP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') };
     case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
-      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') };
+      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR') };
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
       return { 'title': $r('app.string.TITLE_OPERATE_DENY'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') };
     default:
-      if (err.extra != undefined) {
+      if (err.extra != undefined) { // has contact account
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
-          'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT') + err.extra
+          'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.extra)
         }
-      } else {
+      } else if (defaultTitle !== undefined && defaultMessage != undefined) {
         return { 'title': defaultTitle, 'msg': defaultMessage };
+      } else {
+        return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') };
       }
   }
 }
 
-async function startAlertAbility(title: Resource, message: Resource) {
-  let titleStr = await globalThis.context.resourceManager.getString(title.id)
-  let messageStr = await globalThis.context.resourceManager.getString(message.id)
+async function startAlertAbility(error) {
   globalThis.context.startAbility({
     bundleName: 'com.ohos.dlpmanager',
     abilityName: 'AlertAbility',
     parameters: {
-      title: titleStr,
-      message: messageStr,
+      error: error,
     }
   }, async (err, data) => {
     if (err.code !== 0) {
@@ -126,7 +148,7 @@ function judgeIsSandBox() {
     let callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken'];
     let callerBundleName = globalThis.abilityWant.parameters['ohos.aafwk.param.callerBundleName'];
     globalThis.applicationInfo = await bundleManager.getApplicationInfo(
-        callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
+      callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
     if (callerToken === globalThis.applicationInfo.accessTokenId) {
       resolve(false);
     }
@@ -145,4 +167,4 @@ let removeDuplicate = (arr, arg) => {
 }
 
 
-export { getOsAccountInfo, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox, getFileFd, getFileUriByPath, removeDuplicate };
+export { getOsAccountInfo, checkAccountLogin, getUserId, getAuthPerm, terminateSelfWithResult, startAlertAbility, getAlertMessage, judgeIsSandBox, getFileFd, getFileUriByPath, removeDuplicate };
