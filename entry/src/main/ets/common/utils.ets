@@ -106,6 +106,8 @@ function getAlertMessage(err, defaultTitle?: Resource, defaultMessage?: Resource
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') };
     case Constants.ERR_JS_APP_PARAM_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_PARAM_ERROR') };
+    case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
+      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') };
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR') };
     case Constants.ERR_JS_NOT_DLP_FILE:

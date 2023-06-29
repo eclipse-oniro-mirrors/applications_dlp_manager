@@ -181,6 +181,10 @@
       "value": "The application is abnormal"
     },
     {
+      "name": "MESSAGE_APP_GET_FILE_ASSET_ERROR",
+      "value": "Failed to get file information. Please try again."
+    },
+    {
       "name": "MESSAGE_APP_PARAM_ERROR",
       "value": "Failed to start the DLP application. Check the parameters and try again."
     },

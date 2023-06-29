@@ -27,23 +27,16 @@ import {
 } from '../common/utils';
 import fileio from '@ohos.fileio';
 import type Want from '@ohos.app.ability.Want';
-import commonEvent from '@ohos.commonEvent';
 import Constants from '../common/constant';
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import hiSysEvent from '@ohos.hiSysEvent';
 import fileShare from '@ohos.fileshare';
 import wantConstant from '@ohos.app.ability.wantConstant';
 import deviceInfo from '@ohos.deviceInfo';
-import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
-import type { Permissions } from '@ohos.abilityAccessCtrl';
+import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 
 const TAG = '[DLPManager_View]';
 const PHONE = 'phone';
-let permissionList: Array<Permissions> = [
-  'ohos.permission.READ_MEDIA',
-  'ohos.permission.WRITE_MEDIA',
-  'ohos.permission.FILE_ACCESS_MANAGER'
-];
 
 export default class ViewAbility extends ServiceExtensionAbility {
   linkFd: number = -1;
@@ -58,6 +51,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   sandboxModuleName: string = '';
   fileName: string = '';
   uri: string = '';
+  fileAssert: mediaLibrary.FileAsset = undefined;
   linkUri:string = '';
   isCreated: boolean = false;
   gatheringType: number = dlpPermission.GatheringPolicyType.NON_GATHERING;
@@ -77,12 +71,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
       globalThis.authPerm2Sandbox = {};
     }
     globalThis.domainAccount = deviceInfo.deviceType === PHONE ? false : true;
-    let atManager = abilityAccessCtrl.createAtManager();
-    try {
-      await atManager.requestPermissionsFromUser(globalThis.context, permissionList);
-    } catch (err) {
-      console.error(TAG, 'requestPermissionsFromUser failed', err.code, err.message);
-    }
   }
 
   async startDataAbility(): Promise<void> {
@@ -105,8 +93,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'linkFileName': {
           'name': this.linkFileName
         },
-        'fileName': {
-          'name': this.fileName
+        'fileAssert': {
+          'displayName': this.fileAssert.displayName,
+          'relativePath': this.fileAssert.relativePath,
+          'mediaType': this.fileAssert.mediaType,
+          'dateModified': this.fileAssert.dateModified
         },
         'uri': this.linkUri,
         'dlpUri': {
@@ -197,6 +188,23 @@ export default class ViewAbility extends ServiceExtensionAbility {
       await hiSysEvent.write(event);
     } catch (err) {
       console.error(TAG, 'sendDlpFileOpenEvent failed');
+    }
+  }
+
+  async getFileAssetFromUri(uri): Promise<mediaLibrary.FileAsset> {
+    let fileAssetUriFetchOp = {
+      selections: '',
+      selectionArgs: [],
+      uri: uri.toString(),
+    };
+    try {
+      let media = mediaLibrary.getMediaLibrary(this.context);
+      let uriFetchResult = await media.getFileAssets(fileAssetUriFetchOp);
+      let uriFileAsset = await uriFetchResult.getFirstObject();
+      return uriFileAsset;
+    } catch (err) {
+      console.error(TAG, 'getFileAssets failed', err.code, err.message);
+      return undefined;
     }
   }
 
@@ -358,6 +366,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (e) {
         console.error(TAG, 'file error', e);
       }
+    }
+    this.fileAssert = await this.getFileAssetFromUri(this.uri);
+    if (this.fileAssert === undefined) {
+      hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+      await startAlertAbility({ code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR });
+      return;
     }
     this.startSandboxApp(startId);
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
