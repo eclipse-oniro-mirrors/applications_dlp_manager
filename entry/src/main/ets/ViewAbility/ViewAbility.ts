@@ -37,6 +37,7 @@ import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 
 const TAG = '[DLPManager_View]';
 const PHONE = 'phone';
+const SUFFIX_INDEX = 2;
 
 export default class ViewAbility extends ServiceExtensionAbility {
   linkFd: number = -1;
@@ -52,7 +53,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   fileName: string = '';
   uri: string = '';
   fileAssert: mediaLibrary.FileAsset = undefined;
-  linkUri:string = '';
+  linkUri: string = '';
   isCreated: boolean = false;
   gatheringType: number = dlpPermission.GatheringPolicyType.NON_GATHERING;
   alreadyOpen: boolean = false;
@@ -87,7 +88,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     let want: Want = {
       bundleName: this.sandboxBundleName,
       abilityName: this.sandboxAbilityName,
-      uri:this.linkUri,
+      uri: this.linkUri,
       flags: this.linkFileWriteable ? wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION,
       parameters: {
         'linkFileName': {
@@ -103,13 +104,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'dlpUri': {
           'name': this.uri
         },
-        'linkFileWriteable':{
-          'name':this.linkFileWriteable
+        'linkFileWriteable': {
+          'name': this.linkFileWriteable
         },
         'ohos.dlp.params.index': this.sandboxIndex,
         'ohos.dlp.params.moduleName': this.sandboxModuleName,
         'ohos.dlp.params.securityFlag': this.authPerm ===
-                                        dlpPermission.DLPFileAccess.READ_ONLY ? true : false
+          dlpPermission.DLPFileAccess.READ_ONLY ? true : false
       }
     };
     globalThis.context.startAbility(want, async (err, data) => {
@@ -211,11 +212,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async onRequest(want: Want, startId: number): Promise<void> {
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
-    this.fileName = <string> want.parameters.fileName['name'];
+    this.fileName = <string>want.parameters.fileName['name'];
     if (globalThis.domainAccount) {
-      this.uri = <string> want.parameters.uri;
+      this.uri = <string>want.parameters.uri;
     } else {
-      this.uri = <string> want.uri;
+      this.uri = <string>want.uri;
     }
     try {
       await fileShare.grantUriPermission(this.uri, 'com.ohos.dlpmanager', wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION |
@@ -233,12 +234,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.dlpFd = getFileFd(this.uri);
     console.debug(TAG, 'dlpFd:', this.dlpFd);
 
-    this.sandboxBundleName = <string> want.parameters['ohos.dlp.params.bundleName'];
-    this.sandboxAbilityName = <string> want.parameters['ohos.dlp.params.abilityName'];
-    this.sandboxModuleName = <string> want.parameters['ohos.dlp.params.moduleName'];
+    this.sandboxBundleName = <string>want.parameters['ohos.dlp.params.bundleName'];
+    this.sandboxAbilityName = <string>want.parameters['ohos.dlp.params.abilityName'];
+    this.sandboxModuleName = <string>want.parameters['ohos.dlp.params.moduleName'];
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
-    this.sandboxModuleName === undefined) {
+      this.sandboxModuleName === undefined) {
       terminateSelfWithResult(Constants.DLP_GET_PARAMETERS_FAILED, 'get parameters failed');
     }
     hiTraceMeter.startTrace('DlpGetOsAccountJs', startId);
@@ -329,7 +330,15 @@ export default class ViewAbility extends ServiceExtensionAbility {
       let date = new Date();
       let timestamp = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getMilliseconds()).getTime();
-      this.linkFileName = this.sandboxBundleName + '_' + this.sandboxIndex + '_' + timestamp + '.dlp.link';
+      let splitNames = this.fileName.split('.');
+      console.debug(TAG, 'splitNames:', splitNames);
+      if (splitNames.length <= SUFFIX_INDEX) {
+        hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+        await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+        return;
+      }
+      let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
+      this.linkFileName = this.sandboxBundleName + '_' + this.sandboxIndex + '_' + timestamp + '.' + secondarySuffix + '.dlp.link';
       hiTraceMeter.startTrace('DlpAddLinkFileJs', startId);
       try {
         await this.dlpFile.addDLPLinkFile(this.linkFileName);
