@@ -44,7 +44,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
   dlpFd: number = -1;
   linkFileName: string = '';
   linkFilePath: string = '';
-  sandboxIndex: number = -1;
+  appIndex: number = -1;
+  tokenId: number = -1;
   dlpFile: dlpPermission.DLPFile = null;
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   sandboxBundleName: string = '';
@@ -72,6 +73,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
       globalThis.authPerm2Sandbox = {};
     }
     globalThis.domainAccount = deviceInfo.deviceType === PHONE ? false : true;
+    if (!globalThis.token2File) {
+      globalThis.token2File = {};
+    }
   }
 
   async startDataAbility(): Promise<void> {
@@ -107,7 +111,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'linkFileWriteable': {
           'name': this.linkFileWriteable
         },
-        'ohos.dlp.params.index': this.sandboxIndex,
+        'ohos.dlp.params.index': this.appIndex,
         'ohos.dlp.params.moduleName': this.sandboxModuleName,
         'ohos.dlp.params.securityFlag': this.authPerm ===
           dlpPermission.DLPFileAccess.READ_ONLY ? true : false
@@ -126,19 +130,20 @@ export default class ViewAbility extends ServiceExtensionAbility {
         } catch (err) {
           console.error(TAG, 'deleteDLPLinkFile failed', err.code, err.message);
         }
-        await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.sandboxIndex, null); // 105: DLP_START_SANDBOX_ERROR
+        await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.appIndex, null); // 105: DLP_START_SANDBOX_ERROR
       } else {
-        await this.sendDlpFileOpenEvent(Constants.DLP_START_SANDBOX_SUCCESS, this.sandboxBundleName, this.sandboxIndex); // 203: DLP_START_SANDBOX_SUCCESS
-        if (globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex] === undefined) {
-          globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex] = new Array;
+        await this.sendDlpFileOpenEvent(Constants.DLP_START_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex); // 203: DLP_START_SANDBOX_SUCCESS
+        if (globalThis.sandbox2linkFile[this.sandboxBundleName + this.appIndex] === undefined) {
+          globalThis.sandbox2linkFile[this.sandboxBundleName + this.appIndex] = new Array;
         }
 
         if (!this.alreadyOpen) {
-          globalThis.sandbox2linkFile[this.sandboxBundleName + this.sandboxIndex].push([this.linkFd,
+          globalThis.sandbox2linkFile[this.sandboxBundleName + this.appIndex].push([this.linkFd,
             this.dlpFile, this.linkFileName, this.dlpFd]);
           globalThis.fileOpenHistory[this.uri] =
-            [this.sandboxBundleName, this.sandboxIndex, this.linkFileName, this.linkFd];
-          globalThis.authPerm2Sandbox[this.authPerm] = [this.sandboxBundleName, this.sandboxIndex];
+            [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkFd];
+          globalThis.authPerm2Sandbox[this.authPerm] = [this.sandboxBundleName, this.appIndex];
+          globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm];
         }
 
         await this.startDataAbility();
@@ -147,7 +152,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     });
   }
 
-  async sendDlpFileOpenFault(code: number, sandboxName: string, sandboxIndex: number, reason: string): Promise<void> {
+  async sendDlpFileOpenFault(code: number, sandboxName: string, appIndex: number, reason: string): Promise<void> {
     let event: hiSysEvent.SysEventInfo = {
       domain: 'DLP',
       name: 'DLP_FILE_OPEN',
@@ -158,8 +163,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'SANDBOX_PKGNAME': sandboxName,
       }
     };
-    if (sandboxIndex !== -1) {
-      event.params['SANDBOX_INDEX'] = sandboxIndex;
+    if (appIndex !== -1) {
+      event.params['SANDBOX_INDEX'] = appIndex;
     }
     if (reason !== null) {
       event.params['REASON'] = reason;
@@ -171,7 +176,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
   }
 
-  async sendDlpFileOpenEvent(code: number, sandboxName: string, sandboxIndex: number): Promise<void> {
+  async sendDlpFileOpenEvent(code: number, sandboxName: string, appIndex: number): Promise<void> {
     let event: hiSysEvent.SysEventInfo = {
       domain: 'DLP',
       name: 'DLP_FILE_OPEN_EVENT',
@@ -182,8 +187,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'SANDBOX_PKGNAME': sandboxName,
       }
     };
-    if (sandboxIndex !== -1) {
-      event.params['SANDBOX_INDEX'] = sandboxIndex;
+    if (appIndex !== -1) {
+      event.params['SANDBOX_INDEX'] = appIndex;
     }
     try {
       await hiSysEvent.write(event);
@@ -292,7 +297,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.gatheringType = await dlpPermission.getDLPGatheringPolicy();
       if (globalThis.fileOpenHistory[this.uri] !== undefined) {
         console.info(TAG, 'file', this.fileName, 'already open');
-        this.sandboxIndex = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_ONE];
+        this.appIndex = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_ONE];
         this.linkFileName = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_TWO];
         this.linkFd = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_THREE];
         this.alreadyOpen = true;
@@ -300,15 +305,16 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
       if (globalThis.authPerm2Sandbox[this.authPerm] !== undefined &&
         this.gatheringType === dlpPermission.GatheringPolicyType.GATHERING) {
-        this.sandboxIndex = globalThis.authPerm2Sandbox[this.authPerm][1];
-        console.info(TAG, 'Dlp gathering is on, send', this.fileName, 'to sandbox:', this.sandboxBundleName, this.sandboxIndex);
+        this.appIndex = globalThis.authPerm2Sandbox[this.authPerm][1];
+        console.info(TAG, 'Dlp gathering is on, send', this.fileName, 'to sandbox:', this.sandboxBundleName, this.appIndex);
         sortByAuthPerm = true;
       }
 
       if (!this.alreadyOpen && !sortByAuthPerm) {
-        let sandboxInfo = await dlpPermission.installDLPSandbox(this.sandboxBundleName,
+        let appInfo = await dlpPermission.installDLPSandbox(this.sandboxBundleName,
           this.authPerm, this.userId, this.uri);
-        this.sandboxIndex = sandboxInfo.appIndex;
+        this.appIndex = appInfo.appIndex;
+        this.tokenId = appInfo.tokenID;
       }
     } catch (err) {
       console.error(TAG, 'installDLPSandbox failed', err.code, err.message);
@@ -325,7 +331,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
     }
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
-    await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.sandboxIndex); // 202: DLP_INSTALL_SANDBOX_SUCCESS
+    await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex); // 202: DLP_INSTALL_SANDBOX_SUCCESS
     if (!this.alreadyOpen) {
       let date = new Date();
       let timestamp = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
@@ -338,7 +344,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         return;
       }
       let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
-      this.linkFileName = this.sandboxBundleName + '_' + this.sandboxIndex + '_' + timestamp + '.' + secondarySuffix + '.dlp.link';
+      this.linkFileName = this.sandboxBundleName + '_' + this.appIndex + '_' + timestamp + '.' + secondarySuffix + '.dlp.link';
       hiTraceMeter.startTrace('DlpAddLinkFileJs', startId);
       try {
         await this.dlpFile.addDLPLinkFile(this.linkFileName);
