@@ -29,6 +29,10 @@ struct staffInput {
   }[];
 
   @Prop isDisable: boolean;
+  removeItem(i) {
+    this.staffArray.splice(i, 1)
+    this.activeStaffIndex = -1
+  }
 
   build() {
     Column() {
@@ -49,24 +53,17 @@ struct staffInput {
                 .opacity(Constants.PP_ROW_RADIUS)
                 .focusable(true)
                 .focusOnTouch(true)
-                .onKeyEvent((event: KeyEvent) => {
-                  if (event.keyText === 'KEYCODE_DEL' &&
-                    event.keyCode === 2055 && this.activeStaffIndex === index) {
-                    this.staffArray = this.staffArray.filter((item,index) => {
-                      return index !== this.activeStaffIndex
-                    })
-                    this.activeStaffIndex = -1;
-                  }
-                  if (event.keyText === 'KEYCODE_FORWARD_DEL' && event.keyCode === 2071 && this.activeStaffIndex === index) {
-                    this.staffArray = this.staffArray.filter((item,index) => {
-                      return index !== this.activeStaffIndex
-                    })
-                    this.activeStaffIndex = -1
-                  }
-                })
                 .onClick(() => {
                   this.activeStaffIndex = index;
                 })
+                .bindMenu([
+                  {
+                    value: $r('app.string.delete_account'),
+                    action: () => {
+                      this.removeItem(index)
+                    }
+                  }
+                ])
                 .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
                 .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
             }

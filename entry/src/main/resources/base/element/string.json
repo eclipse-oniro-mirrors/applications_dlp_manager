@@ -263,6 +263,10 @@
     {
       "name": "colon",
       "value": ":"
+    },
+    {
+      "name": "delete_account",
+      "value": "Delete"
     }
   ]
 }
