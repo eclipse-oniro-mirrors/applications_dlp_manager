@@ -298,7 +298,13 @@ struct encryptionSuccess {
                               Row() {
                                 if (this.showNamesArrReadOnly.length !== this.routerParams['staffDataArrayReadOnly'].length) {
                                   Text('+')
+                                    .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+                                    .fontSize($r('sys.float.ohos_id_text_size_button2'))
+                                    .fontWeight(FontWeight.Medium)
                                   Text(this.hideNamesNumReadOnly)
+                                    .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+                                    .fontSize($r('sys.float.ohos_id_text_size_button2'))
+                                    .fontWeight(FontWeight.Medium)
                                 }
                                 Image($r("app.media.icon_change"))
                                   .width(Constants.PP_IMAGE_HEIGHT)
@@ -432,7 +438,13 @@ struct encryptionSuccess {
                               Row() {
                                 if (this.showNamesArrEdit.length !== this.routerParams['staffDataArrayEdit'].length) {
                                   Text('+')
+                                    .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+                                    .fontSize($r('sys.float.ohos_id_text_size_button2'))
+                                    .fontWeight(FontWeight.Medium)
                                   Text(this.hideNamesNumEdit)
+                                    .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+                                    .fontSize($r('sys.float.ohos_id_text_size_button2'))
+                                    .fontWeight(FontWeight.Medium)
                                 }
                                 Image($r("app.media.icon_change"))
                                   .width(Constants.PP_IMAGE_HEIGHT)
