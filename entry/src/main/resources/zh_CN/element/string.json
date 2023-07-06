@@ -93,6 +93,10 @@
       "value": "编辑"
     },
     {
+      "name": "header_title_edit_content",
+      "value": "编辑"
+    },
+    {
       "name": "header_title_readonly_tips",
       "value": "拥有只读权限的用户可查看此文件，但不能编辑、复制或打印。"
     },

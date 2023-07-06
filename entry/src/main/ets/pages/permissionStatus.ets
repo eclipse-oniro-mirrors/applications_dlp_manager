@@ -42,7 +42,7 @@ struct PermissionStatus {
           label: ($r('app.string.save_as')), value: false
         },
         {
-          label: ($r('app.string.header_title_edit')), value: false
+          label: ($r('app.string.header_title_edit_content')), value: false
         },
         {
           label: ($r('app.string.screenshot')), value: false
@@ -92,7 +92,7 @@ struct PermissionStatus {
           label: ($r('app.string.save_as')), value: true
         },
         {
-          label: ($r('app.string.header_title_edit')), value: true
+          label: ($r('app.string.header_title_edit_content')), value: true
         },
         {
           label: ($r('app.string.screenshot')), value: true
@@ -193,7 +193,6 @@ struct PermissionStatus {
                     .align(Alignment.Start)
                 }
                 .width(Constants.HEADER_COLUMN_WIDTH)
-                .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
                 .margin({ bottom: Constants.DU_LINE_MARGIN_TOP2 })
                 .padding({
                   left: Constants.HEADER_COLUMN_PADDING_LEFT,
@@ -201,34 +200,37 @@ struct PermissionStatus {
                 })
               }
 
-              Column() {
-                List() {
-                  ForEach(this.authPerm === Constants.FOOTER_OPACITY_ONE ? this.array1 : this.array2, (item) => {
-                    ListItemGroup({ header: this.itemHead(item.title) }) {
-                      ForEach(item.content, (item) => {
-                        ListItem() {
-                          Row() {
-                            Text(item.label)
-                              .width(Constants.ENCRYPTION_PERMISSION_STATUS_IMAGE)
-                              .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-                              .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                              .textAlign(TextAlign.Start)
-                              .fontWeight(FontWeight.Medium)
-                            Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
-                              .width(Constants.PP_IMAGE_WIDTH)
-                              .height(Constants.PP_IMAGE_HEIGHT)
+              Scroll() {
+                Column() {
+                  List() {
+                    ForEach(this.authPerm === Constants.FOOTER_OPACITY_ONE ? this.array1 : this.array2, (item) => {
+                      ListItemGroup({ header: this.itemHead(item.title) }) {
+                        ForEach(item.content, (item) => {
+                          ListItem() {
+                            Row() {
+                              Text(item.label)
+                                .width(Constants.ENCRYPTION_PERMISSION_STATUS_IMAGE)
+                                .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+                                .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                                .textAlign(TextAlign.Start)
+                                .fontWeight(FontWeight.Medium)
+                              Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
+                                .width(Constants.PP_IMAGE_WIDTH)
+                                .height(Constants.PP_IMAGE_HEIGHT)
+                            }
                           }
-                        }
-                      }, item => JSON.stringify(item))
-                    }
-                    .divider({
-                      strokeWidth: Constants.FOOTER_OPACITY_ONE,
-                      color: $r('app.color.encryption_divider_color')
+                        }, item => JSON.stringify(item))
+                      }
+                      .divider({
+                        strokeWidth: Constants.FOOTER_OPACITY_ONE,
+                        color: $r('app.color.encryption_divider_color')
+                      })
                     })
-                  })
+                  }
                 }
-              }
-              .height(Constants.ENCRYPTION_PERMISSION_STATUS_HEIGHT)
+              }.constraintSize({
+                maxHeight: Constants.CHANGE_MAX_HEIGHT
+              })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
