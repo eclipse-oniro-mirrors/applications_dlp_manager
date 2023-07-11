@@ -30,6 +30,13 @@ let abilityResult = {
   'resultCode': 0,
   'want': {}
 };
+
+@Extend(Text) function customizeText() {
+  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+  .fontSize($r('sys.float.ohos_id_text_size_button2'))
+  .fontWeight(FontWeight.Medium)
+}
+
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
   ownerAccountType: globalThis.domainAccount ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
@@ -433,7 +440,6 @@ struct changeEncryption {
                   .align(Alignment.Start)
               }
               .width(Constants.HEADER_COLUMN_WIDTH)
-              .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
               .margin({ bottom: Constants.ENCRYPTION_CHANGE_TIPS_MARGIN_BOTTOM })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
@@ -540,13 +546,9 @@ struct changeEncryption {
                             Row() {
                               if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly['length']) {
                                 Text('+')
-                                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-                                  .fontSize($r('sys.float.ohos_id_text_size_button2'))
-                                  .fontWeight(FontWeight.Medium)
+                                  .customizeText()
                                 Text(this.hideNamesNumReadOnly)
-                                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-                                  .fontSize($r('sys.float.ohos_id_text_size_button2'))
-                                  .fontWeight(FontWeight.Medium)
+                                  .customizeText()
                               }
                               Image($r("app.media.icon_change"))
                                 .width(Constants.PP_IMAGE_HEIGHT)
@@ -679,13 +681,9 @@ struct changeEncryption {
                             Row() {
                               if (this.showNamesArrEdit.length !== this.staffDataArrayEdit['length']) {
                                 Text('+')
-                                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-                                  .fontSize($r('sys.float.ohos_id_text_size_button2'))
-                                  .fontWeight(FontWeight.Medium)
+                                  .customizeText()
                                 Text(this.hideNamesNumEdit)
-                                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-                                  .fontSize($r('sys.float.ohos_id_text_size_button2'))
-                                  .fontWeight(FontWeight.Medium)
+                                  .customizeText()
                               }
                               Image($r("app.media.icon_change"))
                                 .width(Constants.PP_IMAGE_HEIGHT)
@@ -753,16 +751,16 @@ struct changeEncryption {
               Flex({ direction: FlexDirection.Row }) {
                 Button($r('app.string.unencrypted'), { type: ButtonType.Capsule, stateEffect: true })
                   .backgroundColor($r('app.color.base_button_color'))
-                  .width(Constants.FOOTER_WIDTH_BUTTON)
+                  .width(Constants.HEADER_TEXT_WIDTH)
                   .height(Constants.FOOTER_HEIGHT)
                   .fontColor($r('app.color.encryption_cancel'))
                   .onClick(async (event) => {
                     this.unEncrypt();
                   })
-                Text().width(Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH).height(Constants.FOOTER_BUTTON_HEIGHT)
+                  .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })
                   .backgroundColor($r('app.color.base_button_color'))
-                  .width(Constants.FOOTER_WIDTH_BUTTON)
+                  .width(Constants.HEADER_TEXT_WIDTH)
                   .fontColor($r('app.color.encryption_cancel'))
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
@@ -779,6 +777,7 @@ struct changeEncryption {
                       params: this.routerData
                     })
                   })
+                  .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
               }
               .margin({
                 left: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
