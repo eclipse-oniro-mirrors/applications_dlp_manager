@@ -16,17 +16,16 @@
 
 import picker from '@ohos.file.picker';
 import '@ohos.app.ability.UIAbility';
-import fileio from '@ohos.fileio';
 import dlpPermission from '@ohos.dlpPermission';
+import fs from '@ohos.file.fs';
 import {
   startAlertAbility,
   terminateSelfWithResult,
   getFileAssetFromUri,
-  getFileUriByPath
+  getFileUriByPath,
+  getFileFd
 } from '../common/utils';
-import fileUri from "@ohos.file.fileuri";
 import abilityManager from '@ohos.app.ability.abilityManager';
-import Want from '@ohos.app.ability.Want';
 import Constants from '../common/constant';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 
@@ -43,7 +42,9 @@ let result = {
 };
 
 const SUFFIX_INDEX = 2;
-
+const HEAD_LENGTH_IN_BYTE = 16;
+const HEAD_LENGTH_IN_U32 = 4;
+const TXT_OFFSET = 3;
 const TAG = '[DLPManager_SaveAs]';
 @Entry
 @Component
@@ -112,10 +113,34 @@ struct Sa {
     return true;
   }
 
+  async copyDlpHead(srcFd:number, dstFd:number): Promise<boolean> {
+    try {
+      let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
+      let option = {
+        offset:0,
+        length:HEAD_LENGTH_IN_BYTE
+      };
+      let num = fs.readSync(srcFd, z, option);
+      let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
+
+      let txtOffset = buf[TXT_OFFSET];
+      let head = new ArrayBuffer(txtOffset);
+      option = {
+        offset:0,
+        length:txtOffset
+      };
+      num = fs.readSync(srcFd, head, option);
+      num = fs.writeSync(dstFd, head, option);
+    } catch (err) {
+      console.error(TAG, 'copyDlpHead ', err.code, err.message);
+      return false;
+    }
+
+    return true;
+  }
   async prepareDlpFile(): Promise<void> {
     console.info(TAG, 'getFile start:', JSON.stringify(globalThis.abilityWant));
     let uri = null;
-    let tempFd = null;
     let filePath = null;
     let displayName = null;
 
@@ -129,6 +154,8 @@ struct Sa {
       displayName = this.fileName;
       DocumentSaveOptions.newFileNames = [displayName];
       let documentPicker = new picker.DocumentViewPicker();
+      let dstFd = null;
+      let uriFileAsset = null;
       await documentPicker.save(DocumentSaveOptions).then(async (saveRes) => {
         if (saveRes == undefined || saveRes.length == 0) {
           console.error(TAG, 'fail to get uri');
@@ -136,24 +163,13 @@ struct Sa {
         }
         console.info(TAG, 'get uri', saveRes)
         uri = saveRes[0]
-        let dstFd = null;
-        let uriFileAsset = null;
+
         try {
           uriFileAsset = await getFileAssetFromUri(uri);
           dstFd = await uriFileAsset.open('rw');
         } catch (err) {
           console.error(TAG, 'open', uri, 'failed', err.code, err.message);
-          await globalThis.dsHelper.delete(uri);
-          this.isOK = false;
-          await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
-          return;
-        }
-
-        filePath = globalThis.context.filesDir + '/' + (new Date().getTime());
-        try {
-          tempFd = fileio.openSync(filePath, 0o102, 0o666);
-        } catch (err) {
-          console.error(TAG, 'openSync ', filePath, 'failed', err.code, err.message);
+          await uriFileAsset.close(dstFd);
           await globalThis.dsHelper.delete(uri);
           this.isOK = false;
           await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
@@ -163,15 +179,26 @@ struct Sa {
         this.dlpFile = globalThis.token2File[this.tokenId][0];
         this.sandboxBundleName = globalThis.token2File[this.tokenId][1];
         let appId = globalThis.token2File[this.tokenId][2];
+        let srcUri = globalThis.token2File[this.tokenId][4];
 
+        let srcFd = getFileFd(srcUri);
+        let copyRes = await this.copyDlpHead(srcFd, dstFd);
+        if (!copyRes) {
+          await uriFileAsset.close(dstFd);
+          await globalThis.dsHelper.delete(uri);
+          fs.closeSync(srcFd);
+          this.isOK = false;
+          await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+          return;
+        }
         let newDlpFile:dlpPermission.DLPFile = null;
         try {
-          newDlpFile = await dlpPermission.generateDLPFile(tempFd, dstFd, this.dlpFile.dlpProperty);
+          newDlpFile = await dlpPermission.openDLPFile(dstFd);
         } catch (err) {
-          console.error(TAG, 'generateDlpFile', tempFd, 'failed', err.code, err.message);
-          fileio.closeSync(tempFd);
-          fileio.unlinkSync(filePath);
+          console.error(TAG, 'generateDlpFile', dstFd, 'failed', err.code, err.message);
+          await uriFileAsset.close(dstFd);
           await globalThis.dsHelper.delete(uri);
+          fs.closeSync(srcFd);
           return;
         }
 
@@ -189,24 +216,23 @@ struct Sa {
           } catch (err) {
             console.error(TAG, 'closeDlpFile failed', err.code, err.message);
           }
-
-          fileio.closeSync(tempFd);
-          fileio.unlinkSync(filePath);
+          await uriFileAsset.close(dstFd);
           await globalThis.dsHelper.delete(uri);
+          fs.closeSync(srcFd);
           this.isOK = false;
           await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
           return;
         }
 
         let linkFilePath = '/mnt/data/fuse/' + linkFileName;
-        let stat: fileio.Stat = fileio.statSync(linkFilePath);
+        let stat = fs.statSync(linkFilePath);
         const WRITE_ACCESS: number = 0o0200;
         if (stat.mode & WRITE_ACCESS) {
           // @ts-ignore
-          this.linkFd = fileio.openSync(linkFilePath, 0o2);
+          this.linkFd = fs.openSync(linkFilePath, fs.OpenMode.READ_WRITE);
         } else {
           // @ts-ignore
-          this.linkFd = fileio.openSync(linkFilePath, 0o0);
+          this.linkFd = fs.openSync(linkFilePath, fs.OpenMode.READ);
         }
         globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, uriFileAsset, dstFd];
         globalThis.sandbox2linkFile[this.sandboxBundleName + appId].push([this.linkFd,
@@ -216,18 +242,15 @@ struct Sa {
 
         this.resultUri = getFileUriByPath(linkFilePath);
 
-        fileio.closeSync(tempFd);
-        fileio.unlinkSync(filePath);
-
         console.info(TAG, "result uri is", this.resultUri);
 
         result.want.parameters.pick_path_return.push(this.resultUri);
         result.resultCode = 0;
+        fs.closeSync(srcFd);
         return;
       }).catch(async (err) => {
         console.error(TAG, 'DocumentViewPicker failed', err.code, err.message);
-        fileio.closeSync(tempFd);
-        fileio.unlinkSync(filePath);
+        await uriFileAsset.close(dstFd);
         await globalThis.dsHelper.delete(uri);
         this.isOK = false;
         await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
