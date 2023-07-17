@@ -677,23 +677,18 @@ struct DlpDialog {
             right: Constants.HEADER_COLUMN_PADDING_RIGHT
           })
 
-          Row() {
-            Text($r('app.string.header_title_list'))
-              .fontWeight(FontWeight.Regular)
-              .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-              .fontSize($r('sys.float.ohos_id_text_size_body1'))
-              .width(Constants.HEADER_TEXT_WIDTH)
-              .align(Alignment.Start)
-          }
-          .width(Constants.HEADER_COLUMN_WIDTH)
-          .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
-          .padding({
-            left: Constants.HEADER_COLUMN_PADDING_LEFT,
-            right: Constants.HEADER_COLUMN_PADDING_RIGHT
-          })
-
           Scroll() {
             Column() {
+              Row() {
+                Text($r('app.string.header_title_list'))
+                  .fontWeight(FontWeight.Regular)
+                  .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                  .width(Constants.HEADER_TEXT_WIDTH)
+                  .align(Alignment.Start)
+              }
+              .width(Constants.HEADER_COLUMN_WIDTH)
+
               Row() {
                 Text($r('app.string.header_title_readonly'))
                   .fontWeight(FontWeight.Medium)

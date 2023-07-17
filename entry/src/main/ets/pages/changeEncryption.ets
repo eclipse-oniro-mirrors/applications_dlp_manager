@@ -79,6 +79,7 @@ struct changeEncryption {
   @State rowNamesLenReadOnly: number = 0;
   @State hideNamesNumEdit: string = '0';
   @State hideNamesNumReadOnly: string = '0';
+  @State processing: boolean = false;
   @State showNamesArrEdit: {
     authAccount: string,
   }[] = [];
@@ -334,6 +335,9 @@ struct changeEncryption {
       return;
     }
     this.showData(this.dlpFile.dlpProperty)
+    setTimeout(() => {
+      this.processing = false;
+    }, 20)
   }
 
   async showData(defaultDlpProperty) {
@@ -382,6 +386,7 @@ struct changeEncryption {
     if (this.requestIsFromSandBox) {
       this.displaySandboxInfo();
     } else {
+      this.processing = true;
       await this.decryptDlpFile();
     }
   }
@@ -431,73 +436,32 @@ struct changeEncryption {
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
               })
 
-              Row() {
-                Text($r('app.string.permissions_are_restricted'))
-                  .fontWeight(FontWeight.Regular)
-                  .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                  .width(Constants.HEADER_TEXT_WIDTH)
-                  .align(Alignment.Start)
-              }
-              .width(Constants.HEADER_COLUMN_WIDTH)
-              .margin({ bottom: Constants.ENCRYPTION_CHANGE_TIPS_MARGIN_BOTTOM })
-              .padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
-
               Scroll() {
                 Column() {
-                  if (this.selectedPermissionTypeReadOnly.data === 'all') {
-                    Row() {
-                      Text($r('app.string.header_title_readonly'))
-                        .fontWeight(FontWeight.Medium)
-                        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text(' : ')
-                        .fontFamily($r('app.string.typeface'))
-                        .fontWeight(FontWeight.Regular)
-                        .fontColor($r('app.color.text_color'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text($r('app.string.PERMISSION_TYPE_SELECT_ALL'))
-                        .fontFamily($r('app.string.typeface'))
-                        .fontWeight(FontWeight.Regular)
-                        .fontColor($r('app.color.text_color'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Image($r('app.media.details'))
-                        .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                        .onClick(() => {
-                          this.handlePopupReadOnly = !this.handlePopupReadOnly
-                        })
-                        .bindPopup(this.handlePopupReadOnly, {
-                          builder: this.popupBuilderReadOnly,
-                          placement: Placement.Bottom,
-                          popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-                          enableArrow: true,
-                          showInSubWindow: false,
-                          onStateChange: (e) => {
-                            if (!e.isVisible) {
-                              this.handlePopupReadOnly = false
-                            }
-                          }
-                        })
-                    }
-                    .width(Constants.FOOTER_ROW_WIDTH)
-                    .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-                    .margin({
-                      top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
-                      bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
-                    })
-                  } else {
-                    if (this.staffDataArrayReadOnly['length']) {
+                  Row() {
+                    Text($r('app.string.permissions_are_restricted'))
+                      .fontWeight(FontWeight.Regular)
+                      .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                      .width(Constants.HEADER_TEXT_WIDTH)
+                      .align(Alignment.Start)
+                  }
+                  .width(Constants.HEADER_COLUMN_WIDTH)
+                  .margin({ bottom: Constants.ENCRYPTION_CHANGE_TIPS_MARGIN_BOTTOM })
+
+                  Column() {
+                    if (this.selectedPermissionTypeReadOnly.data === 'all') {
                       Row() {
                         Text($r('app.string.header_title_readonly'))
                           .fontWeight(FontWeight.Medium)
                           .fontColor($r('sys.color.ohos_id_color_text_primary'))
                           .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                        Text(` (${this.staffDataArrayReadOnly['length']}):`)
+                        Text(' : ')
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text($r('app.string.PERMISSION_TYPE_SELECT_ALL'))
                           .fontFamily($r('app.string.typeface'))
                           .fontWeight(FontWeight.Regular)
                           .fontColor($r('app.color.text_color'))
@@ -524,115 +488,114 @@ struct changeEncryption {
                       }
                       .width(Constants.FOOTER_ROW_WIDTH)
                       .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-                      .margin({ top: Constants.FOOTER_ROW_MARGIN })
-
-                      Flex({
-                        direction: FlexDirection.Row,
-                        wrap: FlexWrap.Wrap,
-                      }) {
-                        if (this.staffDataArrayReadOnly['length'] > 0) {
-                          ForEach(
-                          this.showNamesArrReadOnly,
-                            (item, index) => {
-                              staffItem({
-                                authAccount: item.authAccount,
-                                isActive: false,
-                                changeIndex: Number(index),
-                              })
-                            },
-                            (item) => item.authAccount
-                          )
-                          if (Number(this.hideNamesNumReadOnly) > 0) {
-                            Row() {
-                              if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly['length']) {
-                                Text('+')
-                                  .customizeText()
-                                Text(this.hideNamesNumReadOnly)
-                                  .customizeText()
-                              }
-                              Image($r("app.media.icon_change"))
-                                .width(Constants.PP_IMAGE_HEIGHT)
-                                .height(Constants.PP_TEXT_FONT_SIZE2)
-                                .objectFit(ImageFit.Contain)
-                                .rotate({
-                                  angle: !this.ReadOnlyFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
-                                })
-                                .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
-                            }
-                            .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
-                            .onClick(() => {
-                              let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
-                              this.showNamesArrReadOnly = showNamesArr;
-                              this.ReadOnlyFlag = showFlag;
-                            })
-                          }
-                        }
-                      }
-                      .onAreaChange((oldValue: Area, newValue: Area) => {
-                        if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                          let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayReadOnly);
-                          this.rowNamesLenReadOnly = rowNamesLen;
-                          this.showNamesArrReadOnly = showNamesArr;
-                          this.hideNamesNumReadOnly = hideNamesNum;
-                        }
-                      })
                       .margin({
                         top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                         bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
                       })
-                    }
-                  }
-                  if (this.selectedPermissionTypeEdit.data !== 'target') {
-                    Row() {
-                      Text($r('app.string.header_title_edit'))
-                        .fontWeight(FontWeight.Medium)
-                        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text(' : ')
-                        .fontFamily($r('app.string.typeface'))
-                        .fontWeight(FontWeight.Regular)
-                        .fontColor($r('app.color.text_color'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Text(this.selectedPermissionTypeEdit.data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
-                        .fontFamily($r('app.string.typeface'))
-                        .fontWeight(FontWeight.Regular)
-                        .fontColor($r('app.color.text_color'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                      Image($r('app.media.details'))
-                        .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                        .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                        .onClick(() => {
-                          this.handlePopupEdit = !this.handlePopupEdit
-                        })
-                        .bindPopup(this.handlePopupEdit, {
-                          builder: this.popupBuilderEdit,
-                          placement: Placement.Bottom,
-                          popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
-                          enableArrow: true,
-                          showInSubWindow: false,
-                          onStateChange: (e) => {
-                            if (!e.isVisible) {
-                              this.handlePopupEdit = false
+                    } else {
+                      if (this.staffDataArrayReadOnly['length']) {
+                        Row() {
+                          Text($r('app.string.header_title_readonly'))
+                            .fontWeight(FontWeight.Medium)
+                            .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          Text(` (${this.staffDataArrayReadOnly['length']}):`)
+                            .fontFamily($r('app.string.typeface'))
+                            .fontWeight(FontWeight.Regular)
+                            .fontColor($r('app.color.text_color'))
+                            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          Image($r('app.media.details'))
+                            .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                            .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                            .onClick(() => {
+                              this.handlePopupReadOnly = !this.handlePopupReadOnly
+                            })
+                            .bindPopup(this.handlePopupReadOnly, {
+                              builder: this.popupBuilderReadOnly,
+                              placement: Placement.Bottom,
+                              popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                              enableArrow: true,
+                              showInSubWindow: false,
+                              onStateChange: (e) => {
+                                if (!e.isVisible) {
+                                  this.handlePopupReadOnly = false
+                                }
+                              }
+                            })
+                        }
+                        .width(Constants.FOOTER_ROW_WIDTH)
+                        .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
+                        .margin({ top: Constants.FOOTER_ROW_MARGIN })
+
+                        Flex({
+                          direction: FlexDirection.Row,
+                          wrap: FlexWrap.Wrap,
+                        }) {
+                          if (this.staffDataArrayReadOnly['length'] > 0) {
+                            ForEach(
+                              this.showNamesArrReadOnly,
+                              (item, index) => {
+                                staffItem({
+                                  authAccount: item.authAccount,
+                                  isActive: false,
+                                  changeIndex: Number(index),
+                                })
+                              },
+                              (item) => item.authAccount
+                            )
+                            if (Number(this.hideNamesNumReadOnly) > 0) {
+                              Row() {
+                                if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly['length']) {
+                                  Text('+')
+                                    .customizeText()
+                                  Text(this.hideNamesNumReadOnly)
+                                    .customizeText()
+                                }
+                                Image($r("app.media.icon_change"))
+                                  .width(Constants.PP_IMAGE_HEIGHT)
+                                  .height(Constants.PP_TEXT_FONT_SIZE2)
+                                  .objectFit(ImageFit.Contain)
+                                  .rotate({
+                                    angle: !this.ReadOnlyFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                  })
+                                  .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
+                              }
+                              .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
+                              .onClick(() => {
+                                let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
+                                this.showNamesArrReadOnly = showNamesArr;
+                                this.ReadOnlyFlag = showFlag;
+                              })
                             }
                           }
+                        }
+                        .onAreaChange((oldValue: Area, newValue: Area) => {
+                          if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                            let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayReadOnly);
+                            this.rowNamesLenReadOnly = rowNamesLen;
+                            this.showNamesArrReadOnly = showNamesArr;
+                            this.hideNamesNumReadOnly = hideNamesNum;
+                          }
                         })
+                        .margin({
+                          top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                          bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+                        })
+                      }
                     }
-                    .justifyContent(FlexAlign.Start)
-                    .width(Constants.FOOTER_ROW_WIDTH)
-                    .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-                    .margin({
-                      top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
-                      bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
-                    })
-                  } else {
-                    if (this.staffDataArrayEdit['length']) {
+                    if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
                       Row() {
                         Text($r('app.string.header_title_edit'))
                           .fontWeight(FontWeight.Medium)
                           .fontColor($r('sys.color.ohos_id_color_text_primary'))
                           .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                        Text(` (${this.staffDataArrayEdit['length']}):`)
+                        Text(' : ')
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('app.color.text_color'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(this.selectedPermissionTypeEdit.data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                           .fontFamily($r('app.string.typeface'))
                           .fontWeight(FontWeight.Regular)
                           .fontColor($r('app.color.text_color'))
@@ -660,84 +623,124 @@ struct changeEncryption {
                       .justifyContent(FlexAlign.Start)
                       .width(Constants.FOOTER_ROW_WIDTH)
                       .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
-
-                      Flex({
-                        direction: FlexDirection.Row,
-                        wrap: FlexWrap.Wrap,
-                      }) {
-                        if (this.staffDataArrayEdit['length'] > 0) {
-                          ForEach(
-                          this.showNamesArrEdit,
-                            (item, index) => {
-                              staffItem({
-                                authAccount: item.authAccount,
-                                isActive: false,
-                                changeIndex: Number(index),
-                              })
-                            },
-                            (item) => item.authAccount
-                          )
-                          if (Number(this.hideNamesNumEdit) > 0) {
-                            Row() {
-                              if (this.showNamesArrEdit.length !== this.staffDataArrayEdit['length']) {
-                                Text('+')
-                                  .customizeText()
-                                Text(this.hideNamesNumEdit)
-                                  .customizeText()
-                              }
-                              Image($r("app.media.icon_change"))
-                                .width(Constants.PP_IMAGE_HEIGHT)
-                                .height(Constants.PP_TEXT_FONT_SIZE2)
-                                .objectFit(ImageFit.Contain)
-                                .rotate({
-                                  angle: !this.editFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
-                                })
-                                .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
-                            }
-                            .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
-                            .onClick(() => {
-                              let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayEdit, this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
-                              this.showNamesArrEdit = showNamesArr;
-                              this.editFlag = showFlag;
-                            })
-                          }
-                        }
-                      }
-                      .onAreaChange((oldValue: Area, newValue: Area) => {
-                        if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                          let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayEdit);
-                          this.rowNamesLenEdit = rowNamesLen;
-                          this.showNamesArrEdit = showNamesArr;
-                          this.hideNamesNumEdit = hideNamesNum;
-                        }
-                      })
                       .margin({
                         top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                         bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
                       })
+                    } else {
+                      if (this.staffDataArrayEdit['length']) {
+                        Row() {
+                          Text($r('app.string.header_title_edit'))
+                            .fontWeight(FontWeight.Medium)
+                            .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          Text(` (${this.staffDataArrayEdit['length']}):`)
+                            .fontFamily($r('app.string.typeface'))
+                            .fontWeight(FontWeight.Regular)
+                            .fontColor($r('app.color.text_color'))
+                            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          Image($r('app.media.details'))
+                            .width(Constants.FOOTER_ROW_PAD_RIGHT)
+                            .height(Constants.FOOTER_ROW_PAD_RIGHT)
+                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                            .onClick(() => {
+                              this.handlePopupEdit = !this.handlePopupEdit
+                            })
+                            .bindPopup(this.handlePopupEdit, {
+                              builder: this.popupBuilderEdit,
+                              placement: Placement.Bottom,
+                              popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                              enableArrow: true,
+                              showInSubWindow: false,
+                              onStateChange: (e) => {
+                                if (!e.isVisible) {
+                                  this.handlePopupEdit = false
+                                }
+                              }
+                            })
+                        }
+                        .justifyContent(FlexAlign.Start)
+                        .width(Constants.FOOTER_ROW_WIDTH)
+                        .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
+
+                        Flex({
+                          direction: FlexDirection.Row,
+                          wrap: FlexWrap.Wrap,
+                        }) {
+                          if (this.staffDataArrayEdit['length'] > 0) {
+                            ForEach(
+                              this.showNamesArrEdit,
+                              (item, index) => {
+                                staffItem({
+                                  authAccount: item.authAccount,
+                                  isActive: false,
+                                  changeIndex: Number(index),
+                                })
+                              },
+                              (item) => item.authAccount
+                            )
+                            if (Number(this.hideNamesNumEdit) > 0) {
+                              Row() {
+                                if (this.showNamesArrEdit.length !== this.staffDataArrayEdit['length']) {
+                                  Text('+')
+                                    .customizeText()
+                                  Text(this.hideNamesNumEdit)
+                                    .customizeText()
+                                }
+                                Image($r("app.media.icon_change"))
+                                  .width(Constants.PP_IMAGE_HEIGHT)
+                                  .height(Constants.PP_TEXT_FONT_SIZE2)
+                                  .objectFit(ImageFit.Contain)
+                                  .rotate({
+                                    angle: !this.editFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                  })
+                                  .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
+                              }
+                              .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
+                              .onClick(() => {
+                                let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayEdit, this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
+                                this.showNamesArrEdit = showNamesArr;
+                                this.editFlag = showFlag;
+                              })
+                            }
+                          }
+                        }
+                        .onAreaChange((oldValue: Area, newValue: Area) => {
+                          if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                            let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayEdit);
+                            this.rowNamesLenEdit = rowNamesLen;
+                            this.showNamesArrEdit = showNamesArr;
+                            this.hideNamesNumEdit = hideNamesNum;
+                          }
+                        })
+                        .margin({
+                          top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                          bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+                        })
+                      }
                     }
-                  }
-                  Column({ space: Constants.HEADER_ROW_FONT_SIZE }) {
-                    Row() {
-                      Text($r('app.string.document_valid_until'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                        .fontWeight(FontWeight.Medium)
-                        .textAlign(TextAlign.Start)
-                      Text($r('app.string.permanently'))
-                        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                        .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                        .fontWeight(FontWeight.Regular)
-                        .width(Constants.HEADER_COLUMN_WIDTH)
-                        .textAlign(TextAlign.Start)
-                        .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                    Column({ space: Constants.HEADER_ROW_FONT_SIZE }) {
+                      Row() {
+                        Text($r('app.string.document_valid_until'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontWeight(FontWeight.Medium)
+                          .textAlign(TextAlign.Start)
+                        Text($r('app.string.permanently'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                          .fontWeight(FontWeight.Regular)
+                          .width(Constants.HEADER_COLUMN_WIDTH)
+                          .textAlign(TextAlign.Start)
+                          .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                      }
+                      .width(Constants.HEADER_COLUMN_WIDTH)
+                      .height(Constants.AP_MARGIN_TOP)
                     }
-                    .width(Constants.HEADER_COLUMN_WIDTH)
-                    .height(Constants.AP_MARGIN_TOP)
+                    .padding({
+                      bottom: Constants.ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM
+                    })
                   }
-                  .padding({
-                    bottom: Constants.ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM
-                  })
                 }
               }.constraintSize({
                 maxHeight: Constants.CHANGE_MAX_HEIGHT
@@ -746,8 +749,6 @@ struct changeEncryption {
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
               })
-
-
               Flex({ direction: FlexDirection.Row }) {
                 Button($r('app.string.unencrypted'), { type: ButtonType.Capsule, stateEffect: true })
                   .backgroundColor($r('app.color.base_button_color'))
@@ -786,6 +787,7 @@ struct changeEncryption {
                 top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
               })
             }
+            .visibility(this.processing ? Visibility.Hidden : Visibility.Visible)
             .width(Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('app.color.index_background_color'))
             .borderRadius(Constants.INDEX_BORDER_RADIUS)

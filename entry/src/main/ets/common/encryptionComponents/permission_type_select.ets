@@ -57,7 +57,7 @@ struct permissionTypeSelect {
     })
     setTimeout( () =>{
       this.selectedItem = this.permissionTypes[0];
-    }, 0)
+    }, 20)
   }
 
   build() {

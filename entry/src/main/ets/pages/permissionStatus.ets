@@ -166,42 +166,36 @@ struct PermissionStatus {
           direction: FlexDirection.Column }) {
           Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
             Column() {
-              Column() {
-                Row() {
-                  Text($r('app.string.header_title'))
-                    .fontWeight(FontWeight.Medium)
-                    .fontFamily($r('app.string.typeface'))
-                    .fontColor($r('app.color.text_color'))
-                    .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
-                    .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
-                    .width(Constants.HEADER_TEXT_WIDTH)
-                    .align(Alignment.Start)
-                }
-                .width(Constants.HEADER_COLUMN_WIDTH)
-                .height(Constants.HEADER_COLUMN_HEIGHT)
-                .padding({
-                  left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                  right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                })
-
-                Row() {
-                  Text(this.authPerm === Constants.FOOTER_OPACITY_ONE ? $r('app.string.permission_status_readOnly') : $r('app.string.permission_status_title'))
-                    .fontWeight(FontWeight.Regular)
-                    .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                    .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                    .width(Constants.HEADER_TEXT_WIDTH)
-                    .align(Alignment.Start)
-                }
-                .width(Constants.HEADER_COLUMN_WIDTH)
-                .margin({ bottom: Constants.DU_LINE_MARGIN_TOP2 })
-                .padding({
-                  left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                  right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                })
+              Row() {
+                Text($r('app.string.header_title'))
+                  .fontWeight(FontWeight.Medium)
+                  .fontFamily($r('app.string.typeface'))
+                  .fontColor($r('app.color.text_color'))
+                  .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+                  .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
+                  .width(Constants.HEADER_TEXT_WIDTH)
+                  .align(Alignment.Start)
               }
+              .width(Constants.HEADER_COLUMN_WIDTH)
+              .height(Constants.HEADER_COLUMN_HEIGHT)
+              .padding({
+                left: Constants.HEADER_COLUMN_PADDING_LEFT,
+                right: Constants.HEADER_COLUMN_PADDING_RIGHT
+              })
 
               Scroll() {
                 Column() {
+                  Row() {
+                    Text(this.authPerm === Constants.FOOTER_OPACITY_ONE ? $r('app.string.permission_status_readOnly') : $r('app.string.permission_status_title'))
+                      .fontWeight(FontWeight.Regular)
+                      .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                      .width(Constants.HEADER_TEXT_WIDTH)
+                      .align(Alignment.Start)
+                  }
+                  .width(Constants.HEADER_COLUMN_WIDTH)
+                  .margin({ bottom: Constants.DU_LINE_MARGIN_TOP2 })
+
                   List() {
                     ForEach(this.authPerm === Constants.FOOTER_OPACITY_ONE ? this.array1 : this.array2, (item) => {
                       ListItemGroup({ header: this.itemHead(item.title) }) {
