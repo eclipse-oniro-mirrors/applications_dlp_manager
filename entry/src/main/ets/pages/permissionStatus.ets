@@ -14,12 +14,14 @@
  */
 
 import Constants from '../common/constant';
+import { directionStatus } from '../common/utils';
 
 const TAG = "[DLPManager_PermStat]";
 
 @Entry
 @Component
 struct PermissionStatus {
+  @State directionStatus: number = 0;
   @State authPerm: number = Constants.PP_IMAGE_PAD;
   @State authPermFlag: boolean = false;
   @State accountId: string = '';
@@ -128,6 +130,10 @@ struct PermissionStatus {
     console.info(TAG, "aboutToAppear");
     this.authPerm = AppStorage.Get('authPerm');
     this.accountId = AppStorage.Get('contractAccount');
+    this.directionStatus = globalThis.context.config.direction;
+    directionStatus((counter) => {
+      this.directionStatus = counter;
+    })
   }
 
   @Builder itemHead(text: string) {
@@ -223,7 +229,7 @@ struct PermissionStatus {
                   }
                 }
               }.constraintSize({
-                maxHeight: Constants.CHANGE_MAX_HEIGHT
+                maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
               })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,

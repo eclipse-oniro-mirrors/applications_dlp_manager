@@ -19,10 +19,9 @@ import staffItem from '../common/encryptionComponents/staff';
 import dlpPermission from '@ohos.dlpPermission';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 // @ts-ignore
-import { getAlertMessage, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd, calculate, toggleShow } from '../common/utils';
+import { getAlertMessage, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd, calculate, toggleShow, directionStatus } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import picker from '@ohos.file.picker';
-import deviceInfo from '@ohos.deviceInfo';
 
 const TAG = '[DLPManager_ModEnc]';
 
@@ -66,6 +65,7 @@ struct changeEncryption {
   srcFileName: string;
   requestIsFromSandBox: boolean | undefined | unknown = false;
   linkFileName: string;
+  @State directionStatus: number = 0;
   @State transferData: object = {};
   @State handlePopup: boolean = false;
   @State handlePopupReadOnly: boolean = false;
@@ -337,7 +337,7 @@ struct changeEncryption {
     this.showData(this.dlpFile.dlpProperty)
     setTimeout(() => {
       this.processing = false;
-    }, 20)
+    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
   }
 
   async showData(defaultDlpProperty) {
@@ -389,6 +389,10 @@ struct changeEncryption {
       this.processing = true;
       await this.decryptDlpFile();
     }
+    this.directionStatus = globalThis.context.config.direction;
+    directionStatus((counter) => {
+      this.directionStatus = counter;
+    })
   }
 
   build() {
@@ -743,7 +747,7 @@ struct changeEncryption {
                   }
                 }
               }.constraintSize({
-                maxHeight: Constants.CHANGE_MAX_HEIGHT
+                maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
               })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,

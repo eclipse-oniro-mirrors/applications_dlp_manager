@@ -80,7 +80,7 @@ struct EncryptingPanel {
                     .textAlign(TextAlign.Center)
                 }
               }
-              .width(Constants.HEADER_TEXT_WIDTH)
+              .width(Constants.HEADER_COLUMN_WIDTH)
               .height(Constants.ENCRYPTION_LOADING_HEIGHT)
               .backgroundColor($r('app.color.index_background_color'))
               .borderRadius(Constants.INDEX_BORDER_RADIUS)

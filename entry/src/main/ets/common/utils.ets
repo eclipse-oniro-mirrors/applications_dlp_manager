@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 import account_osAccount from '@ohos.account.osAccount';
+import emitter from '@ohos.events.emitter';
 import Constants from '../common/constant'
 import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
@@ -216,6 +217,16 @@ async function getFileAssetFromUri(uri:string) {
   return uriFileAsset;
 }
 
+function directionStatus(func) {
+  let innerEvent = {
+    eventId: Constants.ENCRYPTION_EMIT_DIRECTION_STATUS
+  };
+  emitter.on(innerEvent, (eventData) => {
+    func(eventData.data.direction);
+    return eventData.data.direction;
+  });
+}
+
 
 export {
   getOsAccountInfo,
@@ -231,5 +242,6 @@ export {
   removeDuplicate,
   calculate,
   toggleShow,
-  getFileAssetFromUri
+  getFileAssetFromUri,
+  directionStatus
 };

@@ -17,10 +17,11 @@ import datafile from '@ohos.file.fileAccess';
 import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
 import type { Permissions } from '@ohos.abilityAccessCtrl';
 import dlpPermission from '@ohos.dlpPermission';
+import emitter from '@ohos.events.emitter';
+import deviceInfo from '@ohos.deviceInfo';
 import Constants from '../common/constant';
 // @ts-ignore
 import { getAuthPerm, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
-import deviceInfo from '@ohos.deviceInfo';
 
 const PHONE = 'phone';
 const TAG = '[DLPManager_Main]';
@@ -29,6 +30,8 @@ let permissionList: Array<Permissions> = [
   'ohos.permission.WRITE_MEDIA',
   'ohos.permission.FILE_ACCESS_MANAGER'
 ];
+
+let direction: number;
 
 export default class MainAbility extends UIAbility {
   dlpFile: dlpPermission.DLPFile = null;
@@ -45,6 +48,21 @@ export default class MainAbility extends UIAbility {
       globalThis.uri = <string> globalThis.abilityWant.uri;
     }
     globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context);
+    direction = this.context.config.direction;
+  }
+  onConfigurationUpdate(newConfig): void {
+    if (direction !== newConfig.direction) {
+      direction = newConfig.direction;
+    }
+    let eventData = {
+      data: {
+        'direction': direction,
+      }};
+    let innerEvent = {
+      eventId: Constants.ENCRYPTION_EMIT_DIRECTION_STATUS,
+      priority: emitter.EventPriority.HIGH
+    };
+    emitter.emit(innerEvent, eventData);
   }
 
   onDestroy(): void {

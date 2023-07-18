@@ -57,7 +57,7 @@ struct permissionTypeSelect {
     })
     setTimeout( () =>{
       this.selectedItem = this.permissionTypes[0];
-    }, 20)
+    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
   }
 
   build() {

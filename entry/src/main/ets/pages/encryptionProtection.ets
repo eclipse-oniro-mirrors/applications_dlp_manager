@@ -27,7 +27,8 @@ import {
   judgeIsSandBox,
   getAuthPerm,
   removeDuplicate,
-  getFileFd
+  getFileFd,
+  directionStatus
 } from '../common/utils';
 import Constants from '../common/constant';
 import router from '@ohos.router';
@@ -36,7 +37,6 @@ import permissionTypeSelect from '../common/encryptionComponents/permission_type
 import picker from '@ohos.file.picker';
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import fileio from '@ohos.fileio';
-import deviceInfo from '@ohos.deviceInfo';
 
 const TAG = "[DLPManager_Encrypt]"
 let suffix_length = 4;
@@ -78,6 +78,7 @@ struct DlpDialog {
   isReadPermission: boolean = false;
   requestIsFromSandBox: boolean | undefined | unknown = false;
   dlpAlertDialog: CustomDialogController;
+  @State directionStatus: number = 0;
   @State authPerm: number = 2;
   @State dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   @State handlePopupReadOnly: boolean = false;
@@ -653,6 +654,10 @@ struct DlpDialog {
     }
 
     await this.checkAndOpenDlpFile(this.srcFileName, this.srcFd, this.linkFileName);
+    this.directionStatus = globalThis.context.config.direction;
+    directionStatus((counter) => {
+      this.directionStatus = counter;
+    })
   }
 
   build() {
@@ -781,7 +786,7 @@ struct DlpDialog {
               .margin({ bottom: Constants.ENCRYPTION_STAFF_ITEM_MARGIN_BOTTOM })
             }
           }.constraintSize({
-            maxHeight: Constants.CHANGE_MAX_HEIGHT
+            maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
           })
           .padding({
             left: Constants.HEADER_COLUMN_PADDING_LEFT,

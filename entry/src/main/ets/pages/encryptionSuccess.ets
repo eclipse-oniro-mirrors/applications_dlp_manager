@@ -16,9 +16,8 @@
 import Constants from '../common/constant';
 import router from '@ohos.router';
 import staffItem from '../common/encryptionComponents/staff';
-import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import deviceInfo from '@ohos.deviceInfo';
-import { calculate, toggleShow } from '../common/utils';
+import { calculate, toggleShow, directionStatus } from '../common/utils';
 
 const TAG = "[DLPManager_EncSucc]";
 let abilityResult = {
@@ -36,6 +35,7 @@ let abilityResult = {
 @Component
 struct encryptionSuccess {
   private routerParams: any = router.getParams();
+  @State directionStatus: number = 0;
   @State flag: boolean = false;
   @State editFlag: boolean = false;
   @State ReadOnlyFlag: boolean = false;
@@ -103,6 +103,10 @@ struct encryptionSuccess {
     this.deviceType = deviceInfo.deviceType;
     console.info(TAG, "aboutToAppear, encrypt success");
     console.info(TAG, 'get router param', JSON.stringify(this.routerParams));
+    this.directionStatus = globalThis.context.config.direction;
+    directionStatus((counter) => {
+      this.directionStatus = counter;
+    })
   }
 
   build() {
@@ -519,7 +523,7 @@ struct encryptionSuccess {
                   }
                 }
               }.constraintSize({
-                maxHeight: Constants.CHANGE_MAX_HEIGHT
+                maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
               })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
