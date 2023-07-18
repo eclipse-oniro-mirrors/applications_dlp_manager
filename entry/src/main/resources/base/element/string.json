@@ -230,11 +230,11 @@
     },
     {
       "name": "TITLE_APP_VISIT_FILE_ERROR",
-      "value": "Cannot access this file"
+      "value": "No permission"
     },
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-      "value": "You do not have access. Please apply for authorization from the following users:\n%s"
+      "value": "You do not have the permission to view the file. To apply for the permission, contact:%s"
     },
     {
       "name": "TITLE_APP_DLP_ERROR",

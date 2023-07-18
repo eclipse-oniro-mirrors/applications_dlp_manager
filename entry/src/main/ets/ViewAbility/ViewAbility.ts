@@ -232,7 +232,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         globalThis.context.terminateSelf();
       });
     } catch (error) {
-      console.error('grantUriPermission failed with error:' + error);
+      console.error(TAG, 'grantUriPermission failed with error:' + error);
       globalThis.context.terminateSelf();
     }
 

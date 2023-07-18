@@ -166,7 +166,6 @@ struct encryptionSuccess {
                         .fontWeight(FontWeight.Medium)
                     }
                     .width(Constants.HEADER_COLUMN_WIDTH)
-                    .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
 
                     Row() {
                       Text(`${this.routerParams['displayName']}`)
@@ -520,7 +519,7 @@ struct encryptionSuccess {
                   }
                 }
               }.constraintSize({
-                maxHeight: Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
+                maxHeight: Constants.CHANGE_MAX_HEIGHT
               })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,

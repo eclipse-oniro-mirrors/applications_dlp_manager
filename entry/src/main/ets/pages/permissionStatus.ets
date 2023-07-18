@@ -244,7 +244,6 @@ struct PermissionStatus {
                   .fontWeight(FontWeight.Regular)
               }
               .width(Constants.HEADER_COLUMN_WIDTH)
-              .height(Constants.HEADER_COLUMN_HEIGHT_TIPS)
               .margin({ top: Constants.DA_MARGIN_TOP, bottom: Constants.DU_LINE_MARGIN_TOP2 })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,

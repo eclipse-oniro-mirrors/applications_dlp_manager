@@ -230,11 +230,11 @@
     },
     {
       "name": "TITLE_APP_VISIT_FILE_ERROR",
-      "value": "无法访问此文件"
+      "value": "没有权限"
     },
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-      "value": "您没有访问权限。请向下列用户申请授权：\n%s"
+      "value": "您没有权限查看此文件。如需申请权限，请联系：%s"
     },
     {
       "name": "TITLE_APP_DLP_ERROR",

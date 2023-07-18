@@ -56,7 +56,7 @@ struct DlpAlertDialog {
           .fontFamily($r('app.string.typeface'))
           .fontWeight(FontWeight.Medium)
           .fontColor($r('app.color.button_color'))
-          .backgroundColor($r('app.color.da_button_color'))
+          .backgroundColor($r('app.color.base_button_color'))
           .onClick(() => {
             this.controller.close()
             if (this.action != null) {
