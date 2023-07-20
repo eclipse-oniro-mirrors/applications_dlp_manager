@@ -249,8 +249,7 @@ struct DlpDialog {
         return;
       }
     }
-    let filename = this.srcFileName.substr(0, this.srcFileName.length - suffix_length);
-    let filePath = globalThis.context.filesDir + '/' + filename + (new Date().getTime());
+    let filePath = globalThis.context.filesDir + '/' + (new Date().getTime());
     let tempFd = null;
     try {
       tempFd = fileio.openSync(filePath, 0o102, 0o666);
