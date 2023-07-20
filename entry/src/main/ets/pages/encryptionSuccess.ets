@@ -101,8 +101,7 @@ struct encryptionSuccess {
 
   aboutToAppear() {
     this.deviceType = deviceInfo.deviceType;
-    console.info(TAG, "aboutToAppear, encrypt success");
-    console.info(TAG, 'get router param', JSON.stringify(this.routerParams));
+    console.info(TAG, 'aboutToAppear, encrypt success');
     this.directionStatus = globalThis.context.config.direction;
     directionStatus((counter) => {
       this.directionStatus = counter;
@@ -172,7 +171,7 @@ struct encryptionSuccess {
                     .width(Constants.HEADER_COLUMN_WIDTH)
 
                     Row() {
-                      Text(`${this.routerParams['displayName']}`)
+                      Text(`${globalThis.dlpFileName}`)
                         .fontSize($r('sys.float.ohos_id_text_size_body2'))
                         .fontColor($r('sys.color.ohos_id_color_secondary'))
                         .fontWeight(FontWeight.Regular)
@@ -505,13 +504,9 @@ struct encryptionSuccess {
                             .width(Constants.HEADER_COLUMN_WIDTH)
                             .textAlign(TextAlign.Start)
                             .onClick(() => {
-                              let routerParams = {
-                                displayName: this.routerParams['displayName'],
-                                dlpFd: this.routerParams['dlpFd']
-                              }
                               router.replaceUrl({
                                 url: 'pages/changeEncryption',
-                                params: routerParams
+                                params: this.routerParams
                               })
                             })
                         }
@@ -537,6 +532,22 @@ struct encryptionSuccess {
                   .width(Constants.FOOTER_WIDTH_BUTTON)
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
+                    if (!globalThis.requestIsFromSandBox) {
+                      try {
+                        console.info(TAG, 'closeDLPFile', globalThis.dlpFileName, globalThis.dlpFd);
+                        await globalThis.dlpFile.closeDLPFile();
+                      } catch (err) {
+                        console.error(TAG, 'closeDLPFile', globalThis.dlpFileName, 'failed', err.code, err.message);
+                      }
+                      try {
+                        if (globalThis.uriFileAsset !== undefined) {
+                          console.info(TAG, 'refresh dlp file', globalThis.dlpFileName, globalThis.dlpFd);
+                          await globalThis.uriFileAsset.close(globalThis.dlpFd); // refresh file info
+                        }
+                      } catch (err) {
+                        console.error(TAG, 'refresh dlp file', globalThis.dlpFileName, 'failed', err.code, err.message);
+                      }
+                    }
                     abilityResult.resultCode = 0
                     globalThis.context.terminateSelfWithResult(abilityResult);
                   })

@@ -109,7 +109,7 @@ struct Sa {
       return;
     }
     this.suffix = splitNames[splitNames.length - SUFFIX_INDEX];
-    console.info(TAG, "suffix is", this.suffix);
+    console.info(TAG, 'suffix is', this.suffix);
     return true;
   }
 
@@ -242,7 +242,7 @@ struct Sa {
 
         this.resultUri = getFileUriByPath(linkFilePath);
 
-        console.info(TAG, "result uri is", this.resultUri);
+        console.info(TAG, 'result uri is', this.resultUri);
 
         result.want.parameters.pick_path_return.push(this.resultUri);
         result.resultCode = 0;

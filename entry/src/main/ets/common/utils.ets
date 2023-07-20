@@ -35,12 +35,11 @@ function getFileUriByPath(filePath): string {
 
 function getFileFd(uri): number {
   try {
-    console.info(TAG, 'file fd:', uri);
     let file = fs.openSync(uri, fs.OpenMode.READ_WRITE);
-    console.info(TAG, 'file fd:', file.fd);
+    console.info(TAG, 'open', uri, 'as', file.fd);
     return file.fd;
-  } catch (e) {
-    console.info(TAG, 'openSync error:' + e);
+  } catch (err) {
+    console.info(TAG, 'openSync error:', JSON.stringify(err));
     return -1;
   }
 }
@@ -173,21 +172,15 @@ let removeDuplicate = (arr, arg) => {
 
 
 let calculate = (newValue, allNames) => {
-  console.log(TAG + '22')
-  console.log(TAG + 'newValue', JSON.stringify(newValue))
-  console.log(TAG + 'newValue', JSON.stringify(allNames))
   let editLength = allNames.length;
   let screenWidth = newValue['width'] - Constants.HEADER_COLUMN_PADDING_LEFT;
   let rowNamesLen = Math.floor(screenWidth / (Constants.ENCRYPTION_STAFF_WIDTH + Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT));
-  console.log(TAG + 'rowNamesLen', JSON.stringify(rowNamesLen))
   let showNamesArr = editLength > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
     ? allNames.slice(0, 2 * rowNamesLen - 1)
     : allNames.slice(0, 2 * rowNamesLen);
-  console.log(TAG + 'showNamesArr', JSON.stringify(showNamesArr))
   let hideNamesNum = editLength - showNamesArr.length > 0
     ? String(editLength - showNamesArr.length)
     : '0';
-  console.log(TAG + 'hideNamesNum', JSON.stringify(hideNamesNum))
   return { rowNamesLen, showNamesArr, hideNamesNum }
 }
 

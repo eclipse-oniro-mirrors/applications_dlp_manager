@@ -127,7 +127,7 @@ struct PermissionStatus {
   ];
 
   aboutToAppear() {
-    console.info(TAG, "aboutToAppear");
+    console.info(TAG, 'aboutToAppear');
     this.authPerm = AppStorage.Get('authPerm');
     this.accountId = AppStorage.Get('contractAccount');
     this.directionStatus = globalThis.context.config.direction;

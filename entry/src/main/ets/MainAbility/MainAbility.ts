@@ -34,7 +34,6 @@ let permissionList: Array<Permissions> = [
 let direction: number;
 
 export default class MainAbility extends UIAbility {
-  dlpFile: dlpPermission.DLPFile = null;
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
 
   async onCreate(want, launchParam): Promise<void> {
@@ -74,24 +73,13 @@ export default class MainAbility extends UIAbility {
     globalThis.windowStage.setUIContent(globalThis.context, 'pages/alert', null);
   }
 
-  async gotoSandbox(windowStage, accountInfo): Promise<void> {
-    const linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
-    for (let key in globalThis.sandbox2linkFile) {
-      for (let j in globalThis.sandbox2linkFile[key]) {
-        if (globalThis.sandbox2linkFile[key][j][Constants.FILE_OPEN_HISTORY_TWO] === linkFileName) {
-          let linkFile = globalThis.sandbox2linkFile[key][j];
-          this.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ONE];
-        }
-      }
-    }
-    if (globalThis.domainAccount) {
-      this.authPerm = getAuthPerm(accountInfo.domainInfo.accountName, this.dlpFile.dlpProperty);
-    } else {
-      this.authPerm = getAuthPerm(accountInfo.distributedInfo.name, this.dlpFile.dlpProperty);
-    }
-    console.info(TAG, 'authPerm', JSON.stringify(this.authPerm));
+  async gotoPage(windowStage, accountInfo): Promise<void> {
+    let accountName = globalThis.domainAccount ? accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
+    this.authPerm = getAuthPerm(accountName, globalThis.dlpFile.dlpProperty);
+    console.info(TAG, accountName, 'has dlp access', JSON.stringify(this.authPerm));
+
     AppStorage.SetOrCreate('authPerm', this.authPerm);
-    AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
+    AppStorage.SetOrCreate('contractAccount', globalThis.dlpFile.dlpProperty.contractAccount);
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
@@ -107,36 +95,37 @@ export default class MainAbility extends UIAbility {
     });
   }
 
-  async goContentPage(windowStage, srcFd, accountInfo): Promise<void> {
+  async findDlpFile(): Promise<void> {
+    const linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
+    for (let key in globalThis.sandbox2linkFile) {
+      for (let j in globalThis.sandbox2linkFile[key]) {
+        if (globalThis.sandbox2linkFile[key][j][Constants.FILE_OPEN_HISTORY_TWO] === linkFileName) {
+          let linkFile = globalThis.sandbox2linkFile[key][j];
+          globalThis.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ONE];
+          globalThis.dlpFd = linkFile[Constants.FILE_OPEN_HISTORY_THREE];
+          globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
+          globalThis.linkFileName = linkFileName;
+          console.info(TAG, 'find dlp file', globalThis.dlpFileName, globalThis.dlpFd);
+          return;
+        }
+      }
+    }
+    console.error(TAG, 'request from sandbox, but can not find dlp file by linkFileName', linkFileName);
+    await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+    return;
+  }
+
+  async openDlpFile(): Promise<void> {
     try {
-      console.info(TAG, 'openDLPFile', srcFd);
-      this.dlpFile = await dlpPermission.openDLPFile(srcFd);
+      globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
+      globalThis.dlpFd = getFileFd(globalThis.uri);
+      console.info(TAG, 'openDLPFile', globalThis.dlpFileName, globalThis.dlpFd);
+      globalThis.dlpFile = await dlpPermission.openDLPFile(globalThis.dlpFd);
     } catch (err) {
-      console.error(TAG, 'openDLPFile', srcFd, 'failed', err.code, err.message);
+      console.error(TAG, 'openDLPFile', globalThis.dlpFileName, 'failed', err.code, err.message);
       await this.showErrorDialogAndExit(err);
       return;
     }
-    if (globalThis.domainAccount) {
-      this.authPerm = getAuthPerm(accountInfo.domainInfo.accountName, this.dlpFile.dlpProperty);
-    } else {
-      this.authPerm = getAuthPerm(accountInfo.distributedInfo.name, this.dlpFile.dlpProperty);
-    }
-    console.info(TAG, 'authPerm', JSON.stringify(this.authPerm));
-    AppStorage.SetOrCreate('authPerm', this.authPerm);
-    AppStorage.SetOrCreate('contractAccount', this.dlpFile.dlpProperty.contractAccount);
-    if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
-      this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
-      return;
-    }
-    if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      windowStage.setUIContent(this.context, 'pages/changeEncryption', null);
-    } else {
-      windowStage.setUIContent(this.context, 'pages/permissionStatus', null);
-    }
-    windowStage.getMainWindow().then((win) => {
-      win.setBackgroundColor('#00FFFFFF');
-    });
   }
 
   checkValidWant(): boolean {
@@ -152,8 +141,10 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need name in want.parameters.fileName');
       return false;
     }
-    if (globalThis.uri === undefined) {
-      console.error(TAG, 'need uri in want.parameters');
+    let callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken'];
+    let callerBundleName = globalThis.abilityWant.parameters['ohos.aafwk.param.callerBundleName'];
+    if (callerToken === undefined || callerBundleName === undefined) {
+      console.error(TAG, 'need caller info in want.parameters');
       return false;
     }
     return true;
@@ -185,26 +176,27 @@ export default class MainAbility extends UIAbility {
       await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR });
       return;
     }
-    let requestIsFromSandBox = await judgeIsSandBox();
-    console.info(TAG, 'judgeIsSandBox', requestIsFromSandBox);
-    if (requestIsFromSandBox) {
-      this.gotoSandbox(windowStage, accountInfo);
-      return;
+    globalThis.requestIsFromSandBox = await judgeIsSandBox();
+    console.info(TAG, 'request is from sandbox', globalThis.requestIsFromSandBox);
+    if (globalThis.requestIsFromSandBox) {
+      await this.findDlpFile();
     } else {
       let fileName = globalThis.abilityWant.parameters.fileName.name;
       let isDlpSuffix: boolean = fileName.endsWith('.dlp');
       if (!isDlpSuffix) {
-        console.info(TAG, 'input file is not a dlp file');
+        console.info(TAG, fileName, 'is not a dlp file');
+        globalThis.originFileName = globalThis.abilityWant.parameters.fileName.name;
+        globalThis.originFd = getFileFd(globalThis.uri);
         windowStage.setUIContent(this.context, 'pages/encryptionProtection', null);
         windowStage.getMainWindow().then((win) => {
           win.setBackgroundColor('#00FFFFFF');
         });
+        return;
       } else {
-        let uri = globalThis.uri;
-        let srcFd = getFileFd(uri);
-        this.goContentPage(windowStage, srcFd, accountInfo);
+        await this.openDlpFile();
       }
     }
+    this.gotoPage(windowStage, accountInfo);
   }
 
   onWindowStageDestroy(): void {

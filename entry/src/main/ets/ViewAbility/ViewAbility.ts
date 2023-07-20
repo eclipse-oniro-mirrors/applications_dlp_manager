@@ -268,10 +268,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
     hiTraceMeter.startTrace('DlpOpenDlpFileJs', startId);
     try {
-      console.info(TAG, 'openDLPFile', this.dlpFd);
+      console.info(TAG, 'openDLPFile', this.fileName, this.dlpFd);
       this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd);
     } catch (err) {
-      console.error(TAG, 'openDLPFile', this.dlpFd, 'failed', err.code, err.message);
+      console.error(TAG, 'openDLPFile', this.fileName, 'failed', err.code, err.message);
       hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await this.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, err.data); // 103:DLP_FILE_PARSE_ERROR

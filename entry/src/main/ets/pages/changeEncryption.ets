@@ -19,7 +19,7 @@ import staffItem from '../common/encryptionComponents/staff';
 import dlpPermission from '@ohos.dlpPermission';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 // @ts-ignore
-import { getAlertMessage, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd, calculate, toggleShow, directionStatus } from '../common/utils';
+import { getAlertMessage, checkAccountLogin, getOsAccountInfo, getFileFd, calculate, toggleShow, directionStatus } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import picker from '@ohos.file.picker';
 
@@ -63,7 +63,6 @@ let defaultDlpFile: dlpPermission.DLPFile = {
 struct changeEncryption {
   dlpAlertDialog: CustomDialogController;
   srcFileName: string;
-  requestIsFromSandBox: boolean | undefined | unknown = false;
   linkFileName: string;
   @State directionStatus: number = 0;
   @State transferData: object = {};
@@ -79,7 +78,7 @@ struct changeEncryption {
   @State rowNamesLenReadOnly: number = 0;
   @State hideNamesNumEdit: string = '0';
   @State hideNamesNumReadOnly: string = '0';
-  @State processing: boolean = false;
+  @State prepareData: boolean = false;
   @State showNamesArrEdit: {
     authAccount: string,
   }[] = [];
@@ -188,9 +187,9 @@ struct changeEncryption {
   }
 
   async catchProcess() {
-    if (this.requestIsFromSandBox) {
+    if (globalThis.requestIsFromSandBox) {
       try {
-        console.info(TAG, 'resumeFuseLink');
+        console.info(TAG, 'resumeFuseLink', this.linkFileName);
         await this.dlpFile.resumeFuseLink(this.linkFileName);
       } catch (err) {
         console.error(TAG, 'resumeFuseLink failed', err.code, err.message);
@@ -200,7 +199,7 @@ struct changeEncryption {
 
   async unEncrypt() {
     let plaintextFile = this.srcFileName.split('.')[0] + '.' + this.srcFileName.split('.')[1];
-    if (this.requestIsFromSandBox) {
+    if (globalThis.requestIsFromSandBox) {
       try {
         console.info(TAG, 'stopFuseLink', this.linkFileName);
         await this.dlpFile.stopFuseLink(this.linkFileName);
@@ -236,7 +235,7 @@ struct changeEncryption {
           return;
         }
         try {
-          console.info(TAG, 'recoverDLPFile', this.dlpFd);
+          console.info(TAG, 'recoverDLPFile', this.srcFileName, this.dlpFd);
           await this.dlpFile.recoverDLPFile(dstFd);
         } catch (err) {
           console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', err.code, err.message);
@@ -250,7 +249,7 @@ struct changeEncryption {
         }
 
         await uriFileAsset.close(dstFd);
-        if (this.requestIsFromSandBox) { //no need close dlp file in sandbox
+        if (globalThis.requestIsFromSandBox) { //no need close dlp file in sandbox
           try {
             console.info(TAG, 'resumeFuseLink', this.linkFileName);
             await this.dlpFile.resumeFuseLink(this.linkFileName);
@@ -259,10 +258,10 @@ struct changeEncryption {
           }
         } else {
           try {
-            console.info(TAG, 'closeDLPFile', this.dlpFd);
+            console.info(TAG, 'closeDLPFile', this.srcFileName, this.dlpFd);
             await this.dlpFile.closeDLPFile();
           } catch (err) {
-            console.error(TAG, 'closeDLPFile failed', err.code, err.message);
+            console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', err.code, err.message);
           }
         }
         abilityResult.resultCode = 0;
@@ -273,71 +272,6 @@ struct changeEncryption {
     } catch (err) {
       console.error(TAG, 'Decrypt DLP file', this.srcFileName, 'failed', JSON.stringify(err));
     }
-  }
-
-  displaySandboxInfo() {
-    this.linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
-    this.srcFileName = globalThis.abilityWant.parameters.fileName.name;
-    console.info(TAG, 'request from sandbox')
-    for (let key in globalThis.sandbox2linkFile) {
-      for (let j in globalThis.sandbox2linkFile[key]) {
-        if (globalThis.sandbox2linkFile[key][j][2] === this.linkFileName) {
-          let linkFile = globalThis.sandbox2linkFile[key][j];
-          for (let i = 0; i < linkFile[1].dlpProperty.authUserList.length; ++i) {
-            let authUser = linkFile[1].dlpProperty.authUserList[i];
-          }
-          this.dlpFile = linkFile[1]
-          this.dlpFd = linkFile[3]
-	        this.showData(this.dlpFile.dlpProperty)
-          return
-        }
-      }
-    }
-    console.error(TAG, 'request from sandbox, but can not find dlp file by linkFileName', this.linkFileName)
-    this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
-    abilityResult.resultCode = -100;
-    globalThis.context.terminateSelfWithResult(abilityResult);
-    return
-  }
-
-  async decryptDlpFile() {
-    let routerParams = router.getParams();
-    if (routerParams === undefined) { // request from ability
-      console.info(TAG, 'Change encryption request from ability')
-      try {
-        globalThis.accountInfo = await getOsAccountInfo();
-      } catch (err) {
-        console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
-        this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'));
-        return;
-      }
-      if (!checkAccountLogin(globalThis.accountInfo)) {
-        this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-        return;
-      }
-      let uri = <string>globalThis.uri;
-      this.dlpFd = getFileFd(uri);
-      this.srcFileName = globalThis.abilityWant.parameters.fileName.name;
-    } else { // request from router
-      console.info(TAG, 'Change encryption request from router');
-      console.info(TAG, 'get router param', JSON.stringify(routerParams));
-      this.dlpFd = routerParams['dlpFd'];
-      this.srcFileName = routerParams['displayName'];
-    }
-    try {
-      console.info(TAG, 'openDLPFile', this.dlpFd);
-      this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd);
-    } catch (err) {
-      console.error(TAG, 'openDLPFile', this.dlpFd, 'failed', err.code, err.message);
-      let errorInfo = getAlertMessage(
-          err, $r('app.string.TITLE_APP_DLP_ERROR'), $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR'));
-      this.showErrorDialogAndExit(errorInfo.title, errorInfo.msg)
-      return;
-    }
-    this.showData(this.dlpFile.dlpProperty)
-    setTimeout(() => {
-      this.processing = false;
-    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
   }
 
   async showData(defaultDlpProperty) {
@@ -375,20 +309,40 @@ struct changeEncryption {
     this.routerData = {
       staffDataArrayReadOnly: this.staffDataArrayReadOnly,
       staffDataArrayEdit: this.staffDataArrayEdit,
-      displayName: this.srcFileName,
-      dlpFd: this.dlpFd
     }
   }
 
   async aboutToAppear() {
-    this.requestIsFromSandBox = await judgeIsSandBox();
-    console.info(TAG, 'judgeIsSandBox', this.requestIsFromSandBox);
-    if (this.requestIsFromSandBox) {
-      this.displaySandboxInfo();
-    } else {
-      this.processing = true;
-      await this.decryptDlpFile();
+    this.prepareData = true;
+    try {
+      globalThis.accountInfo = await getOsAccountInfo();
+    } catch (err) {
+      console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
+      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
+      return;
     }
+    if (!checkAccountLogin(globalThis.accountInfo)) {
+      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+      return;
+    }
+
+    if (globalThis.requestIsFromSandBox) {
+      console.info(TAG, 'request from sandbox');
+      this.linkFileName = globalThis.linkFileName;
+      this.dlpFd = globalThis.dlpFd;
+      this.srcFileName = globalThis.dlpFileName;
+      this.dlpFile = globalThis.dlpFile;
+    } else {
+      console.info(TAG, 'request from normal');
+      this.dlpFd = globalThis.dlpFd;
+      this.srcFileName = globalThis.dlpFileName;
+      this.dlpFile = globalThis.dlpFile;
+    }
+    await this.showData(this.dlpFile.dlpProperty);
+    setTimeout(() => {
+      this.prepareData = false;
+    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
+
     this.directionStatus = globalThis.context.config.direction;
     directionStatus((counter) => {
       this.directionStatus = counter;
@@ -769,14 +723,8 @@ struct changeEncryption {
                   .fontColor($r('app.color.encryption_cancel'))
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
-                    if (!this.requestIsFromSandBox) {
-                      try {
-                        console.info(TAG, 'closeDLPFile', this.dlpFd);
-                        await this.dlpFile.closeDLPFile()
-                      } catch (err) {
-                        console.error(TAG, 'closeDLPFile failed', err.code, err.message);
-                      }
-                    }
+                    // update the global resource;
+                    globalThis.dlpFile = this.dlpFile;
                     router.replaceUrl({
                       url: 'pages/encryptionProtection',
                       params: this.routerData
@@ -791,7 +739,7 @@ struct changeEncryption {
                 top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
               })
             }
-            .visibility(this.processing ? Visibility.Hidden : Visibility.Visible)
+            .visibility(this.prepareData ? Visibility.Hidden : Visibility.Visible)
             .width(Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('app.color.index_background_color'))
             .borderRadius(Constants.INDEX_BORDER_RADIUS)
