@@ -20,6 +20,7 @@ import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
 import fileuri from "@ohos.file.fileuri";
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
+import { Callback } from '@ohos.base'
 let TAG = "[DLPManager_Utils]";
 
 function getFileUriByPath(filePath): string {
@@ -217,13 +218,12 @@ async function getFileAssetFromUri(uri:string) {
   return uriFileAsset;
 }
 
-function directionStatus(func) {
+function directionStatus(func: Callback<number>) {
   let innerEvent = {
     eventId: Constants.ENCRYPTION_EMIT_DIRECTION_STATUS
   };
   emitter.on(innerEvent, (eventData) => {
     func(eventData.data.direction);
-    return eventData.data.direction;
   });
 }
 

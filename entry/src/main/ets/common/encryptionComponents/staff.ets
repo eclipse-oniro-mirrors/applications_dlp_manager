@@ -56,7 +56,8 @@ struct staffItem {
         .margin({
           right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
         })
-      Text(this.authAccount)
+      Text(this.authAccount.split('')
+        .join('\u200B'))
         .constraintSize({
           maxWidth: Constants.ENCRYPTION_STAFF_MAX_WIDTH
         })
