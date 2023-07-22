@@ -39,6 +39,7 @@ const TAG = '[DLPManager_View]';
 const PHONE = 'phone';
 const SUFFIX_INDEX = 2;
 
+let fileOpening: Map<string, boolean> = new Map();
 export default class ViewAbility extends ServiceExtensionAbility {
   linkFd: number = -1;
   dlpFd: number = -1;
@@ -148,6 +149,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
         await this.startDataAbility();
       }
+      fileOpening.delete(this.uri);
       globalThis.context.terminateSelf();
     });
   }
@@ -223,16 +225,24 @@ export default class ViewAbility extends ServiceExtensionAbility {
     } else {
       this.uri = <string>want.uri;
     }
+    if (fileOpening.has(this.uri)) {
+      console.debug(TAG, 'file is opening', this.uri);
+      return;
+    } else {
+      fileOpening.set(this.uri, true);
+    }
     try {
       await fileShare.grantUriPermission(this.uri, 'com.ohos.dlpmanager', wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION |
         wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION).then(function () {
         console.info(TAG, 'grantUriPermission success!');
       }).catch(function (error) {
         console.error(TAG, 'grantUriPermission failed with error:' + error);
+        fileOpening.delete(this.uri);
         globalThis.context.terminateSelf();
       });
     } catch (error) {
       console.error(TAG, 'grantUriPermission failed with error:' + error);
+      fileOpening.delete(this.uri);
       globalThis.context.terminateSelf();
     }
 
@@ -245,6 +255,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
       this.sandboxModuleName === undefined) {
+      fileOpening.delete(this.uri);
       terminateSelfWithResult(Constants.DLP_GET_PARAMETERS_FAILED, 'get parameters failed');
     }
     hiTraceMeter.startTrace('DlpGetOsAccountJs', startId);
@@ -257,12 +268,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await startAlertAbility({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR });
+      fileOpening.delete(this.uri);
       return;
     }
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
     if (!checkAccountLogin(accountInfo)) {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await startAlertAbility({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR });
+      fileOpening.delete(this.uri);
       return;
     }
 
@@ -276,6 +289,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await this.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, err.data); // 103:DLP_FILE_PARSE_ERROR
       await startAlertAbility(err);
+      fileOpening.delete(this.uri);
       return;
     }
     hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
@@ -287,6 +301,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+      fileOpening.delete(this.uri);
       return;
     }
     hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
@@ -328,6 +343,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await this.sendDlpFileOpenFault(Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, err.data); // 104:DLP_INSTALL_SANDBOX_ERROR
       await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+      fileOpening.delete(this.uri);
       return;
     }
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
@@ -341,6 +357,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (splitNames.length <= SUFFIX_INDEX) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+        fileOpening.delete(this.uri);
         return;
       }
       let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
@@ -358,6 +375,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await startAlertAbility(error);
         hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+        fileOpening.delete(this.uri);
         return;
       }
       hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
@@ -386,6 +404,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (this.fileAssert === undefined) {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await startAlertAbility({ code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR });
+      fileOpening.delete(this.uri);
       return;
     }
     this.startSandboxApp(startId);
