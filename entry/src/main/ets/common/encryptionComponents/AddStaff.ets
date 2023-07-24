@@ -96,6 +96,7 @@ struct staffInput {
             }
           })
           .onSubmit(() => {
+            if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) return;
             if (!this.isAccountCheckSuccess) return;
             if (!this.inputId) {
               return
@@ -142,20 +143,33 @@ struct staffInput {
       }
       .padding({
         top: Constants.ENCRYPTION_ADD_STAFF_PADDING_TOP,
-        // bottom: Constants.ENCRYPTION_ADD_STAFF_PADDING_BOTTOM
       })
       .border({
         width: { bottom: Constants.ENCRYPTION_ADD_STAFF_BORDER },
-        color: this.isInputInvalid ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'),
+        color: (this.isInputInvalid || this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX * Constants.ENCRYPTION_ADD_STAFF_LENGTH)
+          ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'),
       })
-      if (this.isInputInvalid) {
-        Text(globalThis.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
-          .alignSelf(ItemAlign.Start)
-          .fontSize($r('sys.float.ohos_fa_text_size_body'))
-          .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
-          .fontColor('RGB(232,64,38)')
-          .fontWeight(FontWeight.Medium)
-          .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP})
+
+      Flex({ direction: FlexDirection.Row }) {
+        if (this.isInputInvalid) {
+          Text(globalThis.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
+            .fontSize($r('sys.float.ohos_fa_text_size_body'))
+            .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
+            .fontColor('RGB(232,64,38)')
+            .fontWeight(FontWeight.Medium)
+            .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
+            .textAlign(TextAlign.Start)
+        }
+        Blank()
+        if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX * Constants.ENCRYPTION_ADD_STAFF_LENGTH) {
+          Text(`${this.staffArray.length}/${Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX}`)
+            .fontSize($r('sys.float.ohos_fa_text_size_body'))
+            .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
+            .fontColor('RGB(232,64,38)')
+            .fontWeight(FontWeight.Medium)
+            .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
+            .textAlign(TextAlign.End)
+        }
       }
     }
     .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
