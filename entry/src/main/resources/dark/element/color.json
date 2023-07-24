@@ -15,6 +15,10 @@
     {
       "name": "base_button_color",
       "value": "#E6000000"
+    },
+    {
+      "name": "da_button_color",
+      "value": "#D9202224"
     }
   ]
 }

@@ -28,7 +28,7 @@ struct DlpAlertDialog {
           .width(Constants.DU_WIDTH_FULL)
           .fontFamily($r('app.string.typeface'))
           .fontSize(Constants.DA_FONT_SIZE)
-          .fontColor($r('app.color.da_font_color'))
+          .fontColor($r('sys.color.ohos_id_color_text_primary'))
           .fontWeight(FontWeight.Medium)
       }
       .height(Constants.DA_ROW_HEIGHT)
@@ -40,7 +40,7 @@ struct DlpAlertDialog {
             .width(Constants.DU_WIDTH_FULL)
             .fontFamily($r('app.string.typeface'))
             .fontSize(Constants.DA_SCROLL_FONT_SIZE)
-            .fontColor($r('app.color.da_scroll_font_color'))
+            .fontColor($r('sys.color.ohos_id_color_text_secondary'))
             .fontWeight(FontWeight.Regular)
         }
         .scrollBarColor(Color.Gray).scrollBarWidth(Constants.DA_SCROLL_BAR_WIDTH)
@@ -73,7 +73,7 @@ struct DlpAlertDialog {
     .width(Constants.DA_COLOUM_WIDTH)
     .borderRadius(Constants.DA_COLOUM_RADIUS)
     .alignItems(HorizontalAlign.Center)
-    .backgroundColor($r('app.color.da_background_color'))
+    .backgroundColor($r('app.color.da_button_color'))
   }
 }
 

@@ -75,7 +75,7 @@ struct staffInput {
           placeholder: !this.staffArray.length && (globalThis.domainAccount ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')),
         })
           .flexGrow(Constants.ENCRYPTION_ADD_STAFF_FLEX_GROW)
-          .backgroundColor(Color.White)
+          .backgroundColor($r('app.color.da_button_color'))
           .borderRadius(Constants.PP_ROW_RADIUS)
           .fontSize($r('sys.float.ohos_id_text_size_body1'))
           .fontColor(this.isInputInvalid ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_primary'))

@@ -629,7 +629,7 @@ struct DlpDialog {
             Text($r('app.string.header_title'))
               .fontWeight(FontWeight.Medium)
               .fontFamily($r('app.string.typeface'))
-              .fontColor($r('app.color.text_color'))
+              .fontColor($r('sys.color.ohos_id_color_text_primary'))
               .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
               .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
               .width(Constants.HEADER_TEXT_WIDTH)
@@ -663,6 +663,7 @@ struct DlpDialog {
                   .width(Constants.FOOTER_ROW_PAD_RIGHT)
                   .height(Constants.FOOTER_ROW_PAD_RIGHT)
                   .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                  .fillColor($r('sys.color.ohos_id_color_text_secondary'))
                   .onClick(() => {
                     this.handlePopupReadOnly = !this.handlePopupReadOnly
                   })
@@ -709,6 +710,7 @@ struct DlpDialog {
                   .width(Constants.FOOTER_ROW_PAD_RIGHT)
                   .height(Constants.FOOTER_ROW_PAD_RIGHT)
                   .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                  .fillColor($r('sys.color.ohos_id_color_text_secondary'))
                   .onClick(() => {
                     this.handlePopupEdit = !this.handlePopupEdit
                   })
@@ -810,7 +812,7 @@ struct DlpDialog {
         }
         .visibility(this.processing ? Visibility.Hidden : Visibility.Visible)
         .width(Constants.FOOTER_ROW_WIDTH)
-        .backgroundColor($r('app.color.index_background_color'))
+        .backgroundColor($r('app.color.da_button_color'))
         .borderRadius(Constants.INDEX_BORDER_RADIUS)
       }
     }

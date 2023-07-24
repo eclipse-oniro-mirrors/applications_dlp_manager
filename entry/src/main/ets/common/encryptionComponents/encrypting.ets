@@ -21,71 +21,46 @@ struct EncryptingPanel {
 
   build() {
     if (this.processing) {
-      GridRow({
-        columns: {
-          xs: Constants.XS_COLUMNS,
-          sm: Constants.SM_COLUMNS,
-          md: Constants.MD_COLUMNS,
-          lg: Constants.LG_COLUMNS
-        },
-        gutter: Constants.DIALOG_GUTTER
-      }) {
-        GridCol({
-          span: {
-            xs: Constants.XS_SPAN,
-            sm: Constants.SM_SPAN,
-            md: Constants.DIALOG_MD_SPAN,
-            lg: Constants.DIALOG_LG_SPAN
-          },
-          offset: {
-            xs: Constants.XS_OFFSET,
-            sm: Constants.SM_OFFSET,
-            md: Constants.DIALOG_MD_OFFSET,
-            lg: Constants.DIALOG_LG_OFFSET
-          }
-        }) {
-          Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
-            direction: FlexDirection.Column }) {
-            Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-              Column() {
-                Column() {
-                  Text($r('app.string.header_title'))
-                    .fontWeight(FontWeight.Medium)
-                    .fontFamily($r('app.string.typeface'))
-                    .fontColor($r('app.color.text_color'))
-                    .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
-                    .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
-                    .width(Constants.HEADER_TEXT_WIDTH)
-                    .align(Alignment.Start)
-                }
-                .width(Constants.HEADER_COLUMN_WIDTH)
-                .height(Constants.HEADER_COLUMN_HEIGHT)
-                .padding({
-                  left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                  right: Constants.HEADER_COLUMN_PADDING_RIGHT
-                })
+      Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
+        direction: FlexDirection.Column }) {
+        Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
+          Column() {
+            Row() {
+              Text($r('app.string.header_title'))
+                .fontWeight(FontWeight.Medium)
+                .fontFamily($r('app.string.typeface'))
+                .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+                .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
+                .width(Constants.HEADER_TEXT_WIDTH)
+                .align(Alignment.Start)
+            }
+            .width(Constants.HEADER_COLUMN_WIDTH)
+            .height(Constants.HEADER_COLUMN_HEIGHT)
+            .padding({
+              left: Constants.HEADER_COLUMN_PADDING_LEFT,
+              right: Constants.HEADER_COLUMN_PADDING_RIGHT
+            })
 
-                Row() {
-                  LoadingProgress()
-                    .color(Color.Blue)
-                    .height(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
-                    .width(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
-                }
+            Row() {
+              LoadingProgress()
+                .color(Color.Blue)
+                .height(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
+                .width(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
+            }
 
-                Row() {
-                  Text($r('app.string.encryption_loading_title'))
-                    .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                    .fontColor(0xCCCCCC)
-                    .width(Constants.HEADER_TEXT_WIDTH)
-                    .textAlign(TextAlign.Center)
-                }
-              }
-              .width(Constants.HEADER_COLUMN_WIDTH)
-              .height(Constants.ENCRYPTION_LOADING_HEIGHT)
-              .backgroundColor($r('app.color.index_background_color'))
-              .borderRadius(Constants.INDEX_BORDER_RADIUS)
+            Row() {
+              Text($r('app.string.encryption_loading_title'))
+                .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                .fontColor(0xCCCCCC)
+                .width(Constants.HEADER_TEXT_WIDTH)
+                .textAlign(TextAlign.Center)
             }
           }
+          .width(Constants.HEADER_COLUMN_WIDTH)
+          .height(Constants.ENCRYPTION_LOADING_HEIGHT)
+          .backgroundColor($r('app.color.da_button_color'))
+          .borderRadius(Constants.INDEX_BORDER_RADIUS)
         }
       }
     }

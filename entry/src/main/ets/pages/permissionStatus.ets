@@ -176,7 +176,7 @@ struct PermissionStatus {
                 Text($r('app.string.header_title'))
                   .fontWeight(FontWeight.Medium)
                   .fontFamily($r('app.string.typeface'))
-                  .fontColor($r('app.color.text_color'))
+                  .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
                   .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                   .width(Constants.HEADER_TEXT_WIDTH)
@@ -217,6 +217,8 @@ struct PermissionStatus {
                               Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
                                 .width(Constants.PP_IMAGE_WIDTH)
                                 .height(Constants.PP_IMAGE_HEIGHT)
+                                .fillColor($r('sys.color.ohos_id_color_text_primary'))
+                                .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
                             }
                           }
                         }, item => JSON.stringify(item))
@@ -275,7 +277,7 @@ struct PermissionStatus {
               })
             }
             .width(Constants.HEADER_COLUMN_WIDTH)
-            .backgroundColor($r('app.color.index_background_color'))
+            .backgroundColor($r('app.color.da_button_color'))
             .borderRadius(Constants.INDEX_BORDER_RADIUS)
           }
         }
