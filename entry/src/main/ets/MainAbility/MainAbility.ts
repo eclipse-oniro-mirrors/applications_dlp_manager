@@ -79,7 +79,7 @@ export default class MainAbility extends UIAbility {
     console.info(TAG, accountName, 'has dlp access', JSON.stringify(this.authPerm));
 
     AppStorage.SetOrCreate('authPerm', this.authPerm);
-    AppStorage.SetOrCreate('contractAccount', globalThis.dlpFile.dlpProperty.contractAccount);
+    AppStorage.SetOrCreate('contactAccount', globalThis.dlpFile.dlpProperty.contactAccount);
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });

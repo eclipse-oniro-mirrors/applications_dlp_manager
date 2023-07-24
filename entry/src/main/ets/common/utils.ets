@@ -74,8 +74,8 @@ function getAuthPerm(accountName: string, dlpProperty: dlpPermission.DLPProperty
   if (accountName === dlpProperty.ownerAccount) {
     return dlpPermission.DLPFileAccess.FULL_CONTROL;
   }
-  if (dlpProperty.supportEveryone) {
-    perm = dlpProperty.everyonePerm;
+  if ((dlpProperty.everyoneAccessList !== undefined) && (dlpProperty.everyoneAccessList.length > 0)) {
+    perm = Math.max(...dlpProperty.everyoneAccessList);
   }
   for (let i = 0; i < dlpProperty.authUserList.length; ++i) {
     let authUser = dlpProperty.authUserList[i];

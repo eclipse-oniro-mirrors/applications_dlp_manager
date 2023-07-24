@@ -49,11 +49,9 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
   ownerAccountType: globalThis.domainAccount ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
   authUserList: [],
-  contractAccount: '',
+  contactAccount: '',
   offlineAccess: true,
   ownerAccountID: '',
-  supportEveryone: false,
-  everyonePerm: dlpPermission.DLPFileAccess.NO_PERMISSION,
   everyoneAccessList: []
 };
 
@@ -225,8 +223,8 @@ struct DlpDialog {
     this.processing = false;
     if (globalThis.requestIsFromSandBox) {
       try {
-        console.info(TAG, 'resumeFuseLink');
-        await this.dlpFile.resumeFuseLink(this.linkFileName);
+        console.info(TAG, 'resumeFuseLink', this.srcFileName);
+        await this.dlpFile.resumeFuseLink();
       } catch (err) {
         console.error(TAG, 'resumeFuseLink failed', err.code, err.message);
       }
@@ -238,8 +236,8 @@ struct DlpDialog {
     this.processing = true;
     if (globalThis.requestIsFromSandBox) {
       try {
-        console.info(TAG, 'stopFuseLink', this.linkFileName);
-        await this.dlpFile.stopFuseLink(this.linkFileName);
+        console.info(TAG, 'stopFuseLink', this.srcFileName);
+        await this.dlpFile.stopFuseLink();
       } catch (err) {
         console.error(TAG, 'stopFuseLink failed', err.code, err.message);
         this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as any);
@@ -308,18 +306,15 @@ struct DlpDialog {
       property.ownerAccountID = accountInfo.distributedInfo.id;
     }
     property.authUserList = []
-    property.supportEveryone = false;
-    property.everyonePerm = dlpPermission.DLPFileAccess.FULL_CONTROL;
+    property.everyoneAccessList = [];
     if (this.selectedPermissionTypeEdit.data === 'all') {
-      property.supportEveryone = true;
-      property.everyonePerm = dlpPermission.DLPFileAccess.CONTENT_EDIT;
+      property.everyoneAccessList = [ dlpPermission.DLPFileAccess.CONTENT_EDIT ];
       this.staffDataArrayReadOnly = [];
       this.staffDataArrayEdit = [];
     } else {
       let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all';
       if (isReadyOnlyAll) {
-        property.supportEveryone = true;
-        property.everyonePerm = dlpPermission.DLPFileAccess.READ_ONLY;
+        property.everyoneAccessList = [ dlpPermission.DLPFileAccess.READ_ONLY ];
       }
       if (this.selectedPermissionTypeReadOnly.data === 'all') {
         this.staffDataArrayReadOnly = []
@@ -428,14 +423,12 @@ struct DlpDialog {
         this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
         this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
         if (this.selectedPermissionTypeEdit.data === 'all') {
-          this.dlpFile.dlpProperty.supportEveryone = true
-          this.dlpFile.dlpProperty.everyonePerm = dlpPermission.DLPFileAccess.CONTENT_EDIT;
+          this.dlpFile.dlpProperty.everyoneAccessList = [ dlpPermission.DLPFileAccess.CONTENT_EDIT ];
           this.staffDataArrayReadOnly = []
         } else {
           let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all'
           if (isReadyOnlyAll) {
-            this.dlpFile.dlpProperty.supportEveryone = true
-            this.dlpFile.dlpProperty.everyonePerm = dlpPermission.DLPFileAccess.READ_ONLY
+            this.dlpFile.dlpProperty.everyoneAccessList = [ dlpPermission.DLPFileAccess.READ_ONLY ];
           }
           // foreach
           if (this.selectedPermissionTypeReadOnly.data === 'all') {
@@ -512,11 +505,11 @@ struct DlpDialog {
   async prepareDlpProperty() {
     if (globalThis.domainAccount) {
       this.dlpFile.dlpProperty.ownerAccount = globalThis.accountInfo.domainInfo.accountName;
-      this.dlpFile.dlpProperty.contractAccount = globalThis.accountInfo.domainInfo.accountName;
+      this.dlpFile.dlpProperty.contactAccount = globalThis.accountInfo.domainInfo.accountName;
       this.dlpFile.dlpProperty.ownerAccountID = globalThis.accountInfo.domainInfo.accountId;
     } else {
       this.dlpFile.dlpProperty.ownerAccount = globalThis.accountInfo.distributedInfo.name;
-      this.dlpFile.dlpProperty.contractAccount = globalThis.accountInfo.distributedInfo.name;
+      this.dlpFile.dlpProperty.contactAccount = globalThis.accountInfo.distributedInfo.name;
       this.dlpFile.dlpProperty.ownerAccountID = globalThis.accountInfo.distributedInfo.id;
     }
     let ownerAccount: dlpPermission.AuthUser = {
@@ -546,11 +539,12 @@ struct DlpDialog {
         this.staffDataArrayEdit = editData;
       }
     }
-    if (defaultDlpProperty.supportEveryone) {
-      if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
+    if ((defaultDlpProperty.everyoneAccessList !== undefined) && (defaultDlpProperty.everyoneAccessList.length > 0)) {
+      let perm = Math.max(...defaultDlpProperty.everyoneAccessList);
+      if (perm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
         this.selectedPermissionTypeEdit = this.permissionDict[1];
         this.staffDataArrayReadOnly = readOnlyData;
-      } else if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.READ_ONLY) {
+      } else if (perm === dlpPermission.DLPFileAccess.READ_ONLY) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
         this.staffDataArrayReadOnly = [];
         filterEditFilter()

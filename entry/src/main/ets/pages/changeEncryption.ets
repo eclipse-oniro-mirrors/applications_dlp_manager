@@ -40,11 +40,9 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
   ownerAccountType: globalThis.domainAccount ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
   authUserList: [],
-  contractAccount: '',
+  contactAccount: '',
   offlineAccess: true,
   ownerAccountID: '',
-  supportEveryone: false,
-  everyonePerm: dlpPermission.DLPFileAccess.NO_PERMISSION,
   everyoneAccessList: []
 };
 let defaultDlpFile: dlpPermission.DLPFile = {
@@ -189,8 +187,8 @@ struct changeEncryption {
   async catchProcess() {
     if (globalThis.requestIsFromSandBox) {
       try {
-        console.info(TAG, 'resumeFuseLink', this.linkFileName);
-        await this.dlpFile.resumeFuseLink(this.linkFileName);
+        console.info(TAG, 'resumeFuseLink', this.srcFileName);
+        await this.dlpFile.resumeFuseLink();
       } catch (err) {
         console.error(TAG, 'resumeFuseLink failed', err.code, err.message);
       }
@@ -201,8 +199,8 @@ struct changeEncryption {
     let plaintextFile = this.srcFileName.split('.')[0] + '.' + this.srcFileName.split('.')[1];
     if (globalThis.requestIsFromSandBox) {
       try {
-        console.info(TAG, 'stopFuseLink', this.linkFileName);
-        await this.dlpFile.stopFuseLink(this.linkFileName);
+        console.info(TAG, 'stopFuseLink', this.srcFileName);
+        await this.dlpFile.stopFuseLink();
       } catch (err) {
         console.error(TAG, 'stopFuseLink failed', err.code, err.message);
         this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as any);
@@ -251,8 +249,8 @@ struct changeEncryption {
         await uriFileAsset.close(dstFd);
         if (globalThis.requestIsFromSandBox) { //no need close dlp file in sandbox
           try {
-            console.info(TAG, 'resumeFuseLink', this.linkFileName);
-            await this.dlpFile.resumeFuseLink(this.linkFileName);
+            console.info(TAG, 'resumeFuseLink', this.srcFileName);
+            await this.dlpFile.resumeFuseLink();
           } catch (err) {
             console.error(TAG, 'resumeFuseLink failed', err.code, err.message);
           }
@@ -292,12 +290,13 @@ struct changeEncryption {
         this.selectedPermissionTypeEdit = this.permissionDict[0];
       }
     }
-    if (defaultDlpProperty.supportEveryone) {
-      if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
+    if ((defaultDlpProperty.everyoneAccessList !== undefined) && (defaultDlpProperty.everyoneAccessList.length > 0)) {
+      let perm = Math.max(...defaultDlpProperty.everyoneAccessList);
+      if (perm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
         this.selectedPermissionTypeEdit = this.permissionDict[1];
         this.staffDataArrayReadOnly = readOnlyData;
-      } else if (defaultDlpProperty.everyonePerm === dlpPermission.DLPFileAccess.READ_ONLY) {
+      } else if (perm === dlpPermission.DLPFileAccess.READ_ONLY) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
         this.staffDataArrayReadOnly = [];
         filterEditFilter()

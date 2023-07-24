@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import type { AsyncCallback } from '@ohos.base';
+import type { AsyncCallback, Callback } from './@ohos.base';
 
 /**
  * Provides the capability to access the data loss prevention (DLP) files.
@@ -88,7 +88,7 @@ declare namespace dlpPermission {
     ACTION_SCREEN_RECORD = 0x00000040,
 
     /**
-     * Copy a DLP file.
+     * Copy in the editor, on which a DLP file is opened.
      *
      * @syscap SystemCapability.Security.DataLossPrevention
      * @since 10
@@ -179,7 +179,7 @@ declare namespace dlpPermission {
     dlpFileAccess: DLPFileAccess;
 
     /**
-     * Actions allowed for the DLP file. The value is a combination of flags in {@code ActionFlagType}.
+     * Actions allowed for the DLP file. The value is a combination of flags in {@link ActionFlagType}.
      *
      * @type { number }
      * @syscap SystemCapability.Security.DataLossPrevention
@@ -189,13 +189,13 @@ declare namespace dlpPermission {
   }
 
   /**
-   * Represents the visited DLP file info.
+   * Represents the accessed DLP file info.
    *
-   * @interface VisitedDLPFileInfo
+   * @interface AccessedDLPFileInfo
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  export interface VisitedDLPFileInfo {
+  export interface AccessedDLPFileInfo {
     /**
      * URI of the DLP file.
      *
@@ -212,7 +212,7 @@ declare namespace dlpPermission {
      * @syscap SystemCapability.Security.DataLossPrevention
      * @since 10
      */
-    recentOpenTime: number;
+    lastOpenTime: number;
   }
 
   /**
@@ -255,7 +255,7 @@ declare namespace dlpPermission {
    * Checks whether a file is a DLP file. This method uses a promise to return the result.
    *
    * @param { number } fd - Indicates the file descriptor of the file to check.
-   * @returns { Promise<boolean> } Returns {@code true} if {@code fd} is a DLP file; returns {@code false} otherwise.
+   * @returns { Promise<boolean> } Returns {@code true} if {@link fd} is a DLP file; returns {@code false} otherwise.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100011 - System service exception.
@@ -268,7 +268,7 @@ declare namespace dlpPermission {
    * Checks whether a file is a DLP file. This method uses an asynchronous callback to return the result.
    *
    * @param { number } fd - Indicates the file descriptor of the file to check.
-   * @param { AsyncCallback<boolean> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<boolean> } callback - Indicates the callback of isDLPFile.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100011 - System service exception.
@@ -280,9 +280,9 @@ declare namespace dlpPermission {
   /**
    * Obtains the permission info of this DLP file. This method uses a promise to return the result.
    *
-   * @returns { Promise<DLPPermissionInfo> } Returns a {@code DLPPermissionInfo} object.
+   * @returns { Promise<DLPPermissionInfo> } Returns the {@link DLPPermissionInfo}.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100006 - No permission to invoke this api, which is for DLP sandbox application.
+   * @throws { BusinessError } 19100006 - No permission to invoke this API, which is for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
@@ -292,10 +292,10 @@ declare namespace dlpPermission {
   /**
    * Obtains the permission info of this DLP file. This method uses an asynchronous callback to return the result.
    *
-   * @param { AsyncCallback<DLPPermissionInfo> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<DLPPermissionInfo> } callback - Indicates the callback of getDLPPermissionInfo.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100006 - No permission to invoke this api, which is for DLP sandbox application.
+   * @throws { BusinessError } 19100006 - No permission to invoke this API, which is for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
@@ -305,7 +305,7 @@ declare namespace dlpPermission {
   /**
    * Obtains the original file name from a DLP file name. This method removes the DLP file name extension from the DLP file name.
    *
-   * @param { string } fileName - Indicates DLP file name.
+   * @param { string } fileName - Indicates the DLP file name.
    * @returns { string } Returns the original file name obtained.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100011 - System service exception.
@@ -325,37 +325,37 @@ declare namespace dlpPermission {
   function getDLPSuffix(): string;
 
   /**
-   * Subscribes to the event reported when a DLP file is opened by the given application.
+   * Subscribes to the event reported when a DLP file is opened by current application.
    *
    * @param { 'openDLPFile' } type - Indicates the type of the event to subscribe to.
-   * @param { Callback<VisitedDLPFileInfo> } listener - Indicates the callback invoked when a DLP file is opened by the given application.
+   * @param { Callback<AccessedDLPFileInfo> } listener - Indicates the callback invoked when a DLP file is opened by current application.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100007 - No permission to invoke this API, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function on(type: 'openDLPFile', listener: Callback<VisitedDLPFileInfo>): void;
+  function on(type: 'openDLPFile', listener: Callback<AccessedDLPFileInfo>): void;
 
   /**
-   * Unsubscribes from the event reported when a DLP file is opened by the given application.
+   * Unsubscribes from the event reported when a DLP file is opened by current application.
    *
    * @param { 'openDLPFile' } type - Indicates the type of the event to unsubscribe from.
-   * @param { Callback<VisitedDLPFileInfo> } listener - Indicates the callback invoked when a DLP file is opened by the given application.
+   * @param { Callback<AccessedDLPFileInfo> } listener - Indicates the callback invoked when a DLP file is opened by current application.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100007 - No permission to invoke this API, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function off(type: 'openDLPFile', listener?: Callback<VisitedDLPFileInfo>): void;
+  function off(type: 'openDLPFile', listener?: Callback<AccessedDLPFileInfo>): void;
 
   /**
-   * Checks whether this application is in the DLP sandbox. This method uses a promise to return the result.
+   * Checks whether current application is in the DLP sandbox. This method uses a promise to return the result.
    *
-   * @returns { Promise<boolean> } Returns {@code true} if the application is in a DLP sandbox; returns {@code false} otherwise.
+   * @returns { Promise<boolean> } Returns {@code true} if current application is in a DLP sandbox; returns {@code false} otherwise.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
@@ -364,9 +364,9 @@ declare namespace dlpPermission {
   function isInSandbox(): Promise<boolean>;
 
   /**
-   * Checks whether this application is in the DLP sandbox. This method uses an asynchronous callback to return the result.
+   * Checks whether current application is in the DLP sandbox. This method uses an asynchronous callback to return the result.
    *
-   * @param { AsyncCallback<boolean> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<boolean> } callback - Indicates the callback of isInSandbox.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100011 - System service exception.
@@ -389,7 +389,7 @@ declare namespace dlpPermission {
   /**
    * Obtains the file types supported by DLP. This method uses an asynchronous callback to return the result.
    *
-   * @param { AsyncCallback<Array<string>> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<Array<string>> } callback - Indicates the callback of getDLPSupportedFileTypes.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100011 - System service exception.
@@ -399,27 +399,13 @@ declare namespace dlpPermission {
   function getDLPSupportedFileTypes(callback: AsyncCallback<Array<string>>): void;
 
   /**
-   * Sets the retention status for the files specified by {@code dorUri}. This method uses an asynchronous callback to return the result.
+   * Sets the retention status for the files specified by URI list. This method uses a promise to return the result.
    *
    * @param { Array<string> } docUris - Indicates the URIs of the files, for which the retention status is to set.
-   * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+   * @returns { Promise<void> } The promise returned by the function.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100006 - No permission to invoke this api, which is for DLP sandbox application.
-   * @throws { BusinessError } 19100011 - System service exception.
-   * @syscap SystemCapability.Security.DataLossPrevention
-   * @since 10
-   */
-  function setRetentionState(docUris: Array<string>, callback: AsyncCallback<void>): void;
-
-  /**
-   * Sets the retention status for the files specified by {@code dorUri}. This method uses a promise to return the result.
-   *
-   * @param { Array<string> } docUris - Indicates the URIs of the files, for which the retention status is to set.
-   * @returns { Promise<void> } Promise used to return the result.
-   * @throws { BusinessError } 401 - Parameter error.
-   * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100006 - No permission to invoke this api, which is for DLP sandbox application.
+   * @throws { BusinessError } 19100006 - No permission to invoke this API, which is for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
@@ -427,23 +413,24 @@ declare namespace dlpPermission {
   function setRetentionState(docUris: Array<string>): Promise<void>;
 
   /**
-   * Cancels the retention status for the files specified by {@code dorUri}. This method uses an asynchronous callback to return the result.
+   * Sets the retention status for the files specified by URI list. This method uses an asynchronous callback to return the result.
    *
-   * @param { Array<string> } docUris - Indicates the list of the file URIs.
-   * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+   * @param { Array<string> } docUris - Indicates the URIs of the files, for which the retention status is to set.
+   * @param { AsyncCallback<void> } callback - Indicates the callback of setRetentionState.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
+   * @throws { BusinessError } 19100006 - No permission to invoke this API, which is for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function cancelRetentionState(docUris: Array<string>, callback: AsyncCallback<void>): void;
+  function setRetentionState(docUris: Array<string>, callback: AsyncCallback<void>): void;
 
   /**
-   * Cancels the retention status for the files specified by {@code dorUri}. This method uses a promise to return the result.
+   * Cancels the retention status for the files specified by URI list. This method uses a promise to return the result.
    *
    * @param { Array<string> } docUris - Indicates the list of the file URIs.
-   * @returns { Promise<void> } Promise used to return the result.
+   * @returns { Promise<void> } The promise returned by the function.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100011 - System service exception.
@@ -453,13 +440,26 @@ declare namespace dlpPermission {
   function cancelRetentionState(docUris: Array<string>): Promise<void>;
 
   /**
+   * Cancels the retention status for the files specified by URI list. This method uses an asynchronous callback to return the result.
+   *
+   * @param { Array<string> } docUris - Indicates the list of the file URIs.
+   * @param { AsyncCallback<void> } callback - Indicates the callback of cancelRetentionState.
+   * @throws { BusinessError } 401 - Parameter error.
+   * @throws { BusinessError } 19100001 - Invalid parameter value.
+   * @throws { BusinessError } 19100011 - System service exception.
+   * @syscap SystemCapability.Security.DataLossPrevention
+   * @since 10
+   */
+  function cancelRetentionState(docUris: Array<string>, callback: AsyncCallback<void>): void;
+
+  /**
    * Obtains information about the retained DLP sandboxes of an application. This method uses a promise to return the result.
    *
    * @param { string } bundleName - Indicates the bundle name of the application.
-   * @returns { Promise<Array<RetentionSandboxInfo>> } Returns a list of {@code RetentionSandboxInfo}.
+   * @returns { Promise<Array<RetentionSandboxInfo>> } Returns a list of {@link RetentionSandboxInfo}.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100007 - No permission to invoke this API, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
@@ -470,10 +470,10 @@ declare namespace dlpPermission {
    * Obtains information about the retained DLP sandboxes of an application. This method uses an asynchronous callback to return the result.
    *
    * @param { string } bundleName - Indicates the bundle name of the application.
-   * @param { AsyncCallback<Array<RetentionSandboxInfo>> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<Array<RetentionSandboxInfo>> } callback - Indicates the callback of getRetentionSandboxList.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100007 - No permission to invoke this API, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
@@ -481,12 +481,12 @@ declare namespace dlpPermission {
   function getRetentionSandboxList(bundleName: string, callback: AsyncCallback<Array<RetentionSandboxInfo>>): void;
 
   /**
-   * Obtains information about retained DLP sandboxes. This method uses an asynchronous callback to return the result.
+   * Obtains information about the retained DLP sandboxes of an application. This method uses an asynchronous callback to return the result.
    *
-   * @param { AsyncCallback<Array<RetentionSandboxInfo>> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<Array<RetentionSandboxInfo>> } callback - Indicates the callback of getRetentionSandboxList.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100007 - No permission to invoke this API, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
@@ -494,29 +494,29 @@ declare namespace dlpPermission {
   function getRetentionSandboxList(callback: AsyncCallback<Array<RetentionSandboxInfo>>): void;
 
   /**
-   * Obtains the DLP file visit records. This method uses a promise to return the result.
+   * Obtains the DLP file access records. This method uses a promise to return the result.
    *
-   * @returns { Promise<Array<VisitedDLPFileInfo>> } Returns a list of DLP files visited recently.
+   * @returns { Promise<Array<AccessedDLPFileInfo>> } Returns a list of {@link AccessedDLPFileInfo}.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100007 - No permission to invoke this API, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function getDLPFileVisitRecords(): Promise<Array<VisitedDLPFileInfo>>;
+  function getDLPFileAccessRecords(): Promise<Array<AccessedDLPFileInfo>>;
 
   /**
-   * Obtains the DLP file visit records. This method uses an asynchronous callback to return the result.
+   * Obtains the DLP file access records. This method uses an asynchronous callback to return the result.
    *
-   * @param { AsyncCallback<Array<VisitedDLPFileInfo>> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<Array<AccessedDLPFileInfo>> } callback - Indicates the callback of getDLPFileAccessRecords.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
-   * @throws { BusinessError } 19100007 - No permission to invoke this api, which is not for DLP sandbox application.
+   * @throws { BusinessError } 19100007 - No permission to invoke this API, which is not for DLP sandbox application.
    * @throws { BusinessError } 19100011 - System service exception.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @since 10
    */
-  function getDLPFileVisitRecords(callback: AsyncCallback<Array<VisitedDLPFileInfo>>): void;
+  function getDLPFileAccessRecords(callback: AsyncCallback<Array<AccessedDLPFileInfo>>): void;
 
   /**
    * Enumerates the gathering policy types for DLP files.
@@ -550,7 +550,7 @@ declare namespace dlpPermission {
    * Obtains the DLP sandbox gathering policy. This method uses a promise to return the result.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @returns { Promise<GatheringPolicyType> } Returns a {@code GatheringPolicyType} object.
+   * @returns { Promise<GatheringPolicyType> } Returns the {@link GatheringPolicyType}.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
@@ -565,7 +565,7 @@ declare namespace dlpPermission {
    * Obtains the DLP sandbox gathering policy. This method uses an asynchronous callback to return the result.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param { AsyncCallback<GatheringPolicyType> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<GatheringPolicyType> } callback - Indicates the callback of getDLPGatheringPolicy.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
@@ -597,7 +597,7 @@ declare namespace dlpPermission {
     appIndex: number;
 
     /**
-     * Token ID of the installed DLP sandbox application..
+     * Token ID of the installed DLP sandbox application.
      *
      * @type { number }
      * @syscap SystemCapability.Security.DataLossPrevention
@@ -615,7 +615,7 @@ declare namespace dlpPermission {
    * @param { DLPFileAccess } access - Indicates the access permission for the DLP file.
    * @param { number } userId - Indicates the user ID.
    * @param { string } uri - Indicates the URI of the file.
-   * @returns { Promise<DLPSandboxInfo> } Returns the {@code DLPSandboxInfo} of the installed sandbox application.
+   * @returns { Promise<DLPSandboxInfo> } Returns the {@link DLPSandboxInfo}.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
@@ -640,7 +640,7 @@ declare namespace dlpPermission {
    * @param { DLPFileAccess } access - Indicates the access permission for the DLP file.
    * @param { number } userId - Indicates the user ID.
    * @param { string } uri - Indicates the URI of the file.
-   * @param { AsyncCallback<DLPSandboxInfo> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<DLPSandboxInfo> } callback - Indicates the callback of installDLPSandbox.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
@@ -665,7 +665,7 @@ declare namespace dlpPermission {
    * @param { string } bundleName - Indicates the bundle name of the application.
    * @param { number } userId - Indicates the user ID.
    * @param { number } appIndex - Indicates the index of DLP sandbox.
-   * @returns { Promise<void> } Promise used to return the result.
+   * @returns { Promise<void> } The promise returned by the function.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
@@ -684,7 +684,7 @@ declare namespace dlpPermission {
    * @param { string } bundleName - Indicates the bundle name of the application.
    * @param { number } userId - Indicates the user ID.
    * @param { number } appIndex - Indicates the index of DLP sandbox.
-   * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+   * @param { AsyncCallback<void> } callback - Indicates the callback of uninstallDLPSandbox.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
@@ -735,7 +735,7 @@ declare namespace dlpPermission {
    * Subscribes to the event reported when a DLP sandbox application is uninstalled.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param { 'uninstallDLPSandbox' } type - Indicates the type of the event to subscribe to.
+   * @param { 'uninstallDLPSandbox' } type - Indicates the type of event to subscribe to.
    * @param { Callback<DLPSandboxState> } listener - Indicates the callback for the DLP sandbox application uninstall event.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
@@ -752,7 +752,7 @@ declare namespace dlpPermission {
    * Unsubscribes from the event reported when a DLP sandbox application is uninstalled.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param { 'uninstallDLPSandbox' } type - Indicates the type of the event to unsubscribe from.
+   * @param { 'uninstallDLPSandbox' } type - Indicates the type of event to unsubscribe from.
    * @param { Callback<DLPSandboxState> } listener - Indicates the callback for the DLP sandbox application uninstall event.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
@@ -791,15 +791,6 @@ declare namespace dlpPermission {
      * @since 10
      */
     DOMAIN_ACCOUNT = 2,
-
-    /**
-     * Application account.
-     *
-     * @syscap SystemCapability.Security.DataLossPrevention
-     * @systemapi Hide this for inner system use.
-     * @since 10
-     */
-    APPLICATION_ACCOUNT = 3
   }
 
   /**
@@ -882,6 +873,16 @@ declare namespace dlpPermission {
     ownerAccountID: string;
 
     /**
+     * Type of the owner account of the DLP file.
+     *
+     * @type { AccountType }
+     * @syscap SystemCapability.Security.DataLossPrevention
+     * @systemapi Hide this for inner system use.
+     * @since 10
+     */
+    ownerAccountType: AccountType;
+
+    /**
      * Authorized users of the DLP file.
      *
      * @type { Array<AuthUser>? }
@@ -899,17 +900,7 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    contractAccount: string;
-
-    /**
-     * Type of the owner account of the DLP file.
-     *
-     * @type { AccountType }
-     * @syscap SystemCapability.Security.DataLossPrevention
-     * @systemapi Hide this for inner system use.
-     * @since 10
-     */
-    ownerAccountType: AccountType;
+    contactAccount: string;
 
     /**
      * Whether the DLP file can be accessed offline.
@@ -930,25 +921,7 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    everyoneAccessList: Array<DLPFileAccess>;
-
-    /**
-     * Everyone Access support
-     *
-     * @syscap SystemCapability.Security.DataLossPrevention
-     * @systemapi Hide this for inner system use.
-     * @since 10
-     */
-    supportEveryone: boolean;
-
-    /**
-     * Everyone's Access permission
-     *
-     * @syscap SystemCapability.Security.DataLossPrevention
-     * @systemapi Hide this for inner system use.
-     * @since 10
-     */
-    everyonePerm: DLPFileAccess;
+    everyoneAccessList?: Array<DLPFileAccess>;
   }
 
   /**
@@ -976,7 +949,7 @@ declare namespace dlpPermission {
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
      * @param { string } linkFileName - Indicates the name of link file to add.
-     * @returns { Promise<void> } Promise used to return the result.
+     * @returns { Promise<void> } The promise returned by the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
@@ -995,7 +968,7 @@ declare namespace dlpPermission {
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
      * @param { string } linkFileName - Indicates the name of link file to add.
-     * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+     * @param { AsyncCallback<void> } callback - Indicates the callback of addDLPLinkFile.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
@@ -1009,14 +982,12 @@ declare namespace dlpPermission {
     addDLPLinkFile(linkFileName: string, callback: AsyncCallback<void>): void;
 
     /**
-     * Stops the FUSE link between the DLP file and a link life. This method uses a promise to return the result.
+     * Stops the FUSE link between the DLP file and a link file. This method uses a promise to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @param { string } linkFileName - Indicates the name of link file.
-     * @returns { Promise<void> } Promise used to return the result.
+     * @returns { Promise<void> } The promise returned by the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
-     * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 19100001 - Invalid parameter value.
      * @throws { BusinessError } 19100009 - Failed to operate the DLP file.
      * @throws { BusinessError } 19100011 - System service exception.
@@ -1024,13 +995,12 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    stopFuseLink(linkFileName: string): Promise<void>;
+    stopFuseLink(): Promise<void>;
 
     /**
-     * Stops the FUSE link between the DLP file and a link life. This method uses an asynchronous callback to return the result.
+     * Stops the FUSE link between the DLP file and a link file. This method uses an asynchronous callback to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @param { string } linkFileName - Indicates the name of link file.
      * @param { AsyncCallback<void> } callback - Indicates the callback of stopFuseLink.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
@@ -1042,17 +1012,15 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    stopFuseLink(linkFileName: string, callback: AsyncCallback<void>): void;
+    stopFuseLink(callback: AsyncCallback<void>): void;
 
     /**
-     * Resumes the FUSE link between the DLP file and a link life. This method uses a promise to return the result.
+     * Resumes the FUSE link between the DLP file and a link file. This method uses a promise to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @param { string } linkFileName - Indicates the name of link file.
-     * @returns { Promise<void> } Promise used to return the result.
+     * @returns { Promise<void> } The promise returned by the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
-     * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 19100001 - Invalid parameter value.
      * @throws { BusinessError } 19100009 - Failed to operate the DLP file.
      * @throws { BusinessError } 19100011 - System service exception.
@@ -1060,13 +1028,12 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    resumeFuseLink(linkFileName: string): Promise<void>;
+    resumeFuseLink(): Promise<void>;
 
     /**
-     * Resumes the FUSE link between the DLP file and a link life. This method uses an asynchronous callback to return the result.
+     * Resumes the FUSE link between the DLP file and a link file. This method uses an asynchronous callback to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @param { string } linkFileName - Indicates the name of link file.
      * @param { AsyncCallback<void> } callback - Indicates the callback of resumeFuseLink.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
@@ -1078,14 +1045,14 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    resumeFuseLink(linkFileName: string, callback: AsyncCallback<void>): void;
+    resumeFuseLink(callback: AsyncCallback<void>): void;
 
     /**
      * Replaces the link file of the DLP file. This method uses a promise to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
      * @param { string } linkFileName - Indicates the name of link file.
-     * @returns { Promise<void> } Promise used to return the result.
+     * @returns { Promise<void> } The promise returned by the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
@@ -1103,7 +1070,7 @@ declare namespace dlpPermission {
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
      * @param { string } linkFileName - Indicates the name of link file.
-     * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+     * @param { AsyncCallback<void> } callback - Indicates the callback of replaceDLPLinkFile.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
@@ -1121,7 +1088,7 @@ declare namespace dlpPermission {
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
      * @param { string } linkFileName - Indicates the name of link file to delete.
-     * @returns { Promise<void> } Promise used to return the result.
+     * @returns { Promise<void> } The promise returned by the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
@@ -1139,7 +1106,7 @@ declare namespace dlpPermission {
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
      * @param { string } linkFileName - Indicates the name of link file to delete.
-     * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+     * @param { AsyncCallback<void> } callback - Indicates the callback of deleteDLPLinkFile.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
@@ -1156,14 +1123,14 @@ declare namespace dlpPermission {
      * Recovers the file in plaintext from the DLP file. This method uses a promise to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @param { number } plainFd - Indicates the file descriptor of the file in plaintext.
-     * @returns { Promise<void> } Promise used to return the result.
+     * @param { number } plaintextFd - Indicates the file descriptor of the file in plaintext.
+     * @returns { Promise<void> } The promise returned by the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 19100001 - Invalid parameter value.
      * @throws { BusinessError } 19100002 - Credential task error.
-     * @throws { BusinessError } 19100003 - Credential task timed out.
+     * @throws { BusinessError } 19100003 - Credential task time out.
      * @throws { BusinessError } 19100004 - Credential service error.
      * @throws { BusinessError } 19100005 - Remote credential server error.
      * @throws { BusinessError } 19100008 - Not DLP file.
@@ -1174,20 +1141,20 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    recoverDLPFile(plainFd: number): Promise<void>;
+    recoverDLPFile(plaintextFd: number): Promise<void>;
 
     /**
      * Recovers the file in plaintext from the DLP file. This method uses an asynchronous callback to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @param { number } plainFd - Indicates the file descriptor of the file in plaintext.
-     * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+     * @param { number } plaintextFd - Indicates the file descriptor of the file in plaintext.
+     * @param { AsyncCallback<void> } callback - Indicates the callback of recoverDLPFile.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
      * @throws { BusinessError } 19100001 - Invalid parameter value.
      * @throws { BusinessError } 19100002 - Credential task error.
-     * @throws { BusinessError } 19100003 - Credential task timed out.
+     * @throws { BusinessError } 19100003 - Credential task time out.
      * @throws { BusinessError } 19100004 - Credential service error.
      * @throws { BusinessError } 19100005 - Remote credential server error.
      * @throws { BusinessError } 19100008 - Not DLP file.
@@ -1198,15 +1165,16 @@ declare namespace dlpPermission {
      * @systemapi Hide this for inner system use.
      * @since 10
      */
-    recoverDLPFile(plainFd: number, callback: AsyncCallback<void>): void;
+    recoverDLPFile(plaintextFd: number, callback: AsyncCallback<void>): void;
 
     /**
      * Closes the DLP file when the object is no longer used. This method uses a promise to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @returns { Promise<void> } Promise used to return the result.
+     * @returns { Promise<void> } The promise returned by the function.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
+     * @throws { BusinessError } 19100001 - Invalid parameter value.
      * @throws { BusinessError } 19100009 - Failed to operate the DLP file.
      * @throws { BusinessError } 19100011 - System service exception.
      * @syscap SystemCapability.Security.DataLossPrevention
@@ -1219,7 +1187,7 @@ declare namespace dlpPermission {
      * Closes the DLP file when the object is no longer used. This method uses an asynchronous callback to return the result.
      *
      * @permission ohos.permission.ACCESS_DLP_FILE
-     * @param { AsyncCallback<void> } callback - Indicates the callback invoked to return the result.
+     * @param { AsyncCallback<void> } callback - Indicates the callback of closeDLPFile.
      * @throws { BusinessError } 201 - Permission denied.
      * @throws { BusinessError } 202 - Non-system applications use system APIs.
      * @throws { BusinessError } 401 - Parameter error.
@@ -1237,16 +1205,16 @@ declare namespace dlpPermission {
    * Generates a DLP file. This method uses a promise to return the result.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param { number } plainTextFd Indicates the file descriptor of the file in plaintext.
-   * @param { number } cipherTextFd Indicates the file descriptor of the DLP file.
+   * @param { number } plaintextFd - Indicates the file descriptor of the file in plaintext.
+   * @param { number } ciphertextFd - Indicates the file descriptor of the DLP file.
    * @param { DLPProperty } property - Indicates the property of the DLP file.
-   * @returns { Promise<DLPFile> } Returns a {@code DLPFile} object.
+   * @returns { Promise<DLPFile> } Returns the {@link DLPFile}.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100002 - Credential task error.
-   * @throws { BusinessError } 19100003 - Credential task timed out.
+   * @throws { BusinessError } 19100003 - Credential task time out.
    * @throws { BusinessError } 19100004 - Credential service error.
    * @throws { BusinessError } 19100005 - Remote credential server error.
    * @throws { BusinessError } 19100009 - Failed to operate the DLP file.
@@ -1255,22 +1223,22 @@ declare namespace dlpPermission {
    * @systemapi Hide this for inner system use.
    * @since 10
    */
-  function generateDLPFile(plainTextFd: number, cipherTextFd: number, property: DLPProperty): Promise<DLPFile>;
+  function generateDLPFile(plaintextFd: number, ciphertextFd: number, property: DLPProperty): Promise<DLPFile>;
 
   /**
    * Generates a DLP file. This method uses an asynchronous callback to return the result.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param { number } plainTextFd Indicates the file descriptor of the file in plaintext.
-   * @param { number } cipherTextFd - Indicates the file descriptor of the DLP file.
-   * @param { DLPProperty } property Indicates the property of the DLP file.
-   * @param { AsyncCallback<DLPFile> } callback - Indicates the callback invoked to return the result.
+   * @param { number } plaintextFd - Indicates the file descriptor of the file in plaintext.
+   * @param { number } ciphertextFd - Indicates the file descriptor of the DLP file.
+   * @param { DLPProperty } property - Indicates the property of the DLP file.
+   * @param { AsyncCallback<DLPFile> } callback - Indicates the callback of generateDLPFile.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100002 - Credential task error.
-   * @throws { BusinessError } 19100003 - Credential task timed out.
+   * @throws { BusinessError } 19100003 - Credential task time out.
    * @throws { BusinessError } 19100004 - Credential service error.
    * @throws { BusinessError } 19100005 - Remote credential server error.
    * @throws { BusinessError } 19100009 - Failed to operate the DLP file.
@@ -1280,24 +1248,24 @@ declare namespace dlpPermission {
    * @since 10
    */
   function generateDLPFile(
-    plainTextFd: number,
-    cipherTextFd: number,
+    plaintextFd: number,
+    ciphertextFd: number,
     property: DLPProperty,
     callback: AsyncCallback<DLPFile>
   ): void;
 
   /**
-   * Opens a DLP file. This method uses a promise to return a {@code DLPFile} object.
+   * Opens a DLP file. This method uses a promise to return the result.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param { number } cipherTextFd - Indicates the file descriptor of the DLP file to open.
-   * @returns { Promise<DLPFile> } Returns a {@code DLPFile} object.
+   * @param { number } ciphertextFd - Indicates the file descriptor of the DLP file to open.
+   * @returns { Promise<DLPFile> } Returns the {@link DLPFile}.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100002 - Credential task error.
-   * @throws { BusinessError } 19100003 - Credential task timed out.
+   * @throws { BusinessError } 19100003 - Credential task time out.
    * @throws { BusinessError } 19100004 - Credential service error.
    * @throws { BusinessError } 19100005 - Remote credential server error.
    * @throws { BusinessError } 19100008 - Not DLP file.
@@ -1307,20 +1275,20 @@ declare namespace dlpPermission {
    * @systemapi Hide this for inner system use.
    * @since 10
    */
-  function openDLPFile(cipherTextFd: number): Promise<DLPFile>;
+  function openDLPFile(ciphertextFd: number): Promise<DLPFile>;
 
   /**
-   * Opens a DLP file. This method uses an asynchronous callback to return a {@code DLPFile} object.
+   * Opens a DLP file. This method uses an asynchronous callback to return the result.
    *
    * @permission ohos.permission.ACCESS_DLP_FILE
-   * @param { number } cipherTextFd - Indicates the file descriptor of the DLP file to open.
-   * @param { AsyncCallback<DLPFile> } callback - Indicates the callback invoked to return the result.
+   * @param { number } ciphertextFd - Indicates the file descriptor of the DLP file to open.
+   * @param { AsyncCallback<DLPFile> } callback - Indicates the callback of openDLPFile.
    * @throws { BusinessError } 201 - Permission denied.
    * @throws { BusinessError } 202 - Non-system applications use system APIs.
    * @throws { BusinessError } 401 - Parameter error.
    * @throws { BusinessError } 19100001 - Invalid parameter value.
    * @throws { BusinessError } 19100002 - Credential task error.
-   * @throws { BusinessError } 19100003 - Credential task timed out.
+   * @throws { BusinessError } 19100003 - Credential task time out.
    * @throws { BusinessError } 19100004 - Credential service error.
    * @throws { BusinessError } 19100005 - Remote credential server error.
    * @throws { BusinessError } 19100008 - Not DLP file.
@@ -1330,6 +1298,6 @@ declare namespace dlpPermission {
    * @systemapi Hide this for inner system use.
    * @since 10
    */
-  function openDLPFile(cipherTextFd: number, callback: AsyncCallback<DLPFile>): void;
+  function openDLPFile(ciphertextFd: number, callback: AsyncCallback<DLPFile>): void;
 }
 export default dlpPermission;
