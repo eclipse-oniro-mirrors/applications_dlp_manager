@@ -21,6 +21,7 @@ let TAG = '[DLPManager_DataAbility]';
 const INDEX_TWO = 2;
 const INDEX_ONE = 1;
 const INDEX_ZERO = 0;
+const INDEX_THREE = 3;
 const INDEX_FOUR = 4;
 const INDEX_FIVE = 5;
 export default class DataAbility extends ServiceExtensionAbility {
@@ -68,7 +69,11 @@ export default class DataAbility extends ServiceExtensionAbility {
         for (let i in fileArray) {
           let linkFile = fileArray[i];
           // @ts-ignore
-          fileio.closeSync(linkFile[INDEX_ZERO]);
+          try {
+            fileio.closeSync(linkFile[INDEX_ZERO]);
+          } catch (err) {
+            console.error(TAG, 'closeSync failed', err.code, err.message);
+          }
           let dlpFile = linkFile[INDEX_ONE];
           try {
             await dlpFile.deleteDLPLinkFile(linkFile[INDEX_TWO]);
@@ -77,6 +82,12 @@ export default class DataAbility extends ServiceExtensionAbility {
           }
           try {
             await dlpFile.closeDLPFile();
+          } catch (err) {
+            console.error(TAG, 'closeDLPFile failed', err.code, err.message);
+          }
+          try {
+            let dlpFd = linkFile[INDEX_THREE];
+            fileio.closeSync(dlpFd);
           } catch (err) {
             console.error(TAG, 'closeDLPFile failed', err.code, err.message);
           }

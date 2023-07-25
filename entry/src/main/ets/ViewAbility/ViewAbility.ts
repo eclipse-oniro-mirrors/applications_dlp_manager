@@ -216,6 +216,15 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
   }
 
+  async closeFile(): Promise<void> {
+    try {
+      await this.dlpFile.closeDLPFile();
+      fileio.closeSync(this.dlpFd);
+    } catch (err) {
+      console.error(TAG, 'closeFile failed', err.code, err.message);
+    }
+  }
+
   async onRequest(want: Want, startId: number): Promise<void> {
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
@@ -269,6 +278,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await startAlertAbility({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR });
       fileOpening.delete(this.uri);
+      fileio.closeSync(this.dlpFd);
       return;
     }
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
@@ -276,6 +286,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await startAlertAbility({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR });
       fileOpening.delete(this.uri);
+      fileio.closeSync(this.dlpFd);
       return;
     }
 
@@ -290,6 +301,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       await this.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, err.data); // 103:DLP_FILE_PARSE_ERROR
       await startAlertAbility(err);
       fileOpening.delete(this.uri);
+      fileio.closeSync(this.dlpFd);
       return;
     }
     hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
@@ -301,10 +313,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+      await this.closeFile();
       fileOpening.delete(this.uri);
       return;
     }
-    hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
+
     let sortByAuthPerm: boolean = false;
     this.alreadyOpen = false;
 
@@ -315,6 +328,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         this.appIndex = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_ONE];
         this.linkFileName = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_TWO];
         this.linkFd = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_THREE];
+        await this.closeFile();
         this.alreadyOpen = true;
       }
 
@@ -326,6 +340,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
 
       if (!this.alreadyOpen && !sortByAuthPerm) {
+        hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
         let appInfo = await dlpPermission.installDLPSandbox(this.sandboxBundleName,
           this.authPerm, this.userId, this.uri);
         this.appIndex = appInfo.appIndex;
@@ -333,17 +348,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
     } catch (err) {
       console.error(TAG, 'installDLPSandbox failed', err.code, err.message);
-      try {
-        console.info(TAG, 'closeDLPFile');
-        await this.dlpFile.closeDLPFile();
-      } catch (err) {
-        console.error(TAG, 'closeDLPFile failed', err.code, err.message);
-      }
       hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await this.sendDlpFileOpenFault(Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, err.data); // 104:DLP_INSTALL_SANDBOX_ERROR
       await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
       fileOpening.delete(this.uri);
+      await this.closeFile();
       return;
     }
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
@@ -357,6 +367,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (splitNames.length <= SUFFIX_INDEX) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+        await this.closeFile();
         fileOpening.delete(this.uri);
         return;
       }
@@ -375,6 +386,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await startAlertAbility(error);
         hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+        await this.closeFile();
         fileOpening.delete(this.uri);
         return;
       }
@@ -404,6 +416,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (this.fileAssert === undefined) {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       await startAlertAbility({ code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR });
+      await this.closeFile();
       fileOpening.delete(this.uri);
       return;
     }
