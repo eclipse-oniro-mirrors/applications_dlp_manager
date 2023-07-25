@@ -58,6 +58,7 @@
       <filefilter name="binaryFileTypePolicyFilter" desc="Filters for binary file policies">
         <filteritem type="filepath" name="AppScope/resources/base/media/.*" desc="original icons that application required."/>
         <filteritem type="filepath" name="entry/src/main/resources/base/media/.*" desc="original icons that application required."/>
+        <filteritem type="filepath" name="figures/application-framework.png" desc="original application framework."/>
       </filefilter>
     </filefilterlist>
   </oatconfig>
