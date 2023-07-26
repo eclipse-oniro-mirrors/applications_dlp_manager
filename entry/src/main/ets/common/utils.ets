@@ -132,8 +132,8 @@ function getAlertMessage(err, defaultTitle?: Resource, defaultMessage?: Resource
   }
 }
 
-async function startAlertAbility(error) {
-  await globalThis.context.startAbility({
+async function startAlertAbility(context, error) {
+  await context.startAbility({
     bundleName: 'com.ohos.dlpmanager',
     abilityName: 'AlertAbility',
     parameters: {
@@ -143,7 +143,7 @@ async function startAlertAbility(error) {
     if (err.code !== 0) {
       console.error(TAG, 'start AlertAbility failed', err.code, err.message);
     }
-    globalThis.context.terminateSelf()
+    context.terminateSelf()
   })
 }
 

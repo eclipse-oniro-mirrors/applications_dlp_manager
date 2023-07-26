@@ -86,7 +86,7 @@ struct Sa {
       && this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL ) {
       console.error(TAG, 'invalid authPerm ', this.authPerm);
       this.isOK = false;
-      await startAlertAbility({ code: Constants.ERR_JS_DLP_FILE_READ_ONLY });
+      await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_DLP_FILE_READ_ONLY });
       return false;
     }
 
@@ -172,7 +172,7 @@ struct Sa {
           await uriFileAsset.close(dstFd);
           await globalThis.dsHelper.delete(uri);
           this.isOK = false;
-          await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+          await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
           return;
         }
 
@@ -188,7 +188,7 @@ struct Sa {
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
           this.isOK = false;
-          await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+          await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
           return;
         }
         let newDlpFile:dlpPermission.DLPFile = null;
@@ -220,7 +220,7 @@ struct Sa {
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
           this.isOK = false;
-          await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+          await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
           return;
         }
 
@@ -234,11 +234,12 @@ struct Sa {
           // @ts-ignore
           this.linkFd = fs.openSync(linkFilePath, fs.OpenMode.READ);
         }
+        let linkUri = getFileUriByPath(linkFilePath);
         globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, uriFileAsset, dstFd];
         globalThis.sandbox2linkFile[this.sandboxBundleName + appId].push([this.linkFd,
           newDlpFile, linkFileName, 0]);
         globalThis.fileOpenHistory[uri] =
-          [this.sandboxBundleName, appId, linkFileName, this.linkFd];
+          [this.sandboxBundleName, appId, linkFileName, this.linkFd, linkUri];
 
         this.resultUri = getFileUriByPath(linkFilePath);
 
@@ -253,13 +254,13 @@ struct Sa {
         await uriFileAsset.close(dstFd);
         await globalThis.dsHelper.delete(uri);
         this.isOK = false;
-        await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+        await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
         return;
       });
     } catch (err) {
       console.error(TAG, 'prepareDlpFile failed', err.code, err.message);
       this.isOK = false;
-      await startAlertAbility({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+      await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
       return;
     }
   }

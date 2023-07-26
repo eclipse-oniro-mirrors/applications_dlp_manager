@@ -26,7 +26,7 @@ const INDEX_FOUR = 4;
 const INDEX_FIVE = 5;
 export default class DataAbility extends ServiceExtensionAbility {
   sandbox2linkFile: { [key: string]: [number, dlpPermission.DLPFile, string, number] } = {};
-  fileOpenHistory: { [key: string]: [string, number, string, number] } = {};
+  fileOpenHistory: { [key: string]: [string, number, string, number, string] } = {};
   //uri:bundleName:string, sandboxId:number, linkName:string, linkFd:number
   authPerm2Sandbox: { [key: string]: [string, number] } = {};
   //perm : bundlename, sandboxid

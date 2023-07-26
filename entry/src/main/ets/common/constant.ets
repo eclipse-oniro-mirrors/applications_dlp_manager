@@ -177,6 +177,7 @@ export default class Constants {
   static FILE_OPEN_HISTORY_ONE = 1;
   static FILE_OPEN_HISTORY_TWO = 2;
   static FILE_OPEN_HISTORY_THREE = 3;
+  static FILE_OPEN_HISTORY_FOUR = 4;
   static ADD_STAFF_ITEM_MARGIN_RIGHT = 4;
   static CHANGE_MAX_HEIGHT = '70%';
   static ENCRYPTION_SUCCESS_MAX_HEIGHT = '50%';
