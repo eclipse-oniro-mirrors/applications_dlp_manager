@@ -345,7 +345,7 @@ struct encryptionSuccess {
                         }
                       }
 
-                      if (this.routerParams['selectedPermissionTypeEdit'].data !== 'target') {
+                      if (['all', 'self'].includes(this.routerParams['selectedPermissionTypeEdit'].data)) {
                         Row() {
                           Text($r('app.string.header_title_edit'))
                             .fontWeight(FontWeight.Medium)

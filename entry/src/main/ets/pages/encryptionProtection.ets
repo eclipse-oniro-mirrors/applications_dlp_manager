@@ -319,7 +319,7 @@ struct DlpDialog {
       if (this.selectedPermissionTypeReadOnly.data === 'all') {
         this.staffDataArrayReadOnly = []
       }
-      if (this.selectedPermissionTypeEdit.data !== 'target') {
+      if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
         this.staffDataArrayEdit = [];
       }
       // foreach
@@ -434,7 +434,7 @@ struct DlpDialog {
           if (this.selectedPermissionTypeReadOnly.data === 'all') {
             this.staffDataArrayReadOnly = []
           }
-          if (this.selectedPermissionTypeEdit.data !== 'target') {
+          if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
             this.staffDataArrayEdit = [];
           }
           this.dlpFile.dlpProperty.authUserList = []

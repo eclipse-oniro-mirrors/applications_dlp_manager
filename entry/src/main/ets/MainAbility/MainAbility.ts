@@ -32,6 +32,7 @@ let permissionList: Array<Permissions> = [
 ];
 
 let direction: number;
+let languageValue: string;
 
 export default class MainAbility extends UIAbility {
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
@@ -48,10 +49,14 @@ export default class MainAbility extends UIAbility {
     }
     globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context);
     direction = this.context.config.direction;
+    languageValue = this.context.config.language;
   }
   onConfigurationUpdate(newConfig): void {
     if (direction !== newConfig.direction) {
       direction = newConfig.direction;
+    }
+    if (languageValue !== newConfig.language) {
+      languageValue = newConfig.language;
     }
     let eventData = {
       data: {
@@ -62,6 +67,16 @@ export default class MainAbility extends UIAbility {
       priority: emitter.EventPriority.HIGH
     };
     emitter.emit(innerEvent, eventData);
+
+    let languageData = {
+      data: {
+        'languageValue': languageValue,
+      }};
+    let languageEvent = {
+      eventId: Constants.ENCRYPTION_EMIT_LANGUAGE_VALUE,
+      priority: emitter.EventPriority.HIGH
+    };
+    emitter.emit(languageEvent, languageData);
   }
 
   onDestroy(): void {
