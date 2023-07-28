@@ -22,6 +22,7 @@ const TAG = "[DLPManager_AddStaff]";
 struct staffInput {
   @State inputId: string = ''
   @State isAccountCheckSuccess: boolean = true;
+  @State staffArrayLength: boolean = false;
   @State isInputInvalid: boolean = false;
   @State activeStaffIndex: number = -1;
   @Link staffArray: {
@@ -32,6 +33,7 @@ struct staffInput {
   removeItem(i) {
     this.staffArray.splice(i, 1)
     this.activeStaffIndex = -1
+    this.staffArrayLength = false;
   }
 
   build() {
@@ -96,7 +98,11 @@ struct staffInput {
             }
           })
           .onSubmit(() => {
-            if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) return;
+            if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
+              this.inputId = '';
+              this.staffArrayLength = true;
+              return;
+            }
             if (!this.isAccountCheckSuccess) return;
             if (!this.inputId) {
               return
@@ -146,7 +152,7 @@ struct staffInput {
       })
       .border({
         width: { bottom: Constants.ENCRYPTION_ADD_STAFF_BORDER },
-        color: (this.isInputInvalid || this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX * Constants.ENCRYPTION_ADD_STAFF_LENGTH)
+        color: (this.isInputInvalid || this.staffArrayLength )
           ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'),
       })
 
@@ -155,7 +161,7 @@ struct staffInput {
           Text(globalThis.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
             .fontSize($r('sys.float.ohos_fa_text_size_body'))
             .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
-            .fontColor('RGB(232,64,38)')
+            .fontColor($r('sys.color.ohos_id_color_handup'))
             .fontWeight(FontWeight.Medium)
             .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
             .textAlign(TextAlign.Start)
@@ -165,7 +171,7 @@ struct staffInput {
           Text(`${this.staffArray.length}/${Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX}`)
             .fontSize($r('sys.float.ohos_fa_text_size_body'))
             .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
-            .fontColor('RGB(232,64,38)')
+            .fontColor(this.staffArrayLength ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'))
             .fontWeight(FontWeight.Medium)
             .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
             .textAlign(TextAlign.End)

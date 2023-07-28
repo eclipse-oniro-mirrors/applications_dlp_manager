@@ -17,25 +17,16 @@
     "signingConfigs": [
       {
         "name": "default",
-        "material": {
-          "certpath": "C:/Users/l00699231/Desktop/dlpnew/DLPManager3/dlpmanager.cer",
-          "storePassword": "0000001921869AB129053291395B5CACC3FF7D7583EA01AE0D6E71E7BE1229027F0847C4BF7DE075AD",
-          "keyAlias": "dlpKey",
-          "keyPassword": "00000019A811E802679AF61F9AD9C5C5FB15482C580234A8DB6E69A0514503A8945591A3FB3AB353CA",
-          "profile": "C:/Users/l00699231/Desktop/dlpnew/DLPManager3/dlpmanager.p7b",
-          "signAlg": "SHA256withECDSA",
-          "storeFile": "C:/Users/l00699231/Desktop/dlpnew/DLPManager3/dlpmanager.p12"
-        }
       }
     ],
     "products": [
       {
         "name": "default",
         "signingConfig": "default",
-        "compileSdkVersion": "4.0.0(10)",
-        "compatibleSdkVersion": "4.0.0(10)",
-        "targetSdkVersion": "4.0.0(10)",
-        "runtimeOS": "HarmonyOS",
+        "compileSdkVersion": 10,
+        "compatibleSdkVersion": 10,
+        "targetSdkVersion": 10,
+        "runtimeOS": "OpenHarmony",
       }
     ]
   },
