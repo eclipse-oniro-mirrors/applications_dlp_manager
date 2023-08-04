@@ -234,7 +234,7 @@ struct Sa {
           this.linkFd = fs.openSync(linkFilePath, fs.OpenMode.READ);
         }
         let linkUri = getFileUriByPath(linkFilePath);
-        globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, uriFileAsset, dstFd];
+        globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri, uriFileAsset, dstFd];
         globalThis.sandbox2linkFile[this.sandboxBundleName + appId].push([this.linkFd,
           newDlpFile, linkFileName, 0]);
         globalThis.fileOpenHistory[uri] =

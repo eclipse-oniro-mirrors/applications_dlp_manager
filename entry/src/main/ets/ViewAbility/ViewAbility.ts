@@ -152,7 +152,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           globalThis.fileOpenHistory[this.uri] =
             [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkFd, this.linkUri];
           globalThis.authPerm2Sandbox[this.authPerm] = [this.sandboxBundleName, this.appIndex];
-          globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri];
+          globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1];
         }
         await this.startDataAbility();
         opening = false;
