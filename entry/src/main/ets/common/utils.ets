@@ -14,13 +14,15 @@
  */
 import account_osAccount from '@ohos.account.osAccount';
 import emitter from '@ohos.events.emitter';
-import Constants from '../common/constant'
 import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
 import fileuri from "@ohos.file.fileuri";
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import { Callback } from '@ohos.base'
+import deviceInfo from '@ohos.deviceInfo';
+import Constants from '../common/constant';
+
 let TAG = "[DLPManager_Utils]";
 
 function getFileUriByPath(filePath): string {
@@ -220,6 +222,13 @@ function directionStatus(func: Callback<number>) {
   });
 }
 
+function isPC(): boolean {
+  let deviceTypeName = deviceInfo.deviceType;
+  let productModel = deviceInfo.productModel;
+
+  return deviceTypeName === 'tablet' && productModel?.startsWith('HYM') === true
+}
+
 
 export {
   getOsAccountInfo,
@@ -236,5 +245,6 @@ export {
   calculate,
   toggleShow,
   getFileAssetFromUri,
-  directionStatus
+  directionStatus,
+  isPC
 };

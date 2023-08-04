@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import Constants from '../common/constant';
 import router from '@ohos.router';
-import staffItem from '../common/encryptionComponents/staff';
 import deviceInfo from '@ohos.deviceInfo';
+import staffItem from '../common/encryptionComponents/staff';
+import Constants from '../common/constant';
 import { calculate, toggleShow, directionStatus } from '../common/utils';
 
 const TAG = "[DLPManager_EncSucc]";

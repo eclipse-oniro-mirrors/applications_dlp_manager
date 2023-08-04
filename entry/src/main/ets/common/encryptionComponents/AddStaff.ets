@@ -16,6 +16,7 @@
 import staffItem from './staff';
 import account_osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
+import { isPC } from '../utils';
 
 const TAG = "[DLPManager_AddStaff]";
 @Component
@@ -30,6 +31,18 @@ struct staffInput {
   }[];
 
   @Prop isDisable: boolean;
+  @Builder MenuBuilder(index) {
+    Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
+      Text($r('app.string.delete_account'))
+        .fontSize($r('sys.float.ohos_id_text_size_sub_title1'))
+        .textAlign(TextAlign.Center)
+        .width(Constants.ENCRYPTION_ADD_STAFF_MENU_WIDTH)
+        .height(Constants.ENCRYPTION_ADD_STAFF_MENU_HEIGHT)
+        .onClick(() => {
+          this.removeItem(index)
+        })
+    }.width(Constants.ENCRYPTION_ADD_STAFF_MENU_WIDTH)
+  }
   removeItem(i) {
     this.staffArray.splice(i, 1)
     this.activeStaffIndex = -1
@@ -55,17 +68,19 @@ struct staffInput {
                 .opacity(Constants.PP_ROW_RADIUS)
                 .focusable(true)
                 .focusOnTouch(true)
+                .onKeyEvent((event: KeyEvent) => {
+                  if (event.keyText === 'KEYCODE_DEL' &&
+                    event.keyCode === 2055 && this.activeStaffIndex === index) {
+                    this.removeItem(index)
+                  }
+                  if (event.keyText === 'KEYCODE_FORWARD_DEL' && event.keyCode === 2071 && this.activeStaffIndex === index) {
+                    this.removeItem(index)
+                  }
+                })
                 .onClick(() => {
                   this.activeStaffIndex = index;
                 })
-                .bindMenu([
-                  {
-                    value: $r('app.string.delete_account'),
-                    action: () => {
-                      this.removeItem(index)
-                    }
-                  }
-                ])
+                .bindContextMenu(this.MenuBuilder(index), isPC() ? ResponseType.RightClick : ResponseType.LongPress)
                 .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
                 .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
             }
@@ -125,7 +140,7 @@ struct staffInput {
                     return;
                   } else {
                     this.staffArray.push({
-                      authAccount: this.inputId,
+                      authAccount: this.inputId.toLocaleLowerCase(),
                     })
                     this.inputId = '';
                   }

@@ -111,36 +111,41 @@ export default class MainAbility extends UIAbility {
   }
 
   async findDlpFile(): Promise<void> {
-    const linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
-    for (let key in globalThis.sandbox2linkFile) {
-      for (let j in globalThis.sandbox2linkFile[key]) {
-        if (globalThis.sandbox2linkFile[key][j][Constants.FILE_OPEN_HISTORY_TWO] === linkFileName) {
-          let linkFile = globalThis.sandbox2linkFile[key][j];
-          globalThis.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ONE];
-          globalThis.dlpFd = linkFile[Constants.FILE_OPEN_HISTORY_THREE];
-          globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
-          globalThis.linkFileName = linkFileName;
-          console.info(TAG, 'find dlp file', globalThis.dlpFileName, globalThis.dlpFd);
-          return;
+    return new Promise(async (resolve, reject) => {
+      const linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
+      for (let key in globalThis.sandbox2linkFile) {
+        for (let j in globalThis.sandbox2linkFile[key]) {
+          if (globalThis.sandbox2linkFile[key][j][Constants.FILE_OPEN_HISTORY_TWO] === linkFileName) {
+            let linkFile = globalThis.sandbox2linkFile[key][j];
+            globalThis.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ONE];
+            globalThis.dlpFd = linkFile[Constants.FILE_OPEN_HISTORY_THREE];
+            globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
+            globalThis.linkFileName = linkFileName;
+            console.info(TAG, 'find dlp file', globalThis.dlpFileName, globalThis.dlpFd);
+            resolve();
+          }
         }
       }
-    }
-    console.error(TAG, 'request from sandbox, but can not find dlp file by linkFileName', linkFileName);
-    await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
-    return;
+      console.error(TAG, 'request from sandbox, but can not find dlp file by linkFileName', linkFileName);
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+      reject();
+    });
   }
 
   async openDlpFile(): Promise<void> {
-    try {
-      globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
-      globalThis.dlpFd = getFileFd(globalThis.uri);
-      console.info(TAG, 'openDLPFile', globalThis.dlpFileName, globalThis.dlpFd);
-      globalThis.dlpFile = await dlpPermission.openDLPFile(globalThis.dlpFd);
-    } catch (err) {
-      console.error(TAG, 'openDLPFile', globalThis.dlpFileName, 'failed', err.code, err.message);
-      await this.showErrorDialogAndExit(err);
-      return;
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
+        globalThis.dlpFd = getFileFd(globalThis.uri);
+        console.info(TAG, 'openDLPFile', globalThis.dlpFileName, globalThis.dlpFd);
+        globalThis.dlpFile = await dlpPermission.openDLPFile(globalThis.dlpFd);
+        resolve();
+      } catch (err) {
+        console.error(TAG, 'openDLPFile', globalThis.dlpFileName, 'failed', err.code, err.message);
+        await this.showErrorDialogAndExit(err);
+        reject(err);
+      }
+    });
   }
 
   checkValidWant(): boolean {
@@ -194,8 +199,13 @@ export default class MainAbility extends UIAbility {
     globalThis.requestIsFromSandBox = await judgeIsSandBox();
     console.info(TAG, 'request is from sandbox', globalThis.requestIsFromSandBox);
     if (globalThis.requestIsFromSandBox) {
-      await this.findDlpFile();
-    } else {
+      try {
+        await this.findDlpFile();
+      } catch {
+        return;
+      }
+    }
+    else {
       let fileName = globalThis.abilityWant.parameters.fileName.name;
       let isDlpSuffix: boolean = fileName.endsWith('.dlp');
       if (!isDlpSuffix) {
@@ -208,7 +218,11 @@ export default class MainAbility extends UIAbility {
         });
         return;
       } else {
-        await this.openDlpFile();
+        try {
+          await this.openDlpFile();
+        } catch {
+          return;
+        }
       }
     }
     this.gotoPage(windowStage, accountInfo);

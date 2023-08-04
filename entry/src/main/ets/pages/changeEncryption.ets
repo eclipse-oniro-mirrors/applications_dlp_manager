@@ -13,15 +13,14 @@
  * limitations under the License.
  */
 
-import Constants from '../common/constant';
 import router from '@ohos.router';
-import staffItem from '../common/encryptionComponents/staff';
 import dlpPermission from '@ohos.dlpPermission';
 import mediaLibrary from '@ohos.multimedia.mediaLibrary';
-// @ts-ignore
-import { getAlertMessage, checkAccountLogin, getOsAccountInfo, getFileFd, calculate, toggleShow, directionStatus } from '../common/utils';
-import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import picker from '@ohos.file.picker';
+import staffItem from '../common/encryptionComponents/staff';
+import Constants from '../common/constant';
+import { getAlertMessage, checkAccountLogin, getOsAccountInfo, calculate, toggleShow, directionStatus } from '../common/utils';
+import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 
 const TAG = '[DLPManager_ModEnc]';
 

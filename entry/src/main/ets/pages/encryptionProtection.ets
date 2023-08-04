@@ -13,32 +13,29 @@
  * limitations under the License.
  */
 
-import AddStaff from '../common/encryptionComponents/AddStaff';
 import dlpPermission from '@ohos.dlpPermission'
 import hiSysEvent from '@ohos.hiSysEvent';
+import router from '@ohos.router';
+import picker from '@ohos.file.picker';
+import hiTraceMeter from '@ohos.hiTraceMeter';
+import fileio from '@ohos.fileio';
+import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog'
 import {
   getAlertMessage,
   getOsAccountInfo,
   checkAccountLogin,
-  terminateSelfWithResult,
   getUserId,
-  getAuthPerm,
   removeDuplicate,
-  getFileFd,
   directionStatus
 } from '../common/utils';
 import Constants from '../common/constant';
-import router from '@ohos.router';
-import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import permissionTypeSelect from '../common/encryptionComponents/permission_type_select';
-import picker from '@ohos.file.picker';
-import hiTraceMeter from '@ohos.hiTraceMeter';
-import fileio from '@ohos.fileio';
+import AddStaff from '../common/encryptionComponents/AddStaff';
+
 
 const TAG = "[DLPManager_Encrypt]"
-let suffix_length = 4;
 
 let abilityResult = {
   "resultCode": 0,

@@ -18,14 +18,13 @@ import picker from '@ohos.file.picker';
 import '@ohos.app.ability.UIAbility';
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
+import abilityManager from '@ohos.app.ability.abilityManager';
 import {
   startAlertAbility,
-  terminateSelfWithResult,
   getFileAssetFromUri,
   getFileUriByPath,
   getFileFd
 } from '../common/utils';
-import abilityManager from '@ohos.app.ability.abilityManager';
 import Constants from '../common/constant';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 

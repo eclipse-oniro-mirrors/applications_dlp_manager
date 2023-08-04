@@ -15,6 +15,13 @@
 
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import dlpPermission from '@ohos.dlpPermission';
+import fileio from '@ohos.fileio';
+import type Want from '@ohos.app.ability.Want';
+import hiTraceMeter from '@ohos.hiTraceMeter';
+import hiSysEvent from '@ohos.hiSysEvent';
+import wantConstant from '@ohos.app.ability.wantConstant';
+import deviceInfo from '@ohos.deviceInfo';
+import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import {
   getOsAccountInfo,
   getUserId,
@@ -25,14 +32,7 @@ import {
   getFileFd,
   getFileUriByPath
 } from '../common/utils';
-import fileio from '@ohos.fileio';
-import type Want from '@ohos.app.ability.Want';
 import Constants from '../common/constant';
-import hiTraceMeter from '@ohos.hiTraceMeter';
-import hiSysEvent from '@ohos.hiSysEvent';
-import wantConstant from '@ohos.app.ability.wantConstant';
-import deviceInfo from '@ohos.deviceInfo';
-import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 
 const TAG = '[DLPManager_View]';
 const PHONE = 'phone';
