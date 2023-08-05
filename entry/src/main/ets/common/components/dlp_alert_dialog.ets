@@ -62,7 +62,7 @@ struct DlpAlertDialog {
             if (this.action != null) {
               this.action()
             } else {
-              globalThis.context.terminateSelf()
+              globalThis.alertContext.terminateSelf()
             }
           })
       }

@@ -18,7 +18,7 @@ export default class AlertAbility extends UIAbility {
   onCreate(want, launchParam): void {
     console.info(TAG, 'onCreate');
     globalThis.abilityWant = want;
-    globalThis.context = this.context;
+    globalThis.alertContext = this.context;
   }
 
   onDestroy(): void {
