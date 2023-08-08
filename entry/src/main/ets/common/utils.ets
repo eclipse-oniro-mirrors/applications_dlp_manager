@@ -226,7 +226,7 @@ function isPC(): boolean {
   let deviceTypeName = deviceInfo.deviceType;
   let productModel = deviceInfo.productModel;
 
-  return deviceTypeName === 'tablet' && productModel?.startsWith('HYM') === true
+  return (deviceTypeName === 'tablet' || deviceTypeName === '2in1') && productModel?.startsWith('HYM') === true
 }
 
 

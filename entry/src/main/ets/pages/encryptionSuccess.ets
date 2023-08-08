@@ -14,7 +14,6 @@
  */
 
 import router from '@ohos.router';
-import deviceInfo from '@ohos.deviceInfo';
 import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
 import { calculate, toggleShow, directionStatus } from '../common/utils';
@@ -47,7 +46,6 @@ struct encryptionSuccess {
   @State hideNamesNumReadOnly: string = '0';
   @State showNamesArrEdit: [] = [];
   @State showNamesArrReadOnly: [] = [];
-  @State deviceType: string = '';
   @State staffDataArrayReadOnly: {
     authAccount: string,
     avatar: string,
@@ -100,7 +98,6 @@ struct encryptionSuccess {
   }
 
   aboutToAppear() {
-    this.deviceType = deviceInfo.deviceType;
     console.info(TAG, 'aboutToAppear, encrypt success');
     this.directionStatus = globalThis.context.config.direction;
     directionStatus((counter) => {

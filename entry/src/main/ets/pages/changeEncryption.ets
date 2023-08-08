@@ -82,7 +82,6 @@ struct changeEncryption {
   @State showNamesArrReadOnly: {
     authAccount: string,
   }[] = [];
-  @State deviceType: string = '';
   @State staffDataArrayReadOnly: {
     authAccount: string,
   }[] = [];
