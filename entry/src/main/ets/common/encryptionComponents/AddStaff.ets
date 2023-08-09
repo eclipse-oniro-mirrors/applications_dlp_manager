@@ -19,12 +19,21 @@ import Constants from '../constant';
 import { isPC } from '../utils';
 
 const TAG = "[DLPManager_AddStaff]";
+@Extend(Text) function inputMessageText() {
+  .fontSize($r('sys.float.ohos_fa_text_size_body'))
+  .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
+  .fontColor($r('sys.color.ohos_id_color_handup'))
+  .fontWeight(FontWeight.Medium)
+  .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
+  .textAlign(TextAlign.Start)
+}
 @Component
 struct staffInput {
   @State inputId: string = ''
   @State isAccountCheckSuccess: boolean = true;
   @State staffArrayLength: boolean = false;
   @State isInputInvalid: boolean = false;
+  @State isNetworkInvalid: boolean = false;
   @State activeStaffIndex: number = -1;
   @Link staffArray: {
     authAccount: string,
@@ -108,8 +117,9 @@ struct staffInput {
           .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
           .onChange((value) => {
             this.inputId = value
-            if (this.isInputInvalid) {
-              this.isInputInvalid = false
+            if (this.isInputInvalid || this.isNetworkInvalid) {
+              this.isInputInvalid = false;
+              this.isNetworkInvalid = false;
             }
           })
           .onSubmit(() => {
@@ -122,10 +132,6 @@ struct staffInput {
             if (!this.inputId) {
               return
             }
-            if (this.inputId === 'error') {
-              this.isInputInvalid = true
-              return
-            }
             try {
               let domainAccountInfo = {
                 domain: 'china',
@@ -133,16 +139,21 @@ struct staffInput {
               }
               if (globalThis.domainAccount) {
                 this.isAccountCheckSuccess = false;
-                account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err, res) => {
+                account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err, isExist) => {
                   this.isAccountCheckSuccess = true;
-                  if (err) {
-                    this.isInputInvalid = true;
-                    return;
-                  } else {
+                  if (isExist) {
                     this.staffArray.push({
                       authAccount: this.inputId.toLocaleLowerCase(),
                     })
                     this.inputId = '';
+                  } else {
+                    if ([Constants.ERR_JS_INVALID_PARAMETER, Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(err.code)){
+                      this.isInputInvalid = true;
+                      return;
+                    } else {
+                      this.isNetworkInvalid = true;
+                      return;
+                    }
                   }
                 })
               } else {
@@ -167,19 +178,18 @@ struct staffInput {
       })
       .border({
         width: { bottom: Constants.ENCRYPTION_ADD_STAFF_BORDER },
-        color: (this.isInputInvalid || this.staffArrayLength )
+        color: (this.isInputInvalid || this.staffArrayLength || this.isNetworkInvalid )
           ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'),
       })
 
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid) {
           Text(globalThis.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
-            .fontSize($r('sys.float.ohos_fa_text_size_body'))
-            .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
-            .fontColor($r('sys.color.ohos_id_color_handup'))
-            .fontWeight(FontWeight.Medium)
-            .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
-            .textAlign(TextAlign.Start)
+            .inputMessageText()
+        }
+        if (this.isNetworkInvalid) {
+          Text(globalThis.domainAccount ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
+            .inputMessageText()
         }
         Blank()
         if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX * Constants.ENCRYPTION_ADD_STAFF_LENGTH) {

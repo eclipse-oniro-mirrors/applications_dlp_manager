@@ -157,6 +157,10 @@
       "value": "Invalid employee ID. Please reenter."
     },
     {
+      "name": "network_invalid",
+      "value": "Network error. Try again later."
+    },
+    {
       "name": "enter_a_complete_account",
       "value": "Enter an account name"
     },
