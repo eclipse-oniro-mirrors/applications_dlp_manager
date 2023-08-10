@@ -135,7 +135,7 @@ struct staffInput {
             try {
               let domainAccountInfo = {
                 domain: 'china',
-                accountName: this.inputId
+                accountName: this.inputId.toLocaleLowerCase()
               }
               if (globalThis.domainAccount) {
                 this.isAccountCheckSuccess = false;
