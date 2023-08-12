@@ -102,16 +102,24 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
 
 function getAlertMessage(err, defaultTitle?: Resource, defaultMessage?: Resource) {
   switch (err.code) {
+    case Constants.ERR_JS_USER_NO_PERMISSION:
+      return {
+        'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
+        'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.extra)
+      }
     case Constants.ERR_JS_APP_INSIDE_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') };
     case Constants.ERR_JS_GET_ACCOUNT_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') };
     case Constants.ERR_JS_APP_NO_ACCOUNT_ERROR:
+    case Constants.ERR_JS_ACCOUNT_NOT_LOGIN:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') };
     case Constants.ERR_JS_APP_PARAM_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_PARAM_ERROR') };
     case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') };
+    case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
+      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') };
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR') };
     case Constants.ERR_JS_NOT_DLP_FILE:
@@ -121,12 +129,7 @@ function getAlertMessage(err, defaultTitle?: Resource, defaultMessage?: Resource
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
       return { 'title': $r('app.string.TITLE_OPERATE_DENY'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') };
     default:
-      if (err.extra != undefined) { // has contact account
-        return {
-          'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
-          'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.extra)
-        }
-      } else if (defaultTitle !== undefined && defaultMessage != undefined) {
+      if (defaultTitle !== undefined && defaultMessage != undefined) {
         return { 'title': defaultTitle, 'msg': defaultMessage };
       } else {
         return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') };
