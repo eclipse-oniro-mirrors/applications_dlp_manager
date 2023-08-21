@@ -21,7 +21,6 @@ import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
 import {
   startAlertAbility,
-  getFileAssetFromUri,
   getFileUriByPath,
   getFileFd
 } from '../common/utils';
@@ -154,7 +153,7 @@ struct Sa {
       DocumentSaveOptions.newFileNames = [displayName];
       let documentPicker = new picker.DocumentViewPicker();
       let dstFd = null;
-      let uriFileAsset = null;
+      let file = null;
       await documentPicker.save(DocumentSaveOptions).then(async (saveRes) => {
         if (saveRes == undefined || saveRes.length == 0) {
           console.error(TAG, 'fail to get uri');
@@ -162,13 +161,16 @@ struct Sa {
         }
         console.info(TAG, 'get uri', saveRes)
         uri = saveRes[0]
-
         try {
-          uriFileAsset = await getFileAssetFromUri(uri);
-          dstFd = await uriFileAsset.open('rw');
+          file = await fs.open(uri, fs.OpenMode.READ_WRITE);
+          dstFd = file.fd;
         } catch (err) {
           console.error(TAG, 'open', uri, 'failed', err.code, err.message);
-          await uriFileAsset.close(dstFd);
+          try {
+            await fs.close(file);
+          } catch (err) {
+            console.log(TAG, 'close fail', err.code, err.message)
+          }
           await globalThis.dsHelper.delete(uri);
           this.isOK = false;
           await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
@@ -183,7 +185,11 @@ struct Sa {
         let srcFd = getFileFd(srcUri);
         let copyRes = await this.copyDlpHead(srcFd, dstFd);
         if (!copyRes) {
-          await uriFileAsset.close(dstFd);
+          try {
+            await fs.close(file);
+          } catch (err) {
+            console.log(TAG, 'close fail', err.code, err.message)
+          }
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
           this.isOK = false;
@@ -195,7 +201,11 @@ struct Sa {
           newDlpFile = await dlpPermission.openDLPFile(dstFd);
         } catch (err) {
           console.error(TAG, 'generateDlpFile', dstFd, 'failed', err.code, err.message);
-          await uriFileAsset.close(dstFd);
+          try {
+            await fs.close(file);
+          } catch (err) {
+            console.log(TAG, 'close fail', err.code, err.message)
+          }
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
           return;
@@ -215,7 +225,11 @@ struct Sa {
           } catch (err) {
             console.error(TAG, 'closeDlpFile failed', err.code, err.message);
           }
-          await uriFileAsset.close(dstFd);
+          try {
+            await fs.close(file);
+          } catch (err) {
+            console.log(TAG, 'close fail', err.code, err.message)
+          }
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
           this.isOK = false;
@@ -234,7 +248,7 @@ struct Sa {
           this.linkFd = fs.openSync(linkFilePath, fs.OpenMode.READ);
         }
         let linkUri = getFileUriByPath(linkFilePath);
-        globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri, uriFileAsset, dstFd];
+        globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri];
         globalThis.sandbox2linkFile[this.sandboxBundleName + appId].push([this.linkFd,
           newDlpFile, linkFileName, 0]);
         globalThis.fileOpenHistory[uri] =
@@ -247,10 +261,19 @@ struct Sa {
         result.want.parameters.pick_path_return.push(this.resultUri);
         result.resultCode = 0;
         fs.closeSync(srcFd);
+        try {
+          await fs.close(file);
+        } catch (err) {
+          console.log(TAG, 'close fail', err.code, err.message)
+        }
         return;
       }).catch(async (err) => {
         console.error(TAG, 'DocumentViewPicker failed', err.code, err.message);
-        await uriFileAsset.close(dstFd);
+        try {
+            await fs.close(file);
+          } catch (err) {
+            console.log(TAG, 'close fail', err.code, err.message)
+          }
         await globalThis.dsHelper.delete(uri);
         this.isOK = false;
         await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });

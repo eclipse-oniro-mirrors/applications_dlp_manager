@@ -14,6 +14,7 @@
  */
 
 import router from '@ohos.router';
+import fs from '@ohos.file.fs';
 import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
 import { calculate, toggleShow, directionStatus } from '../common/utils';
@@ -541,10 +542,8 @@ struct encryptionSuccess {
                         console.error(TAG, 'closeDLPFile', globalThis.dlpFileName, 'failed', err.code, err.message);
                       }
                       try {
-                        if (globalThis.uriFileAsset !== undefined) {
-                          console.info(TAG, 'refresh dlp file', globalThis.dlpFileName, globalThis.dlpFd);
-                          await globalThis.uriFileAsset.close(globalThis.dlpFd); // refresh file info
-                        }
+                        console.info(TAG, 'refresh dlp file', globalThis.dlpFileName, globalThis.dlpFd);
+                        await fs.close(globalThis.dlpFd); // refresh file info
                       } catch (err) {
                         console.error(TAG, 'refresh dlp file', globalThis.dlpFileName, 'failed', err.code, err.message);
                       }

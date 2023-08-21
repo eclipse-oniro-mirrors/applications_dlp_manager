@@ -21,7 +21,8 @@ import hiTraceMeter from '@ohos.hiTraceMeter';
 import hiSysEvent from '@ohos.hiSysEvent';
 import wantConstant from '@ohos.app.ability.wantConstant';
 import deviceInfo from '@ohos.deviceInfo';
-import mediaLibrary from '@ohos.multimedia.mediaLibrary';
+import fs from '@ohos.file.fs';
+import fileUri from '@ohos.file.fileuri';
 import {
   getOsAccountInfo,
   getUserId,
@@ -53,7 +54,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
   sandboxModuleName: string = '';
   fileName: string = '';
   uri: string = '';
-  fileAssert: mediaLibrary.FileAsset = undefined;
+  file = null;
+  uriInfo = null;
   linkUri: string = '';
   isCreated: boolean = false;
   gatheringType: number = dlpPermission.GatheringPolicyType.NON_GATHERING;
@@ -99,10 +101,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
           'name': this.linkFileName
         },
         'fileAssert': {
-          'displayName': this.fileAssert.displayName,
-          'relativePath': this.fileAssert.relativePath,
-          'mediaType': this.fileAssert.mediaType,
-          'dateModified': this.fileAssert.dateModified
+          'displayName': this.uriInfo.name,
+          // 'relativePath': this.fileAssert.relativePath,
+          // 'mediaType': this.fileAssert.mediaType,
+          // 'dateModified': this.fileAssert.dateModified
         },
         'uri': this.linkUri,
         'dlpUri': {
@@ -207,22 +209,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
   }
 
-  async getFileAssetFromUri(uri): Promise<mediaLibrary.FileAsset> {
-    let fileAssetUriFetchOp = {
-      selections: '',
-      selectionArgs: [],
-      uri: uri.toString(),
-    };
-    try {
-      let media = mediaLibrary.getMediaLibrary(this.context);
-      let uriFetchResult = await media.getFileAssets(fileAssetUriFetchOp);
-      let uriFileAsset = await uriFetchResult.getFirstObject();
-      return uriFileAsset;
-    } catch (err) {
-      console.error(TAG, 'getFileAssets failed', err.code, err.message);
-      return undefined;
-    }
-  }
 
   async closeFile(): Promise<void> {
     try {
@@ -244,12 +230,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
-    this.fileName = <string>want.parameters.fileName['name'];
-    if (globalThis.domainAccount) {
-      this.uri = <string>want.parameters.uri;
-    } else {
-      this.uri = <string>want.uri;
-    }
+    this.fileName = <string>want.parameters.displayName;
+    this.uri = <string>want.uri;
     this.dlpFd = getFileFd(this.uri);
     console.debug(TAG, 'dlpFd:', this.dlpFd);
     if (this.dlpFd === -1) {
@@ -425,12 +407,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
         globalThis.viewContext.terminateSelf();
       }
     }
-    this.fileAssert = await this.getFileAssetFromUri(this.uri);
-    if (this.fileAssert === undefined) {
+    try {
+      this.uriInfo = new fileUri.FileUri(this.uri);
+    } catch (error) {
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       opening = false;
       await startAlertAbility(globalThis.viewContext, { code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR });
       await this.closeFile();
+      console.error(TAG, 'open', this.uri, 'failed', error.code, error.message);
       return;
     }
     this.startSandboxApp(startId);

@@ -18,7 +18,6 @@ import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
 import fileuri from "@ohos.file.fileuri";
-import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import { Callback } from '@ohos.base'
 import deviceInfo from '@ohos.deviceInfo';
 import Constants from '../common/constant';
@@ -203,18 +202,6 @@ let toggleShow = (allNames, showNamesArr, editFlag, rowNamesLen) => {
   }
 }
 
-async function getFileAssetFromUri(uri:string) {
-  let fileAssetUriFetchOp = {
-    selections: '',
-    selectionArgs: [],
-    uri: uri.toString(),
-  };
-  let context: any = getContext(this);
-  let media = mediaLibrary.getMediaLibrary(context);
-  let uriFetchResult = await media.getFileAssets(fileAssetUriFetchOp);
-  let uriFileAsset = await uriFetchResult.getFirstObject();
-  return uriFileAsset;
-}
 
 function directionStatus(func: Callback<number>) {
   let innerEvent = {
@@ -247,7 +234,6 @@ export {
   removeDuplicate,
   calculate,
   toggleShow,
-  getFileAssetFromUri,
   directionStatus,
   isPC
 };

@@ -42,11 +42,8 @@ export default class MainAbility extends UIAbility {
     globalThis.abilityWant = want;
     globalThis.context = this.context;
     globalThis.domainAccount = deviceInfo.deviceType === PHONE ? false : true;
-    if (globalThis.domainAccount) {
-      globalThis.uri = <string> globalThis.abilityWant.parameters.uri;
-    } else {
-      globalThis.uri = <string> globalThis.abilityWant.uri;
-    }
+    globalThis.uri = <string> globalThis.abilityWant.uri;
+
     globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context);
     direction = this.context.config.direction;
     languageValue = this.context.config.language;
@@ -85,7 +82,8 @@ export default class MainAbility extends UIAbility {
 
   async showErrorDialogAndExit(error): Promise<void> {
     globalThis.abilityWant.parameters.error = error;
-    globalThis.windowStage.setUIContent(globalThis.context, 'pages/alert', null);
+    globalThis.alertContext = globalThis.context;
+    globalThis.windowStage.setUIContent(globalThis.alertContext, 'pages/alert', null);
   }
 
   async gotoPage(windowStage, accountInfo): Promise<void> {
@@ -119,10 +117,11 @@ export default class MainAbility extends UIAbility {
             let linkFile = globalThis.sandbox2linkFile[key][j];
             globalThis.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ONE];
             globalThis.dlpFd = linkFile[Constants.FILE_OPEN_HISTORY_THREE];
-            globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
+            globalThis.dlpFileName = globalThis.abilityWant.parameters.displayName;
             globalThis.linkFileName = linkFileName;
             console.info(TAG, 'find dlp file', globalThis.dlpFileName, globalThis.dlpFd);
             resolve();
+            return;
           }
         }
       }
@@ -135,7 +134,7 @@ export default class MainAbility extends UIAbility {
   async openDlpFile(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
+        globalThis.dlpFileName = globalThis.abilityWant.parameters.displayName;
         globalThis.dlpFd = getFileFd(globalThis.uri);
         console.info(TAG, 'openDLPFile', globalThis.dlpFileName, globalThis.dlpFd);
         globalThis.dlpFile = await dlpPermission.openDLPFile(globalThis.dlpFd);
@@ -153,12 +152,8 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need parameters in want');
       return false;
     }
-    if (globalThis.abilityWant.parameters.fileName === undefined) {
-      console.error(TAG, 'need fileName in want.parameters');
-      return false;
-    }
-    if (globalThis.abilityWant.parameters.fileName.name === undefined) {
-      console.error(TAG, 'need name in want.parameters.fileName');
+    if (globalThis.abilityWant.parameters.displayName === undefined) {
+      console.error(TAG, 'need name in want.parameters.displayName');
       return false;
     }
     let callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken'];
@@ -206,11 +201,11 @@ export default class MainAbility extends UIAbility {
       }
     }
     else {
-      let fileName = globalThis.abilityWant.parameters.fileName.name;
+      let fileName = globalThis.abilityWant.parameters.displayName;
       let isDlpSuffix: boolean = fileName.endsWith('.dlp');
       if (!isDlpSuffix) {
         console.info(TAG, fileName, 'is not a dlp file');
-        globalThis.originFileName = globalThis.abilityWant.parameters.fileName.name;
+        globalThis.originFileName = globalThis.abilityWant.parameters.displayName;
         globalThis.originFd = getFileFd(globalThis.uri);
         windowStage.setUIContent(this.context, 'pages/encryptionProtection', null);
         windowStage.getMainWindow().then((win) => {

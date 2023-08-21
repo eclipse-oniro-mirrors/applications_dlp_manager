@@ -15,8 +15,9 @@
 
 import router from '@ohos.router';
 import dlpPermission from '@ohos.dlpPermission';
-import mediaLibrary from '@ohos.multimedia.mediaLibrary';
 import picker from '@ohos.file.picker';
+import fs from '@ohos.file.fs';
+import fileUri from '@ohos.file.fileuri';
 import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
 import { getAlertMessage, checkAccountLogin, getOsAccountInfo, calculate, toggleShow, directionStatus } from '../common/utils';
@@ -112,19 +113,6 @@ struct changeEncryption {
     index?: number
   } = {}
 
-  async getFileAssetFromUri(uri) {
-    let fileAssetUriFetchOp = {
-      selections: '',
-      selectionArgs: [],
-      uri: uri.toString(),
-    };
-    let context: any = getContext(this);
-    let media = mediaLibrary.getMediaLibrary(context);
-    let uriFetchResult = await media.getFileAssets(fileAssetUriFetchOp);
-    let uriFileAsset = await uriFetchResult.getFirstObject();
-    return uriFileAsset;
-  }
-
   @Builder popupBuilderReadOnly() {
     Row() {
       Text($r('app.string.header_title_readonly_tips'))
@@ -219,24 +207,42 @@ struct changeEncryption {
         console.info(TAG, 'get uri', saveRes)
         let uri = saveRes[0];
         let dstFd = null;
-        let uriFileAsset = null;
+        let uriInfo = null;
+        let file = null;
         try {
-          uriFileAsset = await this.getFileAssetFromUri(uri);
-          dstFd = await uriFileAsset.open('rw');
+          uriInfo = new fileUri.FileUri(uri);
+        } catch (err) {
+          console.log(TAG, 'fileUri fail', err.code, err.message)
+        }
+        try {
+          file = await fs.open(uri, fs.OpenMode.READ_WRITE);
+          dstFd = file.fd;
         } catch (err) {
           console.error(TAG, 'open', uri, 'failed', err.code, err.message);
-          await globalThis.dsHelper.delete(uri);
+          try {
+            await fs.unlink(uriInfo.path);
+          } catch (err) {
+            console.log(TAG, 'unlink fail', err.code, err.message)
+          }
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any,$r('app.string.MESSAGE_APP_INSIDE_ERROR') as any);
           await this.catchProcess();
           return;
-        }
+        };
         try {
           console.info(TAG, 'recoverDLPFile', this.srcFileName, this.dlpFd);
           await this.dlpFile.recoverDLPFile(dstFd);
         } catch (err) {
           console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', err.code, err.message);
-          await uriFileAsset.close(dstFd);
-          await globalThis.dsHelper.delete(uri);
+          try {
+            await fs.close(file);
+          } catch (err) {
+            console.log(TAG, 'close fail', err.code, err.message)
+          }
+          try {
+            await fs.unlink(uriInfo.path);
+          } catch (err) {
+            console.log(TAG, 'unlink fail', err.code, err.message)
+          }
           let errorInfo = getAlertMessage(
               err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
           this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -244,7 +250,11 @@ struct changeEncryption {
           return;
         }
 
-        await uriFileAsset.close(dstFd);
+        try {
+          await fs.close(file);
+        } catch (err) {
+          console.log(TAG, 'close fail', err.code, err.message)
+        }
         if (globalThis.requestIsFromSandBox) { //no need close dlp file in sandbox
           try {
             console.info(TAG, 'resumeFuseLink', this.srcFileName);

@@ -19,7 +19,8 @@ import router from '@ohos.router';
 import picker from '@ohos.file.picker';
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import fileio from '@ohos.fileio';
-import mediaLibrary from '@ohos.multimedia.mediaLibrary';
+import fileUri from '@ohos.file.fileuri';
+import fs from '@ohos.file.fs';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog'
 import {
@@ -89,19 +90,6 @@ struct DlpDialog {
       value: $r('app.string.PERMISSION_TYPE_SELECT_SELF') as any, data: 'self', index: 2
     }
   ];
-
-  async getFileAssetFromUri(uri) {
-    let fileAssetUriFetchOp = {
-      selections: "",
-      selectionArgs: [],
-      uri: uri.toString(),
-    };
-    let context: any = getContext(this);
-    let media = mediaLibrary.getMediaLibrary(context);
-    let uriFetchResult = await media.getFileAssets(fileAssetUriFetchOp);
-    let uriFileAsset = await uriFetchResult.getFirstObject();
-    return uriFileAsset;
-  }
 
   @State staffDataArrayReadOnly: {
     authAccount: string,
@@ -405,17 +393,27 @@ struct DlpDialog {
         console.info(TAG, 'get uri', saveRes)
         uri = saveRes[0];
         let dstFd = null;
-        let uriFileAsset = null;
+        let uriInfo = null;
+        let file = null;
         try {
-          uriFileAsset = await this.getFileAssetFromUri(uri);
-          dstFd = await uriFileAsset.open('rw');
+          uriInfo = new fileUri.FileUri(uri);
         } catch (err) {
-          console.error(TAG, 'open', uri, 'failed', err.code, err.message);
-          await globalThis.dsHelper.delete(uri);
+          console.log(TAG, 'fileUri fail', err.code, err.message)
+        }
+        try {
+          file = await fs.open(uri, fs.OpenMode.READ_WRITE);
+          dstFd = file.fd;
+        } catch (error) {
+          console.error(TAG, 'open', uri, 'failed', error.code, error.message);
+          try {
+            await fs.unlink(uriInfo.path);
+          } catch (err) {
+            console.log(TAG, 'unlink fail', err.code, err.message)
+          }
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as any);
           this.processing = false;
           return;
-        }
+        };
         this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
         this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
         this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
@@ -460,8 +458,16 @@ struct DlpDialog {
           await this.sendDlpFileCreateFault(102, err.data); // 102: DLP_FILE_CREATE_ERORR
           hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
           console.info(TAG, 'generateDLPFile failed', err.code, err.message);
-          await uriFileAsset.close(dstFd);
-          await globalThis.dsHelper.delete(uri);
+          try {
+            await fs.close(file);
+          } catch (err) {
+            console.log(TAG, 'close fail', err.code, err.message)
+          }
+          try {
+            await fs.unlink(uriInfo.path);
+          } catch (err) {
+            console.log(TAG, 'unlink fail', err.code, err.message)
+          }
           let errorInfo = getAlertMessage(err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
           this.showErrorDialog(errorInfo.title, errorInfo.msg);
           this.processing = false;
@@ -472,8 +478,8 @@ struct DlpDialog {
         this.processing = false;
 
         // update global dlp resource
-        globalThis.uriFileAsset = uriFileAsset; // for file refresh after dlp close
-        globalThis.dlpFileName = uriFileAsset.displayName;
+        globalThis.dlpFileName = uriInfo.name;
+
         globalThis.dlpFile = this.dlpFile;
         globalThis.dlpFd = dstFd;
         router.replaceUrl({
@@ -768,10 +774,8 @@ struct DlpDialog {
                     console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', err.code, err.message);
                   }
                   try {
-                    if (globalThis.uriFileAsset !== undefined) {
-                      console.info(TAG, 'refresh dlp file', globalThis.dlpFileName, globalThis.dlpFd);
-                      await globalThis.uriFileAsset.close(globalThis.dlpFd); // refresh file info
-                    }
+                    console.info(TAG, 'refresh dlp file', globalThis.dlpFileName, globalThis.dlpFd);
+                    await fs.close(globalThis.dlpFd); // refresh file info
                   } catch (err) {
                     console.error(TAG, 'refresh dlp file failed', err.code, err.message);
                   }

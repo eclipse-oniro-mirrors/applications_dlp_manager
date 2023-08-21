@@ -53,11 +53,6 @@ export default class DataAbility extends ServiceExtensionAbility {
     for (let item in globalThis.token2File) {
       const APP_ID = globalThis.token2File[item][INDEX_ONE] + globalThis.token2File[item][INDEX_TWO];
       if (key === APP_ID) {
-        let uriFileAsset = globalThis.token2File[item][INDEX_FOUR];
-        let dstFd = globalThis.token2File[item][INDEX_FIVE];
-        if (uriFileAsset !== undefined && dstFd !== undefined) {
-          await uriFileAsset.close(dstFd);
-        }
         delete globalThis.token2File[item];
       }
     }

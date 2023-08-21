@@ -18,7 +18,7 @@
         "name": "ArkTSPartialUpdate",
         "value": "true"
       }
-     ],
+    ],
     "uiSyntax": "ets",
     "abilities": [
       {
