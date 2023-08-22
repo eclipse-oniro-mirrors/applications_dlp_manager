@@ -398,7 +398,7 @@ struct DlpDialog {
         try {
           uriInfo = new fileUri.FileUri(uri);
         } catch (err) {
-          console.log(TAG, 'fileUri fail', err.code, err.message)
+          console.log(TAG, 'fileUri fail', err.code, err.message);
         }
         try {
           file = await fs.open(uri, fs.OpenMode.READ_WRITE);
@@ -408,7 +408,7 @@ struct DlpDialog {
           try {
             await fs.unlink(uriInfo.path);
           } catch (err) {
-            console.log(TAG, 'unlink fail', err.code, err.message)
+            console.log(TAG, 'unlink fail', err.code, err.message);
           }
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as any);
           this.processing = false;
@@ -461,12 +461,12 @@ struct DlpDialog {
           try {
             await fs.close(file);
           } catch (err) {
-            console.log(TAG, 'close fail', err.code, err.message)
+            console.log(TAG, 'close fail', err.code, err.message);
           }
           try {
             await fs.unlink(uriInfo.path);
           } catch (err) {
-            console.log(TAG, 'unlink fail', err.code, err.message)
+            console.log(TAG, 'unlink fail', err.code, err.message);
           }
           let errorInfo = getAlertMessage(err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
           this.showErrorDialog(errorInfo.title, errorInfo.msg);

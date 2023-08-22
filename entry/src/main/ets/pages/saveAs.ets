@@ -169,7 +169,7 @@ struct Sa {
           try {
             await fs.close(file);
           } catch (err) {
-            console.log(TAG, 'close fail', err.code, err.message)
+            console.log(TAG, 'close fail', err.code, err.message);
           }
           await globalThis.dsHelper.delete(uri);
           this.isOK = false;
@@ -188,7 +188,7 @@ struct Sa {
           try {
             await fs.close(file);
           } catch (err) {
-            console.log(TAG, 'close fail', err.code, err.message)
+            console.log(TAG, 'close fail', err.code, err.message);
           }
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
@@ -204,7 +204,7 @@ struct Sa {
           try {
             await fs.close(file);
           } catch (err) {
-            console.log(TAG, 'close fail', err.code, err.message)
+            console.log(TAG, 'close fail', err.code, err.message);
           }
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
@@ -228,7 +228,7 @@ struct Sa {
           try {
             await fs.close(file);
           } catch (err) {
-            console.log(TAG, 'close fail', err.code, err.message)
+            console.log(TAG, 'close fail', err.code, err.message);
           }
           await globalThis.dsHelper.delete(uri);
           fs.closeSync(srcFd);
@@ -264,16 +264,16 @@ struct Sa {
         try {
           await fs.close(file);
         } catch (err) {
-          console.log(TAG, 'close fail', err.code, err.message)
+          console.log(TAG, 'close fail', err.code, err.message);
         }
         return;
       }).catch(async (err) => {
         console.error(TAG, 'DocumentViewPicker failed', err.code, err.message);
         try {
-            await fs.close(file);
-          } catch (err) {
-            console.log(TAG, 'close fail', err.code, err.message)
-          }
+          await fs.close(file);
+        } catch (err) {
+          console.log(TAG, 'close fail', err.code, err.message);
+        }
         await globalThis.dsHelper.delete(uri);
         this.isOK = false;
         await startAlertAbility(globalThis.context, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
