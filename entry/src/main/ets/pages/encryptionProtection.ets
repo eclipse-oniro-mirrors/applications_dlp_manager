@@ -769,7 +769,7 @@ struct DlpDialog {
                 if (this.isDlpFile && !globalThis.requestIsFromSandBox) {
                   try {
                     console.info(TAG, 'closeDLPFile', this.srcFileName, this.srcFd);
-                    await this.dlpFile.closeDLPFile()
+                    await this.dlpFile.closeDLPFile();
                   } catch (err) {
                     console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', err.code, err.message);
                   }

@@ -55,6 +55,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   fileName: string = '';
   uri: string = '';
   file = null;
+  stat = null;
   uriInfo = null;
   linkUri: string = '';
   isCreated: boolean = false;
@@ -100,11 +101,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'linkFileName': {
           'name': this.linkFileName
         },
-        'fileAssert': {
+        'fileAsset': {
           'displayName': this.uriInfo.name,
-          // 'relativePath': this.fileAssert.relativePath,
-          // 'mediaType': this.fileAssert.mediaType,
-          // 'dateModified': this.fileAssert.dateModified
+          'relativePath': this.uriInfo.path,
+          'dateModified': this.stat.ctime
         },
         'uri': this.linkUri,
         'dlpUri': {
@@ -230,7 +230,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
-    this.fileName = <string>want.parameters.displayName;
+    let obj: Object = want.parameters.fileName;
+    this.fileName = (obj as any).name;
     this.uri = <string>want.uri;
     this.dlpFd = getFileFd(this.uri);
     console.debug(TAG, 'dlpFd:', this.dlpFd);
@@ -416,6 +417,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
       await this.closeFile();
       console.error(TAG, 'open', this.uri, 'failed', error.code, error.message);
       return;
+    }
+    try {
+      this.stat = await fs.stat(this.uriInfo.path);
+    } catch (err) {
+      console.log(TAG, 'stat fail', err.code, err.message);
     }
     this.startSandboxApp(startId);
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
