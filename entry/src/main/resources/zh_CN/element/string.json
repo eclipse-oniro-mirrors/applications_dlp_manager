@@ -218,7 +218,7 @@
     },
     {
       "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
-      "value": "连接凭据服务器失败，请检查服务器后重试。"
+      "value": "连接服务器失败，请检查网络后重试。"
     },
     {
       "name": "MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR",

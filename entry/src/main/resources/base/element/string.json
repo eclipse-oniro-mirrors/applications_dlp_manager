@@ -218,7 +218,7 @@
     },
     {
       "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
-      "value": "Failed to connect to the credential server. Check the server and try again."
+      "value": "Failed to connect to the server. Check the network and try again."
     },
     {
       "name": "MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR",
