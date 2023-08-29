@@ -90,38 +90,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
     await globalThis.viewContext.startAbility(want);
   }
 
-  startSandboxApp(startId: number): void {
-    startId = Number(startId);
-    hiTraceMeter.startTrace('DlpStartSandboxJs', startId);
-    let want: Want = {
-      bundleName: this.sandboxBundleName,
-      abilityName: this.sandboxAbilityName,
-      uri: this.linkUri,
-      flags: this.linkFileWriteable ? wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION,
-      parameters: {
-        'linkFileName': {
-          'name': this.linkFileName
-        },
-        'fileAsset': {
-          'displayName': this.uriInfo.name,
-          'relativePath': this.uriInfo.path,
-          'dateModified': this.stat.ctime
-        },
-        'uri': this.linkUri,
-        'dlpUri': {
-          'name': this.uri
-        },
-        'linkFileWriteable': {
-          'name': this.linkFileWriteable
-        },
-        'ohos.dlp.params.index': this.appIndex,
-        'ohos.dlp.params.moduleName': this.sandboxModuleName,
-        'ohos.dlp.params.securityFlag': this.authPerm ===
-          dlpPermission.DLPFileAccess.READ_ONLY ? true : false
-      }
-    };
+  startAbility(want, startId): void {
     globalThis.viewContext.startAbility(want, async (err, data) => {
-
       hiTraceMeter.finishTrace('DlpStartSandboxJs', startId);
       if (err && err.code !== 0) {
         console.error(TAG, 'startSandboxApp failed', err.code, err.message);
@@ -163,6 +133,39 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       globalThis.viewContext.terminateSelf();
     });
+  }
+
+  startSandboxApp(startId: number): void {
+    startId = Number(startId);
+    hiTraceMeter.startTrace('DlpStartSandboxJs', startId);
+    let want: Want = {
+      bundleName: this.sandboxBundleName,
+      abilityName: this.sandboxAbilityName,
+      uri: this.linkUri,
+      flags: this.linkFileWriteable ? wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION,
+      parameters: {
+        'linkFileName': {
+          'name': this.linkFileName
+        },
+        'fileAsset': {
+          'displayName': this.uriInfo.name,
+          'relativePath': this.uriInfo.path,
+          'dateModified': this.stat.ctime
+        },
+        'uri': this.linkUri,
+        'dlpUri': {
+          'name': this.uri
+        },
+        'linkFileWriteable': {
+          'name': this.linkFileWriteable
+        },
+        'ohos.dlp.params.index': this.appIndex,
+        'ohos.dlp.params.moduleName': this.sandboxModuleName,
+        'ohos.dlp.params.securityFlag': this.authPerm ===
+          dlpPermission.DLPFileAccess.READ_ONLY ? true : false
+      }
+    };
+    this.startAbility(want, startId)
   }
 
   async sendDlpFileOpenFault(code: number, sandboxName: string, appIndex: number, reason: string): Promise<void> {
