@@ -261,11 +261,6 @@ struct Sa {
         result.want.parameters.pick_path_return.push(this.resultUri);
         result.resultCode = 0;
         fs.closeSync(srcFd);
-        try {
-          await fs.close(file);
-        } catch (err) {
-          console.log(TAG, 'close fail', err.code, err.message);
-        }
         return;
       }).catch(async (err) => {
         console.error(TAG, 'DocumentViewPicker failed', err.code, err.message);
