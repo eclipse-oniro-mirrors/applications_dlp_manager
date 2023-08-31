@@ -166,7 +166,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           dlpPermission.DLPFileAccess.READ_ONLY ? true : false
       }
     };
-    this.startAbility(want, startId)
+    this.startAbility(want, startId);
   }
 
   async sendDlpFileOpenFault(code: number, sandboxName: string, appIndex: number, reason: string): Promise<void> {

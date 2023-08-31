@@ -439,6 +439,7 @@ struct changeEncryption {
                           .onClick(() => {
                             this.handlePopupReadOnly = !this.handlePopupReadOnly
                           })
+                          .draggable(false)
                           .bindPopup(this.handlePopupReadOnly, {
                             builder: this.popupBuilderReadOnly,
                             placement: Placement.Bottom,
@@ -478,6 +479,7 @@ struct changeEncryption {
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
+                            .draggable(false)
                             .bindPopup(this.handlePopupReadOnly, {
                               builder: this.popupBuilderReadOnly,
                               placement: Placement.Bottom,
@@ -520,6 +522,7 @@ struct changeEncryption {
                                     .customizeText()
                                 }
                                 Image($r("app.media.icon_change"))
+                                  .draggable(false)
                                   .width(Constants.PP_IMAGE_HEIGHT)
                                   .height(Constants.PP_TEXT_FONT_SIZE2)
                                   .objectFit(ImageFit.Contain)
@@ -575,6 +578,7 @@ struct changeEncryption {
                           .onClick(() => {
                             this.handlePopupEdit = !this.handlePopupEdit
                           })
+                          .draggable(false)
                           .bindPopup(this.handlePopupEdit, {
                             builder: this.popupBuilderEdit,
                             placement: Placement.Bottom,
@@ -615,6 +619,7 @@ struct changeEncryption {
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
+                            .draggable(false)
                             .bindPopup(this.handlePopupEdit, {
                               builder: this.popupBuilderEdit,
                               placement: Placement.Bottom,
@@ -657,6 +662,7 @@ struct changeEncryption {
                                     .customizeText()
                                 }
                                 Image($r("app.media.icon_change"))
+                                  .draggable(false)
                                   .width(Constants.PP_IMAGE_HEIGHT)
                                   .height(Constants.PP_TEXT_FONT_SIZE2)
                                   .objectFit(ImageFit.Contain)

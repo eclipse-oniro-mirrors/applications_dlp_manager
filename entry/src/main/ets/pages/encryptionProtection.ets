@@ -670,6 +670,7 @@ struct DlpDialog {
                   .onClick(() => {
                     this.handlePopupReadOnly = !this.handlePopupReadOnly
                   })
+                  .draggable(false)
                   .bindPopup(this.handlePopupReadOnly, {
                     builder: this.popupBuilderReadOnly,
                     placement: Placement.Bottom,
@@ -717,6 +718,7 @@ struct DlpDialog {
                   .onClick(() => {
                     this.handlePopupEdit = !this.handlePopupEdit
                   })
+                  .draggable(false)
                   .bindPopup(this.handlePopupEdit, {
                     builder: this.popupBuilderEdit,
                     placement: Placement.Bottom,

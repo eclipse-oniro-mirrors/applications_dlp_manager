@@ -154,6 +154,7 @@ struct encryptionSuccess {
               Scroll() {
                 Column() {
                   Image($r('app.media.finished'))
+                    .draggable(false)
                     .width(Constants.ENCRYPTION_SUCCESS_ICON)
                     .height(Constants.ENCRYPTION_SUCCESS_ICON)
                     .margin({ top: Constants.ENCRYPTION_SUCCESS_IMAGE_MARGIN_TOP })
@@ -191,6 +192,7 @@ struct encryptionSuccess {
                       .fontWeight(FontWeight.Regular)
                       .textAlign(TextAlign.Center)
                     Image($r("app.media.icon_change"))
+                      .draggable(false)
                       .width(Constants.PP_IMAGE_HEIGHT)
                       .height(Constants.PP_TEXT_FONT_SIZE2)
                       .objectFit(ImageFit.Contain)
@@ -231,6 +233,7 @@ struct encryptionSuccess {
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
+                            .draggable(false)
                             .bindPopup(this.handlePopupReadOnly, {
                               builder: this.popupBuilderReadOnly,
                               placement: Placement.Bottom,
@@ -270,6 +273,7 @@ struct encryptionSuccess {
                               .onClick(() => {
                                 this.handlePopupReadOnly = !this.handlePopupReadOnly
                               })
+                              .draggable(false)
                               .bindPopup(this.handlePopupReadOnly, {
                                 builder: this.popupBuilderReadOnly,
                                 placement: Placement.Bottom,
@@ -311,6 +315,7 @@ struct encryptionSuccess {
                                       .customizeText()
                                   }
                                   Image($r("app.media.icon_change"))
+                                    .draggable(false)
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
@@ -367,6 +372,7 @@ struct encryptionSuccess {
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
+                            .draggable(false)
                             .bindPopup(this.handlePopupEdit, {
                               builder: this.popupBuilderEdit,
                               placement: Placement.Bottom,
@@ -407,6 +413,7 @@ struct encryptionSuccess {
                               .onClick(() => {
                                 this.handlePopupEdit = !this.handlePopupEdit
                               })
+                              .draggable(false)
                               .bindPopup(this.handlePopupEdit, {
                                 builder: this.popupBuilderEdit,
                                 placement: Placement.Bottom,
@@ -449,6 +456,7 @@ struct encryptionSuccess {
                                       .customizeText()
                                   }
                                   Image($r("app.media.icon_change"))
+                                    .draggable(false)
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
