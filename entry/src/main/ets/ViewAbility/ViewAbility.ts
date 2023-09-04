@@ -62,6 +62,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   isCreated: boolean = false;
   gatheringType: number = dlpPermission.GatheringPolicyType.NON_GATHERING;
   alreadyOpen: boolean = false;
+  sortByAuthPerm: boolean = false;
   userId: number = -1;
   linkFileWriteable: boolean = false;
 
@@ -244,8 +245,15 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = false;
         await startAlertAbility(globalThis.viewContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR });
         fileio.closeSync(this.dlpFd);
-        reject(); return;
+        reject();
+        return;
       }
+      resolve();
+    });
+  }
+
+  async getOpenDLPFile(startId): Promise<void> {
+    return new Promise(async (resolve, reject) => {
       hiTraceMeter.startTrace('DlpOpenDlpFileJs', startId);
       try {
         console.info(TAG, 'openDLPFile', this.fileName, this.dlpFd);
@@ -262,17 +270,20 @@ export default class ViewAbility extends ServiceExtensionAbility {
           console.error(TAG, 'openDLPFile2', this.fileName, 'failed', e.code, e.message, e);
         }
         fileio.closeSync(this.dlpFd);
-        reject(); return;
+        reject();
+        return;
       }
       hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
       try {
         await this.dlpGetAuthPerm();
       } catch (err) {
-        reject(); return;
+        reject();
+        return;
       }
       resolve();
-    });
+    })
   }
+
   async dlpGetAuthPerm(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (globalThis.domainAccount) {
@@ -292,10 +303,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
     });
   }
 
-
   async getPolicyAndInstallSandbox(startId): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      let sortByAuthPerm: boolean = false;
       this.alreadyOpen = false;
       try {
         this.gatheringType = await dlpPermission.getDLPGatheringPolicy();
@@ -307,19 +316,19 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.linkUri = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_FOUR];
           await this.closeFile();
           this.alreadyOpen = true;
+        } else {
+          await this.getOpenDLPFile(startId);
         }
 
         if (globalThis.authPerm2Sandbox[this.authPerm] !== undefined &&
           this.gatheringType === dlpPermission.GatheringPolicyType.GATHERING) {
           this.appIndex = globalThis.authPerm2Sandbox[this.authPerm][1];
           console.info(TAG, 'Dlp gathering is on, send', this.fileName, 'to sandbox:', this.sandboxBundleName, this.appIndex);
-          sortByAuthPerm = true;
+          this.sortByAuthPerm = true;
         }
-
-        if (!this.alreadyOpen && !sortByAuthPerm) {
+        if (!this.alreadyOpen && !this.sortByAuthPerm) {
           hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
-          let appInfo = await dlpPermission.installDLPSandbox(this.sandboxBundleName,
-            this.authPerm, this.userId, this.uri);
+          let appInfo = await dlpPermission.installDLPSandbox(this.sandboxBundleName, this.authPerm, this.userId, this.uri);
           this.appIndex = appInfo.appIndex;
           this.tokenId = appInfo.tokenID;
         }
@@ -331,8 +340,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await this.sendDlpFileOpenFault(Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, err.data); // 104:DLP_INSTALL_SANDBOX_ERROR
         await startAlertAbility(globalThis.viewContext, { code: Constants.ERR_JS_APP_INSIDE_ERROR });
         await this.closeFile();
-        reject();
-        return;
+        reject(); return;
       }
       hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
       await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex); // 202: DLP_INSTALL_SANDBOX_SUCCESS
@@ -340,13 +348,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
         try {
           await this.getAlreadyOpen(startId);
         } catch {
-          reject();
-          return;
+          reject(); return;
         }
       }
       resolve();
     });
   }
+
   async getAlreadyOpen(startId): Promise<void> {
     return new Promise(async (resolve, reject) => {
       let timestamp = new Date().getTime();
