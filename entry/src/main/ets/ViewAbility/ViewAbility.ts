@@ -29,7 +29,6 @@ import {
   checkAccountLogin,
   getAuthPerm,
   startAlertAbility,
-  terminateSelfWithResult,
   getFileFd,
   getFileUriByPath
 } from '../common/utils';
@@ -451,6 +450,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async onRequest(want: Want, startId: number): Promise<void> {
     console.debug(TAG, 'enter onRequest');
+    if (globalThis.fileOpenHistoryFromMain && globalThis.fileOpenHistoryFromMain[want.uri] !== undefined) {
+      await startAlertAbility(globalThis.viewContext, { code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED });
+      return;
+    }
     if (opening) {
       console.debug(TAG, 'file is opening', this.uri);
       return;

@@ -31,7 +31,7 @@ struct DlpAlertDialog {
           .fontColor($r('sys.color.ohos_id_color_text_primary'))
           .fontWeight(FontWeight.Medium)
       }
-      .height(Constants.DA_ROW_HEIGHT)
+      .height(this.title ? Constants.DA_ROW_HEIGHT : '')
       .width(Constants.DA_ROW_WIDTH)
       Row() {
         Scroll() {

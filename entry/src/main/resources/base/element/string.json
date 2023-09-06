@@ -275,6 +275,18 @@
     {
       "name": "delete_account",
       "value": "Delete"
+    },
+    {
+      "name": "MESSAGE_DLP_FILENAME_TOO_LONG",
+      "value": "The length of the path or file name exceeds the maximum."
+    },
+    {
+      "name": "MESSAGE_DLP_OPEN_REJECT",
+      "value": "文件已被打开，请先关闭后再进行加密。"
+    },
+    {
+      "name": "MESSAGE_DLP_ENCRYPTION_REJECTED",
+      "value": "文件正在加密，请加密完成后再打开。"
     }
   ]
 }

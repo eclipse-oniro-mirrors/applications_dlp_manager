@@ -47,6 +47,9 @@ export default class MainAbility extends UIAbility {
     globalThis.dsHelper = await datafile.createFileAccessHelper(globalThis.context);
     direction = this.context.config.direction;
     languageValue = this.context.config.language;
+    if (!globalThis.fileOpenHistoryFromMain) {
+      globalThis.fileOpenHistoryFromMain = {};
+    }
   }
   onConfigurationUpdate(newConfig): void {
     if (direction !== newConfig.direction) {
@@ -203,8 +206,7 @@ export default class MainAbility extends UIAbility {
       } catch {
         return;
       }
-    }
-    else {
+    } else {
       let fileName = globalThis.abilityWant.parameters.fileName.name;
       let isDlpSuffix: boolean = fileName.endsWith('.dlp');
       if (!isDlpSuffix) {
@@ -217,11 +219,17 @@ export default class MainAbility extends UIAbility {
         });
         return;
       } else {
+        if (globalThis.fileOpenHistory && globalThis.fileOpenHistory[globalThis.uri] !== undefined) {
+          await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_OPEN_REJECTED });
+          return;
+        }
         try {
           await this.openDlpFile();
         } catch {
           return;
         }
+        globalThis.fileOpenHistoryFromMain[globalThis.uri] = [globalThis.uri, globalThis.dlpFileName, globalThis.dlpFd];
+        console.log(TAG, 'fileOpenHistoryFromMain add', JSON.stringify(globalThis.fileOpenHistoryFromMain));
       }
     }
     this.gotoPage(windowStage, accountInfo);

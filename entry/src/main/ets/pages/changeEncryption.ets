@@ -270,6 +270,9 @@ struct changeEncryption {
             console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', err.code, err.message);
           }
         }
+        if (globalThis.fileOpenHistoryFromMain) {
+          delete globalThis.fileOpenHistoryFromMain[globalThis.uri];
+        }
         abilityResult.resultCode = 0;
         globalThis.context.terminateSelfWithResult(abilityResult);
       }).catch((err) => {

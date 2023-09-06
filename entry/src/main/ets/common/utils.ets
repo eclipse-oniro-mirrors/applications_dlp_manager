@@ -117,6 +117,10 @@ function getAlertMessage(err, defaultTitle?: Resource, defaultMessage?: Resource
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_PARAM_ERROR') };
     case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') };
+    case Constants.ERR_JS_APP_OPEN_REJECTED:
+      return { msg: $r('app.string.MESSAGE_DLP_OPEN_REJECT') };
+    case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
+      return { msg: $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED') };
     case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') };
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
