@@ -49,7 +49,8 @@
         "startWindowIcon": "$media:app_icon",
         "startWindowBackground": "$color:white",
         "orientation": "auto_rotation_restricted",
-        "visible": true
+        "visible": true,
+        "removeMissionAfterTerminate": true
       }
     ],
     "extensionAbilities": [

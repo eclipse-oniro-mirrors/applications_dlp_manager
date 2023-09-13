@@ -277,16 +277,20 @@
       "value": "Delete"
     },
     {
+      "name": "TITLE_CANT_ENCRYPT",
+      "value": "Can't encrypt"
+    },
+    {
       "name": "MESSAGE_DLP_FILENAME_TOO_LONG",
-      "value": "The length of the path or file name exceeds the maximum."
+      "value": "The encrypted file cannot be saved because the file name is too long. You are advised to shorten the file name by four characters before encrypting the file."
     },
     {
       "name": "MESSAGE_DLP_OPEN_REJECT",
-      "value": "文件已被打开，请先关闭后再进行加密。"
+      "value": "The file has been opened. Close the file before encrypting it."
     },
     {
       "name": "MESSAGE_DLP_ENCRYPTION_REJECTED",
-      "value": "文件正在加密，请加密完成后再打开。"
+      "value": "The file is being encrypted. Please open it after the encryption is complete."
     }
   ]
 }
