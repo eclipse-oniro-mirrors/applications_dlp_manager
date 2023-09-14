@@ -131,6 +131,8 @@ function getAlertMessage(err, defaultTitle?: Resource, defaultMessage?: Resource
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR') };
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
       return { 'title': $r('app.string.TITLE_OPERATE_DENY'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') };
+    case Constants.ERR_JS_FILENAME_TOO_LONG:
+      return { title: $r('app.string.TITLE_CANT_ENCRYPT'), msg: $r('app.string.MESSAGE_DLP_FILENAME_TOO_LONG')};
     default:
       if (defaultTitle !== undefined && defaultMessage != undefined) {
         return { 'title': defaultTitle, 'msg': defaultMessage };

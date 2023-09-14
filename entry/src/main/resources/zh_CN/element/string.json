@@ -277,8 +277,12 @@
       "value": "删除"
     },
     {
+      "name": "TITLE_CANT_ENCRYPT",
+      "value": "无法加密"
+    },
+    {
       "name": "MESSAGE_DLP_FILENAME_TOO_LONG",
-      "value": "路径或文件名超过最大长度"
+      "value": "当前文件名超长导致加密文件无法保存，建议将文件名减短4个字符后再进行加密。"
     },
     {
       "name": "MESSAGE_DLP_OPEN_REJECT",
