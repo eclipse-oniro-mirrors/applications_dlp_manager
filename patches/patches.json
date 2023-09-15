@@ -1,9 +1,0 @@
-{
-    "patches": [
-        {
-            "project":"applications_hap",
-            "path":"applications/standard/hap",
-            "pr_url":"https://gitee.com/openharmony/applications_hap/pulls/2041"
-        }
-    ]
-}
