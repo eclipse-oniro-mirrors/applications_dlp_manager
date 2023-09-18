@@ -1271,6 +1271,7 @@ declare namespace dlpPermission {
    * @throws { BusinessError } 19100008 - Not DLP file.
    * @throws { BusinessError } 19100009 - Failed to operate the DLP file.
    * @throws { BusinessError } 19100011 - System service exception.
+   * @throws { BusinessError } 19100015 - System need to be upgraded.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @systemapi Hide this for inner system use.
    * @since 10
@@ -1294,6 +1295,7 @@ declare namespace dlpPermission {
    * @throws { BusinessError } 19100008 - Not DLP file.
    * @throws { BusinessError } 19100009 - Failed to operate the DLP file.
    * @throws { BusinessError } 19100011 - System service exception.
+   * @throws { BusinessError } 19100015 - System need to be upgraded.
    * @syscap SystemCapability.Security.DataLossPrevention
    * @systemapi Hide this for inner system use.
    * @since 10
