@@ -291,6 +291,10 @@
     {
       "name": "MESSAGE_DLP_ENCRYPTION_REJECTED",
       "value": "文件正在加密，请加密完成后再打开。"
+    },
+    {
+      "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+      "value": "系统版本过低，无法打开在高版本系统上加密的文件，请升级系统后再试。"
     }
   ]
 }
