@@ -291,6 +291,10 @@
     {
       "name": "MESSAGE_DLP_ENCRYPTION_REJECTED",
       "value": "The file is being encrypted. Please open it after the encryption is complete."
+    },
+    {
+      "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+      "value": "The system version is too early to open encrypted files on the system of a later version. Upgrada the system and try again."
     }
   ]
 }
