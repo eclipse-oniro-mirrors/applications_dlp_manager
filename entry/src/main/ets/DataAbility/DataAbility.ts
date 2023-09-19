@@ -25,9 +25,9 @@ const INDEX_THREE = 3;
 const INDEX_FOUR = 4;
 const INDEX_FIVE = 5;
 export default class DataAbility extends ServiceExtensionAbility {
-  sandbox2linkFile: { [key: string]: [number, dlpPermission.DLPFile, string, number] } = {};
-  fileOpenHistory: { [key: string]: [string, number, string, number, string] } = {};
-  //uri:bundleName:string, sandboxId:number, linkName:string, linkFd:number
+  sandbox2linkFile: { [key: string]: [dlpPermission.DLPFile, string, number, number] } = {};
+  fileOpenHistory: { [key: string]: [string, number, string, string] } = {};
+  //uri:bundleName:string, sandboxId:number, linkName:string,
   authPerm2Sandbox: { [key: string]: [string, number] } = {};
   //perm : bundlename, sandboxid
 
@@ -36,12 +36,6 @@ export default class DataAbility extends ServiceExtensionAbility {
     let bundleName = data.bundleName;
     let sandboxAppIndex = data.appIndex;
     let key: unknown = bundleName + sandboxAppIndex;
-    for (let item in globalThis.fileOpenHistory) {
-      let tmp = globalThis.fileOpenHistory[item][0] + globalThis.fileOpenHistory[item][1];
-      if (tmp === key) {
-        delete globalThis.fileOpenHistory[item];
-      }
-    }
 
     for (let item in globalThis.authPerm2Sandbox) {
       const app = globalThis.authPerm2Sandbox[item][0] + globalThis.authPerm2Sandbox[item][1];
@@ -63,15 +57,9 @@ export default class DataAbility extends ServiceExtensionAbility {
         let fileArray = globalThis.sandbox2linkFile[key];
         for (let i in fileArray) {
           let linkFile = fileArray[i];
-          // @ts-ignore
+          let dlpFile = linkFile[INDEX_ZERO];
           try {
-            fileio.closeSync(linkFile[INDEX_ZERO]);
-          } catch (err) {
-            console.error(TAG, 'closeSync failed', err.code, err.message);
-          }
-          let dlpFile = linkFile[INDEX_ONE];
-          try {
-            await dlpFile.deleteDLPLinkFile(linkFile[INDEX_TWO]);
+            await dlpFile.deleteDLPLinkFile(linkFile[INDEX_ONE]);
           } catch (err) {
             console.error(TAG, 'deleteDLPLinkFile failed', err.code, err.message);
           }
@@ -81,7 +69,7 @@ export default class DataAbility extends ServiceExtensionAbility {
             console.error(TAG, 'closeDLPFile failed', err.code, err.message);
           }
           try {
-            let dlpFd = linkFile[INDEX_THREE];
+            let dlpFd = linkFile[INDEX_TWO];
             fileio.closeSync(dlpFd);
           } catch (err) {
             console.error(TAG, 'closeDLPFile failed', err.code, err.message);
@@ -90,6 +78,15 @@ export default class DataAbility extends ServiceExtensionAbility {
 
         // @ts-ignore
         delete globalThis.sandbox2linkFile[key];
+
+        for (let item in globalThis.fileOpenHistory) {
+          let tmp = globalThis.fileOpenHistory[item][0] + globalThis.fileOpenHistory[item][1];
+          if (tmp === key) {
+            let linkUri = globalThis.fileOpenHistory[item][INDEX_THREE];
+            globalThis.linkSet.delete(linkUri);
+            delete globalThis.fileOpenHistory[item];
+          }
+        }
 
         if (Object.keys(globalThis.sandbox2linkFile).length === 0) {
           console.info(TAG, 'sandbox2linkFile empty');

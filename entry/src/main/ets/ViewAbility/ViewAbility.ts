@@ -40,7 +40,6 @@ const SUFFIX_INDEX = 2;
 
 let opening: boolean = false;
 export default class ViewAbility extends ServiceExtensionAbility {
-  linkFd: number = -1;
   dlpFd: number = -1;
   linkFileName: string = '';
   linkFilePath: string = '';
@@ -80,6 +79,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (!globalThis.token2File) {
       globalThis.token2File = {};
     }
+    if (!globalThis.linkSet) {
+      globalThis.linkSet = new Set();
+    }
   }
 
   async startDataAbility(): Promise<void> {
@@ -95,12 +97,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpStartSandboxJs', startId);
       if (err && err.code !== 0) {
         console.error(TAG, 'startSandboxApp failed', err.code, err.message);
-        try {
-          // @ts-ignore
-          fileio.closeSync(this.linkFd);
-        } catch (err) {
-          console.error(TAG, 'closeSync failed', err.code, err.message);
-        }
         try {
           await this.dlpFile.deleteDLPLinkFile(this.linkFileName);
         } catch (err) {
@@ -120,12 +116,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
           globalThis.sandbox2linkFile[this.sandboxBundleName + this.appIndex] = new Array;
         }
         if (!this.alreadyOpen) {
-          globalThis.sandbox2linkFile[this.sandboxBundleName + this.appIndex].push([this.linkFd,
-            this.dlpFile, this.linkFileName, this.dlpFd]);
+          globalThis.sandbox2linkFile[this.sandboxBundleName + this.appIndex].push([
+            this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId]);
           globalThis.fileOpenHistory[this.uri] =
-            [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkFd, this.linkUri];
+            [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri];
           globalThis.authPerm2Sandbox[this.authPerm] = [this.sandboxBundleName, this.appIndex];
           globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1];
+          globalThis.linkSet.add(this.linkUri);
         }
         await this.startDataAbility();
         opening = false;
@@ -311,9 +308,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
           console.info(TAG, 'file', this.fileName, 'already open');
           this.appIndex = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_ONE];
           this.linkFileName = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_TWO];
-          this.linkFd = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_THREE];
-          this.linkUri = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_FOUR];
-          await this.closeFile();
+          this.linkUri = globalThis.fileOpenHistory[this.uri][Constants.FILE_OPEN_HISTORY_THREE];
+          fileio.closeSync(this.dlpFd);
           this.alreadyOpen = true;
         } else {
           await this.getOpenDLPFile(startId);
@@ -367,7 +363,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
         reject(); return;
       }
       let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
-      this.linkFileName = this.sandboxBundleName + '_' + this.appIndex + '_' + timestamp + '.' + secondarySuffix + '.dlp.link';
+      this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + this.appIndex +
+       '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
+       secondarySuffix + '.dlp.link';
       hiTraceMeter.startTrace('DlpAddLinkFileJs', startId);
       try {
         await this.getAddDLPLinkFile(startId);
@@ -376,23 +374,17 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
       try {
-        this.linkFilePath = '/mnt/data/fuse/' + this.linkFileName;
+        this.linkFilePath = Constants.FUSE_PATH + this.linkFileName;
         let stat: fileio.Stat = fileio.statSync(this.linkFilePath);
         const WRITE_ACCESS: number = 0o0200;
-        this.linkFd = -1;
         if (stat.mode & WRITE_ACCESS) {
-          this.linkFd = fileio.openSync(this.linkFilePath, 0o2);
           this.linkFileWriteable = true;
         } else {
-          this.linkFd = fileio.openSync(this.linkFilePath, 0o0);
           this.linkFileWriteable = false;
         }
       } catch (e) {
         console.error(TAG, 'file error', e);
         opening = false;
-        if (this.linkFd !== -1) {
-          fileio.close(this.linkFd);
-        }
         globalThis.viewContext.terminateSelf();
       }
       this.linkUri = getFileUriByPath(this.linkFilePath);
