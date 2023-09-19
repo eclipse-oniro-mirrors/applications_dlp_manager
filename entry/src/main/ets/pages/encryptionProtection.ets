@@ -342,8 +342,8 @@ struct DlpDialog {
     if (globalThis.requestIsFromSandBox) {
       for (var key in globalThis.sandbox2linkFile) {
         for (var j in globalThis.sandbox2linkFile[key]) {
-          if (globalThis.sandbox2linkFile[key][j][2] === this.linkFileName) {
-            globalThis.sandbox2linkFile[key][j][1] = newDlpFile;
+          if (globalThis.sandbox2linkFile[key][j][1] === this.linkFileName) {
+            globalThis.sandbox2linkFile[key][j][0] = newDlpFile;
           }
         }
       }

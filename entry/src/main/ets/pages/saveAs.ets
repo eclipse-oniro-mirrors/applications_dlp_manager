@@ -40,9 +40,10 @@ let result = {
 };
 
 const SUFFIX_INDEX = 2;
-const HEAD_LENGTH_IN_BYTE = 16;
-const HEAD_LENGTH_IN_U32 = 4;
+const HEAD_LENGTH_IN_BYTE = 20;
+const HEAD_LENGTH_IN_U32 = 5;
 const TXT_OFFSET = 3;
+const SIZE_OFFSET = 4;
 const TAG = '[DLPManager_SaveAs]';
 @Entry
 @Component
@@ -52,7 +53,6 @@ struct Sa {
   dlpFile: dlpPermission.DLPFile = null;
   sandboxBundleName: string = '';
   resultUri: string = '';
-  linkFd: number = -1;
   tokenId: number = -1;
   requestCode: number = -1;
   fileName: string = '';
@@ -128,6 +128,8 @@ struct Sa {
         length:txtOffset
       };
       num = fs.readSync(srcFd, head, option);
+      let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
+      buf2[SIZE_OFFSET] = 0;
       num = fs.writeSync(dstFd, head, option);
     } catch (err) {
       console.error(TAG, 'copyDlpHead ', err.code, err.message);
@@ -215,7 +217,10 @@ struct Sa {
         let timestamp = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getMilliseconds()).getTime();
 
-        let linkFileName = this.sandboxBundleName + '_' + appId + '_' + timestamp + '.' + this.suffix + '.dlp.link';
+        let linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + appId +
+          '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
+          this.suffix + '.dlp.link';
+
         try {
           await newDlpFile.addDLPLinkFile(linkFileName);
         } catch (err) {
@@ -237,22 +242,14 @@ struct Sa {
           return;
         }
 
-        let linkFilePath = '/mnt/data/fuse/' + linkFileName;
+        let linkFilePath = Constants.FUSE_PATH + linkFileName;
         let stat = fs.statSync(linkFilePath);
-        const WRITE_ACCESS: number = 0o0200;
-        if (stat.mode & WRITE_ACCESS) {
-          // @ts-ignore
-          this.linkFd = fs.openSync(linkFilePath, fs.OpenMode.READ_WRITE);
-        } else {
-          // @ts-ignore
-          this.linkFd = fs.openSync(linkFilePath, fs.OpenMode.READ);
-        }
         let linkUri = getFileUriByPath(linkFilePath);
         globalThis.token2File[this.tokenId] = [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri];
-        globalThis.sandbox2linkFile[this.sandboxBundleName + appId].push([this.linkFd,
-          newDlpFile, linkFileName, 0]);
+        globalThis.sandbox2linkFile[this.sandboxBundleName + appId].push([newDlpFile, linkFileName, dstFd, this.tokenId]);
         globalThis.fileOpenHistory[uri] =
-          [this.sandboxBundleName, appId, linkFileName, this.linkFd, linkUri];
+          [this.sandboxBundleName, appId, linkFileName, linkUri];
+        globalThis.linkSet.add(linkUri);
 
         this.resultUri = getFileUriByPath(linkFilePath);
 

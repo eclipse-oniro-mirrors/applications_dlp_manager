@@ -77,6 +77,7 @@ export default class Constants {
   static DA_COLOUM_WIDTH = 336;
   static DA_COLOUM_RADIUS = 24;
 
+  static FILE_OPEN_HISTORY_ZERO = 0;
   static FILE_OPEN_HISTORY_ONE = 1;
   static FILE_OPEN_HISTORY_TWO = 2;
   static FILE_OPEN_HISTORY_THREE = 3;
@@ -165,4 +166,8 @@ export default class Constants {
   static DIALOG_MD_OFFSET = 1;
   static DIALOG_LG_SPAN = 6;
   static DIALOG_LG_OFFSET = 3;
+  static FUSE_PATH = '/mnt/data/fuse';
+  static RAND_START = 2;
+  static RAND_END = 10;
+  static BUNDLE_LEN = 20;
 }

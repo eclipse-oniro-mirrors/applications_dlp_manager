@@ -36,6 +36,7 @@ let languageValue: string;
 
 export default class MainAbility extends UIAbility {
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  callerToken:number = 0;
 
   async onCreate(want, launchParam): Promise<void> {
     console.info(TAG, 'onCreate');
@@ -49,6 +50,9 @@ export default class MainAbility extends UIAbility {
     languageValue = this.context.config.language;
     if (!globalThis.fileOpenHistoryFromMain) {
       globalThis.fileOpenHistoryFromMain = {};
+    }
+    if (!globalThis.linkSet) {
+      globalThis.linkSet = new Set();
     }
   }
   onConfigurationUpdate(newConfig): void {
@@ -116,10 +120,16 @@ export default class MainAbility extends UIAbility {
       const linkFileName = globalThis.abilityWant.parameters.linkFileName.name;
       for (let key in globalThis.sandbox2linkFile) {
         for (let j in globalThis.sandbox2linkFile[key]) {
-          if (globalThis.sandbox2linkFile[key][j][Constants.FILE_OPEN_HISTORY_TWO] === linkFileName) {
+          if (globalThis.sandbox2linkFile[key][j][Constants.FILE_OPEN_HISTORY_ONE] === linkFileName) {
             let linkFile = globalThis.sandbox2linkFile[key][j];
-            globalThis.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ONE];
-            globalThis.dlpFd = linkFile[Constants.FILE_OPEN_HISTORY_THREE];
+            if (this.callerToken !== linkFile[Constants.FILE_OPEN_HISTORY_THREE]) {
+              console.error(TAG, 'found file, buf token invalid', linkFileName);
+              await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR });
+              reject();
+              return;
+            }
+            globalThis.dlpFile = linkFile[Constants.FILE_OPEN_HISTORY_ZERO];
+            globalThis.dlpFd = linkFile[Constants.FILE_OPEN_HISTORY_TWO];
             globalThis.dlpFileName = globalThis.abilityWant.parameters.fileName.name;
             globalThis.linkFileName = linkFileName;
             console.info(TAG, 'find dlp file', globalThis.dlpFileName, globalThis.dlpFd);
@@ -163,10 +173,24 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need name in want.parameters.fileName');
       return false;
     }
-    let callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken'];
+    if (globalThis.abilityWant.uri === undefined) {
+      console.error(TAG, 'need uri in want');
+      return false;
+    }
+    this.callerToken = globalThis.abilityWant.parameters['ohos.aafwk.param.callerToken'];
     let callerBundleName = globalThis.abilityWant.parameters['ohos.aafwk.param.callerBundleName'];
-    if (callerToken === undefined || callerBundleName === undefined) {
+    if (this.callerToken === undefined || callerBundleName === undefined) {
       console.error(TAG, 'need caller info in want.parameters');
+      return false;
+    }
+    let uri = String(globalThis.abilityWant.uri);
+    if (globalThis.linkSet.has(uri)) {
+      console.error(TAG, 'invalid uri for opened link uri');
+      return false;
+    }
+
+    if (uri.indexOf(Constants.FUSE_PATH) !== -1) {
+      console.error(TAG, 'invalid uri in want.uri');
       return false;
     }
     return true;
