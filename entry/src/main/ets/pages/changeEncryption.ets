@@ -549,6 +549,7 @@ struct changeEncryption {
                             this.rowNamesLenReadOnly = rowNamesLen;
                             this.showNamesArrReadOnly = showNamesArr;
                             this.hideNamesNumReadOnly = hideNamesNum;
+                            this.ReadOnlyFlag = false;
                           }
                         })
                         .margin({
@@ -689,6 +690,7 @@ struct changeEncryption {
                             this.rowNamesLenEdit = rowNamesLen;
                             this.showNamesArrEdit = showNamesArr;
                             this.hideNamesNumEdit = hideNamesNum;
+                            this.editFlag = false;
                           }
                         })
                         .margin({
