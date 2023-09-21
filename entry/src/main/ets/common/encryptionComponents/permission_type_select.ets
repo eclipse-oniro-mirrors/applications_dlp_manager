@@ -15,30 +15,43 @@
 
 import emitter from '@ohos.events.emitter';
 import Constants from '../constant';
+import GlobalContext from '../GlobalContext';
+import common from '@ohos.app.ability.common';
+import { BusinessError } from '@ohos.base';
 
 const TAG = '[DLPManager_Select]';
+
+class Types_ {
+  value: Resource = {
+    id: 0,
+    type: 0,
+    params: [],
+    bundleName: '',
+    moduleName: ''
+  }
+  data: string = ''
+  index: number = 0
+}
+
+interface Staff {
+  authAccount: string,
+  avatar: string,
+  id: number
+}
 
 @Component
 struct permissionTypeSelect {
   @State text: string = "";
   @State index: number = 0
-  @Prop isReadType: boolean;
-  @State permissionTypes: any[] = [
+  @Prop isReadType: boolean = false;
+  @State permissionTypes: Types_[] = [
     { value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_ALL'), data: 'all', index: 1 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_SELF'), data: 'self', index: 2 }
   ];
-  @Link @Watch('selectedItemUpdated') selectedItem: {
-    data?: string,
-    value?: any,
-    index?: number
-  };
-  @Link staffArray: {
-    authAccount: string,
-    avatar: string,
-    id: number
-  }[];
-  @Prop @Watch('onCountUpdated') isDisable: boolean;
+  @Link @Watch('selectedItemUpdated') selectedItem: Types_;
+  @Link staffArray: Staff[];
+  @Prop @Watch('onCountUpdated') isDisable: boolean = false;
 
   onCountUpdated(isDisable: boolean): void {
     if (this.isReadType) {
@@ -46,8 +59,9 @@ struct permissionTypeSelect {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT];
         this.index = Constants.ENCRYPTION_TYPE_SELECT;
         try {
-          globalThis.context.resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
-            .id, (error, value) => {
+          (GlobalContext.getContext()
+            .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
+            .id, (error: BusinessError, value: string) => {
             if (error != null) {
               console.log("error is " + error);
             } else {
@@ -55,14 +69,15 @@ struct permissionTypeSelect {
             }
           });
         } catch (error) {
-          console.error(`callback getStringValue failed, error code: ${error.code}, message: ${error.message}.`);
+          console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
         }
       } else {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT_INDEX];
         this.index = Constants.ENCRYPTION_TYPE_SELECT_INDEX;
         try {
-          globalThis.context.resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
-            .id, (error, value) => {
+          (GlobalContext.getContext()
+            .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
+            .id, (error: BusinessError, value: string) => {
             if (error != null) {
               console.log("error is " + error);
             } else {
@@ -70,7 +85,7 @@ struct permissionTypeSelect {
             }
           });
         } catch (error) {
-          console.error(`callback getStringValue failed, error code: ${error.code}, message: ${error.message}.`);
+          console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
         }
       }
     }
@@ -79,7 +94,8 @@ struct permissionTypeSelect {
   selectedItemUpdated(selectedItem: object): void {
     this.index = this.selectedItem.index;
     try {
-      globalThis.context.resourceManager.getStringValue(this.selectedItem.value.id, (error, value) => {
+      (GlobalContext.getContext()
+        .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue(this.selectedItem.value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
           console.log("error is " + error);
         } else {
@@ -87,7 +103,7 @@ struct permissionTypeSelect {
         }
       });
     } catch (error) {
-      console.error(`callback getStringValue failed, error code: ${error.code}, message: ${error.message}.`);
+      console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
     }
   }
 
@@ -98,7 +114,8 @@ struct permissionTypeSelect {
       })
     }
     try {
-      globalThis.context.resourceManager.getStringValue(this.permissionTypes[this.index].value.id, (error, value) => {
+      (GlobalContext.getContext()
+        .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
           console.log("error is " + error);
         } else {
@@ -106,14 +123,15 @@ struct permissionTypeSelect {
         }
       });
     } catch (error) {
-      console.error(`callback getStringValue failed, error code: ${error.code}, message: ${error.message}.`);
+      console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
     }
-    var innerEvent = {
+    let innerEvent: emitter.InnerEvent = {
       eventId: Constants.ENCRYPTION_EMIT_LANGUAGE_VALUE
     };
-    var callback = (eventData) => {
+    let callback = (eventData: emitter.EventData) => {
       try {
-        globalThis.context.resourceManager.getStringValue(this.permissionTypes[this.index].value.id, (error, value) => {
+        (GlobalContext.getContext()
+          .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
           if (error != null) {
             console.log("error is " + error);
           } else {
@@ -121,7 +139,7 @@ struct permissionTypeSelect {
           }
         });
       } catch (error) {
-        console.error(`callback getStringValue failed, error code: ${error.code}, message: ${error.message}.`);
+        console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
       }
     };
     emitter.on(innerEvent, callback);
@@ -130,8 +148,18 @@ struct permissionTypeSelect {
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
   }
 
+  private getSelectOptionArr(): Array<SelectOption> {
+    let ret: Array<SelectOption> = [];
+    this.permissionTypes.forEach(
+      (item) => {
+        ret.push({ value: item.value })
+      }
+    );
+    return ret;
+  }
+
   build() {
-    Select(this.permissionTypes)
+    Select(this.getSelectOptionArr())
       .font({
         size: $r('sys.float.ohos_id_text_size_body1'),
         weight: FontWeight.Medium,
@@ -149,10 +177,10 @@ struct permissionTypeSelect {
         ` (${this.staffArray.length})` :
         ''
       }`)
-      .onSelect((index: number, text: string) => {
+      .onSelect((index: number, text?: string) => {
         this.selectedItem = this.permissionTypes[index]
         this.index = index;
-        this.text = text;
+        this.text = text as string;
       })
       .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
       .enabled(this.isDisable ? false : true)
