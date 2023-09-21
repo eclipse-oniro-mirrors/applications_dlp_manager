@@ -2,7 +2,7 @@
   "module": {
     "name": "entry",
     "type": "entry",
-    "srcEntry": "./ets/Application/AbilityStage.ts",
+    "srcEntry": "./ets/Application/AbilityStage.ets",
     "description": "$string:entry_desc",
     "mainElement": "MainAbility",
     "deviceTypes": [
@@ -23,7 +23,7 @@
     "abilities": [
       {
         "name": "AlertAbility",
-        "srcEntrance": "./ets/AlertAbility/AlertAbility.ts",
+        "srcEntrance": "./ets/AlertAbility/AlertAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
@@ -42,7 +42,7 @@
       },
       {
         "name": "MainAbility",
-        "srcEntrance": "./ets/MainAbility/MainAbility.ts",
+        "srcEntrance": "./ets/MainAbility/MainAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:app_icon",
         "label": "$string:MainAbility_label",
@@ -56,7 +56,7 @@
     "extensionAbilities": [
       {
         "name": "ViewAbility",
-        "srcEntrance": "./ets/ViewAbility/ViewAbility.ts",
+        "srcEntrance": "./ets/ViewAbility/ViewAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service",

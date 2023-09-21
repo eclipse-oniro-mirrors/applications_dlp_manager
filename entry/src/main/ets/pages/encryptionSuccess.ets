@@ -17,10 +17,15 @@ import router from '@ohos.router';
 import fs from '@ohos.file.fs';
 import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
-import { calculate, toggleShow, directionStatus } from '../common/utils';
+import { AuthAccount, PermissionType, calculate, toggleShow, directionStatus } from '../common/utils';
+import ability from '@ohos.ability.ability';
+import common from '@ohos.app.ability.common';
+import GlobalContext from '../common/GlobalContext'
+import dlpPermission from '@ohos.dlpPermission';
+import { BusinessError } from '@ohos.base';
 
 const TAG = "[DLPManager_EncSucc]";
-let abilityResult = {
+let abilityResult: ability.AbilityResult = {
   "resultCode": 0,
   "want": {}
 };
@@ -34,7 +39,7 @@ let abilityResult = {
 @Entry
 @Component
 struct encryptionSuccess {
-  private routerParams: any = router.getParams();
+  private routerParams: Record<string, AuthAccount[] | PermissionType> = router.getParams() as Record<string, AuthAccount[] | PermissionType>;
   @State directionStatus: number = 0;
   @State flag: boolean = false;
   @State editFlag: boolean = false;
@@ -45,18 +50,10 @@ struct encryptionSuccess {
   @State rowNamesLenReadOnly: number = 0;
   @State hideNamesNumEdit: string = '0';
   @State hideNamesNumReadOnly: string = '0';
-  @State showNamesArrEdit: [] = [];
-  @State showNamesArrReadOnly: [] = [];
-  @State staffDataArrayReadOnly: {
-    authAccount: string,
-    avatar: string,
-    id: number
-  }[] = this.routerParams['staffDataArrayReadOnly'];
-  @State staffDataArrayEdit: {
-    authAccount: string,
-    avatar: string,
-    id: number
-  }[] = this.routerParams['staffDataArrayEdit'];
+  @State showNamesArrEdit: AuthAccount[] = [];
+  @State showNamesArrReadOnly: AuthAccount[] = [];
+  @State staffDataArrayReadOnly: AuthAccount[] = this.routerParams.staffDataArrayReadOnly as AuthAccount[];
+  @State staffDataArrayEdit: AuthAccount[] = this.routerParams.staffDataArrayEdit as AuthAccount[];
 
   @Builder popupBuilderReadOnly() {
     Row() {
@@ -100,7 +97,7 @@ struct encryptionSuccess {
 
   aboutToAppear() {
     console.info(TAG, 'aboutToAppear, encrypt success');
-    this.directionStatus = globalThis.context.config.direction;
+    this.directionStatus = (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -170,7 +167,7 @@ struct encryptionSuccess {
                     .width(Constants.HEADER_COLUMN_WIDTH)
 
                     Row() {
-                      Text(`${globalThis.dlpFileName}`)
+                      Text(`${GlobalContext.getContext().getObject('dlpFileName') as string}`)
                         .fontSize($r('sys.float.ohos_id_text_size_body2'))
                         .fontColor($r('sys.color.ohos_id_color_secondary'))
                         .fontWeight(FontWeight.Regular)
@@ -209,7 +206,7 @@ struct encryptionSuccess {
 
                   Column() {
                     if (this.flag) {
-                      if (this.routerParams['selectedPermissionTypeReadOnly'].data === 'all') {
+                      if ((this.routerParams.selectedPermissionTypeReadOnly as PermissionType).data === 'all') {
                         Row() {
                           Text($r('app.string.header_title_readonly'))
                             .fontWeight(FontWeight.Medium)
@@ -297,18 +294,18 @@ struct encryptionSuccess {
                             if (this.staffDataArrayReadOnly['length'] > 0) {
                               ForEach(
                                 this.showNamesArrReadOnly,
-                                (item, index) => {
+                                (item: AuthAccount, index?: number) => {
                                   staffItem({
                                     authAccount: item.authAccount,
                                     isActive: false,
                                     changeIndex: Number(index),
                                   })
                                 },
-                                (item) => item.authAccount
+                                (item: AuthAccount) => item.authAccount
                               )
                               if (Number(this.hideNamesNumReadOnly) > 0) {
                                 Row() {
-                                  if (this.showNamesArrReadOnly.length !== this.routerParams['staffDataArrayReadOnly'].length) {
+                                  if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly.length) {
                                     Text('+')
                                       .customizeText()
                                     Text(this.hideNamesNumReadOnly)
@@ -326,19 +323,19 @@ struct encryptionSuccess {
                                 }
                                 .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                                 .onClick(() => {
-                                  let { showNamesArr, showFlag } = toggleShow(this.routerParams['staffDataArrayReadOnly'], this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
-                                  this.showNamesArrReadOnly = showNamesArr;
-                                  this.ReadOnlyFlag = showFlag;
+                                  let tmp: Record<string, AuthAccount[] | boolean> = toggleShow(this.routerParams.staffDataArrayReadOnly as AuthAccount[], this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
+                                  this.showNamesArrReadOnly = tmp.showNamesArr as AuthAccount[];
+                                  this.ReadOnlyFlag = tmp.showFlag as boolean;
                                 })
                               }
                             }
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
                             if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                              let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.routerParams['staffDataArrayReadOnly']);
-                              this.rowNamesLenReadOnly = rowNamesLen;
-                              this.showNamesArrReadOnly = showNamesArr;
-                              this.hideNamesNumReadOnly = hideNamesNum;
+                              let tmp: Record<string, number | AuthAccount[] | string> = calculate(newValue, this.routerParams.staffDataArrayReadOnly as AuthAccount[]);
+                              this.rowNamesLenReadOnly = tmp.rowNamesLen as number;
+                              this.showNamesArrReadOnly = tmp.showNamesArr as AuthAccount[];
+                              this.hideNamesNumReadOnly = tmp.hideNamesNum as string;
                               this.ReadOnlyFlag = false;
                             }
                           })
@@ -349,7 +346,7 @@ struct encryptionSuccess {
                         }
                       }
 
-                      if (['all', 'self'].includes(this.routerParams['selectedPermissionTypeEdit'].data)) {
+                      if (['all', 'self'].includes((this.routerParams.selectedPermissionTypeEdit as PermissionType).data)) {
                         Row() {
                           Text($r('app.string.header_title_edit'))
                             .fontWeight(FontWeight.Medium)
@@ -360,7 +357,7 @@ struct encryptionSuccess {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Text(this.routerParams['selectedPermissionTypeEdit'].data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
+                          Text((this.routerParams.selectedPermissionTypeEdit as PermissionType).data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
@@ -439,18 +436,18 @@ struct encryptionSuccess {
                             if (this.staffDataArrayEdit['length'] > 0) {
                               ForEach(
                                 this.showNamesArrEdit,
-                                (item, index) => {
+                                (item: AuthAccount, index?: number) => {
                                   staffItem({
                                     authAccount: item.authAccount,
                                     isActive: false,
                                     changeIndex: Number(index),
                                   })
                                 },
-                                (item) => item.authAccount
+                                (item: AuthAccount) => item.authAccount
                               )
                               if (Number(this.hideNamesNumEdit) > 0) {
                                 Row() {
-                                  if (this.showNamesArrEdit.length !== this.routerParams['staffDataArrayEdit'].length) {
+                                  if (this.showNamesArrEdit.length !== this.staffDataArrayEdit.length) {
                                     Text('+')
                                       .customizeText()
                                     Text(this.hideNamesNumEdit)
@@ -468,19 +465,19 @@ struct encryptionSuccess {
                                 }
                                 .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                                 .onClick(() => {
-                                  let { showNamesArr, showFlag } = toggleShow(this.routerParams['staffDataArrayEdit'], this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
-                                  this.showNamesArrEdit = showNamesArr;
-                                  this.editFlag = showFlag;
+                                  let tmp: Record<string, AuthAccount[] | boolean> = toggleShow(this.routerParams.staffDataArrayEdit as AuthAccount[], this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
+                                  this.showNamesArrEdit = tmp.showNamesArr as AuthAccount[];
+                                  this.editFlag = tmp.showFlag as boolean;
                                 })
                               }
                             }
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
                             if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                              let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.routerParams['staffDataArrayEdit']);
-                              this.rowNamesLenEdit = rowNamesLen;
-                              this.showNamesArrEdit = showNamesArr;
-                              this.hideNamesNumEdit = hideNamesNum;
+                              let tmp: Record<string, number | AuthAccount[] | string> = calculate(newValue, this.routerParams.staffDataArrayEdit as AuthAccount[]);
+                              this.rowNamesLenEdit = tmp.rowNamesLen as number;
+                              this.showNamesArrEdit = tmp.showNamesArr as AuthAccount[];
+                              this.hideNamesNumEdit = tmp.hideNamesNum as string;
                               this.editFlag = false;
                             }
                           })
@@ -544,25 +541,28 @@ struct encryptionSuccess {
                   .width(Constants.FOOTER_WIDTH_BUTTON)
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
-                    if (!globalThis.requestIsFromSandBox) {
+                    if (!(GlobalContext.getContext().getObject('requestIsFromSandBox') as boolean)) {
+                      let dlpFileName: string = GlobalContext.getContext().getObject('dlpFileName') as string;
+                      let dlpFd: number = GlobalContext.getContext().getObject('dlpFd') as number;
+                      let dlpFile: dlpPermission.DLPFile = GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile;
                       try {
-                        console.info(TAG, 'closeDLPFile', globalThis.dlpFileName, globalThis.dlpFd);
-                        await globalThis.dlpFile.closeDLPFile();
+                        console.info(TAG, 'closeDLPFile', dlpFileName, dlpFd);
+                        await dlpFile.closeDLPFile();
                       } catch (err) {
-                        console.error(TAG, 'closeDLPFile', globalThis.dlpFileName, 'failed', err.code, err.message);
+                        console.error(TAG, 'closeDLPFile', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                       }
                       try {
-                        console.info(TAG, 'refresh dlp file', globalThis.dlpFileName, globalThis.dlpFd);
-                        await fs.close(globalThis.dlpFd); // refresh file info
+                        console.info(TAG, 'refresh dlp file', dlpFileName, dlpFd);
+                        await fs.close(dlpFd); // refresh file info
                       } catch (err) {
-                        console.error(TAG, 'refresh dlp file', globalThis.dlpFileName, 'failed', err.code, err.message);
+                        console.error(TAG, 'refresh dlp file', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                       }
                     }
-                    if (globalThis.fileOpenHistoryFromMain) {
-                      delete globalThis.fileOpenHistoryFromMain[globalThis.uri];
+                    if (GlobalContext.getContext().getObject('fileOpenHistoryFromMain')) {
+                      (GlobalContext.getContext().getObject('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.getContext().getObject('uri') as string)
                     }
-                    abilityResult.resultCode = 0
-                    globalThis.context.terminateSelfWithResult(abilityResult);
+                    abilityResult.resultCode = 0;
+                    (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                   })
               }
               .justifyContent(FlexAlign.Center)
