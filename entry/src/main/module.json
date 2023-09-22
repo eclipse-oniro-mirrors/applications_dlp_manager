@@ -32,7 +32,7 @@
       },
       {
         "name": "SaveAsAbility",
-        "srcEntrance": "./ets/SaveAsAbility/SaveAsAbility.ts",
+        "srcEntrance": "./ets/SaveAsAbility/SaveAsAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
@@ -64,7 +64,7 @@
       },
       {
         "name": "DataAbility",
-        "srcEntrance": "./ets/DataAbility/DataAbility.ts",
+        "srcEntrance": "./ets/DataAbility/DataAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service"

@@ -17,10 +17,10 @@ import Constants from '../constant';
 
 @Component
 struct staffItem {
-  @Prop authAccount: string;
-  @Prop isActive: boolean;
+  @Prop authAccount: string = '';
+  @Prop isActive: boolean = false;
   @State containerBackgroundColor: string = '#0D000000';
-  @State color: any[] = [
+  @State color: Resource[] = [
     $r('sys.color.ohos_id_color_special1'),
     $r('sys.color.ohos_id_color_special2'),
     $r('sys.color.ohos_id_color_special3'),
@@ -33,7 +33,7 @@ struct staffItem {
     $r('sys.color.ohos_id_color_special10'),
     $r('sys.color.ohos_id_color_special11'),
   ];
-  @Prop changeIndex: number;
+  @Prop changeIndex: number = 0;
 
   private rollColor() {
     while (this.changeIndex > this.color.length - 1) {
@@ -79,7 +79,7 @@ struct staffItem {
         right: Constants.FOOTER_ROW_MARGIN
       }
     )
-    .onHover((isHover: boolean) => {
+    .onHover((isHover?: boolean) => {
       if (isHover) {
         this.containerBackgroundColor = '#fffff'
       } else {
