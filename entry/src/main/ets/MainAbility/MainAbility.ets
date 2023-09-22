@@ -1,0 +1,323 @@
+/*
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import UIAbility from '@ohos.app.ability.UIAbility';
+import datafile from '@ohos.file.fileAccess';
+import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
+import { Permissions } from '@ohos.abilityAccessCtrl';
+import dlpPermission from '@ohos.dlpPermission';
+import emitter from '@ohos.events.emitter';
+import deviceInfo from '@ohos.deviceInfo';
+import Constants from '../common/constant';
+import { getAuthPerm, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import GlobalContext from '../common/GlobalContext'
+import { Configuration } from '@ohos.app.ability.Configuration';
+import Want from '@ohos.app.ability.Want';
+import AbilityConstant from '@ohos.app.ability.AbilityConstant';
+import { BusinessError } from '@ohos.base';
+import window from '@ohos.window';
+import osAccount from '@ohos.account.osAccount';
+import common from '@ohos.app.ability.common';
+
+const PHONE = 'phone';
+const TAG = '[DLPManager_Main]';
+let permissionList: Array<Permissions> = [
+  'ohos.permission.READ_MEDIA',
+  'ohos.permission.WRITE_MEDIA',
+  'ohos.permission.FILE_ACCESS_MANAGER'
+];
+
+let direction: number = -1;
+let languageValue: string = 'zh';
+
+export default class MainAbility extends UIAbility {
+  authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  callerToken:number = 0;
+
+  async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
+    console.info(TAG, 'onCreate');
+    GlobalContext.getContext().setObject('abilityWant', want);
+    GlobalContext.getContext().setObject('context', this.context);
+    GlobalContext.getContext().setObject('domainAccount', deviceInfo.deviceType === PHONE ? false : true);
+    GlobalContext.getContext().setObject('uri', want.uri ?? '');
+
+    GlobalContext.getContext().setObject('dsHelper', datafile.createFileAccessHelper(this.context));
+    direction = this.context.config.direction ?? -1;
+    languageValue = this.context.config.language ?? 'zh';
+    if (!GlobalContext.getContext().getObject('fileOpenHistoryFromMain')) {
+      GlobalContext.getContext().setObject('fileOpenHistoryFromMain', new Map<string, (string | number)[]>());
+    }
+    if (!GlobalContext.getContext().getObject('linkSet')) {
+      GlobalContext.getContext().setObject('linkSet', new Set<string>());
+    }
+  }
+  onConfigurationUpdate(newConfig: Configuration): void {
+    if (direction !== newConfig.direction) {
+      direction = newConfig.direction ?? -1;
+    }
+    if (languageValue !== newConfig.language) {
+      languageValue = newConfig.language ?? 'zh';
+    }
+    let eventData: emitter.EventData = {
+      data: {
+        'direction': direction,
+      }};
+    let innerEvent: emitter.InnerEvent = {
+      eventId: Constants.ENCRYPTION_EMIT_DIRECTION_STATUS,
+      priority: emitter.EventPriority.HIGH
+    };
+    emitter.emit(innerEvent, eventData);
+
+    let languageData: emitter.EventData = {
+      data: {
+        'languageValue': languageValue,
+      }};
+    let languageEvent: emitter.InnerEvent = {
+      eventId: Constants.ENCRYPTION_EMIT_LANGUAGE_VALUE,
+      priority: emitter.EventPriority.HIGH
+    };
+    emitter.emit(languageEvent, languageData);
+  }
+
+  onDestroy(): void {
+    console.info(TAG, 'onDestroy');
+  }
+
+  onNewWant(want: Want) {
+    console.log(TAG, 'onNewWant', JSON.stringify(want));
+    GlobalContext.getContext().setObject('newWant', want);
+    GlobalContext.getContext().setObject('uri', (GlobalContext.getContext().getObject('abilityWant') as Want).uri as string);
+
+    this.getNewWantPage();
+  }
+
+  async showErrorDialogAndExit(error: BusinessError): Promise<void> {
+    //<!!!>
+    let abilityWant = GlobalContext.getContext().getObject('abilityWant') as Want;
+    if (abilityWant.parameters) {
+      abilityWant.parameters.error = error;
+    }
+    let context: common.UIAbilityContext = GlobalContext.getContext().getObject('context') as common.UIAbilityContext;
+    GlobalContext.getContext().setObject('alertContext', context);
+    (GlobalContext.getContext().getObject('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
+      if (err.code !== 0) {
+        console.error(TAG, 'loadContent failed', err.code, err.message);
+      }
+    });
+  }
+
+  async gotoPage(windowStage: window.WindowStage, accountInfo: osAccount.OsAccountInfo): Promise<void> {
+    let accountName: string = (GlobalContext.getContext().getObject('domainAccount') as boolean) ? accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
+    this.authPerm = getAuthPerm(accountName, (GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile).dlpProperty);
+    console.info(TAG, accountName, 'has dlp access', JSON.stringify(this.authPerm));
+
+    AppStorage.SetOrCreate('authPerm', this.authPerm);
+    AppStorage.SetOrCreate<string>('contactAccount', (GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile).dlpProperty.contactAccount);
+    if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
+      this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      return;
+    }
+    if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
+      windowStage.loadContent('pages/changeEncryption', (err: BusinessError) =>{
+        if (err.code !== 0) {
+          console.error(TAG, 'loadContent failed', err.code, err.message);
+        }
+      });
+    } else {
+      windowStage.loadContent('pages/permissionStatus', (err: BusinessError) =>{
+        if (err.code !== 0) {
+          console.error(TAG, 'loadContent failed', err.code, err.message);
+        }
+      });
+    }
+    windowStage.getMainWindow().then((win: window.Window) => {
+      win.setBackgroundColor('#00FFFFFF');
+    });
+  }
+
+  async findDlpFile(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      let abilityWant: Want = GlobalContext.getContext().getObject('abilityWant') as Want;
+      const linkFileName: string = (abilityWant.parameters?.linkFileName as Record<string, string>)?.name;
+      let sandbox2linkFile:Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.getContext().getObject('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+      for (let value of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
+        for (let linkFile of value) {
+          if (linkFile[Constants.FILE_OPEN_HISTORY_ONE] === linkFileName) {
+            if (this.callerToken !== linkFile[Constants.FILE_OPEN_HISTORY_THREE]) {
+              console.error(TAG, 'found file, buf token invalid', linkFileName);
+              await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+              reject();
+              return;
+            }
+            GlobalContext.getContext().setObject('dlpFile', linkFile[Constants.FILE_OPEN_HISTORY_ZERO]);
+            GlobalContext.getContext().setObject('dlpFd', linkFile[Constants.FILE_OPEN_HISTORY_TWO]);
+            let dlpFileName: string = (abilityWant.parameters?.fileName as Record<string, string>)?.name;
+            GlobalContext.getContext().setObject('dlpFileName', dlpFileName);
+            GlobalContext.getContext().setObject('linkFileName', linkFileName);
+            console.info(TAG, 'find dlp file', dlpFileName, GlobalContext.getContext().getObject('dlpFd'));
+            resolve();
+            return;
+          }
+        }
+      }
+      console.error(TAG, 'request from sandbox, but can not find dlp file by linkFileName', linkFileName);
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      reject();
+    });
+  }
+
+  async openDlpFile(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let dlpFileName: string = ((GlobalContext.getContext().getObject('abilityWant')as Want).parameters?.fileName as Record<string, string>)?.name;
+        GlobalContext.getContext().setObject('dlpFileName', dlpFileName);
+        let dlpFd: number = getFileFd(GlobalContext.getContext().getObject('uri') as string);
+        GlobalContext.getContext().setObject('dlpFd', dlpFd);
+        console.info(TAG, 'openDLPFile', dlpFileName, dlpFd);
+        GlobalContext.getContext().setObject('dlpFile', await dlpPermission.openDLPFile(dlpFd));
+        resolve();
+      } catch (err) {
+        console.error(TAG, 'openDLPFile', GlobalContext.getContext().getObject('dlpFileName') as string, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+        await this.showErrorDialogAndExit(err as BusinessError);
+        reject(err);
+      }
+    });
+  }
+
+  checkValidWant(): boolean {
+    let parameters = (GlobalContext.getContext().getObject('abilityWant') as Want).parameters;
+    if (parameters === undefined) {
+      console.error(TAG, 'need parameters in want');
+      return false;
+    }
+    if (parameters.fileName === undefined) {
+      console.error(TAG, 'need fileName in want.parameters');
+      return false;
+    }
+    if ((parameters.fileName as Record<string, string>).name === undefined) {
+      console.error(TAG, 'need name in want.parameters.fileName');
+      return false;
+    }
+    if ((GlobalContext.getContext().getObject('abilityWant') as Want).uri === undefined) {
+      console.error(TAG, 'need uri in want');
+      return false;
+    }
+    this.callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
+    let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
+    if (this.callerToken === undefined || callerBundleName === undefined) {
+      console.error(TAG, 'need caller info in want.parameters');
+      return false;
+    }
+    let uri = String((GlobalContext.getContext().getObject('abilityWant') as Want).uri);
+    if ((GlobalContext.getContext().getObject('linkSet') as Set<string>).has(uri)) {
+      console.error(TAG, 'invalid uri for opened link uri');
+      return false;
+    }
+
+    if (uri.indexOf(Constants.FUSE_PATH) !== -1) {
+      console.error(TAG, 'invalid uri in want.uri');
+      return false;
+    }
+    return true;
+  }
+
+  async getNewWantPage(): Promise<void> {
+    console.log(TAG, 'getNewWantPage start');
+    let windowStage: window.WindowStage = GlobalContext.getContext().getObject('windowStage') as window.WindowStage;
+    if (!this.checkValidWant()) {
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
+      return;
+    }
+    let accountInfo: osAccount.OsAccountInfo;
+    try {
+      accountInfo = await getOsAccountInfo();
+    } catch (err) {
+      console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+      return;
+    }
+    if (!checkAccountLogin(accountInfo)) {
+      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+      return;
+    }
+    let requestIsFromSandBox: boolean = await judgeIsSandBox();
+    GlobalContext.getContext().setObject('requestIsFromSandBox', requestIsFromSandBox);
+    console.info(TAG, 'request is from sandbox', requestIsFromSandBox);
+    if (requestIsFromSandBox) {
+      try {
+        await this.findDlpFile();
+      } catch {
+        return;
+      }
+    } else {
+      let fileName: string = ((GlobalContext.getContext().getObject('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
+      let isDlpSuffix: boolean = fileName.endsWith('.dlp');
+      if (!isDlpSuffix) {
+        console.info(TAG, fileName, 'is not a dlp file');
+        GlobalContext.getContext().setObject('originFileName', fileName);
+        GlobalContext.getContext().setObject('originFd', getFileFd(GlobalContext.getContext().getObject('uri') as string));
+        windowStage.loadContent('pages/encryptionProtection', (err: BusinessError) =>{
+          if (err.code !== 0) {
+            console.error(TAG, 'loadContent failed', err.code, err.message);
+          }
+        });
+        windowStage.getMainWindow().then((win: window.Window) => {
+          win.setBackgroundColor('#00FFFFFF');
+        });
+        return;
+      } else {
+        let uri: string = GlobalContext.getContext().getObject('uri') as string;
+        if ((GlobalContext.getContext().getObject('fileOpenHistory') as Map<string, (number | string)[]>)?.has(uri)) {
+          await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
+          return;
+        }
+        try {
+          await this.openDlpFile();
+        } catch {
+          return;
+        }
+        let fileOpenHistoryFromMain: Map<string, (string | number)[]> = GlobalContext.getContext().getObject('fileOpenHistoryFromMain') as Map<string, (string | number)[]>;
+        fileOpenHistoryFromMain.set(uri, [uri, GlobalContext.getContext().getObject('dlpFileName') as string, GlobalContext.getContext().getObject('dlpFd') as number]);
+        console.log(TAG, 'fileOpenHistoryFromMain add', JSON.stringify(fileOpenHistoryFromMain));
+      }
+    }
+    this.gotoPage(windowStage, accountInfo);
+}
+
+  async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
+    console.info(TAG, 'onWindowStageCreate');
+    GlobalContext.getContext().setObject('windowStage', windowStage);
+    try {
+      let atManager = abilityAccessCtrl.createAtManager();
+      await atManager.requestPermissionsFromUser(GlobalContext.getContext().getObject('context') as common.UIAbilityContext, permissionList);
+    } catch (err) {
+      console.error(TAG, 'requestPermissionsFromUser failed', err.code, err.message);
+      return;
+    }
+    this.getNewWantPage();
+  }
+
+  onWindowStageDestroy(): void {
+    console.info(TAG, 'onWindowStageDestroy');
+  }
+
+  onForeground(): void {
+    console.info(TAG, 'onForeground');
+  }
+
+  onBackground() {
+    console.info(TAG, 'onBackground');
+  }
+};

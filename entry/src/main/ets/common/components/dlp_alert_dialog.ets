@@ -13,13 +13,15 @@
  * limitations under the License.
  */
 import Constants from '../constant';
+import GlobalContext from '../GlobalContext';
+import common from '@ohos.app.ability.common';
 
 @CustomDialog
 struct DlpAlertDialog {
-  controller : CustomDialogController
-  title: Resource
-  message: Resource
-  action: () => void = null
+  controller?: CustomDialogController
+  title?: Resource
+  message?: Resource
+  action?: () => void
   build() {
     Column() {
       Row() {
@@ -58,11 +60,11 @@ struct DlpAlertDialog {
           .fontColor($r('app.color.button_color'))
           .backgroundColor($r('app.color.base_button_color'))
           .onClick(() => {
-            this.controller.close()
+            this.controller?.close()
             if (this.action != null) {
               this.action()
             } else {
-              globalThis.alertContext.terminateSelf()
+              (GlobalContext.getContext().getObject('alertContext') as common.UIAbilityContext).terminateSelf();
             }
           })
       }
