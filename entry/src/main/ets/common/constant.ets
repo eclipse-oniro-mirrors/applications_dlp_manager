@@ -166,7 +166,7 @@ export default class Constants {
   static DIALOG_MD_OFFSET = 1;
   static DIALOG_LG_SPAN = 6;
   static DIALOG_LG_OFFSET = 3;
-  static FUSE_PATH = '/mnt/data/fuse';
+  static FUSE_PATH = '/mnt/data/fuse/';
   static RAND_START = 2;
   static RAND_END = 10;
   static BUNDLE_LEN = 20;
