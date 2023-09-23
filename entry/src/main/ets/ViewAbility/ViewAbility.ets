@@ -37,7 +37,6 @@ import GlobalContext from '../common/GlobalContext'
 import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
-import uriPermissionManager from '@ohos.application.uriPermissionManager';
 
 const TAG = '[DLPManager_View]';
 const PHONE = 'phone';
@@ -499,13 +498,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
       opening = false;
       console.error(TAG, 'get parameters failed');
       (GlobalContext.getContext().getObject('viewContext') as common.ServiceExtensionContext).terminateSelf();
-    }
-    if(GlobalContext.getContext().getObject('domainAccount') as boolean){
-      let flag = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION | wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
-      let targetBundleName = this.sandboxBundleName;
-      uriPermissionManager.grandUriPermission(this.uri, flag, targetBundleName , (result, error) => {
-        console.info(TAG, 'grandUriPermission result:', JSON.stringify(result), JSON.stringify(error));
-      });
     }
     try {
       await this.getAccountAndOpenDLPFile(startId);
