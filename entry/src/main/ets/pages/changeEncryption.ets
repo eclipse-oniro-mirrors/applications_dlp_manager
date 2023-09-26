@@ -41,6 +41,10 @@ let abilityResult: ability.AbilityResult = {
   'want': {}
 };
 
+interface AuthAccount {
+  authAccount: string;
+}
+
 @Extend(Text) function customizeText() {
   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
   .fontSize($r('sys.float.ohos_id_text_size_button2'))
@@ -88,11 +92,11 @@ struct changeEncryption {
   @State hideNamesNumEdit: string = '0';
   @State hideNamesNumReadOnly: string = '0';
   @State prepareData: boolean = false;
-  @State showNamesArrEdit: dlpPermission.AuthUser[] = [];
-  @State showNamesArrReadOnly: dlpPermission.AuthUser[] = [];
-  @State staffDataArrayReadOnly: dlpPermission.AuthUser[] = [];
-  @State staffDataArrayEdit: dlpPermission.AuthUser[] = [];
-  private routerData: Record<string, dlpPermission.AuthUser[]> = {};
+  @State showNamesArrEdit: AuthAccount[] = [];
+  @State showNamesArrReadOnly: AuthAccount[] = [];
+  @State staffDataArrayReadOnly: AuthAccount[] = [];
+  @State staffDataArrayEdit: AuthAccount[] = [];
+  private routerData: Record<string, AuthAccount[]> = {};
   private dlpFd: number = 0;
   @State permissionDict: PermissionValue[] = [
     {
@@ -324,7 +328,7 @@ struct changeEncryption {
     this.routerData = {
       'staffDataArrayReadOnly': this.staffDataArrayReadOnly,
       'staffDataArrayEdit': this.staffDataArrayEdit,
-    } as Record<string, dlpPermission.AuthUser[]>
+    } as Record<string, AuthAccount[]>
   }
 
   async aboutToAppear() {
@@ -543,7 +547,7 @@ struct changeEncryption {
                               .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                               .onClick(() => {
                                 let showValue = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
-                                this.showNamesArrReadOnly = showValue.showNamesArr as dlpPermission.AuthUser[];
+                                this.showNamesArrReadOnly = showValue.showNamesArr as AuthAccount[];
                                 this.ReadOnlyFlag = showValue.showFlag as boolean;
                               })
                             }
@@ -553,7 +557,7 @@ struct changeEncryption {
                           if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
                             let nameValue = calculate(newValue, this.staffDataArrayReadOnly);
                             this.rowNamesLenReadOnly = nameValue.rowNamesLen as number;
-                            this.showNamesArrReadOnly = nameValue.showNamesArr as dlpPermission.AuthUser[];
+                            this.showNamesArrReadOnly = nameValue.showNamesArr as AuthAccount[];
                             this.hideNamesNumReadOnly = nameValue.hideNamesNum as string;
                           }
                         })
@@ -683,7 +687,7 @@ struct changeEncryption {
                               .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                               .onClick(() => {
                                 let showValue = toggleShow(this.staffDataArrayEdit, this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
-                                this.showNamesArrEdit = showValue.showNamesArr as dlpPermission.AuthUser[];
+                                this.showNamesArrEdit = showValue.showNamesArr as AuthAccount[];
                                 this.editFlag = showValue.showFlag as boolean;
                               })
                             }
@@ -693,7 +697,7 @@ struct changeEncryption {
                           if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
                             let nameValue = calculate(newValue, this.staffDataArrayEdit);
                             this.rowNamesLenEdit = nameValue.rowNamesLen as number;
-                            this.showNamesArrEdit = nameValue.showNamesArr as dlpPermission.AuthUser[];
+                            this.showNamesArrEdit = nameValue.showNamesArr as AuthAccount[];
                             this.hideNamesNumEdit = nameValue.hideNamesNum as string;
                           }
                         })
