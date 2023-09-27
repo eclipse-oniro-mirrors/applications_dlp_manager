@@ -142,8 +142,8 @@ struct PermissionStatus {
     console.info(TAG, 'aboutToAppear');
     this.authPerm = AppStorage.Get('authPerm') ?? 1;
     this.accountId = AppStorage.Get('contactAccount') ?? '';
-    this.directionStatus = (GlobalContext.getContext()
-      .getObject('context') as common.UIAbilityContext).config.direction ?? -1;
+    this.directionStatus = (GlobalContext
+      .load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -278,7 +278,7 @@ struct PermissionStatus {
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
                   .height(Constants.FOOTER_BUTTON_HEIGHT)
                   .onClick(() => {
-                    (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).terminateSelf()
+                    (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf()
                   })
               }
               .justifyContent(FlexAlign.Center)

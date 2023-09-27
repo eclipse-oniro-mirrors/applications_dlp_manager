@@ -49,7 +49,7 @@ class option_ {
 let defaultDlpFile: dlpPermission.DLPFile = {
   dlpProperty: {
     ownerAccount: '',
-    ownerAccountType: GlobalContext.getContext().getObject('domainAccount') as Boolean
+    ownerAccountType: GlobalContext.load('domainAccount') as Boolean
       ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
     authUserList: [],
     contactAccount: '',
@@ -123,15 +123,15 @@ export default class SaveAsAbility extends UIAbility {
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     console.info(TAG, 'onCreate');
-    GlobalContext.getContext().setObject('abilityWant', want);
-    GlobalContext.getContext().setObject('context', this.context);
-    GlobalContext.getContext()
-      .setObject('dsHelper', await datafile.createFileAccessHelper(GlobalContext.getContext()
-        .getObject('context') as common.UIAbilityContext));
+    GlobalContext.store('abilityWant', want);
+    GlobalContext.store('context', this.context);
+    GlobalContext
+      .store('dsHelper', await datafile.createFileAccessHelper(GlobalContext
+        .load('context') as common.UIAbilityContext));
     try {
       let atManager = abilityAccessCtrl.createAtManager();
-      await atManager.requestPermissionsFromUser(GlobalContext.getContext()
-        .getObject('context') as common.UIAbilityContext, permissionList);
+      await atManager.requestPermissionsFromUser(GlobalContext
+        .load('context') as common.UIAbilityContext, permissionList);
     } catch (err) {
       console.error(TAG, 'requestPermissionsFromUser failed', err.code, err.message);
       return;
@@ -143,7 +143,7 @@ export default class SaveAsAbility extends UIAbility {
       console.error(TAG, 'notifySaveAsResult failed ', (err as BusinessError).code, (err as BusinessError).message);
     }
     if (this.isOK === true) {
-      (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).terminateSelf();
+      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
     }
   }
 
@@ -153,8 +153,8 @@ export default class SaveAsAbility extends UIAbility {
 
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     // Main window is created, set main page for this ability
-    console.info(TAG, 'onWindowStageCreate: ', GlobalContext.getContext()
-      .getObject('context') as common.UIAbilityContext);
+    console.info(TAG, 'onWindowStageCreate: ', GlobalContext
+      .load('context') as common.UIAbilityContext);
 
   }
 
@@ -174,27 +174,27 @@ export default class SaveAsAbility extends UIAbility {
   }
 
   async parseParams(): Promise<boolean | void> {
-    if (GlobalContext.getContext().getObject('abilityWant') === undefined ||
-    (GlobalContext.getContext().getObject('abilityWant') as Want).parameters === undefined) {
+    if (GlobalContext.load('abilityWant') === undefined ||
+    (GlobalContext.load('abilityWant') as Want).parameters === undefined) {
       console.error(TAG, 'invalid abilityWant');
       return false;
     }
 
-    this.requestCode = (GlobalContext.getContext().getObject('abilityWant') as Want)
+    this.requestCode = (GlobalContext.load('abilityWant') as Want)
       .parameters?.['requestCode'] as number;
     if (this.requestCode === undefined) {
       console.error(TAG, 'invalid requestCode');
       return false;
     }
 
-    this.tokenId = (GlobalContext.getContext().getObject('abilityWant') as Want)
+    this.tokenId = (GlobalContext.load('abilityWant') as Want)
       .parameters?.['ohos.aafwk.param.callerToken'] as number;
     if (this.tokenId === undefined) {
       console.error(TAG, 'invalid tokenId');
       return false;
     }
 
-    this.authPerm = (GlobalContext.getContext().getObject('token2File') as
+    this.authPerm = (GlobalContext.load('token2File') as
     Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
       .get(this.tokenId)?.[3] as dlpPermission.DLPFileAccess;
 
@@ -202,18 +202,18 @@ export default class SaveAsAbility extends UIAbility {
     && this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
       console.error(TAG, 'invalid authPerm ', this.authPerm);
       this.isOK = false;
-      await startAlertAbility(GlobalContext.getContext().getObject('context') as common.UIAbilityContext,
+      await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
         {
           code: Constants.ERR_JS_DLP_FILE_READ_ONLY
         } as BusinessError);
       return false;
     }
-    if (!(GlobalContext.getContext().getObject('token2File') as Map<number, Object[]>).has(this.tokenId)) {
+    if (!(GlobalContext.load('token2File') as Map<number, Object[]>).has(this.tokenId)) {
       console.error(TAG, 'invalid token2File');
       return;
     }
 
-    this.fileName = (GlobalContext.getContext().getObject('abilityWant') as Want)
+    this.fileName = (GlobalContext.load('abilityWant') as Want)
       .parameters?.['key_pick_file_name'] as string;
     if (this.fileName === undefined) {
       console.error(TAG, 'invalid fileName');
@@ -315,7 +315,7 @@ export default class SaveAsAbility extends UIAbility {
     return {code: errCode, message: ERRCODE_MAP.get(errCode)};
   }
   async documentPickerSave(...args) {
-    let context = GlobalContext.getContext().getObject('context') as common.UIAbilityContext;
+    let context = GlobalContext.load('context') as common.UIAbilityContext;
     let config = undefined;
     let result = undefined;
     try {
@@ -349,7 +349,7 @@ export default class SaveAsAbility extends UIAbility {
   }
 
   async prepareDlpFile(): Promise<void> {
-    console.info(TAG, 'getFile start:', JSON.stringify(GlobalContext.getContext().getObject('abilityWant')));
+    console.info(TAG, 'getFile start:', JSON.stringify(GlobalContext.load('abilityWant')));
     let uri = '';
     let displayName = '';
 
@@ -383,9 +383,9 @@ export default class SaveAsAbility extends UIAbility {
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
-        await (GlobalContext.getContext().getObject('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
+        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         this.isOK = false;
-        await startAlertAbility(GlobalContext.getContext().getObject('context') as common.UIAbilityContext,
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           {
             code: Constants.ERR_JS_APP_INSIDE_ERROR
           } as BusinessError);
@@ -393,8 +393,8 @@ export default class SaveAsAbility extends UIAbility {
       }
 
       let token2File_value: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]
-        = (GlobalContext.getContext()
-        .getObject('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
+        = (GlobalContext
+        .load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
         .get(this.tokenId) as (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[];
       this.dlpFile = token2File_value[0] as dlpPermission.DLPFile;
       this.sandboxBundleName = token2File_value[1] as string;
@@ -409,10 +409,10 @@ export default class SaveAsAbility extends UIAbility {
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
-        await (GlobalContext.getContext().getObject('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
+        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         fs.closeSync(srcFd);
         this.isOK = false;
-        await startAlertAbility(GlobalContext.getContext().getObject('context') as common.UIAbilityContext,
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           {
             code: Constants.ERR_JS_APP_INSIDE_ERROR
           } as BusinessError);
@@ -428,7 +428,7 @@ export default class SaveAsAbility extends UIAbility {
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
-        await (GlobalContext.getContext().getObject('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
+        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         fs.closeSync(srcFd);
         return;
       }
@@ -455,10 +455,10 @@ export default class SaveAsAbility extends UIAbility {
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
-        await (GlobalContext.getContext().getObject('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
+        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         fs.closeSync(srcFd);
         this.isOK = false;
-        await startAlertAbility(GlobalContext.getContext().getObject('context') as common.UIAbilityContext,
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           {
             code: Constants.ERR_JS_APP_INSIDE_ERROR
           } as BusinessError);
@@ -467,17 +467,17 @@ export default class SaveAsAbility extends UIAbility {
 
       let linkFilePath = Constants.FUSE_PATH + linkFileName;
       let linkUri = getFileUriByPath(linkFilePath);
-      (GlobalContext.getContext().getObject("token2File") as Map<number, Object[]>)
+      (GlobalContext.load("token2File") as Map<number, Object[]>)
         .set(this.tokenId, [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri]);
       let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]>
-        = GlobalContext.getContext()
-        .getObject('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+        = GlobalContext
+        .load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       sandbox2linkFile.get(this.sandboxBundleName + appId)?.push([newDlpFile, linkFileName, dstFd, this.tokenId]);
 
-      (GlobalContext.getContext().getObject("fileOpenHistory") as Map<string, Object[]>)
+      (GlobalContext.load("fileOpenHistory") as Map<string, Object[]>)
         .set(uri, [this.sandboxBundleName, appId, linkFileName, linkUri]);
 
-      (GlobalContext.getContext().getObject("linkSet") as Set<string>).add(linkUri);
+      (GlobalContext.load("linkSet") as Set<string>).add(linkUri);
 
       this.resultUri = getFileUriByPath(linkFilePath);
 
@@ -494,9 +494,9 @@ export default class SaveAsAbility extends UIAbility {
       } catch (err) {
         console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
       }
-      await (GlobalContext.getContext().getObject('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
+      await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
       this.isOK = false;
-      await startAlertAbility(GlobalContext.getContext().getObject('context') as common.UIAbilityContext,
+      await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
         {
           code: Constants.ERR_JS_APP_INSIDE_ERROR
         } as BusinessError);

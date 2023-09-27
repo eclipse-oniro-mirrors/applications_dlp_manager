@@ -35,7 +35,7 @@ struct Index {
       }),
       autoCancel: false,
       cancel: () => {
-        (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).terminateSelf();
+        (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
       },
       alignment: DialogAlignment.Center,
       customStyle: true,
@@ -46,7 +46,7 @@ struct Index {
   async aboutToAppear() {
     try {
       let errInfo = getAlertMessage(
-        (GlobalContext.getContext().getObject('abilityWant') as Want)
+        (GlobalContext.load('abilityWant') as Want)
 	.parameters?.error as BusinessError);
       this.showErrorDialogAndExit(errInfo.title as Resource, errInfo.msg as Resource);
     } catch (err) {

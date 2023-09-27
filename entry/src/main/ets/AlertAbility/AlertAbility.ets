@@ -23,8 +23,8 @@ const TAG = '[DLPManager_Alert]';
 export default class AlertAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     console.info(TAG, 'onCreate');
-    GlobalContext.getContext().setObject('abilityWant', want);
-    GlobalContext.getContext().setObject('alertContext', this.context)
+    GlobalContext.store('abilityWant', want);
+    GlobalContext.store('alertContext', this.context)
   }
 
   onDestroy(): void {
