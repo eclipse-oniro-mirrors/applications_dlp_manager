@@ -65,7 +65,7 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
 }
 
 function checkAccountLogin(accountInfo: account_osAccount.OsAccountInfo): boolean {
-  if (GlobalContext.getContext().getObject('domainAccount') as boolean) {
+  if (GlobalContext.load('domainAccount') as boolean) {
     if (accountInfo.domainInfo.accountName === '' &&
       accountInfo.domainInfo.accountId === '') {
       return false;
@@ -111,7 +111,7 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
       }
     }
   };
-  (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+  (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
 }
 
 function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMessage?: Resource) {
@@ -176,12 +176,12 @@ async function startAlertAbility(context: common.UIAbilityContext | common.Servi
 
 function judgeIsSandBox() {
   return new Promise<boolean>(async resolve => {
-    let abilityWant: Want = GlobalContext.getContext().getObject('abilityWant') as Want;
+    let abilityWant: Want = GlobalContext.load('abilityWant') as Want;
     let callerToken: number = abilityWant.parameters?.['ohos.aafwk.param.callerToken'] as number;
     let callerBundleName: string = abilityWant.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
-    GlobalContext.getContext().setObject('applicationInfo', await bundleManager.getApplicationInfo(
+    GlobalContext.store('applicationInfo', await bundleManager.getApplicationInfo(
       callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT));
-    if (callerToken === (GlobalContext.getContext().getObject('applicationInfo') as bundleManager.ApplicationInfo).accessTokenId) {
+    if (callerToken === (GlobalContext.load('applicationInfo') as bundleManager.ApplicationInfo).accessTokenId) {
       resolve(false);
     }
     resolve(true);

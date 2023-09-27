@@ -104,7 +104,7 @@ struct staffInput {
         TextInput({
           text: this.inputId,
           placeholder: !this.staffArray.length ?
-            ((GlobalContext.getContext().getObject('domainAccount') as boolean) 
+            ((GlobalContext.load('domainAccount') as boolean)
               ? $r('app.string.enter_a_complete_work_ID') 
               : $r('app.string.enter_a_complete_account')) : undefined,
         })
@@ -145,7 +145,7 @@ struct staffInput {
                 domain: 'china',
                 accountName: this.inputId.toLocaleLowerCase()
               }
-              if (GlobalContext.getContext().getObject('domainAccount')) {
+              if (GlobalContext.load('domainAccount')) {
                 this.isAccountCheckSuccess = false;
                 account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err, isExist) => {
                   this.isAccountCheckSuccess = true;
@@ -194,13 +194,13 @@ struct staffInput {
 
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid) {
-          Text((GlobalContext.getContext()
-            .getObject('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
+          Text((GlobalContext
+            .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         if (this.isNetworkInvalid) {
-          Text((GlobalContext.getContext()
-            .getObject('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
+          Text((GlobalContext
+            .load('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         Blank()

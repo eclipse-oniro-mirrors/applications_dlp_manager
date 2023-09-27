@@ -52,7 +52,7 @@ let abilityResult: ability.AbilityResult = {
 
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
-  ownerAccountType: (GlobalContext.getContext().getObject('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  ownerAccountType: (GlobalContext.load('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
   authUserList: [],
   contactAccount: '',
   offlineAccess: true,
@@ -85,7 +85,7 @@ struct DlpDialog {
   @State handlePopupEdit: boolean = false;
   @State processing: boolean = false;
   @State prepareData: boolean = false;
-  @State domainOrCloudAccount: number = (GlobalContext.getContext().getObject('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
+  @State domainOrCloudAccount: number = (GlobalContext.load('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
   @State permissionDict: PermissionType[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0
@@ -201,7 +201,7 @@ struct DlpDialog {
 
   async catchProcess() {
     this.processing = false;
-    if (GlobalContext.getContext().getObject('requestIsFromSandBox') as boolean) {
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
         console.info(TAG, 'resumeFuseLink', this.srcFileName);
         await this.dlpFile.resumeFuseLink();
@@ -214,7 +214,7 @@ struct DlpDialog {
   async changeEncrypt() {
     console.info(TAG, 'Change encryption for', this.srcFd);
     this.processing = true;
-    if (GlobalContext.getContext().getObject('requestIsFromSandBox') as boolean) {
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
         console.info(TAG, 'stopFuseLink', this.srcFileName);
         await this.dlpFile.stopFuseLink();
@@ -225,7 +225,7 @@ struct DlpDialog {
         return;
       }
     }
-    let filePath = (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).filesDir + '/' + (new Date().getTime());
+    let filePath = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/' + (new Date().getTime());
     let tempFd: number = 0;
     try {
       tempFd = fileio.openSync(filePath, 0o102, 0o660);
@@ -278,7 +278,7 @@ struct DlpDialog {
     this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
     this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
     this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
-    if (GlobalContext.getContext().getObject('domainAccount') as boolean) {
+    if (GlobalContext.load('domainAccount') as boolean) {
       property.ownerAccount = accountInfo.domainInfo.accountName;
       property.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
     } else {
@@ -334,8 +334,8 @@ struct DlpDialog {
       await this.catchProcess();
       return;
     }
-    if (GlobalContext.getContext().getObject('requestIsFromSandBox') as boolean) {
-      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.getContext().getObject('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
+      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       for (let key of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
         for (let j of key) {
           if (j[1] === this.linkFileName) {
@@ -355,9 +355,9 @@ struct DlpDialog {
     await this.catchProcess();
     this.processing = false;
     // update global dlp resource
-    GlobalContext.getContext().setObject('dlpFileName', this.srcFileName);
-    GlobalContext.getContext().setObject('dlpFile', this.dlpFile);
-    GlobalContext.getContext().setObject('dlpFd', this.srcFd);
+    GlobalContext.store('dlpFileName', this.srcFileName);
+    GlobalContext.store('dlpFile', this.dlpFile);
+    GlobalContext.store('dlpFd', this.srcFd);
     router.replaceUrl({
       url: 'pages/encryptionSuccess',
       params: {
@@ -474,10 +474,10 @@ struct DlpDialog {
         this.processing = false;
 
         // update global dlp resource
-        GlobalContext.getContext().setObject('dlpFileName', uriInfo.name);
+        GlobalContext.store('dlpFileName', uriInfo.name);
 
-        GlobalContext.getContext().setObject('dlpFile', this.dlpFile);
-        GlobalContext.getContext().setObject('dlpFd', dstFd);
+        GlobalContext.store('dlpFile', this.dlpFile);
+        GlobalContext.store('dlpFd', dstFd);
         router.replaceUrl({
           url: 'pages/encryptionSuccess',
           params: {
@@ -502,13 +502,13 @@ struct DlpDialog {
   }
 
   async prepareDlpProperty() {
-    if (GlobalContext.getContext().getObject('domainAccount') as boolean) {
-      let accountInfo: osAccount.OsAccountInfo = GlobalContext.getContext().getObject('accountInfo') as osAccount.OsAccountInfo;
+    if (GlobalContext.load('domainAccount') as boolean) {
+      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
       this.dlpFile.dlpProperty.ownerAccount = accountInfo.domainInfo.accountName;
       this.dlpFile.dlpProperty.contactAccount = accountInfo.domainInfo.accountName;
       this.dlpFile.dlpProperty.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
     } else {
-      let accountInfo: osAccount.OsAccountInfo = GlobalContext.getContext().getObject('accountInfo') as osAccount.OsAccountInfo;
+      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
       this.dlpFile.dlpProperty.ownerAccount = accountInfo.distributedInfo.name;
       this.dlpFile.dlpProperty.contactAccount = accountInfo.distributedInfo.name;
       this.dlpFile.dlpProperty.ownerAccountID = accountInfo.distributedInfo.id;
@@ -525,7 +525,7 @@ struct DlpDialog {
 
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
     this.permissionDict.forEach(async (item, index) => {
-      this.permissionDict[index].value = $r(await (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).resourceManager.getString(item.value.id))
+      this.permissionDict[index].value = $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getString(item.value.id))
     })
     let readOnlyData: dlpPermission.AuthUser[] = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 1;
@@ -558,13 +558,13 @@ struct DlpDialog {
 
   async checkAccount() {
     try {
-      GlobalContext.getContext().setObject('accountInfo', await getOsAccountInfo());
+      GlobalContext.store('accountInfo', await getOsAccountInfo());
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed:', JSON.stringify(err));
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
       return;
     }
-    if (!checkAccountLogin(GlobalContext.getContext().getObject('accountInfo') as osAccount.OsAccountInfo)) {
+    if (!checkAccountLogin(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
       return;
     }
@@ -573,12 +573,12 @@ struct DlpDialog {
   async aboutToAppear() {
     this.prepareData = true;
     await this.checkAccount();
-    if (GlobalContext.getContext().getObject('requestIsFromSandBox') as boolean) {
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       console.info(TAG, 'encryption request from sandbox');
-      this.linkFileName = GlobalContext.getContext().getObject('linkFileName') as string;
-      this.srcFileName = GlobalContext.getContext().getObject('dlpFileName') as string;
-      this.dlpFile = GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile;
-      this.srcFd = GlobalContext.getContext().getObject('dlpFd') as number;
+      this.linkFileName = GlobalContext.load('linkFileName') as string;
+      this.srcFileName = GlobalContext.load('dlpFileName') as string;
+      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
+      this.srcFd = GlobalContext.load('dlpFd') as number;
       setTimeout(() => {
         this.showData(this.dlpFile.dlpProperty);
       }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
@@ -591,12 +591,12 @@ struct DlpDialog {
       let routerParams = router.getParams();
       if (routerParams !== undefined) { // is a dlp file
         console.info(TAG, 'encryption request from router');
-        this.srcFileName = GlobalContext.getContext().getObject('dlpFileName') as string;
-        this.srcFd = GlobalContext.getContext().getObject('dlpFd') as number;
+        this.srcFileName = GlobalContext.load('dlpFileName') as string;
+        this.srcFd = GlobalContext.load('dlpFd') as number;
       } else { // not a dlp file
         console.info(TAG, 'encryption request from ability');
-        this.srcFileName = GlobalContext.getContext().getObject('originFileName') as string;
-        this.srcFd = GlobalContext.getContext().getObject('originFd') as number;
+        this.srcFileName = GlobalContext.load('originFileName') as string;
+        this.srcFd = GlobalContext.load('originFd') as number;
       }
     }
 
@@ -605,7 +605,7 @@ struct DlpDialog {
       await this.prepareDlpProperty();
       this.isDlpFile = false;
     } else {
-      this.dlpFile = GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile;
+      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
       setTimeout(() => {
         this.showData(this.dlpFile.dlpProperty);
       }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
@@ -615,7 +615,7 @@ struct DlpDialog {
       this.prepareData = false;
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
 
-    this.directionStatus = (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).config.direction ?? -1;
+    this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -766,7 +766,7 @@ struct DlpDialog {
               .fontColor($r('app.color.encryption_cancel'))
               .height(Constants.FOOTER_HEIGHT)
               .onClick(async (event) => {
-                if (this.isDlpFile && !(GlobalContext.getContext().getObject('requestIsFromSandBox') as boolean)) {
+                if (this.isDlpFile && !(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                   try {
                     console.info(TAG, 'closeDLPFile', this.srcFileName, this.srcFd);
                     await this.dlpFile.closeDLPFile();
@@ -774,17 +774,17 @@ struct DlpDialog {
                     console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                   }
                   try {
-                    console.info(TAG, 'refresh dlp file', GlobalContext.getContext().getObject('dlpFileName') as string, GlobalContext.getContext().getObject('dlpFd') as number);
-                    await fs.close(GlobalContext.getContext().getObject('dlpFd') as number); // refresh file info
+                    console.info(TAG, 'refresh dlp file', GlobalContext.load('dlpFileName') as string, GlobalContext.load('dlpFd') as number);
+                    await fs.close(GlobalContext.load('dlpFd') as number); // refresh file info
                   } catch (err) {
                     console.error(TAG, 'refresh dlp file failed', (err as BusinessError).code, (err as BusinessError).message);
                   }
                 }
-                if (GlobalContext.getContext().getObject('fileOpenHistoryFromMain')) {
-                  (GlobalContext.getContext().getObject('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.getContext().getObject('uri') as string)
+                if (GlobalContext.load('fileOpenHistoryFromMain')) {
+                  (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
                 }
                 abilityResult.resultCode = 0;
-                (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
               })
               .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
             Button($r('app.string.sure'), {

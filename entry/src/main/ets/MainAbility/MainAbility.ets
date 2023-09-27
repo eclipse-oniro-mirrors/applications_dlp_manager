@@ -47,19 +47,19 @@ export default class MainAbility extends UIAbility {
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     console.info(TAG, 'onCreate');
-    GlobalContext.getContext().setObject('abilityWant', want);
-    GlobalContext.getContext().setObject('context', this.context);
-    GlobalContext.getContext().setObject('domainAccount', deviceInfo.deviceType === PHONE ? false : true);
-    GlobalContext.getContext().setObject('uri', want.uri ?? '');
+    GlobalContext.store('abilityWant', want);
+    GlobalContext.store('context', this.context);
+    GlobalContext.store('domainAccount', deviceInfo.deviceType === PHONE ? false : true);
+    GlobalContext.store('uri', want.uri ?? '');
 
-    GlobalContext.getContext().setObject('dsHelper', datafile.createFileAccessHelper(this.context));
+    GlobalContext.store('dsHelper', datafile.createFileAccessHelper(this.context));
     direction = this.context.config.direction ?? -1;
     languageValue = this.context.config.language ?? 'zh';
-    if (!GlobalContext.getContext().getObject('fileOpenHistoryFromMain')) {
-      GlobalContext.getContext().setObject('fileOpenHistoryFromMain', new Map<string, (string | number)[]>());
+    if (!GlobalContext.load('fileOpenHistoryFromMain')) {
+      GlobalContext.store('fileOpenHistoryFromMain', new Map<string, (string | number)[]>());
     }
-    if (!GlobalContext.getContext().getObject('linkSet')) {
-      GlobalContext.getContext().setObject('linkSet', new Set<string>());
+    if (!GlobalContext.load('linkSet')) {
+      GlobalContext.store('linkSet', new Set<string>());
     }
   }
   onConfigurationUpdate(newConfig: Configuration): void {
@@ -96,21 +96,21 @@ export default class MainAbility extends UIAbility {
 
   onNewWant(want: Want) {
     console.log(TAG, 'onNewWant', JSON.stringify(want));
-    GlobalContext.getContext().setObject('newWant', want);
-    GlobalContext.getContext().setObject('uri', (GlobalContext.getContext().getObject('abilityWant') as Want).uri as string);
+    GlobalContext.store('abilityWant', want);
+    GlobalContext.store('uri', (GlobalContext.load('abilityWant') as Want).uri as string);
 
     this.getNewWantPage();
   }
 
   async showErrorDialogAndExit(error: BusinessError): Promise<void> {
     //<!!!>
-    let abilityWant = GlobalContext.getContext().getObject('abilityWant') as Want;
+    let abilityWant = GlobalContext.load('abilityWant') as Want;
     if (abilityWant.parameters) {
       abilityWant.parameters.error = error;
     }
-    let context: common.UIAbilityContext = GlobalContext.getContext().getObject('context') as common.UIAbilityContext;
-    GlobalContext.getContext().setObject('alertContext', context);
-    (GlobalContext.getContext().getObject('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
+    let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
+    GlobalContext.store('alertContext', context);
+    (GlobalContext.load('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
       if (err.code !== 0) {
         console.error(TAG, 'loadContent failed', err.code, err.message);
       }
@@ -118,12 +118,12 @@ export default class MainAbility extends UIAbility {
   }
 
   async gotoPage(windowStage: window.WindowStage, accountInfo: osAccount.OsAccountInfo): Promise<void> {
-    let accountName: string = (GlobalContext.getContext().getObject('domainAccount') as boolean) ? accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
-    this.authPerm = getAuthPerm(accountName, (GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile).dlpProperty);
+    let accountName: string = (GlobalContext.load('domainAccount') as boolean) ? accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
+    this.authPerm = getAuthPerm(accountName, (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty);
     console.info(TAG, accountName, 'has dlp access', JSON.stringify(this.authPerm));
 
     AppStorage.SetOrCreate('authPerm', this.authPerm);
-    AppStorage.SetOrCreate<string>('contactAccount', (GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile).dlpProperty.contactAccount);
+    AppStorage.SetOrCreate<string>('contactAccount', (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty.contactAccount);
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -149,9 +149,9 @@ export default class MainAbility extends UIAbility {
 
   async findDlpFile(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      let abilityWant: Want = GlobalContext.getContext().getObject('abilityWant') as Want;
+      let abilityWant: Want = GlobalContext.load('abilityWant') as Want;
       const linkFileName: string = (abilityWant.parameters?.linkFileName as Record<string, string>)?.name;
-      let sandbox2linkFile:Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.getContext().getObject('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+      let sandbox2linkFile:Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       for (let value of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
         for (let linkFile of value) {
           if (linkFile[Constants.FILE_OPEN_HISTORY_ONE] === linkFileName) {
@@ -161,12 +161,12 @@ export default class MainAbility extends UIAbility {
               reject();
               return;
             }
-            GlobalContext.getContext().setObject('dlpFile', linkFile[Constants.FILE_OPEN_HISTORY_ZERO]);
-            GlobalContext.getContext().setObject('dlpFd', linkFile[Constants.FILE_OPEN_HISTORY_TWO]);
+            GlobalContext.store('dlpFile', linkFile[Constants.FILE_OPEN_HISTORY_ZERO]);
+            GlobalContext.store('dlpFd', linkFile[Constants.FILE_OPEN_HISTORY_TWO]);
             let dlpFileName: string = (abilityWant.parameters?.fileName as Record<string, string>)?.name;
-            GlobalContext.getContext().setObject('dlpFileName', dlpFileName);
-            GlobalContext.getContext().setObject('linkFileName', linkFileName);
-            console.info(TAG, 'find dlp file', dlpFileName, GlobalContext.getContext().getObject('dlpFd'));
+            GlobalContext.store('dlpFileName', dlpFileName);
+            GlobalContext.store('linkFileName', linkFileName);
+            console.info(TAG, 'find dlp file', dlpFileName, GlobalContext.load('dlpFd'));
             resolve();
             return;
           }
@@ -181,15 +181,15 @@ export default class MainAbility extends UIAbility {
   async openDlpFile(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let dlpFileName: string = ((GlobalContext.getContext().getObject('abilityWant')as Want).parameters?.fileName as Record<string, string>)?.name;
-        GlobalContext.getContext().setObject('dlpFileName', dlpFileName);
-        let dlpFd: number = getFileFd(GlobalContext.getContext().getObject('uri') as string);
-        GlobalContext.getContext().setObject('dlpFd', dlpFd);
+        let dlpFileName: string = ((GlobalContext.load('abilityWant')as Want).parameters?.fileName as Record<string, string>)?.name;
+        GlobalContext.store('dlpFileName', dlpFileName);
+        let dlpFd: number = getFileFd(GlobalContext.load('uri') as string);
+        GlobalContext.store('dlpFd', dlpFd);
         console.info(TAG, 'openDLPFile', dlpFileName, dlpFd);
-        GlobalContext.getContext().setObject('dlpFile', await dlpPermission.openDLPFile(dlpFd));
+        GlobalContext.store('dlpFile', await dlpPermission.openDLPFile(dlpFd));
         resolve();
       } catch (err) {
-        console.error(TAG, 'openDLPFile', GlobalContext.getContext().getObject('dlpFileName') as string, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+        console.error(TAG, 'openDLPFile', GlobalContext.load('dlpFileName') as string, 'failed', (err as BusinessError).code, (err as BusinessError).message);
         await this.showErrorDialogAndExit(err as BusinessError);
         reject(err);
       }
@@ -197,7 +197,7 @@ export default class MainAbility extends UIAbility {
   }
 
   checkValidWant(): boolean {
-    let parameters = (GlobalContext.getContext().getObject('abilityWant') as Want).parameters;
+    let parameters = (GlobalContext.load('abilityWant') as Want).parameters;
     if (parameters === undefined) {
       console.error(TAG, 'need parameters in want');
       return false;
@@ -210,7 +210,7 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need name in want.parameters.fileName');
       return false;
     }
-    if ((GlobalContext.getContext().getObject('abilityWant') as Want).uri === undefined) {
+    if ((GlobalContext.load('abilityWant') as Want).uri === undefined) {
       console.error(TAG, 'need uri in want');
       return false;
     }
@@ -220,8 +220,8 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need caller info in want.parameters');
       return false;
     }
-    let uri = String((GlobalContext.getContext().getObject('abilityWant') as Want).uri);
-    if ((GlobalContext.getContext().getObject('linkSet') as Set<string>).has(uri)) {
+    let uri = String((GlobalContext.load('abilityWant') as Want).uri);
+    if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
       console.error(TAG, 'invalid uri for opened link uri');
       return false;
     }
@@ -235,7 +235,7 @@ export default class MainAbility extends UIAbility {
 
   async getNewWantPage(): Promise<void> {
     console.log(TAG, 'getNewWantPage start');
-    let windowStage: window.WindowStage = GlobalContext.getContext().getObject('windowStage') as window.WindowStage;
+    let windowStage: window.WindowStage = GlobalContext.load('windowStage') as window.WindowStage;
     if (!this.checkValidWant()) {
       await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
       return;
@@ -253,7 +253,7 @@ export default class MainAbility extends UIAbility {
       return;
     }
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
-    GlobalContext.getContext().setObject('requestIsFromSandBox', requestIsFromSandBox);
+    GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
     console.info(TAG, 'request is from sandbox', requestIsFromSandBox);
     if (requestIsFromSandBox) {
       try {
@@ -262,12 +262,12 @@ export default class MainAbility extends UIAbility {
         return;
       }
     } else {
-      let fileName: string = ((GlobalContext.getContext().getObject('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
+      let fileName: string = ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
       let isDlpSuffix: boolean = fileName.endsWith('.dlp');
       if (!isDlpSuffix) {
         console.info(TAG, fileName, 'is not a dlp file');
-        GlobalContext.getContext().setObject('originFileName', fileName);
-        GlobalContext.getContext().setObject('originFd', getFileFd(GlobalContext.getContext().getObject('uri') as string));
+        GlobalContext.store('originFileName', fileName);
+        GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
         windowStage.loadContent('pages/encryptionProtection', (err: BusinessError) =>{
           if (err.code !== 0) {
             console.error(TAG, 'loadContent failed', err.code, err.message);
@@ -278,8 +278,8 @@ export default class MainAbility extends UIAbility {
         });
         return;
       } else {
-        let uri: string = GlobalContext.getContext().getObject('uri') as string;
-        if ((GlobalContext.getContext().getObject('fileOpenHistory') as Map<string, (number | string)[]>)?.has(uri)) {
+        let uri: string = GlobalContext.load('uri') as string;
+        if ((GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>)?.has(uri)) {
           await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
           return;
         }
@@ -288,8 +288,8 @@ export default class MainAbility extends UIAbility {
         } catch {
           return;
         }
-        let fileOpenHistoryFromMain: Map<string, (string | number)[]> = GlobalContext.getContext().getObject('fileOpenHistoryFromMain') as Map<string, (string | number)[]>;
-        fileOpenHistoryFromMain.set(uri, [uri, GlobalContext.getContext().getObject('dlpFileName') as string, GlobalContext.getContext().getObject('dlpFd') as number]);
+        let fileOpenHistoryFromMain: Map<string, (string | number)[]> = GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>;
+        fileOpenHistoryFromMain.set(uri, [uri, GlobalContext.load('dlpFileName') as string, GlobalContext.load('dlpFd') as number]);
         console.log(TAG, 'fileOpenHistoryFromMain add', JSON.stringify(fileOpenHistoryFromMain));
       }
     }
@@ -298,10 +298,10 @@ export default class MainAbility extends UIAbility {
 
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     console.info(TAG, 'onWindowStageCreate');
-    GlobalContext.getContext().setObject('windowStage', windowStage);
+    GlobalContext.store('windowStage', windowStage);
     try {
       let atManager = abilityAccessCtrl.createAtManager();
-      await atManager.requestPermissionsFromUser(GlobalContext.getContext().getObject('context') as common.UIAbilityContext, permissionList);
+      await atManager.requestPermissionsFromUser(GlobalContext.load('context') as common.UIAbilityContext, permissionList);
     } catch (err) {
       console.error(TAG, 'requestPermissionsFromUser failed', err.code, err.message);
       return;

@@ -34,7 +34,7 @@ export default class DataAbility extends ServiceExtensionAbility {
     let sandboxAppIndex: number = data.appIndex;
     let key: string = bundleName + sandboxAppIndex;
 
-    let authPerm2Sandbox:Map<dlpPermission.DLPFileAccess, (number | string)[]> = GlobalContext.getContext().getObject('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>;
+    let authPerm2Sandbox:Map<dlpPermission.DLPFileAccess, (number | string)[]> = GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>;
     for (let item of Array.from<(dlpPermission.DLPFileAccess|(number | string)[])[]>(authPerm2Sandbox)) {
       let itemKey = item[0];
       let itemValue = item[1];
@@ -44,7 +44,7 @@ export default class DataAbility extends ServiceExtensionAbility {
       }
     }
 
-    let token2File:Map<number, (number | string | dlpPermission.DLPFile)[]> = GlobalContext.getContext().getObject('token2File') as Map<number, (number | string | dlpPermission.DLPFile)[]>;
+    let token2File:Map<number, (number | string | dlpPermission.DLPFile)[]> = GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile)[]>;
     for (let item of Array.from<(number|(number | string | dlpPermission.DLPFile)[])[]>(token2File)) {
       let itemKey = item[0];
       let itemValue = item[1];
@@ -54,7 +54,7 @@ export default class DataAbility extends ServiceExtensionAbility {
       }
     }
     try {
-      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.getContext().getObject('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       if (sandbox2linkFile.has(key)) {
         let fileArray: (number | string | dlpPermission.DLPFile)[][] = sandbox2linkFile.get(key) as (number | string | dlpPermission.DLPFile)[][];
         for (let i of fileArray) {
@@ -79,21 +79,21 @@ export default class DataAbility extends ServiceExtensionAbility {
         }
         sandbox2linkFile.delete(key);
 
-        let fileOpenHistory:Map<string, (number | string)[]> = GlobalContext.getContext().getObject('fileOpenHistory') as Map<string, (number | string)[]>;
+        let fileOpenHistory:Map<string, (number | string)[]> = GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
         for (let item of Array.from<(string|(number | string)[])[]>(fileOpenHistory)) {
           let itemKey = item[0];
           let itemValue = item[1];
           let tmp: string = (itemValue[0] as string) + (itemValue[1] as number);
           if (tmp === key) {
             let linkUri: string = itemValue[INDEX_THREE] as string;
-            (GlobalContext.getContext().getObject('linkSet') as Set<string>).delete(linkUri);
+            (GlobalContext.load('linkSet') as Set<string>).delete(linkUri);
             fileOpenHistory.delete(itemKey as string);
           }
         }
 
         if (sandbox2linkFile.size === 0) {
           console.info(TAG, 'sandbox2linkFile empty');
-          (GlobalContext.getContext().getObject('dataContext') as common.ServiceExtensionContext).terminateSelf();
+          (GlobalContext.load('dataContext') as common.ServiceExtensionContext).terminateSelf();
         }
       }
     } catch (err) {
@@ -113,7 +113,7 @@ export default class DataAbility extends ServiceExtensionAbility {
 
   onCreate(want: Want): void {
     const context = this.context;
-    GlobalContext.getContext().setObject('dataContext', context);
+    GlobalContext.store('dataContext', context);
   }
 
   onRequest(want: Want, startId: number): void {

@@ -59,8 +59,8 @@ struct permissionTypeSelect {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT];
         this.index = Constants.ENCRYPTION_TYPE_SELECT;
         try {
-          (GlobalContext.getContext()
-            .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
+          (GlobalContext
+            .load('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
             .id, (error: BusinessError, value: string) => {
             if (error != null) {
               console.log("error is " + error);
@@ -75,8 +75,8 @@ struct permissionTypeSelect {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT_INDEX];
         this.index = Constants.ENCRYPTION_TYPE_SELECT_INDEX;
         try {
-          (GlobalContext.getContext()
-            .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
+          (GlobalContext
+            .load('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
             .id, (error: BusinessError, value: string) => {
             if (error != null) {
               console.log("error is " + error);
@@ -94,8 +94,8 @@ struct permissionTypeSelect {
   selectedItemUpdated(selectedItem: object): void {
     this.index = this.selectedItem.index;
     try {
-      (GlobalContext.getContext()
-        .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue(this.selectedItem.value?.id!, (error: BusinessError, value: string) => {
+      (GlobalContext
+        .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.selectedItem.value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
           console.log("error is " + error);
         } else {
@@ -114,8 +114,8 @@ struct permissionTypeSelect {
       })
     }
     try {
-      (GlobalContext.getContext()
-        .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
+      (GlobalContext
+        .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
           console.log("error is " + error);
         } else {
@@ -130,8 +130,8 @@ struct permissionTypeSelect {
     };
     let callback = (eventData: emitter.EventData) => {
       try {
-        (GlobalContext.getContext()
-          .getObject('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
+        (GlobalContext
+          .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
           if (error != null) {
             console.log("error is " + error);
           } else {
