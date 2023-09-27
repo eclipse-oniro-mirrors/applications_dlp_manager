@@ -31,7 +31,7 @@ import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
 import { startAlertAbility, getFileUriByPath, getFileFd } from '../common/utils';
-import Constants from '../common/constant';;
+import Constants from '../common/constant';
 import fileAccess from '@ohos.file.fileAccess';
 
 const TAG = '[DLPManager_SaveAs]';
@@ -81,17 +81,17 @@ const SIZE_OFFSET = 4;
 const ARGS_ZERO = 0;
 const ARGS_ONE = 1;
 const ARGS_TWO = 2;
-const ACTION = {
-  SELECT_ACTION: 'ohos.want.action.OPEN_FILE',
-  SELECT_ACTION_MODAL: 'ohos.want.action.OPEN_FILE_SERVICE',
-  SAVE_ACTION: 'ohos.want.action.CREATE_FILE',
-  SAVE_ACTION_MODAL: 'ohos.want.action.CREATE_FILE_SERVICE',
+const ACTION: Record<string, string> = {
+  'SELECT_ACTION': 'ohos.want.action.OPEN_FILE',
+  'SELECT_ACTION_MODAL': 'ohos.want.action.OPEN_FILE_SERVICE',
+  'SAVE_ACTION': 'ohos.want.action.CREATE_FILE',
+  'SAVE_ACTION_MODAL': 'ohos.want.action.CREATE_FILE_SERVICE',
 };
 
-const ErrCode = {
-  INVALID_ARGS: 13900020,
-  RESULT_ERROR: 13900042,
-  NAME_TOO_LONG: 13900030,
+const ErrCode: Record<string, number> = {
+  'INVALID_ARGS': 13900020,
+  'RESULT_ERROR': 13900042,
+  'NAME_TOO_LONG': 13900030,
 };
 
 const ERRCODE_MAP = new Map([
@@ -260,30 +260,26 @@ export default class SaveAsAbility extends UIAbility {
     return true;
   }
 
-  parseDocumentPickerSaveOption(args, action) {
-    let config = {
-      action: action,
-      parameters: {
-        startMode: 'save',
-      }
+  parseDocumentPickerSaveOption(args: picker.DocumentSaveOptions[], action: string) {
+    let config: Record<string, string | Record<string, Object>> = {
+      'action': action,
+      'parameters': {
+        'startMode': 'save',
+      } as Record<string, Object>
     };
 
     if (args.length > ARGS_ZERO && typeof args[ARGS_ZERO] === 'object') {
-      let option = args[ARGS_ZERO];
+      let option: picker.DocumentSaveOptions = args[ARGS_ZERO];
       if ((option.newFileNames !== undefined) && option.newFileNames.length > 0) {
-        //@ts-ignore
-        config.parameters.key_pick_file_name = option.newFileNames;
-        //@ts-ignore
-        config.parameters.saveFile = option.newFileNames[0];
+        config.parameters['key_pick_file_name'] = option.newFileNames;
+        config.parameters['saveFile'] = option.newFileNames[0];
       }
 
       if (option.defaultFilePathUri !== undefined) {
-        //@ts-ignore
-        config.parameters.key_pick_dir_path = option.defaultFilePathUri;
+        config.parameters['key_pick_dir_path'] = option.defaultFilePathUri;
       }
       if ((option.fileSuffixChoices !== undefined) && option.fileSuffixChoices.length > 0) {
-        //@ts-ignore
-        config.parameters.key_file_suffix_choices = option.fileSuffixChoices;
+        config.parameters['key_file_suffix_choices'] = option.fileSuffixChoices;
       }
     }
 
@@ -291,37 +287,36 @@ export default class SaveAsAbility extends UIAbility {
     return config;
   }
 
-  getDocumentPickerSaveResult(args) {
-    let saveResult = {
-      error: undefined,
-      data: undefined
+  getDocumentPickerSaveResult(args: ability.AbilityResult) {
+    let saveResult: Record<string, BusinessError | string[]> = {
+      'error': {} as BusinessError,
+      'data': []
     };
 
-    if ((args.resultCode !== undefined && args.resultCode === 0) || (args.result !== undefined && args.result === 0)) {
+    if ((args.resultCode !== undefined && args.resultCode === 0)) {
       if (args.want && args.want.parameters) {
-        saveResult.data = args.want.parameters.pick_path_return;
+        saveResult.data = args.want.parameters.pick_path_return as string[];
       }
-    } else if ((args.resultCode !== undefined && args.resultCode === -1) || (args.result !== undefined && args.result === 1)) {
+    } else if ((args.resultCode !== undefined && args.resultCode === -1)) {
       saveResult.data = [];
     } else {
-      saveResult.error = this.getErr(ErrCode.RESULT_ERROR);
+      saveResult.error = this.getErr(ErrCode.RESULT_ERROR) as BusinessError;
     }
 
     console.log(TAG, '[picker] Save saveResult: ' + JSON.stringify(saveResult));
     return saveResult;
   }
 
-  getErr(errCode) {
-    return {code: errCode, message: ERRCODE_MAP.get(errCode)};
+  getErr(errCode: number) {
+    return {code: errCode, message: ERRCODE_MAP.get(errCode)} as BusinessError;
   }
-  async documentPickerSave(...args) {
+  async documentPickerSave(...args: Object[]): Promise<BusinessError | string[] | undefined>  {
     let context = GlobalContext.getContext().getObject('context') as common.UIAbilityContext;
-    let config = undefined;
-    let result = undefined;
+    let config: Record<string, string | Record<string, Object>>;
+    let result: ability.AbilityResult;
     try {
       config = this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION_MODAL);
       config = this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION);
-      //@ts-ignore
       result = await context.startAbilityForResult(config, {windowMode: 0});
     } catch (error) {
       console.log(TAG, '[picker] error: ' + error);
@@ -329,13 +324,13 @@ export default class SaveAsAbility extends UIAbility {
     }
     console.log(TAG, '[picker] Save result: ' + JSON.stringify(result));
     try {
-      const saveResult = this.getDocumentPickerSaveResult(result);
+      const saveResult: Record<string, BusinessError | string[]> = this.getDocumentPickerSaveResult(result);
       if (args.length === ARGS_TWO && typeof args[ARGS_ONE] === 'function') {
-        return args[ARGS_ONE](saveResult.error, saveResult.data);
+        return (args[ARGS_ONE] as Function)(saveResult.error, saveResult.data);
       } else if (args.length === ARGS_ONE && typeof args[ARGS_ZERO] === 'function') {
-        return args[ARGS_ZERO](saveResult.error, saveResult.data);
+        return (args[ARGS_ZERO] as Function)(saveResult.error, saveResult.data);
       }
-      return new Promise((resolve, reject) => {
+      return new Promise<BusinessError | string[]>((resolve, reject) => {
         if (saveResult.data !== undefined) {
           resolve(saveResult.data);
         } else {
@@ -362,12 +357,12 @@ export default class SaveAsAbility extends UIAbility {
     DocumentSaveOptions.newFileNames = [displayName];
     let documentPicker = new picker.DocumentViewPicker();
     let dstFd: number;
-    let file: fs.File;
+    let file: fs.File | undefined;
 
     try {
 
-      let saveRes = await this.documentPickerSave(DocumentSaveOptions);
-      if (saveRes == undefined || saveRes.length == 0) {
+      let saveRes: BusinessError | string[] | undefined = await this.documentPickerSave(DocumentSaveOptions);
+      if (saveRes == undefined || (saveRes instanceof Array && saveRes.length == 0)) {
         console.error(TAG, 'fail to get uri');
         return;
       }
@@ -379,7 +374,9 @@ export default class SaveAsAbility extends UIAbility {
       } catch (err) {
         console.error(TAG, 'open', uri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
         try {
-          await fs.close(file);
+          if (file != undefined) {
+            await fs.close(file);
+          }
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
@@ -490,7 +487,9 @@ export default class SaveAsAbility extends UIAbility {
     } catch (err) {
       console.error(TAG, 'DocumentViewPicker failed', (err as BusinessError).code, (err as BusinessError).message);
       try {
-        await fs.close(file);
+        if (file != undefined) {
+          await fs.close(file);
+        }
       } catch (err) {
         console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
       }
