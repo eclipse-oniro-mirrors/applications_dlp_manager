@@ -64,7 +64,7 @@ struct DlpAlertDialog {
             if (this.action != null) {
               this.action()
             } else {
-              (GlobalContext.getContext().getObject('alertContext') as common.UIAbilityContext).terminateSelf();
+              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
             }
           })
       }

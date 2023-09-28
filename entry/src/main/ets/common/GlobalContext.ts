@@ -24,6 +24,14 @@ export default class GlobalContext {
     return GlobalContext.instance;
   }
 
+  static load(name: string): any {
+    return globalThis[name];
+  }
+
+  static store(name: string, obj: Object): void {
+    globalThis[name] = obj;
+  }
+
   getObject(key: string): Object | undefined {
     return this._objects.get(key);
   }

@@ -97,7 +97,7 @@ struct encryptionSuccess {
 
   aboutToAppear() {
     console.info(TAG, 'aboutToAppear, encrypt success');
-    this.directionStatus = (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).config.direction ?? -1;
+    this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -167,7 +167,7 @@ struct encryptionSuccess {
                     .width(Constants.HEADER_COLUMN_WIDTH)
 
                     Row() {
-                      Text(`${GlobalContext.getContext().getObject('dlpFileName') as string}`)
+                      Text(`${GlobalContext.load('dlpFileName') as string}`)
                         .fontSize($r('sys.float.ohos_id_text_size_body2'))
                         .fontColor($r('sys.color.ohos_id_color_secondary'))
                         .fontWeight(FontWeight.Regular)
@@ -541,10 +541,10 @@ struct encryptionSuccess {
                   .width(Constants.FOOTER_WIDTH_BUTTON)
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
-                    if (!(GlobalContext.getContext().getObject('requestIsFromSandBox') as boolean)) {
-                      let dlpFileName: string = GlobalContext.getContext().getObject('dlpFileName') as string;
-                      let dlpFd: number = GlobalContext.getContext().getObject('dlpFd') as number;
-                      let dlpFile: dlpPermission.DLPFile = GlobalContext.getContext().getObject('dlpFile') as dlpPermission.DLPFile;
+                    if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
+                      let dlpFileName: string = GlobalContext.load('dlpFileName') as string;
+                      let dlpFd: number = GlobalContext.load('dlpFd') as number;
+                      let dlpFile: dlpPermission.DLPFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
                       try {
                         console.info(TAG, 'closeDLPFile', dlpFileName, dlpFd);
                         await dlpFile.closeDLPFile();
@@ -558,11 +558,11 @@ struct encryptionSuccess {
                         console.error(TAG, 'refresh dlp file', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                       }
                     }
-                    if (GlobalContext.getContext().getObject('fileOpenHistoryFromMain')) {
-                      (GlobalContext.getContext().getObject('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.getContext().getObject('uri') as string)
+                    if (GlobalContext.load('fileOpenHistoryFromMain')) {
+                      (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
                     }
                     abilityResult.resultCode = 0;
-                    (GlobalContext.getContext().getObject('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                    (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                   })
               }
               .justifyContent(FlexAlign.Center)
