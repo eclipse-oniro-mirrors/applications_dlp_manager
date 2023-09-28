@@ -311,7 +311,7 @@ export default class SaveAsAbility extends UIAbility {
     return {code: errCode, message: ERRCODE_MAP.get(errCode)} as BusinessError;
   }
   async documentPickerSave(...args: Object[]): Promise<BusinessError | string[] | undefined>  {
-    let context = GlobalContext.getContext().getObject('context') as common.UIAbilityContext;
+    let context = GlobalContext.load('context') as common.UIAbilityContext;
     let config: Record<string, string | Record<string, Object>>;
     let result: ability.AbilityResult;
     try {
