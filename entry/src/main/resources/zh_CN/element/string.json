@@ -295,6 +295,14 @@
     {
       "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
       "value": "系统版本过低，无法打开在高版本系统上加密的文件，请升级系统后再试。"
+    },
+    {
+      "name": "encrypt_employee_id",
+      "value": "工号"
+    },
+    {
+      "name": "encrypt_domain",
+      "value": "域"
     }
   ]
 }

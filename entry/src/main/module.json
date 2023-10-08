@@ -94,6 +94,9 @@
       },
       {
         "name": "ohos.permission.MEDIA_LOCATION"
+      },
+      {
+        "name": "ohos.permission.GET_DOMAIN_ACCOUNTS"
       }
     ]
   }
