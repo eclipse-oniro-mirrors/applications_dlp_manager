@@ -103,7 +103,6 @@ export default class MainAbility extends UIAbility {
   }
 
   async showErrorDialogAndExit(error: BusinessError): Promise<void> {
-    //<!!!>
     let abilityWant = GlobalContext.load('abilityWant') as Want;
     if (abilityWant.parameters) {
       abilityWant.parameters.error = error;

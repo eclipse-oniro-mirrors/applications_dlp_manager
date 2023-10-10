@@ -13,13 +13,15 @@
  * limitations under the License.
  */
 
-import staffItem from './staff';
+
+import osAccount from '@ohos.account.osAccount';
+import { BusinessError } from '@ohos.base';
 import account_osAccount from '@ohos.account.osAccount';
+import staffItem from './staff';
 import Constants from '../constant';
 import { isPC } from '../utils';
 import GlobalContext from '../GlobalContext';
-import osAccount from '@ohos.account.osAccount';
-import { BusinessError } from '@ohos.base';
+
 
 interface Staff {
   authAccount: string;
@@ -42,6 +44,9 @@ struct staffInput {
   @State isInputInvalid: boolean = false;
   @State isNetworkInvalid: boolean = false;
   @State activeStaffIndex: number = -1;
+  @State domainTips: string = '';
+  @State accountNameTips: string = '';
+  @State handlePopupTips: boolean = false;
   @Link staffArray: Staff[];
 
   @Prop isDisable: boolean = false;
@@ -57,6 +62,50 @@ struct staffInput {
         })
     }.width(Constants.ENCRYPTION_ADD_STAFF_MENU_WIDTH)
   }
+
+  @Builder popupBuilderTips() {
+    Column() {
+      Row() {
+        Text($r('app.string.encrypt_employee_id'))
+          .fontFamily('HarmonyHeiTi')
+          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        Text(' : ')
+          .fontFamily('HarmonyHeiTi')
+          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        Text(this.accountNameTips)
+          .fontFamily('HarmonyHeiTi')
+          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+      }
+      .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
+      if (GlobalContext.load('domainAccount')) {
+        Row() {
+          Text($r('app.string.encrypt_domain'))
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+          Text(' : ')
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+          Text(this.domainTips)
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        }
+        .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
+      }
+    }
+    .padding({
+      left: Constants.ROW_FONT_SIZE,
+      right: Constants.ROW_FONT_SIZE,
+      top: Constants.DA_MARGIN_TOP,
+      bottom: Constants.DA_MARGIN_TOP
+    })
+  }
+
   removeItem(i: number) {
     this.staffArray.splice(i, 1)
     this.activeStaffIndex = -1
@@ -82,6 +131,7 @@ struct staffInput {
                 .opacity(Constants.PP_ROW_RADIUS)
                 .focusable(true)
                 .focusOnTouch(true)
+                .borderRadius(Constants.ENCRYPTION_SUCCESS_CHANGE_TOP)
                 .onKeyEvent((event?: KeyEvent) => {
                   if (event?.keyText === 'KEYCODE_DEL' &&
                     event.keyCode === 2055 && this.activeStaffIndex === index) {
@@ -93,6 +143,47 @@ struct staffInput {
                 })
                 .onClick(() => {
                   this.activeStaffIndex = index!;
+                  let domainAccountInfo: osAccount.DomainAccountInfo = {
+                    domain: 'china',
+                    accountName: item.authAccount.toLocaleLowerCase()
+                  }
+                  if (GlobalContext.load('domainAccount')) {
+                    try {
+                      account_osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo)
+                        .then((result: account_osAccount.DomainAccountInfo) => {
+                          this.domainTips = result.domain;
+                          this.accountNameTips = result.accountName;
+                        }).catch((err: BusinessError) => {
+                        console.log(TAG, 'call getAccountInfo failed, error: ' + JSON.stringify(err));
+                      });
+                    } catch (err) {
+                      console.log(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
+                    }
+                  } else {
+                    this.accountNameTips = item.authAccount;
+                  }
+                })
+                .padding(
+                  {
+                    top: Constants.FOOTER_ROW_PAD_LEFT,
+                    bottom: Constants.FOOTER_ROW_PAD_RIGHT,
+                  }
+                )
+                .margin({
+                  right: Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT,
+                  bottom: Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
+                })
+                .bindPopup(this.activeStaffIndex === index, {
+                  builder: this.popupBuilderTips,
+                  placement: Placement.Bottom,
+                  popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                  enableArrow: true,
+                  showInSubWindow: false,
+                  onStateChange: (e) => {
+                    if (!e.isVisible) {
+                      this.activeStaffIndex = -1;
+                    }
+                  }
                 })
                 .bindContextMenu(this.MenuBuilder(index!), isPC() ? ResponseType.RightClick : ResponseType.LongPress)
                 .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
@@ -104,7 +195,7 @@ struct staffInput {
         TextInput({
           text: this.inputId,
           placeholder: !this.staffArray.length ?
-            ((GlobalContext.load('domainAccount') as boolean)
+            ((GlobalContext.load('domainAccount') as boolean) 
               ? $r('app.string.enter_a_complete_work_ID') 
               : $r('app.string.enter_a_complete_account')) : undefined,
         })
@@ -195,12 +286,12 @@ struct staffInput {
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid) {
           Text((GlobalContext
-            .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
+          .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         if (this.isNetworkInvalid) {
           Text((GlobalContext
-            .load('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
+          .load('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         Blank()

@@ -195,7 +195,6 @@ let removeDuplicate = (arr: AuthAccount[], arg: string) => {
       map.set(item.authAccount, item);
     }
   }
-  // return [...map.values()];
   return Array.from<AuthAccount>(map.values());
 }
 
