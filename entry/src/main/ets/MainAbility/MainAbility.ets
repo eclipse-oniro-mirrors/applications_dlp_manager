@@ -92,6 +92,9 @@ export default class MainAbility extends UIAbility {
 
   onDestroy(): void {
     console.info(TAG, 'onDestroy');
+    if (GlobalContext.load('fileOpenHistoryFromMain')) {
+      (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+    }
   }
 
   onNewWant(want: Want) {
@@ -287,6 +290,7 @@ export default class MainAbility extends UIAbility {
         } catch {
           return;
         }
+        GlobalContext.store('fileOpenHistoryFromMain', new Map<string, (string | number)[]>());
         let fileOpenHistoryFromMain: Map<string, (string | number)[]> = GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>;
         fileOpenHistoryFromMain.set(uri, [uri, GlobalContext.load('dlpFileName') as string, GlobalContext.load('dlpFd') as number]);
         console.log(TAG, 'fileOpenHistoryFromMain add', JSON.stringify(fileOpenHistoryFromMain));
