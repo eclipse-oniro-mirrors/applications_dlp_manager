@@ -119,7 +119,7 @@ struct staffItem {
         .fontSize($r('sys.float.ohos_id_text_size_button2'))
     }
     .onClick(() => {
-      let domainAccountInfo: osAccount.DomainAccountInfo = {
+      let domainAccountInfo: account_osAccount.GetDomainAccountInfoOptions = {
         domain: 'china',
         accountName: this.authAccount.toLocaleLowerCase()
       }

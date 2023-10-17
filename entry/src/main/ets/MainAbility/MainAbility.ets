@@ -20,7 +20,7 @@ import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import deviceInfo from '@ohos.deviceInfo';
 import Constants from '../common/constant';
-import { getAuthPerm, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import { getAuthPerm, checkDomainAccountInfo, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
 import GlobalContext from '../common/GlobalContext'
 import { Configuration } from '@ohos.app.ability.Configuration';
 import Want from '@ohos.app.ability.Want';
@@ -250,7 +250,12 @@ export default class MainAbility extends UIAbility {
       await this.showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       return;
     }
-    if (!checkAccountLogin(accountInfo)) {
+    console.log(TAG + 'accountInfo', JSON.stringify(accountInfo));
+    if (!checkDomainAccountInfo(accountInfo)) {
+      if ( !accountInfo.domainInfo.isAuthenticated ) {
+        await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED } as BusinessError);
+        return;
+      }
       await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       return;
     }

@@ -27,11 +27,13 @@ const TAG = '[DLPManager_Alert]';
 struct Index {
   dlpAlertDialog?: CustomDialogController;
 
-  showErrorDialogAndExit(title: Resource, message: Resource) {
+  showErrorDialogAndExit(title: Resource, message: Resource, cancel?: Resource, ok?: Resource) {
     this.dlpAlertDialog = new CustomDialogController({
       builder: DlpAlertDialog({
         title: title,
-        message: message
+        message: message,
+        cancel: cancel,
+        ok: ok
       }),
       autoCancel: false,
       cancel: () => {
@@ -45,10 +47,8 @@ struct Index {
 
   async aboutToAppear() {
     try {
-      let errInfo = getAlertMessage(
-        (GlobalContext.load('abilityWant') as Want)
-	.parameters?.error as BusinessError);
-      this.showErrorDialogAndExit(errInfo.title as Resource, errInfo.msg as Resource);
+      let errInfo = getAlertMessage((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError);
+      this.showErrorDialogAndExit(errInfo.title as Resource, errInfo.msg as Resource, errInfo?.cancel as Resource, errInfo?.ok as Resource);
     } catch (err) {
       console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err as BusinessError));
     }

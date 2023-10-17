@@ -26,7 +26,7 @@ import fileUri from '@ohos.file.fileuri';
 import {
   getOsAccountInfo,
   getUserId,
-  checkAccountLogin,
+  checkDomainAccountInfo,
   getAuthPerm,
   startAlertAbility,
   getFileFd,
@@ -258,7 +258,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         reject(err); return;
       }
       hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
-      if (!checkAccountLogin(this.accountInfo)) {
+      if (!checkDomainAccountInfo(this.accountInfo)) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
         await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);

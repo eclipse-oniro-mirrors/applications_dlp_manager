@@ -303,6 +303,18 @@
     {
       "name": "encrypt_domain",
       "value": "Domain"
+    },
+    {
+      "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",
+      "value": "Login"
+    },
+    {
+      "name": "MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+      "value": "Your login information is not identified. This function is available only for enterprise users. Please log in to the enterprise account first."
+    },
+    {
+      "name": "MESSAGE_DLP_KNOWING_THAT",
+      "value": "Got it"
     }
   ]
 }
