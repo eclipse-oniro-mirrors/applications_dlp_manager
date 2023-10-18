@@ -549,7 +549,6 @@ struct changeEncryption {
                                 let showValue = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
                                 this.showNamesArrReadOnly = showValue.showNamesArr as AuthAccount[];
                                 this.ReadOnlyFlag = showValue.showFlag as boolean;
-                                this.ReadOnlyFlag = false;
                               })
                             }
                           }
@@ -560,6 +559,7 @@ struct changeEncryption {
                             this.rowNamesLenReadOnly = nameValue.rowNamesLen as number;
                             this.showNamesArrReadOnly = nameValue.showNamesArr as AuthAccount[];
                             this.hideNamesNumReadOnly = nameValue.hideNamesNum as string;
+                            this.ReadOnlyFlag = false;
                           }
                         })
                         .margin({
