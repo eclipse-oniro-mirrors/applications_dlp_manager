@@ -21,7 +21,7 @@ import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
 import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
-import { getAlertMessage, checkAccountLogin, getOsAccountInfo, calculate, toggleShow, directionStatus } from '../common/utils';
+import { getAlertMessage, checkDomainAccountInfo, getOsAccountInfo, calculate, toggleShow, directionStatus } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import osAccount from '@ohos.account.osAccount';
@@ -340,7 +340,7 @@ struct changeEncryption {
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
       return;
     }
-    if (!checkAccountLogin(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
+    if (!checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
       return;
     }

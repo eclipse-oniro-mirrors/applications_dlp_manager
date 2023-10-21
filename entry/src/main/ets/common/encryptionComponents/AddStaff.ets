@@ -143,7 +143,7 @@ struct staffInput {
                 })
                 .onClick(() => {
                   this.activeStaffIndex = index!;
-                  let domainAccountInfo: osAccount.DomainAccountInfo = {
+                  let domainAccountInfo: account_osAccount.GetDomainAccountInfoOptions = {
                     domain: 'china',
                     accountName: item.authAccount.toLocaleLowerCase()
                   }
@@ -232,7 +232,7 @@ struct staffInput {
               return
             }
             try {
-              let domainAccountInfo: osAccount.DomainAccountInfo = {
+              let domainAccountInfo: account_osAccount.GetDomainAccountInfoOptions = {
                 domain: 'china',
                 accountName: this.inputId.toLocaleLowerCase()
               }
@@ -265,9 +265,9 @@ struct staffInput {
                 this.inputId = ''
               }
             }
-            catch (e) {
+            catch (err) {
               this.isAccountCheckSuccess = true;
-              console.log(e.code);
+              console.err(TAG, (err as BusinessError).code);
             }
           })
           .onFocus(() => {

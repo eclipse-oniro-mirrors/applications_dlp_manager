@@ -303,6 +303,18 @@
     {
       "name": "encrypt_domain",
       "value": "域"
+    },
+    {
+      "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",
+      "value": "登录"
+    },
+    {
+      "name": "MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+      "value": "未识别到您的登录信息，此功能仅支持企业用户使用，请先登录企业帐号。"
+    },
+    {
+      "name": "MESSAGE_DLP_KNOWING_THAT",
+      "value": "知道了"
     }
   ]
 }

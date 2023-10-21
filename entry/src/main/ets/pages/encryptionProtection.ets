@@ -30,7 +30,7 @@ import {
   PermissionType,
   getAlertMessage,
   getOsAccountInfo,
-  checkAccountLogin,
+  checkDomainAccountInfo,
   getUserId,
   removeDuplicate,
   directionStatus,
@@ -260,7 +260,7 @@ struct DlpDialog {
       await this.catchProcess();
       return;
     }
-    if (!checkAccountLogin(accountInfo)) {
+    if (!checkDomainAccountInfo(accountInfo)) {
       fileio.closeSync(tempFd);
       fileio.unlinkSync(filePath);
       this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
@@ -564,7 +564,7 @@ struct DlpDialog {
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
       return;
     }
-    if (!checkAccountLogin(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
+    if (!checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
       return;
     }

@@ -12,16 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+ import account_osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';
+
+const TAG = '[DLPManager_dialog]';
 
 @CustomDialog
 struct DlpAlertDialog {
   controller?: CustomDialogController
   title?: Resource
   message?: Resource
+  cancel?: Resource
+  ok?: Resource
   action?: () => void
+
+  authWithPop(): void {
+    console.log(TAG, 'authwithpop start');
+    try {
+      account_osAccount.DomainAccountManager.authWithPopup({
+        onResult: (resultCode: number, authResult: account_osAccount.AuthResult) => {
+          console.log(TAG, 'auth resultCode = ' + resultCode);
+          console.log(TAG, 'auth authResult = ' + JSON.stringify(authResult));
+        }
+      })
+    } catch (err) {
+      console.log(TAG, 'auth exception = ' + JSON.stringify(err));
+    }
+  }
+
   build() {
     Column() {
       Row() {
@@ -50,16 +71,14 @@ struct DlpAlertDialog {
       }
       .margin({top: Constants.DA_MARGIN_TOP})
       .width(Constants.DA_SCROLL_WIDTH);
-      Row() {
-        Button($r('app.string.da_buttion'))
-          .width(Constants.ROW_BUTTON_WIDTH)
-          .height(Constants.ROW_BUTTON_HEIGHT)
-          .fontSize(Constants.ROW_FONT_SIZE)
-          .fontFamily($r('app.string.typeface'))
-          .fontWeight(FontWeight.Medium)
-          .fontColor($r('app.color.button_color'))
+      Flex({ direction: FlexDirection.Row }) {
+        Button(this.cancel? this.cancel : $r('app.string.da_buttion'), { type: ButtonType.Capsule, stateEffect: true })
           .backgroundColor($r('app.color.base_button_color'))
-          .onClick(() => {
+          .width(Constants.HEADER_TEXT_WIDTH)
+          .focusable(false)
+          .fontColor($r('app.color.encryption_cancel'))
+          .height(Constants.FOOTER_HEIGHT)
+          .onClick(async (event) => {
             this.controller?.close()
             if (this.action != null) {
               this.action()
@@ -67,10 +86,27 @@ struct DlpAlertDialog {
               (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
             }
           })
+          .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+        if (this.ok) {
+          Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
+            .backgroundColor($r('app.color.base_button_color'))
+            .width(Constants.HEADER_TEXT_WIDTH)
+            .focusable(false)
+            .fontColor($r('app.color.encryption_cancel'))
+            .height(Constants.FOOTER_BUTTON_HEIGHT)
+            .onClick(async (event) => {
+              this.authWithPop();
+              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
+            })
+            .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+        }
       }
-      .alignItems(VerticalAlign.Top)
-      .margin({ top: Constants.ROW_MARGIN_TOP })
-      .height(Constants.DA_ROW_HEIGHT)
+      .margin({
+        left: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
+        right: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
+        bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM,
+        top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
+      })
     }
     .width(Constants.DA_COLOUM_WIDTH)
     .borderRadius(Constants.DA_COLOUM_RADIUS)

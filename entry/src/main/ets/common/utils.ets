@@ -64,10 +64,13 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   return await accountMgr.getCurrentOsAccount();
 }
 
-function checkAccountLogin(accountInfo: account_osAccount.OsAccountInfo): boolean {
+function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): boolean {
   if (GlobalContext.load('domainAccount') as boolean) {
     if (accountInfo.domainInfo.accountName === '' &&
       accountInfo.domainInfo.accountId === '') {
+      return false;
+    }
+    if (!accountInfo.domainInfo.isAuthenticated) {
       return false;
     }
   } else {
@@ -136,6 +139,13 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       return { 'msg': $r('app.string.MESSAGE_DLP_OPEN_REJECT') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
       return { 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED') } as Record<string, Resource>;
+    case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:
+      return { 
+        'title': $r('app.string.header_title'),
+        'msg': $r('app.string.MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED'),
+        'cancel': $r('app.string.ban'),
+        'ok': $r('app.string.SYSTEM_IS_AUTHENTICATED_LOGIN')
+      } as Record<string, Resource>;
     case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
       return { 'msg': $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED')} as Record<string, Resource>;
     case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
@@ -258,7 +268,7 @@ export {
   AuthAccount,
   PermissionType,
   getOsAccountInfo,
-  checkAccountLogin,
+  checkDomainAccountInfo,
   getUserId,
   getAuthPerm,
   terminateSelfWithResult,

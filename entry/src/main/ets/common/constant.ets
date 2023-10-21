@@ -127,6 +127,7 @@ export default class Constants {
   static readonly ERR_JS_APP_GET_FILE_ASSET_ERROR = 5;
   static readonly ERR_JS_APP_OPEN_REJECTED = 6;
   static readonly ERR_JS_APP_ENCRYPTION_REJECTED = 7;
+  static readonly ERR_JS_APP_SYSTEM_IS_AUTHENTICATED = 8;
   static readonly ERR_JS_CREDENTIAL_TIMEOUT = 19100003;
   static readonly ERR_JS_CREDENTIAL_SERVICE_ERROR = 19100004;
   static readonly ERR_JS_CREDENTIAL_SERVER_ERROR = 19100005;
