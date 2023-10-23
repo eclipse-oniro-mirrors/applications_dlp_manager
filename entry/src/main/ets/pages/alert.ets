@@ -14,23 +14,28 @@
  */
 
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
+import GlobalContext from '../common/GlobalContext';
 import { getAlertMessage } from '../common/utils';
+import common from '@ohos.app.ability.common';
+import Want from '@ohos.app.ability.Want';
+import { BusinessError } from '@ohos.base'
+
 const TAG = '[DLPManager_Alert]';
 
 @Entry
 @Component
 struct Index {
-  dlpAlertDialog: CustomDialogController;
+  dlpAlertDialog?: CustomDialogController;
 
   showErrorDialogAndExit(title: Resource, message: Resource) {
     this.dlpAlertDialog = new CustomDialogController({
       builder: DlpAlertDialog({
         title: title,
-        message: message
+        message: message,
       }),
       autoCancel: false,
       cancel: () => {
-        globalThis.context.terminateSelf();
+        (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
       },
       alignment: DialogAlignment.Center,
       customStyle: true,
@@ -40,10 +45,10 @@ struct Index {
 
   async aboutToAppear() {
     try {
-      let errInfo = getAlertMessage(globalThis.abilityWant.parameters.error)
-      this.showErrorDialogAndExit(errInfo.title, errInfo.msg);
+      let errInfo = getAlertMessage((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError);
+      this.showErrorDialogAndExit(errInfo.title as Resource, errInfo.msg as Resource);
     } catch (err) {
-      console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err))
+      console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err as BusinessError));
     }
   }
 

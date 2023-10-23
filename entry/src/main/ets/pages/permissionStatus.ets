@@ -14,9 +14,21 @@
  */
 
 import Constants from '../common/constant';
+import GlobalContext from '../common/GlobalContext';
 import { directionStatus } from '../common/utils';
+import common from '@ohos.app.ability.common';
 
 const TAG = "[DLPManager_PermStat]";
+
+class Content_ {
+  label: Resource | undefined = undefined
+  value: boolean = false
+}
+
+class TitleContent {
+  title: Resource | undefined = undefined
+  content: Content_[] = []
+}
 
 @Entry
 @Component
@@ -25,7 +37,7 @@ struct PermissionStatus {
   @State authPerm: number = Constants.PP_IMAGE_PAD;
   @State authPermFlag: boolean = false;
   @State accountId: string = '';
-  private array1: any = [
+  private array1: TitleContent[] = [
     {
       title: ($r('app.string.perm_list_title_read_only')),
       content: [
@@ -75,7 +87,7 @@ struct PermissionStatus {
       ]
     }
   ];
-  private array2: any = [
+  private array2: TitleContent[] = [
     {
       title: ($r('app.string.perm_list_title_read_only')),
       content: [
@@ -128,15 +140,16 @@ struct PermissionStatus {
 
   aboutToAppear() {
     console.info(TAG, 'aboutToAppear');
-    this.authPerm = AppStorage.Get('authPerm');
-    this.accountId = AppStorage.Get('contactAccount');
-    this.directionStatus = globalThis.context.config.direction;
+    this.authPerm = AppStorage.Get('authPerm') ?? 1;
+    this.accountId = AppStorage.Get('contactAccount') ?? '';
+    this.directionStatus = (GlobalContext
+      .load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
   }
 
-  @Builder itemHead(text: string) {
+  @Builder itemHead(text?: string | Resource) {
     Text(text)
       .fontSize($r('sys.float.ohos_id_text_size_body2'))
       .width(Constants.HEADER_COLUMN_WIDTH)
@@ -203,9 +216,9 @@ struct PermissionStatus {
                   .margin({ bottom: Constants.DU_LINE_MARGIN_TOP2 })
 
                   List() {
-                    ForEach(this.authPerm === Constants.FOOTER_OPACITY_ONE ? this.array1 : this.array2, (item) => {
+                    ForEach(this.authPerm === Constants.FOOTER_OPACITY_ONE ? this.array1 : this.array2, (item: TitleContent) => {
                       ListItemGroup({ header: this.itemHead(item.title) }) {
-                        ForEach(item.content, (item) => {
+                        ForEach(item.content, (item: Content_) => {
                           ListItem() {
                             Row() {
                               Text(item.label)
@@ -221,7 +234,7 @@ struct PermissionStatus {
                                 .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
                             }
                           }
-                        }, item => JSON.stringify(item))
+                        }, (item: Content_) => JSON.stringify(item))
                       }
                       .divider({
                         strokeWidth: Constants.FOOTER_OPACITY_ONE,
@@ -265,7 +278,7 @@ struct PermissionStatus {
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
                   .height(Constants.FOOTER_BUTTON_HEIGHT)
                   .onClick(() => {
-                    globalThis.context.terminateSelf()
+                    (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf()
                   })
               }
               .justifyContent(FlexAlign.Center)

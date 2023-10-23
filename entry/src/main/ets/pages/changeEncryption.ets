@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import ability from '@ohos.ability.ability';
 import router from '@ohos.router';
 import dlpPermission from '@ohos.dlpPermission';
 import picker from '@ohos.file.picker';
@@ -22,13 +23,27 @@ import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
 import { getAlertMessage, checkAccountLogin, getOsAccountInfo, calculate, toggleShow, directionStatus } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
+import GlobalContext from '../common/GlobalContext';
+import osAccount from '@ohos.account.osAccount';
+import common from '@ohos.app.ability.common';
+import { BusinessError } from '@ohos.base';
 
 const TAG = '[DLPManager_ModEnc]';
 
-let abilityResult = {
+class PermissionValue {
+  value: Resource | undefined
+  data: string = ''
+  index: number = 0
+}
+
+let abilityResult: ability.AbilityResult = {
   'resultCode': 0,
   'want': {}
 };
+
+interface AuthAccount {
+  authAccount: string;
+}
 
 @Extend(Text) function customizeText() {
   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
@@ -38,7 +53,8 @@ let abilityResult = {
 
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
-  ownerAccountType: globalThis.domainAccount ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  ownerAccountType: GlobalContext.load('domainAccount') as Boolean
+    ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
   authUserList: [],
   contactAccount: '',
   offlineAccess: true,
@@ -47,23 +63,22 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 };
 let defaultDlpFile: dlpPermission.DLPFile = {
   dlpProperty: defaultDlpProperty,
-  recoverDLPFile: null,
-  closeDLPFile: null,
-  addDLPLinkFile: null,
-  stopFuseLink: null,
-  resumeFuseLink: null,
-  replaceDLPLinkFile: null,
-  deleteDLPLinkFile: null
+  recoverDLPFile: async() => {},
+  closeDLPFile: async() => {},
+  addDLPLinkFile: async() => {},
+  stopFuseLink: async() => {},
+  resumeFuseLink: async() => {},
+  replaceDLPLinkFile: async() => {},
+  deleteDLPLinkFile: async() => {}
 };
 
 @Entry
 @Component
 struct changeEncryption {
-  dlpAlertDialog: CustomDialogController;
-  srcFileName: string;
-  linkFileName: string;
+  dlpAlertDialog?: CustomDialogController;
+  srcFileName: string = '';
+  linkFileName: string = '';
   @State directionStatus: number = 0;
-  @State transferData: object = {};
   @State handlePopup: boolean = false;
   @State handlePopupReadOnly: boolean = false;
   @State handlePopupEdit: boolean = false;
@@ -77,41 +92,33 @@ struct changeEncryption {
   @State hideNamesNumEdit: string = '0';
   @State hideNamesNumReadOnly: string = '0';
   @State prepareData: boolean = false;
-  @State showNamesArrEdit: {
-    authAccount: string,
-  }[] = [];
-  @State showNamesArrReadOnly: {
-    authAccount: string,
-  }[] = [];
-  @State staffDataArrayReadOnly: {
-    authAccount: string,
-  }[] = [];
-  @State staffDataArrayEdit: {
-    authAccount: string,
-  }[] = [];
-  private routerData: any = {};
-  private dlpFd: number;
-  @State permissionDict: [any, any, any] = [
+  @State showNamesArrEdit: AuthAccount[] = [];
+  @State showNamesArrReadOnly: AuthAccount[] = [];
+  @State staffDataArrayReadOnly: AuthAccount[] = [];
+  @State staffDataArrayEdit: AuthAccount[] = [];
+  private routerData: Record<string, AuthAccount[]> = {};
+  private dlpFd: number = 0;
+  @State permissionDict: PermissionValue[] = [
     {
-      value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as any, data: 'target', index: 0
+      value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as Resource, data: 'target', index: 0
     },
     {
-      value: $r('app.string.PERMISSION_TYPE_SELECT_ALL') as any, data: 'all', index: 1
+      value: $r('app.string.PERMISSION_TYPE_SELECT_ALL') as Resource, data: 'all', index: 1
     },
     {
-      value: $r('app.string.PERMISSION_TYPE_SELECT_SELF') as any, data: 'self', index: 2
+      value: $r('app.string.PERMISSION_TYPE_SELECT_SELF') as Resource, data: 'self', index: 2
     }
   ];
-  @State selectedPermissionTypeReadOnly: {
-    data?: string,
-    value?: string,
-    index?: number
-  } = {}
-  @State selectedPermissionTypeEdit: {
-    data?: string,
-    value?: string,
-    index?: number
-  } = {}
+  @State selectedPermissionTypeReadOnly: PermissionValue = {
+    data: '',
+    value: $r('app.string.PERMISSION_TYPE_SELECT_ALL'),
+    index: 0
+  }
+  @State selectedPermissionTypeEdit: PermissionValue = {
+    data: '',
+    value: $r('app.string.PERMISSION_TYPE_SELECT_ALL'),
+    index: 1
+  }
 
   @Builder popupBuilderReadOnly() {
     Row() {
@@ -158,7 +165,7 @@ struct changeEncryption {
     this.dlpAlertDialog.open();
   }
 
-  showErrorDialogAndExit(title, message) {
+  showErrorDialogAndExit(title: Resource, message: Resource) {
     this.dlpAlertDialog = new CustomDialogController({
       builder: DlpAlertDialog({
         title: title,
@@ -171,25 +178,25 @@ struct changeEncryption {
   }
 
   async catchProcess() {
-    if (globalThis.requestIsFromSandBox) {
+    if (GlobalContext.load('requestIsFromSandBox')) {
       try {
         console.info(TAG, 'resumeFuseLink', this.srcFileName);
         await this.dlpFile.resumeFuseLink();
       } catch (err) {
-        console.error(TAG, 'resumeFuseLink failed', err.code, err.message);
+        console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
       }
     }
   }
 
   async unEncrypt() {
     let plaintextFile = this.srcFileName.split('.')[0] + '.' + this.srcFileName.split('.')[1];
-    if (globalThis.requestIsFromSandBox) {
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
         console.info(TAG, 'stopFuseLink', this.srcFileName);
         await this.dlpFile.stopFuseLink();
       } catch (err) {
-        console.error(TAG, 'stopFuseLink failed', err.code, err.message);
-        this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as any);
+        console.error(TAG, 'stopFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
+        this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
         return;
       }
     }
@@ -206,25 +213,25 @@ struct changeEncryption {
         }
         console.info(TAG, 'get uri', saveRes)
         let uri = saveRes[0];
-        let dstFd = null;
-        let uriInfo = null;
-        let file = null;
+        let dstFd: number = 0;
+        let uriInfo: fileUri.FileUri | undefined = undefined;
+        let file: fs.File | undefined = undefined;
         try {
           uriInfo = new fileUri.FileUri(uri);
         } catch (err) {
-          console.log(TAG, 'fileUri fail', err.code, err.message);
+          console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
         }
         try {
           file = await fs.open(uri, fs.OpenMode.READ_WRITE);
           dstFd = file.fd;
         } catch (err) {
-          console.error(TAG, 'open', uri, 'failed', err.code, err.message);
+          console.error(TAG, 'open', uri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           try {
-            await fs.unlink(uriInfo.path);
+            await fs.unlink(uriInfo!.path);
           } catch (err) {
-            console.log(TAG, 'unlink fail', err.code, err.message);
+            console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
           }
-          this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as any,$r('app.string.MESSAGE_APP_INSIDE_ERROR') as any);
+          this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
           await this.catchProcess();
           return;
         };
@@ -232,20 +239,20 @@ struct changeEncryption {
           console.info(TAG, 'recoverDLPFile', this.srcFileName, this.dlpFd);
           await this.dlpFile.recoverDLPFile(dstFd);
         } catch (err) {
-          console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', err.code, err.message);
+          console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           try {
             await fs.close(file);
           } catch (err) {
-            console.log(TAG, 'close fail', err.code, err.message);
+            console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
           }
           try {
-            await fs.unlink(uriInfo.path);
+            await fs.unlink(uriInfo!.path);
           } catch (err) {
-            console.log(TAG, 'unlink fail', err.code, err.message);
+            console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
           }
           let errorInfo = getAlertMessage(
               err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
-          this.showErrorDialog(errorInfo.title, errorInfo.msg);
+          this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
           await this.catchProcess();
           return;
         }
@@ -253,46 +260,48 @@ struct changeEncryption {
         try {
           await fs.close(file);
         } catch (err) {
-          console.log(TAG, 'close fail', err.code, err.message);
+          console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
-        if (globalThis.requestIsFromSandBox) { //no need close dlp file in sandbox
+        if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
           try {
             console.info(TAG, 'resumeFuseLink', this.srcFileName);
             await this.dlpFile.resumeFuseLink();
           } catch (err) {
-            console.error(TAG, 'resumeFuseLink failed', err.code, err.message);
+            console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
           }
         } else {
           try {
             console.info(TAG, 'closeDLPFile', this.srcFileName, this.dlpFd);
             await this.dlpFile.closeDLPFile();
           } catch (err) {
-            console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', err.code, err.message);
+            console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           }
         }
-        if (globalThis.fileOpenHistoryFromMain) {
-          delete globalThis.fileOpenHistoryFromMain[globalThis.uri];
+        if (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>) {
+          (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>).delete(GlobalContext.load('uri') as string);
         }
         abilityResult.resultCode = 0;
-        globalThis.context.terminateSelfWithResult(abilityResult);
-      }).catch((err) => {
+        (GlobalContext
+          .load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+      }).catch((err: number) => {
         console.error(TAG, 'DocumentViewPicker save failed', JSON.stringify(err));
       });
     } catch (err) {
-      console.error(TAG, 'Decrypt DLP file', this.srcFileName, 'failed', JSON.stringify(err));
+      console.error(TAG, 'Decrypt DLP file', this.srcFileName, 'failed', JSON.stringify(err as BusinessError));
     }
   }
 
-  async showData(defaultDlpProperty) {
+  async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
     this.permissionDict.forEach(async (item, index) => {
-      this.permissionDict[index].value = await globalThis.context.resourceManager.getString(item.value.id)
+      this.permissionDict[index].value = $r(await (GlobalContext
+        .load('context') as common.UIAbilityContext).resourceManager.getString(item.value!.id))
     })
-    let readOnlyData = defaultDlpProperty.authUserList.filter(item => {
+    let readOnlyData = (defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 1;
-    })
-    let editData = defaultDlpProperty.authUserList.filter(item => {
+    })) ?? []
+    let editData = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 2;
-    })
+    }) ?? []
     const filterEditFilter = () => {
       if (editData.length === 0) {
         this.selectedPermissionTypeEdit = this.permissionDict[2];
@@ -317,43 +326,44 @@ struct changeEncryption {
       filterEditFilter()
     }
     this.routerData = {
-      staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-      staffDataArrayEdit: this.staffDataArrayEdit,
-    }
+      'staffDataArrayReadOnly': this.staffDataArrayReadOnly,
+      'staffDataArrayEdit': this.staffDataArrayEdit,
+    } as Record<string, AuthAccount[]>
   }
 
   async aboutToAppear() {
     this.prepareData = true;
     try {
-      globalThis.accountInfo = await getOsAccountInfo();
+      GlobalContext.store("accountInfo", await getOsAccountInfo());
     } catch (err) {
-      console.error(TAG, 'getOsAccountInfo failed', err.code, err.message);
+      console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
       return;
     }
-    if (!checkAccountLogin(globalThis.accountInfo)) {
+    if (!checkAccountLogin(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
       this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
       return;
     }
 
-    if (globalThis.requestIsFromSandBox) {
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       console.info(TAG, 'request from sandbox');
-      this.linkFileName = globalThis.linkFileName;
-      this.dlpFd = globalThis.dlpFd;
-      this.srcFileName = globalThis.dlpFileName;
-      this.dlpFile = globalThis.dlpFile;
+      this.linkFileName = GlobalContext.load('linkFileName') as string;
+      this.dlpFd = GlobalContext.load('dlpFd') as number;
+      this.srcFileName = GlobalContext.load('dlpFileName') as string;
+      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
     } else {
       console.info(TAG, 'request from normal');
-      this.dlpFd = globalThis.dlpFd;
-      this.srcFileName = globalThis.dlpFileName;
-      this.dlpFile = globalThis.dlpFile;
+      this.dlpFd = GlobalContext.load('dlpFd') as number;
+      this.srcFileName = GlobalContext.load('dlpFileName') as string;
+      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
     }
     await this.showData(this.dlpFile.dlpProperty);
     setTimeout(() => {
       this.prepareData = false;
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
 
-    this.directionStatus = globalThis.context.config.direction;
+    this.directionStatus = (GlobalContext
+      .load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -507,14 +517,14 @@ struct changeEncryption {
                           if (this.staffDataArrayReadOnly['length'] > 0) {
                             ForEach(
                               this.showNamesArrReadOnly,
-                              (item, index) => {
+                              (item: dlpPermission.AuthUser, index) => {
                                 staffItem({
                                   authAccount: item.authAccount,
                                   isActive: false,
                                   changeIndex: Number(index),
                                 })
                               },
-                              (item) => item.authAccount
+                              (item: dlpPermission.AuthUser) => item.authAccount
                             )
                             if (Number(this.hideNamesNumReadOnly) > 0) {
                               Row() {
@@ -536,19 +546,20 @@ struct changeEncryption {
                               }
                               .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                               .onClick(() => {
-                                let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
-                                this.showNamesArrReadOnly = showNamesArr;
-                                this.ReadOnlyFlag = showFlag;
+                                let showValue = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
+                                this.showNamesArrReadOnly = showValue.showNamesArr as AuthAccount[];
+                                this.ReadOnlyFlag = showValue.showFlag as boolean;
                               })
                             }
                           }
                         }
                         .onAreaChange((oldValue: Area, newValue: Area) => {
                           if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                            let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayReadOnly);
-                            this.rowNamesLenReadOnly = rowNamesLen;
-                            this.showNamesArrReadOnly = showNamesArr;
-                            this.hideNamesNumReadOnly = hideNamesNum;
+                            let nameValue = calculate(newValue, this.staffDataArrayReadOnly);
+                            this.rowNamesLenReadOnly = nameValue.rowNamesLen as number;
+                            this.showNamesArrReadOnly = nameValue.showNamesArr as AuthAccount[];
+                            this.hideNamesNumReadOnly = nameValue.hideNamesNum as string;
+                            this.ReadOnlyFlag = false;
                           }
                         })
                         .margin({
@@ -647,14 +658,14 @@ struct changeEncryption {
                           if (this.staffDataArrayEdit['length'] > 0) {
                             ForEach(
                               this.showNamesArrEdit,
-                              (item, index) => {
+                              (item: dlpPermission.AuthUser, index) => {
                                 staffItem({
                                   authAccount: item.authAccount,
                                   isActive: false,
                                   changeIndex: Number(index),
                                 })
                               },
-                              (item) => item.authAccount
+                              (item: dlpPermission.AuthUser) => item.authAccount
                             )
                             if (Number(this.hideNamesNumEdit) > 0) {
                               Row() {
@@ -676,19 +687,20 @@ struct changeEncryption {
                               }
                               .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                               .onClick(() => {
-                                let { showNamesArr, showFlag } = toggleShow(this.staffDataArrayEdit, this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
-                                this.showNamesArrEdit = showNamesArr;
-                                this.editFlag = showFlag;
+                                let showValue = toggleShow(this.staffDataArrayEdit, this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
+                                this.showNamesArrEdit = showValue.showNamesArr as AuthAccount[];
+                                this.editFlag = showValue.showFlag as boolean;
                               })
                             }
                           }
                         }
                         .onAreaChange((oldValue: Area, newValue: Area) => {
                           if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                            let {rowNamesLen, showNamesArr, hideNamesNum} = calculate(newValue, this.staffDataArrayEdit);
-                            this.rowNamesLenEdit = rowNamesLen;
-                            this.showNamesArrEdit = showNamesArr;
-                            this.hideNamesNumEdit = hideNamesNum;
+                            let nameValue = calculate(newValue, this.staffDataArrayEdit);
+                            this.rowNamesLenEdit = nameValue.rowNamesLen as number;
+                            this.showNamesArrEdit = nameValue.showNamesArr as AuthAccount[];
+                            this.hideNamesNumEdit = nameValue.hideNamesNum as string;
+                            this.editFlag = false;
                           }
                         })
                         .margin({
@@ -744,7 +756,7 @@ struct changeEncryption {
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
                     // update the global resource;
-                    globalThis.dlpFile = this.dlpFile;
+                    GlobalContext.store('dlpFile', this.dlpFile);
                     router.replaceUrl({
                       url: 'pages/encryptionProtection',
                       params: this.routerData
