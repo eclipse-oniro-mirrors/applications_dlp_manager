@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
- import account_osAccount from '@ohos.account.osAccount';
+import account_osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';

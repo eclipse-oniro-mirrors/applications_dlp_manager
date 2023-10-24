@@ -41,21 +41,18 @@ struct EncryptingPanel {
               left: Constants.HEADER_COLUMN_PADDING_LEFT,
               right: Constants.HEADER_COLUMN_PADDING_RIGHT
             })
-
-            Row() {
+            Column() {
               LoadingProgress()
                 .color(Color.Blue)
                 .height(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
                 .width(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
-            }
-
-            Row() {
               Text($r('app.string.encryption_loading_title'))
                 .fontSize($r('sys.float.ohos_id_text_size_body1'))
                 .fontColor(0xCCCCCC)
-                .width(Constants.HEADER_TEXT_WIDTH)
-                .textAlign(TextAlign.Center)
             }
+            .height(Constants.ENCRYPTION_LOADING_CONTENT_HEIGHT)
+            .alignItems(HorizontalAlign.Center)
+            .justifyContent(FlexAlign.Center)
           }
           .width(Constants.HEADER_COLUMN_WIDTH)
           .height(Constants.ENCRYPTION_LOADING_HEIGHT)
