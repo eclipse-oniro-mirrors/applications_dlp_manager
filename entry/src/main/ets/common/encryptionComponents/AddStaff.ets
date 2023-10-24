@@ -232,7 +232,7 @@ struct staffInput {
               return
             }
             try {
-              let domainAccountInfo: account_osAccount.GetDomainAccountInfoOptions = {
+              let domainAccountInfo: osAccount.DomainAccountInfo = {
                 domain: 'china',
                 accountName: this.inputId.toLocaleLowerCase()
               }
@@ -264,10 +264,9 @@ struct staffInput {
                 this.staffArray.push(o2)
                 this.inputId = ''
               }
-            }
-            catch (err) {
+            }catch (err) {
               this.isAccountCheckSuccess = true;
-              console.err(TAG, (err as BusinessError).code);
+              console.error(TAG, (err as BusinessError).code);
             }
           })
           .onFocus(() => {
