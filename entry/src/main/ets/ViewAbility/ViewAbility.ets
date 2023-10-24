@@ -500,7 +500,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
       (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
     }
     //uri permission just for pc
-    console.debug(TAG, 'domainAccount:', GlobalContext.load('domainAccount') as boolean);
     if(GlobalContext.load('domainAccount') as boolean){
       let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION | wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
       let targetBundleName = this.sandboxBundleName;

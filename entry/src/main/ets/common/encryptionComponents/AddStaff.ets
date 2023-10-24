@@ -264,7 +264,7 @@ struct staffInput {
                 this.staffArray.push(o2)
                 this.inputId = ''
               }
-            }catch (err) {
+            } catch (err) {
               this.isAccountCheckSuccess = true;
               console.error(TAG, (err as BusinessError).code);
             }
