@@ -295,6 +295,14 @@
     {
       "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
       "value": "The system version is too early to open encrypted files on the system of a later version. Upgrada the system and try again."
+    },
+    {
+      "name": "encrypt_employee_id",
+      "value": "Employee ID"
+    },
+    {
+      "name": "encrypt_domain",
+      "value": "Domain"
     }
   ]
 }

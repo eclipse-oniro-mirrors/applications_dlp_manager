@@ -13,10 +13,19 @@
  * limitations under the License.
  */
 
-import staffItem from './staff';
+
+import osAccount from '@ohos.account.osAccount';
+import { BusinessError } from '@ohos.base';
 import account_osAccount from '@ohos.account.osAccount';
+import staffItem from './staff';
 import Constants from '../constant';
 import { isPC } from '../utils';
+import GlobalContext from '../GlobalContext';
+
+
+interface Staff {
+  authAccount: string;
+}
 
 const TAG = "[DLPManager_AddStaff]";
 @Extend(Text) function inputMessageText() {
@@ -35,12 +44,13 @@ struct staffInput {
   @State isInputInvalid: boolean = false;
   @State isNetworkInvalid: boolean = false;
   @State activeStaffIndex: number = -1;
-  @Link staffArray: {
-    authAccount: string,
-  }[];
+  @State domainTips: string = '';
+  @State accountNameTips: string = '';
+  @State handlePopupTips: boolean = false;
+  @Link staffArray: Staff[];
 
-  @Prop isDisable: boolean;
-  @Builder MenuBuilder(index) {
+  @Prop isDisable: boolean = false;
+  @Builder MenuBuilder(index: number) {
     Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
       Text($r('app.string.delete_account'))
         .fontSize($r('sys.float.ohos_id_text_size_sub_title1'))
@@ -52,7 +62,51 @@ struct staffInput {
         })
     }.width(Constants.ENCRYPTION_ADD_STAFF_MENU_WIDTH)
   }
-  removeItem(i) {
+
+  @Builder popupBuilderTips() {
+    Column() {
+      Row() {
+        Text($r('app.string.encrypt_employee_id'))
+          .fontFamily('HarmonyHeiTi')
+          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        Text(' : ')
+          .fontFamily('HarmonyHeiTi')
+          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        Text(this.accountNameTips)
+          .fontFamily('HarmonyHeiTi')
+          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+      }
+      .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
+      if (GlobalContext.load('domainAccount')) {
+        Row() {
+          Text($r('app.string.encrypt_domain'))
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+          Text(' : ')
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+          Text(this.domainTips)
+            .fontFamily('HarmonyHeiTi')
+            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        }
+        .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
+      }
+    }
+    .padding({
+      left: Constants.ROW_FONT_SIZE,
+      right: Constants.ROW_FONT_SIZE,
+      top: Constants.DA_MARGIN_TOP,
+      bottom: Constants.DA_MARGIN_TOP
+    })
+  }
+
+  removeItem(i: number) {
     this.staffArray.splice(i, 1)
     this.activeStaffIndex = -1
     this.staffArrayLength = false;
@@ -66,7 +120,7 @@ struct staffInput {
       }) {
         ForEach(
           this.staffArray,
-          (item, index) => {
+          (item: Staff, index) => {
             Stack() {
               staffItem({
                 authAccount: item.authAccount,
@@ -77,28 +131,73 @@ struct staffInput {
                 .opacity(Constants.PP_ROW_RADIUS)
                 .focusable(true)
                 .focusOnTouch(true)
-                .onKeyEvent((event: KeyEvent) => {
-                  if (event.keyText === 'KEYCODE_DEL' &&
+                .borderRadius(Constants.ENCRYPTION_SUCCESS_CHANGE_TOP)
+                .onKeyEvent((event?: KeyEvent) => {
+                  if (event?.keyText === 'KEYCODE_DEL' &&
                     event.keyCode === 2055 && this.activeStaffIndex === index) {
                     this.removeItem(index)
                   }
-                  if (event.keyText === 'KEYCODE_FORWARD_DEL' && event.keyCode === 2071 && this.activeStaffIndex === index) {
+                  if (event?.keyText === 'KEYCODE_FORWARD_DEL' && event.keyCode === 2071 && this.activeStaffIndex === index) {
                     this.removeItem(index)
                   }
                 })
                 .onClick(() => {
-                  this.activeStaffIndex = index;
+                  this.activeStaffIndex = index!;
+                  let domainAccountInfo: account_osAccount.GetDomainAccountInfoOptions = {
+                    domain: 'china',
+                    accountName: item.authAccount.toLocaleLowerCase()
+                  }
+                  if (GlobalContext.load('domainAccount')) {
+                    try {
+                      account_osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo)
+                        .then((result: account_osAccount.DomainAccountInfo) => {
+                          this.domainTips = result.domain;
+                          this.accountNameTips = result.accountName;
+                        }).catch((err: BusinessError) => {
+                        console.log(TAG, 'call getAccountInfo failed, error: ' + JSON.stringify(err));
+                      });
+                    } catch (err) {
+                      console.log(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
+                    }
+                  } else {
+                    this.accountNameTips = item.authAccount;
+                  }
                 })
-                .bindContextMenu(this.MenuBuilder(index), isPC() ? ResponseType.RightClick : ResponseType.LongPress)
+                .padding(
+                  {
+                    top: Constants.FOOTER_ROW_PAD_LEFT,
+                    bottom: Constants.FOOTER_ROW_PAD_RIGHT,
+                  }
+                )
+                .margin({
+                  right: Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT,
+                  bottom: Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
+                })
+                .bindPopup(this.activeStaffIndex === index, {
+                  builder: this.popupBuilderTips,
+                  placement: Placement.Bottom,
+                  popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                  enableArrow: true,
+                  showInSubWindow: false,
+                  onStateChange: (e) => {
+                    if (!e.isVisible) {
+                      this.activeStaffIndex = -1;
+                    }
+                  }
+                })
+                .bindContextMenu(this.MenuBuilder(index!), isPC() ? ResponseType.RightClick : ResponseType.LongPress)
                 .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
                 .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
             }
           },
-          (item) => item.authAccount
+          (item: Staff) => item.authAccount
         )
         TextInput({
           text: this.inputId,
-          placeholder: !this.staffArray.length && (globalThis.domainAccount ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')),
+          placeholder: !this.staffArray.length ?
+            ((GlobalContext.load('domainAccount') as boolean) 
+              ? $r('app.string.enter_a_complete_work_ID') 
+              : $r('app.string.enter_a_complete_account')) : undefined,
         })
           .flexGrow(Constants.ENCRYPTION_ADD_STAFF_FLEX_GROW)
           .backgroundColor($r('app.color.da_button_color'))
@@ -133,18 +232,19 @@ struct staffInput {
               return
             }
             try {
-              let domainAccountInfo = {
+              let domainAccountInfo: osAccount.DomainAccountInfo = {
                 domain: 'china',
                 accountName: this.inputId.toLocaleLowerCase()
               }
-              if (globalThis.domainAccount) {
+              if (GlobalContext.load('domainAccount')) {
                 this.isAccountCheckSuccess = false;
                 account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err, isExist) => {
                   this.isAccountCheckSuccess = true;
                   if (isExist) {
-                    this.staffArray.push({
+                    let o1: Staff = {
                       authAccount: this.inputId.toLocaleLowerCase(),
-                    })
+                    }
+                    this.staffArray.push(o1)
                     this.inputId = '';
                   } else {
                     if ([Constants.ERR_JS_INVALID_PARAMETER, Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(err.code)){
@@ -158,9 +258,10 @@ struct staffInput {
                 })
               } else {
                 this.isAccountCheckSuccess = true;
-                this.staffArray.push({
+                let o2: Staff = {
                   authAccount: this.inputId,
-                })
+                }
+                this.staffArray.push(o2)
                 this.inputId = ''
               }
             }
@@ -184,11 +285,13 @@ struct staffInput {
 
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid) {
-          Text(globalThis.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
+          Text((GlobalContext
+          .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         if (this.isNetworkInvalid) {
-          Text(globalThis.domainAccount ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
+          Text((GlobalContext
+          .load('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         Blank()
