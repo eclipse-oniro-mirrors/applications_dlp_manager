@@ -33,6 +33,7 @@ import abilityManager from '@ohos.app.ability.abilityManager';
 import { startAlertAbility, getFileUriByPath, getFileFd } from '../common/utils';
 import Constants from '../common/constant';
 import fileAccess from '@ohos.file.fileAccess';
+import zlib from '@ohos.zlib';
 
 const TAG = '[DLPManager_SaveAs]';
 let permissionList: Array<Permissions> = [
@@ -232,7 +233,41 @@ export default class SaveAsAbility extends UIAbility {
     return true;
   }
 
+  deleteFile(file:string) {
+    try {
+      let res = fs.accessSync(file);
+      if (res) {
+        fs.unlinkSync(file);
+      }
+    } catch (err) {
+      console.error(TAG, 'deleteFile ', (err as BusinessError).code, (err as BusinessError).message);
+    }
+  }
+
+  rmDir(file:string) {
+    try {
+      let res = fs.accessSync(file);
+      if (res) {
+        fs.rmdirSync(file);
+      }
+    } catch (err) {
+      console.error(TAG, 'rmdirSync ', (err as BusinessError).code, (err as BusinessError).message);
+    }
+  }
+
   async copyDlpHead(srcFd: number, dstFd: number): Promise<boolean> {
+    let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
+    let appDir = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/';
+    let filePath = appDir + "saveAs" + random;
+    let dirPath = appDir + "saveAsUnzip" + random;
+    let encFile = appDir + "/encrypted_data";
+    let zipPath = appDir + "saveAsZip" + random;
+    let zipName = zipPath + ".zip";
+    let zipFlag = false;
+    let retVal = false;
+
+    let ff:fs.File = undefined;
+    let zf2:fs.File = undefined;
     try {
       let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
       let option: option_ = {
@@ -242,22 +277,59 @@ export default class SaveAsAbility extends UIAbility {
       let num = fs.readSync(srcFd, z, option);
       let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
 
-      let txtOffset = buf[TXT_OFFSET];
-      let head = new ArrayBuffer(txtOffset);
-      option = {
-        offset: 0,
-        length: txtOffset
-      };
-      num = fs.readSync(srcFd, head, option);
-      let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
-      buf2[SIZE_OFFSET] = 0;
-      num = fs.writeSync(dstFd, head, option);
+      let magic = buf[0];
+      if (magic === Constants.DLP_ZIP_MAGIC) {
+        zipFlag = true;
+        ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+        await fs.copyFile(srcFd, ff.fd);
+        await fs.mkdir(dirPath);
+        let options: zlib.Options = {
+          level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
+          memLevel:zlib.MemLevel.MEM_LEVEL_DEFAULT,
+          strategy:zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
+        };
+        await zlib.decompressFile(filePath, dirPath, options);
+        await fs.truncate(encFile);
+        await zlib.compressFile(dirPath, zipPath, options);
+
+        zf2 = await fs.open(zipName, fs.OpenMode.READ_WRITE);
+        await fs.copyFile(zf2.fd, dstFd);
+        await fs.close(ff);
+        await fs.close(zf2);
+        retVal = true;
+      } else {
+        let txtOffset = buf[TXT_OFFSET];
+        let head = new ArrayBuffer(txtOffset);
+        option = {
+          offset: 0,
+          length: txtOffset
+        };
+        num = fs.readSync(srcFd, head, option);
+        let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
+        buf2[SIZE_OFFSET] = 0;
+        num = fs.writeSync(dstFd, head, option);
+        retVal = true;
+      }
     } catch (err) {
       console.error(TAG, 'copyDlpHead ', (err as BusinessError).code, (err as BusinessError).message);
-      return false;
+      try {
+        await fs.close(ff);
+        await fs.close(zf2);
+      } catch (error) {
+        console.error(TAG, 'close ', (err as BusinessError).code, (err as BusinessError).message);
+      }
     }
 
-    return true;
+    if (zipFlag) {
+      this.deleteFile(dirPath + "/encrypted_data");
+      this.deleteFile(dirPath + "/dlp_general_info");
+      this.deleteFile(dirPath + "/dlp_cert");
+      this.rmDir(dirPath);
+      this.deleteFile(filePath);
+      this.deleteFile(zipName);
+    }
+
+    return retVal;
   }
 
   parseDocumentPickerSaveOption(args: picker.DocumentSaveOptions[], action: string) {

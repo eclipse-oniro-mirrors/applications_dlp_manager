@@ -172,4 +172,6 @@ export default class Constants {
   static RAND_START = 2;
   static RAND_END = 10;
   static BUNDLE_LEN = 20;
+
+  static DLP_ZIP_MAGIC = 0x04034b50;
 }
