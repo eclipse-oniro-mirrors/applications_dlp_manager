@@ -136,9 +136,9 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_OPEN_REJECTED:
-      return { 'msg': $r('app.string.MESSAGE_DLP_OPEN_REJECT') } as Record<string, Resource>;
+      return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_OPEN_REJECT') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
-      return { 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED') } as Record<string, Resource>;
+      return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:
       return { 
         'title': $r('app.string.header_title'),
