@@ -20,7 +20,7 @@ import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import deviceInfo from '@ohos.deviceInfo';
 import Constants from '../common/constant';
-import { getAuthPerm, checkDomainAccountInfo, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import { getAuthPerm, checkDomainAccountInfo, getOsAccountInfo, judgeIsSandBox, getFileFd, getAppId } from '../common/utils';
 import GlobalContext from '../common/GlobalContext'
 import { Configuration } from '@ohos.app.ability.Configuration';
 import Want from '@ohos.app.ability.Want';
@@ -188,7 +188,15 @@ export default class MainAbility extends UIAbility {
         let dlpFd: number = getFileFd(GlobalContext.load('uri') as string);
         GlobalContext.store('dlpFd', dlpFd);
         console.info(TAG, 'openDLPFile', dlpFileName, dlpFd);
-        GlobalContext.store('dlpFile', await dlpPermission.openDLPFile(dlpFd));
+        let callerAppId: string;
+        try {
+          let callerBundleName = (GlobalContext.load('abilityWant') as Want).parameters?.['ohos.dlp.params.bundleName'] as string;
+          callerAppId = await getAppId(callerBundleName);
+          console.info(TAG, 'get AppId', callerAppId);
+        } catch {
+          return;
+        }
+        GlobalContext.store('dlpFile', await dlpPermission.openDLPFile(dlpFd, callerAppId));
         resolve();
       } catch (err) {
         console.error(TAG, 'openDLPFile', GlobalContext.load('dlpFileName') as string, 'failed', (err as BusinessError).code, (err as BusinessError).message);
