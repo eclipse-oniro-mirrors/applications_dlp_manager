@@ -53,24 +53,28 @@ struct DlpAlertDialog {
           .fontSize(Constants.DA_FONT_SIZE)
           .fontColor($r('sys.color.ohos_id_color_text_primary'))
           .fontWeight(FontWeight.Medium)
+          .align(Alignment.Start)
       }
+      .width(Constants.HEADER_COLUMN_WIDTH)
       .height(this.title ? Constants.DA_ROW_HEIGHT : '')
-      .width(Constants.DA_ROW_WIDTH)
+      .padding({
+        left: Constants.HEADER_COLUMN_PADDING_LEFT,
+        right: Constants.HEADER_COLUMN_PADDING_RIGHT
+      })
       Row() {
-        Scroll() {
-          Text(this.message)
-            .lineHeight(Constants.DA_SCROLL_LINE_HEIGHT)
-            .width(Constants.DU_WIDTH_FULL)
-            .fontFamily($r('app.string.typeface'))
-            .fontSize(Constants.DA_SCROLL_FONT_SIZE)
-            .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-            .fontWeight(FontWeight.Regular)
-        }
-        .scrollBarColor(Color.Gray).scrollBarWidth(Constants.DA_SCROLL_BAR_WIDTH)
-        .constraintSize({maxHeight: Constants.DA_STRAIN_SIZE_MA_HEIGHT})
+        Text(this.message)
+          .lineHeight(Constants.DA_SCROLL_LINE_HEIGHT)
+          .fontFamily($r('app.string.typeface'))
+          .fontSize(Constants.DA_SCROLL_FONT_SIZE)
+          .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+          .fontWeight(FontWeight.Regular)
+          .textAlign(TextAlign.Start)
       }
-      .margin({top: Constants.DA_MARGIN_TOP})
-      .width(Constants.DA_SCROLL_WIDTH);
+      .align(Alignment.Center)
+      .padding({
+        left: Constants.HEADER_COLUMN_PADDING_LEFT,
+        right: Constants.HEADER_COLUMN_PADDING_RIGHT
+      })
       Flex({ direction: FlexDirection.Row }) {
         Button(this.cancel? this.cancel : $r('app.string.da_buttion'), { type: ButtonType.Capsule, stateEffect: true })
           .backgroundColor($r('app.color.base_button_color'))
@@ -102,13 +106,13 @@ struct DlpAlertDialog {
         }
       }
       .margin({
-        left: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
-        right: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
+        left: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
+        right: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
         bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM,
         top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
       })
     }
-    .width(Constants.DA_COLOUM_WIDTH)
+    .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
     .borderRadius(Constants.DA_COLOUM_RADIUS)
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('app.color.da_button_color'))
