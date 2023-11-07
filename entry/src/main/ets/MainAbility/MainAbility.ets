@@ -39,7 +39,6 @@ let permissionList: Array<Permissions> = [
 ];
 
 let direction: number = -1;
-let languageValue: string = 'zh';
 
 export default class MainAbility extends UIAbility {
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
@@ -54,7 +53,6 @@ export default class MainAbility extends UIAbility {
 
     GlobalContext.store('dsHelper', datafile.createFileAccessHelper(this.context));
     direction = this.context.config.direction ?? -1;
-    languageValue = this.context.config.language ?? 'zh';
     if (!GlobalContext.load('fileOpenHistoryFromMain')) {
       GlobalContext.store('fileOpenHistoryFromMain', new Map<string, (string | number)[]>());
     }
@@ -66,9 +64,6 @@ export default class MainAbility extends UIAbility {
     if (direction !== newConfig.direction) {
       direction = newConfig.direction ?? -1;
     }
-    if (languageValue !== newConfig.language) {
-      languageValue = newConfig.language ?? 'zh';
-    }
     let eventData: emitter.EventData = {
       data: {
         'direction': direction,
@@ -78,16 +73,6 @@ export default class MainAbility extends UIAbility {
       priority: emitter.EventPriority.HIGH
     };
     emitter.emit(innerEvent, eventData);
-
-    let languageData: emitter.EventData = {
-      data: {
-        'languageValue': languageValue,
-      }};
-    let languageEvent: emitter.InnerEvent = {
-      eventId: Constants.ENCRYPTION_EMIT_LANGUAGE_VALUE,
-      priority: emitter.EventPriority.HIGH
-    };
-    emitter.emit(languageEvent, languageData);
   }
 
   onDestroy(): void {
