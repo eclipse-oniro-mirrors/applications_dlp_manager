@@ -260,7 +260,7 @@ export default class SaveAsAbility extends UIAbility {
     let appDir = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/';
     let filePath = appDir + "saveAs" + random;
     let dirPath = appDir + "saveAsUnzip" + random;
-    let encFile = appDir + "/encrypted_data";
+    let encFile = dirPath + "/encrypted_data";
     let zipPath = appDir + "saveAsZip" + random;
     let zipName = zipPath + ".zip";
     let zipFlag = false;
@@ -438,7 +438,7 @@ export default class SaveAsAbility extends UIAbility {
         console.error(TAG, 'fail to get uri');
         return;
       }
-      console.info(TAG, 'get uri', saveRes)
+
       uri = saveRes[0]
       try {
         file = await fs.open(uri, fs.OpenMode.READ_WRITE);
@@ -549,8 +549,6 @@ export default class SaveAsAbility extends UIAbility {
       (GlobalContext.load("linkSet") as Set<string>).add(linkUri);
 
       this.resultUri = getFileUriByPath(linkFilePath);
-
-      console.info(TAG, 'result uri is', this.resultUri);
 
       (this.result.want?.parameters?.pick_path_return as string[]).push(this.resultUri);
       this.result.resultCode = 0;
