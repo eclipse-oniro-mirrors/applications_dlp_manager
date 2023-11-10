@@ -37,7 +37,7 @@ const TAG = "[DLPManager_AddStaff]";
   .textAlign(TextAlign.Start)
 }
 @Component
-struct staffInput {
+struct AddStaff {
   @State inputId: string = ''
   @State isAccountCheckSuccess: boolean = true;
   @State staffArrayLength: boolean = false;
@@ -53,8 +53,8 @@ struct staffInput {
   @Builder MenuBuilder(index: number) {
     Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
       Text($r('app.string.delete_account'))
-        .fontSize($r('sys.float.ohos_id_text_size_sub_title1'))
-        .textAlign(TextAlign.Center)
+        .fontSize($r('sys.float.ohos_id_text_size_body1'))
+        .textAlign(TextAlign.Start)
         .width(Constants.ENCRYPTION_ADD_STAFF_MENU_WIDTH)
         .height(Constants.ENCRYPTION_ADD_STAFF_MENU_HEIGHT)
         .onClick(() => {
@@ -310,4 +310,4 @@ struct staffInput {
   }
 }
 
-export default staffInput;
+export { AddStaff };

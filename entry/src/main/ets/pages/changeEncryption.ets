@@ -21,7 +21,15 @@ import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
 import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
-import { getAlertMessage, checkDomainAccountInfo, getOsAccountInfo, calculate, toggleShow, directionStatus } from '../common/utils';
+import {
+  getAlertMessage,
+  checkDomainAccountInfo,
+  getOsAccountInfo,
+  calculate,
+  toggleShow,
+  directionStatus,
+  showErrorDialogAndExit
+} from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import osAccount from '@ohos.account.osAccount';
@@ -162,18 +170,6 @@ struct changeEncryption {
       autoCancel: false,
       customStyle: true,
     });
-    this.dlpAlertDialog.open();
-  }
-
-  showErrorDialogAndExit(title: Resource, message: Resource) {
-    this.dlpAlertDialog = new CustomDialogController({
-      builder: DlpAlertDialog({
-        title: title,
-        message: message
-      }),
-      autoCancel: false,
-      customStyle: true
-    })
     this.dlpAlertDialog.open();
   }
 
@@ -337,11 +333,12 @@ struct changeEncryption {
       GlobalContext.store("accountInfo", await getOsAccountInfo());
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
+      showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError)
       return;
     }
-    if (!checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
-      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+    let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
+    if (codeMessage) {
+      showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       return;
     }
 

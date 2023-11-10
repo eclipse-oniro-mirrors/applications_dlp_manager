@@ -34,11 +34,12 @@ import {
   getUserId,
   removeDuplicate,
   directionStatus,
-  AuthAccount
+  AuthAccount,
+  showErrorDialogAndExit
 } from '../common/utils';
 import Constants from '../common/constant';
-import permissionTypeSelect from '../common/encryptionComponents/permission_type_select';
-import AddStaff from '../common/encryptionComponents/AddStaff';
+import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
+import { AddStaff } from '../common/encryptionComponents/AddStaff';
 import GlobalContext from '../common/GlobalContext'
 import common from '@ohos.app.ability.common';
 
@@ -148,19 +149,6 @@ struct DlpDialog {
     this.dlpAlertDialog.open();
   }
 
-  showErrorDialogAndExit(title: Resource, message: Resource) {
-    this.dlpAlertDialog = new CustomDialogController({
-      builder: DlpAlertDialog({
-        title: title,
-        message: message
-      }),
-      autoCancel: false,
-      customStyle: true
-    })
-    this.dlpAlertDialog.open();
-  }
-
-
   async sendDlpFileCreateFault(code: number, reason?: string) {
     let event: hiSysEvent.SysEventInfo = {
       domain: 'DLP',
@@ -260,7 +248,8 @@ struct DlpDialog {
       await this.catchProcess();
       return;
     }
-    if (!checkDomainAccountInfo(accountInfo)) {
+    let codeMessage = checkDomainAccountInfo(accountInfo);
+    if (codeMessage) {
       fileio.closeSync(tempFd);
       fileio.unlinkSync(filePath);
       this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
@@ -558,14 +547,15 @@ struct DlpDialog {
 
   async checkAccount() {
     try {
-      GlobalContext.store('accountInfo', await getOsAccountInfo());
+      GlobalContext.store("accountInfo", await getOsAccountInfo());
     } catch (err) {
-      console.error(TAG, 'getOsAccountInfo failed:', JSON.stringify(err));
-      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'))
+      console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
+      showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       return;
     }
-    if (!checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo)) {
-      this.showErrorDialogAndExit($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
+    let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
+    if (codeMessage) {
+      showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       return;
     }
   }

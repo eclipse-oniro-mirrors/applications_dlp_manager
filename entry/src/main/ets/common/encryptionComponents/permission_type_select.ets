@@ -169,4 +169,4 @@ struct permissionTypeSelect {
   }
 }
 
-export default permissionTypeSelect;
+export { permissionTypeSelect };
