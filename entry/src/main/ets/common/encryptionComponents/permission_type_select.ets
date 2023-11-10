@@ -125,24 +125,6 @@ struct permissionTypeSelect {
     } catch (error) {
       console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
     }
-    let innerEvent: emitter.InnerEvent = {
-      eventId: Constants.ENCRYPTION_EMIT_LANGUAGE_VALUE
-    };
-    let callback = (eventData: emitter.EventData) => {
-      try {
-        (GlobalContext
-          .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
-          if (error != null) {
-            console.log("error is " + error);
-          } else {
-            this.text = value;
-          }
-        });
-      } catch (error) {
-        console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
-      }
-    };
-    emitter.on(innerEvent, callback);
     setTimeout(() => {
       this.selectedItem = this.permissionTypes[0];
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
