@@ -30,7 +30,7 @@ import * as ns from '@ohos.app.ability.UIAbility';
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
-import { startAlertAbility, getFileUriByPath, getFileFd } from '../common/utils';
+import { startAlertAbility, getFileUriByPath, getFileFd, getAppId } from '../common/utils';
 import Constants from '../common/constant';
 import fileAccess from '@ohos.file.fileAccess';
 import zlib from '@ohos.zlib';
@@ -487,9 +487,17 @@ export default class SaveAsAbility extends UIAbility {
           } as BusinessError);
         return;
       }
+      let callerAppId: string;
+      try {
+        let callerBundleName = (GlobalContext.load('abilityWant') as Want).parameters?.['ohos.dlp.params.bundleName'] as string;
+          callerAppId = await getAppId(callerBundleName);
+          console.info(TAG, 'get AppId', callerAppId);
+      } catch {
+        return;
+      }
       let newDlpFile: dlpPermission.DLPFile;
       try {
-        newDlpFile = await dlpPermission.openDLPFile(dstFd);
+        newDlpFile = await dlpPermission.openDLPFile(dstFd, callerAppId);
       } catch (err) {
         console.error(TAG, 'generateDlpFile', dstFd, 'failed', (err as BusinessError).code, (err as BusinessError).message);
         try {
