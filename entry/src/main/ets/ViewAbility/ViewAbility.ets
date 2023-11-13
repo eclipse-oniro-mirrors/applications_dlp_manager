@@ -30,7 +30,8 @@ import {
   getAuthPerm,
   startAlertAbility,
   getFileFd,
-  getFileUriByPath
+  getFileUriByPath,
+  getAppId
 } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext'
@@ -86,6 +87,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   sortByAuthPerm: boolean = false;
   userId: number = -1;
   linkFileWriteable: boolean = false;
+  callerBundleName: string = '';
 
   async onCreate(want: Want): Promise<void> {
     GlobalContext.store('viewContext', this.context);
@@ -277,7 +279,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.startTrace('DlpOpenDlpFileJs', startId);
       try {
         console.info(TAG, 'openDLPFile', this.fileName, this.dlpFd);
-        this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd);
+        let callerAppId: string;
+        try {
+          callerAppId = await getAppId(this.callerBundleName);
+          console.info(TAG, 'get AppId', callerAppId);;
+        } catch {
+          return;
+        }
+        this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd, callerAppId);
       } catch (err) {
         console.error(TAG, 'openDLPFile', this.fileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
         try {
@@ -469,6 +478,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async onRequest(want: Want, startId: number): Promise<void> {
     console.debug(TAG, 'enter onRequest');
+    this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
     if ((GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
       await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
       return;

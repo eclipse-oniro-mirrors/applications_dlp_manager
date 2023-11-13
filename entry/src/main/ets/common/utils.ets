@@ -280,6 +280,25 @@ async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
   });
 }
 
+function getAppId(bundleName: string) {
+  return new Promise<string>(async resolve => {
+    let bundleFlags: number = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO;
+    let userId = await getUserId();
+    try {
+      bundleManager.getBundleInfo(bundleName, bundleFlags, userId, (err, data) => {
+        if (err) {
+          console.error(TAG, 'get appId failed', (err as BusinessError).code, (err as BusinessError).message);
+          resolve('');
+        } else {
+          resolve(data.signatureInfo.appId);
+        }
+      })
+    } catch (err) {
+      console.error(TAG, 'get appId failed', (err as BusinessError).code, (err as BusinessError).message);
+      resolve('');
+    }
+  })
+}
 
 export {
   AuthAccount,
@@ -299,5 +318,6 @@ export {
   toggleShow,
   directionStatus,
   isPC,
-  showErrorDialogAndExit
+  showErrorDialogAndExit,
+  getAppId
 };

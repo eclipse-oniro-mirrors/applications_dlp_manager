@@ -26,6 +26,7 @@ import {
   getOsAccountInfo,
   judgeIsSandBox,
   getFileFd,
+  getAppId,
   showErrorDialogAndExit
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext'
@@ -166,7 +167,15 @@ export default class MainAbility extends UIAbility {
         let dlpFd: number = getFileFd(GlobalContext.load('uri') as string);
         GlobalContext.store('dlpFd', dlpFd);
         console.info(TAG, 'openDLPFile', dlpFileName, dlpFd);
-        GlobalContext.store('dlpFile', await dlpPermission.openDLPFile(dlpFd));
+        let callerAppId: string;
+        try {
+          let callerBundleName = (GlobalContext.load('abilityWant') as Want).parameters?.['ohos.dlp.params.bundleName'] as string;
+          callerAppId = await getAppId(callerBundleName);
+          console.info(TAG, 'get AppId', callerAppId);
+        } catch {
+          return;
+        }
+        GlobalContext.store('dlpFile', await dlpPermission.openDLPFile(dlpFd, callerAppId));
         resolve();
       } catch (err) {
         console.error(TAG, 'openDLPFile', GlobalContext.load('dlpFileName') as string, 'failed', (err as BusinessError).code, (err as BusinessError).message);
