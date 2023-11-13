@@ -118,6 +118,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   }
 
   startAbility(want: Want, startId: number): void {
+    console.log(TAG, 'start sandbox begin');
     (GlobalContext.load('viewContext') as common.ServiceExtensionContext).startAbility(want, async (err) => {
       hiTraceMeter.finishTrace('DlpStartSandboxJs', startId);
       if (err && err.code !== 0) {
@@ -260,7 +261,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
         reject(err); return;
       }
       hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
-      if (!checkDomainAccountInfo(this.accountInfo)) {
+      let codeMessage = checkDomainAccountInfo(this.accountInfo);
+      if (codeMessage) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
         await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);

@@ -19,6 +19,7 @@ import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
 import fileuri from "@ohos.file.fileuri";
+import window from '@ohos.window';
 import { BusinessError, Callback } from '@ohos.base'
 import deviceInfo from '@ohos.deviceInfo';
 import Constants from '../common/constant';
@@ -64,22 +65,22 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   return await accountMgr.getCurrentOsAccount();
 }
 
-function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): boolean {
+function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number | boolean {
   if (GlobalContext.load('domainAccount') as boolean) {
     if (accountInfo.domainInfo.accountName === '' &&
       accountInfo.domainInfo.accountId === '') {
-      return false;
+      return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
     }
     if (!accountInfo.domainInfo.isAuthenticated) {
-      return false;
+      return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
     }
   } else {
     if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
       accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-      return false;
+      return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
     }
   }
-  return true;
+  return false;
 }
 
 async function getUserId(): Promise<number> {
@@ -139,6 +140,8 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_OPEN_REJECT') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED') } as Record<string, Resource>;
+    case Constants.ERR_JS_APP_NETWORK_INVALID:
+      return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:
       return { 
         'title': $r('app.string.header_title'),
@@ -263,6 +266,20 @@ function isPC(): boolean {
   return (deviceTypeName === 'tablet' || deviceTypeName === '2in1') && productModel?.startsWith('HYM') === true
 }
 
+async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
+  let abilityWant = GlobalContext.load('abilityWant') as Want;
+  if (abilityWant.parameters) {
+    abilityWant.parameters.error = error;
+  }
+  let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
+  GlobalContext.store('alertContext', context);
+  (GlobalContext.load('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
+    if (err.code !== 0) {
+      console.error(TAG, 'loadContent failed', err.code, err.message);
+    }
+  });
+}
+
 function getAppId(bundleName: string) {
   return new Promise<string>(async resolve => {
     let bundleFlags: number = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO;
@@ -301,5 +318,6 @@ export {
   toggleShow,
   directionStatus,
   isPC,
+  showErrorDialogAndExit,
   getAppId
 };

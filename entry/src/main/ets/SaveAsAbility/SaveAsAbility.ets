@@ -34,6 +34,7 @@ import { startAlertAbility, getFileUriByPath, getFileFd, getAppId } from '../com
 import Constants from '../common/constant';
 import fileAccess from '@ohos.file.fileAccess';
 import zlib from '@ohos.zlib';
+import File from '@system.file';
 
 const TAG = '[DLPManager_SaveAs]';
 let permissionList: Array<Permissions> = [
@@ -266,8 +267,8 @@ export default class SaveAsAbility extends UIAbility {
     let zipFlag = false;
     let retVal = false;
 
-    let ff:fs.File = undefined;
-    let zf2:fs.File = undefined;
+    let ff:fs.File | undefined = undefined;
+    let zf2:fs.File | undefined = undefined;
     try {
       let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
       let option: option_ = {

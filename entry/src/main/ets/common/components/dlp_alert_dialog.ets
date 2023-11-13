@@ -14,9 +14,11 @@
  */
 
 import account_osAccount from '@ohos.account.osAccount';
+import { BusinessError } from '@ohos.base';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';
+import { showErrorDialogAndExit } from '../utils';
 
 const TAG = '[DLPManager_dialog]';
 
@@ -33,7 +35,12 @@ struct DlpAlertDialog {
     console.log(TAG, 'authwithpop start');
     try {
       account_osAccount.DomainAccountManager.authWithPopup({
-        onResult: (resultCode: number, authResult: account_osAccount.AuthResult) => {
+        onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
+          if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
+            await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+            return;
+          }
+          (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
           console.log(TAG, 'auth resultCode = ' + resultCode);
           console.log(TAG, 'auth authResult = ' + JSON.stringify(authResult));
         }
@@ -45,27 +52,29 @@ struct DlpAlertDialog {
 
   build() {
     Column() {
-      Row() {
-        Text(this.title)
-          .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
-          .width(Constants.DU_WIDTH_FULL)
-          .fontFamily($r('app.string.typeface'))
-          .fontSize(Constants.DA_FONT_SIZE)
-          .fontColor($r('sys.color.ohos_id_color_text_primary'))
-          .fontWeight(FontWeight.Medium)
-          .align(Alignment.Start)
+      if (this.title) {
+        Row() {
+          Text(this.title)
+            .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
+            .width(Constants.DU_WIDTH_FULL)
+            .fontFamily($r('app.string.typeface'))
+            .fontSize(Constants.DA_FONT_SIZE)
+            .fontColor($r('sys.color.ohos_id_color_text_primary'))
+            .fontWeight(FontWeight.Medium)
+            .align(Alignment.Start)
+        }
+        .width(Constants.HEADER_COLUMN_WIDTH)
+        .height(this.title ? Constants.DA_ROW_HEIGHT : '')
+        .padding({
+          left: Constants.HEADER_COLUMN_PADDING_LEFT,
+          right: Constants.HEADER_COLUMN_PADDING_RIGHT
+        })
       }
-      .width(Constants.HEADER_COLUMN_WIDTH)
-      .height(this.title ? Constants.DA_ROW_HEIGHT : '')
-      .padding({
-        left: Constants.HEADER_COLUMN_PADDING_LEFT,
-        right: Constants.HEADER_COLUMN_PADDING_RIGHT
-      })
       Row() {
         Text(this.message)
           .lineHeight(Constants.DA_SCROLL_LINE_HEIGHT)
           .fontFamily($r('app.string.typeface'))
-          .fontSize(Constants.DA_SCROLL_FONT_SIZE)
+          .fontSize($r('sys.float.ohos_id_text_size_body1'))
           .fontColor($r('sys.color.ohos_id_color_text_secondary'))
           .fontWeight(FontWeight.Regular)
           .textAlign(TextAlign.Start)
@@ -73,7 +82,8 @@ struct DlpAlertDialog {
       .align(Alignment.Center)
       .padding({
         left: Constants.HEADER_COLUMN_PADDING_LEFT,
-        right: Constants.HEADER_COLUMN_PADDING_RIGHT
+        right: Constants.HEADER_COLUMN_PADDING_RIGHT,
+        top: this.title ? Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
       })
       Flex({ direction: FlexDirection.Row }) {
         Button(this.cancel? this.cancel : $r('app.string.da_buttion'), { type: ButtonType.Capsule, stateEffect: true })
@@ -93,14 +103,13 @@ struct DlpAlertDialog {
           .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
         if (this.ok) {
           Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
-            .backgroundColor($r('app.color.base_button_color'))
+            .backgroundColor($r('app.color.encryption_cancel'))
             .width(Constants.HEADER_TEXT_WIDTH)
             .focusable(false)
-            .fontColor($r('app.color.encryption_cancel'))
+            .fontColor($r('app.color.da_button_color'))
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
               this.authWithPop();
-              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
             })
             .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
         }

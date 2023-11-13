@@ -20,7 +20,15 @@ import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import deviceInfo from '@ohos.deviceInfo';
 import Constants from '../common/constant';
-import { getAuthPerm, checkDomainAccountInfo, getOsAccountInfo, judgeIsSandBox, getFileFd, getAppId } from '../common/utils';
+import {
+  getAuthPerm,
+  checkDomainAccountInfo,
+  getOsAccountInfo,
+  judgeIsSandBox,
+  getFileFd,
+  getAppId,
+  showErrorDialogAndExit
+} from '../common/utils';
 import GlobalContext from '../common/GlobalContext'
 import { Configuration } from '@ohos.app.ability.Configuration';
 import Want from '@ohos.app.ability.Want';
@@ -90,20 +98,6 @@ export default class MainAbility extends UIAbility {
     this.getNewWantPage();
   }
 
-  async showErrorDialogAndExit(error: BusinessError): Promise<void> {
-    let abilityWant = GlobalContext.load('abilityWant') as Want;
-    if (abilityWant.parameters) {
-      abilityWant.parameters.error = error;
-    }
-    let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
-    GlobalContext.store('alertContext', context);
-    (GlobalContext.load('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
-      if (err.code !== 0) {
-        console.error(TAG, 'loadContent failed', err.code, err.message);
-      }
-    });
-  }
-
   async gotoPage(windowStage: window.WindowStage, accountInfo: osAccount.OsAccountInfo): Promise<void> {
     let accountName: string = (GlobalContext.load('domainAccount') as boolean) ? accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
     this.authPerm = getAuthPerm(accountName, (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty);
@@ -113,7 +107,7 @@ export default class MainAbility extends UIAbility {
     AppStorage.SetOrCreate<string>('contactAccount', (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty.contactAccount);
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
@@ -144,7 +138,7 @@ export default class MainAbility extends UIAbility {
           if (linkFile[Constants.FILE_OPEN_HISTORY_ONE] === linkFileName) {
             if (this.callerToken !== linkFile[Constants.FILE_OPEN_HISTORY_THREE]) {
               console.error(TAG, 'found file, buf token invalid', linkFileName);
-              await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+              await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
               reject();
               return;
             }
@@ -160,7 +154,7 @@ export default class MainAbility extends UIAbility {
         }
       }
       console.error(TAG, 'request from sandbox, but can not find dlp file by linkFileName', linkFileName);
-      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       reject();
     });
   }
@@ -185,7 +179,7 @@ export default class MainAbility extends UIAbility {
         resolve();
       } catch (err) {
         console.error(TAG, 'openDLPFile', GlobalContext.load('dlpFileName') as string, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-        await this.showErrorDialogAndExit(err as BusinessError);
+        await showErrorDialogAndExit(err as BusinessError);
         reject(err);
       }
     });
@@ -232,7 +226,7 @@ export default class MainAbility extends UIAbility {
     console.log(TAG, 'getNewWantPage start');
     let windowStage: window.WindowStage = GlobalContext.load('windowStage') as window.WindowStage;
     if (!this.checkValidWant()) {
-      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
+      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
       return;
     }
     let accountInfo: osAccount.OsAccountInfo;
@@ -240,16 +234,12 @@ export default class MainAbility extends UIAbility {
       accountInfo = await getOsAccountInfo();
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+      await showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       return;
     }
-    console.log(TAG + 'accountInfo', JSON.stringify(accountInfo));
-    if (!checkDomainAccountInfo(accountInfo)) {
-      if ( !accountInfo.domainInfo.isAuthenticated ) {
-        await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED } as BusinessError);
-        return;
-      }
-      await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+    let codeMessage = checkDomainAccountInfo(accountInfo);
+    if (codeMessage) {
+      await showErrorDialogAndExit({ code: codeMessage } as BusinessError);
       return;
     }
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
@@ -280,7 +270,7 @@ export default class MainAbility extends UIAbility {
       } else {
         let uri: string = GlobalContext.load('uri') as string;
         if ((GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>)?.has(uri)) {
-          await this.showErrorDialogAndExit({ code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
+          await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
           return;
         }
         try {
