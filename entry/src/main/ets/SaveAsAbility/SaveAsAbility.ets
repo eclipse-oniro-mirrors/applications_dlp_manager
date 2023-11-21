@@ -295,7 +295,11 @@ export default class SaveAsAbility extends UIAbility {
 
     if ((args.resultCode !== undefined && args.resultCode === 0)) {
       if (args.want && args.want.parameters) {
-        saveResult.data = args.want.parameters.pick_path_return as string[];
+        if (args.want.parameters.pick_path_return) {
+          saveResult.data = args.want.parameters.pick_path_return as string[];
+        } else {
+          saveResult.data = args.want.parameters['ability.params.stream'] as string[];
+        }
       }
     } else if ((args.resultCode !== undefined && args.resultCode === -1)) {
       saveResult.data = [];
