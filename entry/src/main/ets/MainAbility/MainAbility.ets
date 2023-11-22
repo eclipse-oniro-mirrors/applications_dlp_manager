@@ -101,7 +101,6 @@ export default class MainAbility extends UIAbility {
   async gotoPage(windowStage: window.WindowStage, accountInfo: osAccount.OsAccountInfo): Promise<void> {
     let accountName: string = (GlobalContext.load('domainAccount') as boolean) ? accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
     this.authPerm = getAuthPerm(accountName, (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty);
-    console.info(TAG, accountName, 'has dlp access', JSON.stringify(this.authPerm));
 
     AppStorage.SetOrCreate('authPerm', this.authPerm);
     AppStorage.SetOrCreate<string>('contactAccount', (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty.contactAccount);
