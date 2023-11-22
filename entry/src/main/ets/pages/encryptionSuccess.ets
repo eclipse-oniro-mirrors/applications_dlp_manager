@@ -525,6 +525,7 @@ struct encryptionSuccess {
                       .margin({ bottom: Constants.ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM })
                     }
                   }
+                  .clip(true)
                 }
               }.constraintSize({
                 maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
