@@ -23,6 +23,7 @@ const TAG = "[DLPManager_PermStat]";
 class Content_ {
   label: Resource | undefined = undefined
   value: boolean = false
+  date?: boolean
 }
 
 class TitleContent {
@@ -37,6 +38,7 @@ struct PermissionStatus {
   @State authPerm: number = Constants.PP_IMAGE_PAD;
   @State authPermFlag: boolean = false;
   @State accountId: string = '';
+  @State validity: number = 0;
   private array1: TitleContent[] = [
     {
       title: ($r('app.string.perm_list_title_read_only')),
@@ -84,6 +86,14 @@ struct PermissionStatus {
         {
           label: ($r('app.string.modifying_the_permissions_of_a_document')), value: false
         },
+      ]
+    },
+    {
+      title: ($r('app.string.Document_valid')),
+      content: [
+        {
+          label: ($r('app.string.Document_valid_until')), value: false, date: true
+        }
       ]
     }
   ];
@@ -135,6 +145,14 @@ struct PermissionStatus {
           label: ($r('app.string.modifying_the_permissions_of_a_document')), value: false
         },
       ]
+    },
+    {
+      title: ($r('app.string.Document_valid')),
+      content: [
+        {
+          label: ($r('app.string.Document_valid_until')), value: false, date: true
+        }
+      ]
     }
   ];
 
@@ -142,11 +160,25 @@ struct PermissionStatus {
     console.info(TAG, 'aboutToAppear');
     this.authPerm = AppStorage.Get('authPerm') ?? 1;
     this.accountId = AppStorage.Get('contactAccount') ?? '';
+    this.validity = AppStorage.Get('validity') ?? 0;
     this.directionStatus = (GlobalContext
       .load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
+  }
+
+  getTime(validity: number) {
+    if (validity === 0) {
+      return $r('app.string.permanently');
+    }
+    let date: Date = new Date(validity);
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    return `${year}/${month}/${day} ${hour}:${minute}`;
   }
 
   @Builder itemHead(text?: string | Resource) {
@@ -222,17 +254,27 @@ struct PermissionStatus {
                           ListItem() {
                             Row() {
                               Text(item.label)
-                                .width(Constants.ENCRYPTION_PERMISSION_STATUS_IMAGE)
                                 .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
                                 .fontSize($r('sys.float.ohos_id_text_size_body1'))
                                 .textAlign(TextAlign.Start)
                                 .fontWeight(FontWeight.Medium)
-                              Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
-                                .width(Constants.PP_IMAGE_WIDTH)
-                                .height(Constants.PP_IMAGE_HEIGHT)
-                                .fillColor($r('sys.color.ohos_id_color_text_primary'))
-                                .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
+                              Blank()
+                              if (item.date) {
+                                Text(this.getTime(this.validity))
+                                  .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+                                  .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                                  .textAlign(TextAlign.Start)
+                                  .fontWeight(FontWeight.Regular)
+                                  .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
+                              } else {
+                                Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
+                                  .width(Constants.PP_IMAGE_WIDTH)
+                                  .height(Constants.PP_IMAGE_HEIGHT)
+                                  .fillColor($r('sys.color.ohos_id_color_text_primary'))
+                                  .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
+                              }
                             }
+                            .width(Constants.HEADER_TEXT_WIDTH)
                           }
                         }, (item: Content_) => JSON.stringify(item))
                       }

@@ -151,6 +151,18 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       } as Record<string, Resource>;
     case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
       return { 'msg': $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED')} as Record<string, Resource>;
+    case Constants.ERR_JS_FILE_EXPIRATION:
+      return {
+        'title': $r('app.string.Permission_has_expired'),
+        'msg': $r('app.string.Permission_has_expired_description', err.message.split(", contact:")?.[1])
+      } as Record<string, Resource>;
+    case Constants.ERR_JS_OFFLINE:
+      return {
+        'title': $r('app.string.Network_not_connected'),
+        'msg': $r('app.string.Network_not_connected_description'),
+        'cancel': $r('app.string.ban'),
+        'ok': $r('app.string.Go_setting')
+      } as Record<string, Resource>;
     case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
@@ -300,6 +312,20 @@ function getAppId(bundleName: string) {
   })
 }
 
+function getTime() {
+  let permanent: boolean = GlobalContext.load('permanent');
+  if (permanent) {
+    return $r('app.string.permanently');
+  }
+  let date: Date = GlobalContext.load('validity');
+  let year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
+  let hour = date.getHours();
+  let minute = date.getMinutes();
+  return `${year}/${month}/${day} ${hour}:${minute}`;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -319,5 +345,6 @@ export {
   directionStatus,
   isPC,
   showErrorDialogAndExit,
-  getAppId
+  getAppId,
+  getTime
 };

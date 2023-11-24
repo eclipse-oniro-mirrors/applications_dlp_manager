@@ -28,7 +28,8 @@ import {
   calculate,
   toggleShow,
   directionStatus,
-  showErrorDialogAndExit
+  showErrorDialogAndExit,
+  getTime
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
@@ -708,12 +709,17 @@ struct changeEncryption {
                     }
                     Column({ space: Constants.HEADER_ROW_FONT_SIZE }) {
                       Row() {
-                        Text($r('app.string.document_valid_until'))
+                        Text($r('app.string.Document_valid_until'))
                           .fontSize($r('sys.float.ohos_id_text_size_body2'))
                           .fontColor($r('sys.color.ohos_id_color_text_primary'))
                           .fontWeight(FontWeight.Medium)
                           .textAlign(TextAlign.Start)
-                        Text($r('app.string.permanently'))
+                        Text(' : ')
+                          .fontFamily($r('app.string.typeface'))
+                          .fontWeight(FontWeight.Regular)
+                          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                          .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                        Text(getTime())
                           .fontSize($r('sys.float.ohos_id_text_size_body2'))
                           .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                           .fontWeight(FontWeight.Regular)
