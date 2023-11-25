@@ -17,7 +17,7 @@ import router from '@ohos.router';
 import fs from '@ohos.file.fs';
 import staffItem from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
-import { AuthAccount, PermissionType, calculate, toggleShow, directionStatus } from '../common/utils';
+import { AuthAccount, PermissionType, calculate, toggleShow, directionStatus, getTime } from '../common/utils';
 import ability from '@ohos.ability.ability';
 import common from '@ohos.app.ability.common';
 import GlobalContext from '../common/GlobalContext'
@@ -490,12 +490,17 @@ struct encryptionSuccess {
 
                       Column({ space: Constants.HEADER_ROW_FONT_SIZE }) {
                         Row() {
-                          Text($r('app.string.document_valid_until'))
+                          Text($r('app.string.Document_valid_until'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontWeight(FontWeight.Medium)
                             .textAlign(TextAlign.Start)
-                          Text($r('app.string.permanently'))
+                          Text(' : ')
+                            .fontFamily($r('app.string.typeface'))
+                            .fontWeight(FontWeight.Regular)
+                            .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                            .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                          Text(getTime())
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
                             .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                             .fontWeight(FontWeight.Regular)

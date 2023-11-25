@@ -104,6 +104,7 @@ export default class MainAbility extends UIAbility {
 
     AppStorage.SetOrCreate('authPerm', this.authPerm);
     AppStorage.SetOrCreate<string>('contactAccount', (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty.contactAccount);
+    AppStorage.SetOrCreate('validity', (GlobalContext.load('dlpFile') as dlpPermission.DLPFile).dlpProperty.expireTime)
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
       await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -175,7 +176,12 @@ export default class MainAbility extends UIAbility {
         } catch {
           return;
         }
-        GlobalContext.store('dlpFile', await dlpPermission.openDLPFile(dlpFd, callerAppId));
+        let dlpFile: dlpPermission.DLPFile = await dlpPermission.openDLPFile(dlpFd, callerAppId);
+        GlobalContext.store('dlpFile', dlpFile);
+        GlobalContext.store('permanent', dlpFile.dlpProperty.expireTime === 0);
+        if (dlpFile.dlpProperty.expireTime !== 0) {
+          GlobalContext.store('validity', new Date(dlpFile.dlpProperty.expireTime));
+        }
         resolve();
       } catch (err) {
         console.error(TAG, 'openDLPFile', GlobalContext.load('dlpFileName') as string, 'failed', (err as BusinessError).code, (err as BusinessError).message);

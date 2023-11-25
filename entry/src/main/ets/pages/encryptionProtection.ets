@@ -86,6 +86,8 @@ struct DlpDialog {
   @State handlePopupEdit: boolean = false;
   @State processing: boolean = false;
   @State prepareData: boolean = false;
+  @State validity: Date = GlobalContext.load('validity') || new Date();
+  @State selectedIndex: number = GlobalContext.load('permanent') === false ? 1 : 0;
   @State domainOrCloudAccount: number = (GlobalContext.load('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
   @State permissionDict: PermissionType[] = [
     {
@@ -135,10 +137,35 @@ struct DlpDialog {
     })
   }
 
+  @Builder
+  SubMenu() {
+    Menu() {
+      MenuItem({ content: $r('app.string.permanently') })
+        .onClick(() => {
+          this.selectedIndex = 0;
+        })
+      MenuItem({ content: $r('app.string.Appointed_day') })
+        .contentFontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+    }
+  }
+
   showErrorDialog(title: Resource, message: Resource) {
     this.dlpAlertDialog = new CustomDialogController({
       builder: DlpAlertDialog({
         title: title,
+        message: message,
+        action: () => {
+        }
+      }),
+      autoCancel: false,
+      customStyle: true,
+    })
+    this.dlpAlertDialog.open();
+  }
+
+  showErrorDialogNoTitle(message: Resource) {
+    this.dlpAlertDialog = new CustomDialogController({
+      builder: DlpAlertDialog({
         message: message,
         action: () => {
         }
@@ -276,6 +303,8 @@ struct DlpDialog {
     }
     property.authUserList = []
     property.everyoneAccessList = [];
+    property.offlineAccess = this.selectedIndex === 0 ? true : false;
+    property.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(this.validity).getTime();
     if (this.selectedPermissionTypeEdit.data === 'all') {
       property.everyoneAccessList = [ dlpPermission.DLPFileAccess.CONTENT_EDIT ];
       this.staffDataArrayReadOnly = [];
@@ -402,6 +431,8 @@ struct DlpDialog {
         this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
         this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
         this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
+        this.dlpFile.dlpProperty.offlineAccess = this.selectedIndex === 0 ? true : false;
+        this.dlpFile.dlpProperty.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(this.validity).getTime();
         if (this.selectedPermissionTypeEdit.data === 'all') {
           this.dlpFile.dlpProperty.everyoneAccessList = [ dlpPermission.DLPFileAccess.CONTENT_EDIT ];
           this.staffDataArrayReadOnly = []
@@ -558,6 +589,13 @@ struct DlpDialog {
       showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       return;
     }
+  }
+
+  reconfigurationTime(date: Date) {
+    let year = date.getFullYear();
+    let month = date.getMonth();
+    let day = date.getDate();
+    return new Date(year, month, day, 23, 59, 59);
   }
 
   async aboutToAppear() {
@@ -739,6 +777,50 @@ struct DlpDialog {
                 }
               }
               .margin({ bottom: Constants.ENCRYPTION_STAFF_ITEM_MARGIN_BOTTOM })
+
+              Row() {
+                Text($r('app.string.Document_valid_until'))
+                  .fontWeight(FontWeight.Medium)
+                  .fontColor($r('sys.color.ohos_id_color_text_primary'))
+                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                Blank()
+                if (this.selectedIndex === 1) {
+                  CalendarPicker({ selected: this.validity })
+                    .onChange((value) => {
+                      this.validity = value;
+                    })
+                  Row() {
+                    Image($r('app.media.rectangle'))
+                      .width(Constants.VALIDITY_IMAGE_WIDTH)
+                  }
+                  .height(Constants.VALIDITY_IMAGE_HEIGHT)
+                  .padding({ right: Constants.VALIDITY_IMAGE_PADDING_RIGHT, left: Constants.VALIDITY_IMAGE_PADDING_LEFT })
+                  .bindMenu(this.SubMenu())
+                } else {
+                  Select([{ value: $r('app.string.permanently') }, { value: $r('app.string.Appointed_day') }])
+                    .font({
+                      size: $r('sys.float.ohos_id_text_size_body1'),
+                      weight: FontWeight.Medium,
+                    })
+                    .optionFont({
+                      weight: FontWeight.Regular
+                    })
+                    .selectedOptionFont({
+                      weight: FontWeight.Regular
+                    })
+                    .selectedOptionBgColor(Color.Transparent)
+                    .selected(GlobalContext.load('permanent') === false ? 1 : 0)
+                    .value(GlobalContext.load('permanent') === false ? $r('app.string.Appointed_day') : $r('app.string.permanently'))
+                    .onSelect((index: number, text?: string) => {
+                      this.selectedIndex = index;
+                    })
+                    .opacity(Constants.FOOTER_OPACITY_ONE)
+                }
+              }
+              .width(Constants.FOOTER_ROW_WIDTH)
+              .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+              .margin({ top: Constants.FOOTER_ROW_MARGIN })
+
             }
           }.constraintSize({
             maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
@@ -789,6 +871,16 @@ struct DlpDialog {
               Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
               .height(Constants.FOOTER_BUTTON_HEIGHT)
               .onClick(async (event) => {
+                if (this.selectedIndex === 1) {
+                  let currentTime = new Date().getTime();
+                  let validity = this.reconfigurationTime(this.validity).getTime();
+                  if (currentTime >= validity) {
+                    this.showErrorDialogNoTitle($r('app.string.Timeout_is_not_supported'));
+                    return;
+                  }
+                  GlobalContext.store('validity', this.reconfigurationTime(this.validity));
+                }
+                GlobalContext.store('permanent', this.selectedIndex ? false : true);
                 if (this.isDlpFile) {
                   await this.changeEncrypt();
                 } else {

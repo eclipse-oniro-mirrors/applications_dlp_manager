@@ -478,7 +478,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async onRequest(want: Want, startId: number): Promise<void> {
     console.debug(TAG, 'enter onRequest');
-    this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
+    this.callerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
     if ((GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
       await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
       return;

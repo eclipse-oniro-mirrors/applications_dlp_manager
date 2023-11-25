@@ -15,6 +15,7 @@
 
 import account_osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
+import Want from '@ohos.app.ability.Want';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';
@@ -109,6 +110,17 @@ struct DlpAlertDialog {
             .fontColor($r('app.color.da_button_color'))
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
+              let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
+              if (error.code === Constants.ERR_JS_OFFLINE) {
+                let want: Want = {
+                  bundleName: 'com.huawei.hmos.settings',
+                  abilityName: 'com.huawei.hmos.settings.MainAbility',
+                  uri: 'wifi_entry'
+                };
+                (GlobalContext.load('alertContext') as common.UIAbilityContext).startAbility(want);
+                (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
+                return;
+              }
               this.authWithPop();
             })
             .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })

@@ -315,6 +315,42 @@
     {
       "name": "MESSAGE_DLP_KNOWING_THAT",
       "value": "Got it"
+    },
+    {
+      "name": "Document_valid",
+      "value": "Document validity period"
+    },
+    {
+      "name": "Document_valid_until",
+      "value": "Document valid until"
+    },
+    {
+      "name": "Appointed_day",
+      "value": "Appointed day"
+    },
+    {
+      "name": "Permission_has_expired",
+      "value": "Permission has expired"
+    },
+    {
+      "name": "Permission_has_expired_description",
+      "value": "Permission on this file has expired. To continue viewing, please contact %s."
+    },
+    {
+      "name": "Network_not_connected",
+      "value": "Network not connected"
+    },
+    {
+      "name": "Network_not_connected_description",
+      "value": "The validity period of the file has been set. Please check the file permission first."
+    },
+    {
+      "name": "Go_setting",
+      "value": "Go to Settings"
+    },
+    {
+      "name": "Timeout_is_not_supported",
+      "value": "You cannot set the validity period to a date that has passed. You need to reset the validity period."
     }
   ]
 }
