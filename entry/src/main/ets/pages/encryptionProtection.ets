@@ -13,17 +13,18 @@
  * limitations under the License.
  */
 
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import ability from '@ohos.ability.ability';
-import dlpPermission from '@ohos.dlpPermission'
+import dlpPermission from '@ohos.dlpPermission';
 import hiSysEvent from '@ohos.hiSysEvent';
 import router from '@ohos.router';
 import picker from '@ohos.file.picker';
-import hiTraceMeter from '@ohos.hiTraceMeter';
 import fileio from '@ohos.fileio';
 import fileUri from '@ohos.file.fileuri';
 import fs from '@ohos.file.fs';
 import osAccount from '@ohos.account.osAccount';
-import { BusinessError } from '@ohos.base'
+import { BusinessError } from '@ohos.base';
+import common from '@ohos.app.ability.common';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import {
@@ -35,21 +36,34 @@ import {
   removeDuplicate,
   directionStatus,
   AuthAccount,
-  showErrorDialogAndExit
+  showErrorDialogAndExit,
+  getFileUriByPath,
+  getFileMsgByUri,
+  FileMsg
 } from '../common/utils';
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
 import { AddStaff } from '../common/encryptionComponents/AddStaff';
 import GlobalContext from '../common/GlobalContext'
-import common from '@ohos.app.ability.common';
-
+import HomeFeature from '../feature/HomeFeature';
+import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
+import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
 
 const TAG = "[DLPManager_Encrypt]"
-
 let abilityResult: ability.AbilityResult = {
   "resultCode": 0,
   "want": {}
 };
+
+interface dlpDataType {
+  ownerAccount: string;
+  ownerAccountID: string;
+  ownerAccountType: number;
+  authUserList: Array<dlpPermission.AuthUser>;
+  contactAccount: string;
+  offlineAccess: boolean;
+  everyoneAccessList: Array<dlpPermission.DLPFileAccess>;
+}
 
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
@@ -74,6 +88,10 @@ let defaultDlpFile: dlpPermission.DLPFile = {
 
 @Component
 struct DlpDialog {
+  @State dlpProperty: dlpDataType = GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
+  private acontext: Context = getContext(this);
+  private homeFeature = new HomeFeature(this.acontext);
+  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   srcFd: number = -1;
   srcFileName: string = '';
   isDlpFile: boolean = false;
@@ -219,7 +237,7 @@ struct DlpDialog {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
         console.info(TAG, 'resumeFuseLink', this.srcFileName);
-        await this.dlpFile.resumeFuseLink();
+        this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), () => {});
       } catch (err) {
         console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
       }
@@ -227,16 +245,21 @@ struct DlpDialog {
   }
 
   async changeEncrypt() {
-    console.info(TAG, 'Change encryption for', this.srcFd);
     this.processing = true;
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
-        console.info(TAG, 'stopFuseLink', this.srcFileName);
-        await this.dlpFile.stopFuseLink();
-      } catch (err) {
-        console.error(TAG, 'stopFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
-        this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
-        this.processing = false;
+        await new Promise<void>((resolve, reject) => {
+          this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+            if (err !== 0) {
+              console.error(TAG, 'stopFuseLink failed', err);
+              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+              this.processing = false;
+              reject();
+            }
+            resolve();
+          });
+        })
+      } catch {
         return;
       }
     }
@@ -244,6 +267,7 @@ struct DlpDialog {
     let tempFd: number = 0;
     try {
       tempFd = fileio.openSync(filePath, 0o102, 0o660);
+      fileio.close(tempFd);
       console.info(TAG, 'open temp file, fd', tempFd)
     } catch (err) {
       console.error(TAG, 'open temp failed', JSON.stringify(err));
@@ -251,49 +275,160 @@ struct DlpDialog {
       await this.catchProcess();
       return;
     }
+    let filePathUri = getFileUriByPath(filePath);
+    console.info(TAG, 'recoverDLPFile', this.srcFileName);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), filePathUri, async (err: number) => {
+          if (err !== 0) {
+            let ansErr: BusinessError<void> = {
+              code: err,
+              name: '',
+              message: ''
+            }
+            fs.unlinkSync(filePath);
+            console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', err);
+            let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
+            this.showErrorDialog(errorInfo.title, errorInfo.msg);
+            await this.catchProcess();
+            reject();
+          }
+          resolve();
+        });
+      })
+    } catch {
+      return;
+    }
+    console.info(TAG, 'closeDLPFile', this.srcFileName);
+    await this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+      if (err !== 0) {
+        console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', err);
+      }
+    });
+    let _dlp = this.tempData();
+    this.homeFeature.genDlpFileHome(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
+      if (err !== 0) {
+        console.error(TAG, 'generateDLPFile', 'failed', err);
+        let ansErr: BusinessError<void> = {
+          code: err,
+          name: '',
+          message: ''
+        }
+        fs.unlinkSync(filePath);
+        let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
+        this.showErrorDialog(errorInfo.title, errorInfo.msg);
+        await this.catchProcess();
+      } else {
+        if (GlobalContext.load('requestIsFromSandBox') as boolean) {
+          this.homeFeature.replaceDLPLinkFileHome(GlobalContext.load('uri'), this.linkFileName, (err: number) => {
+            if (err !== 0) {
+              console.error(TAG, 'replaceDLPLinkFile failed', err);
+            }
+          });
+        }
+        fs.unlinkSync(filePath);
+        await this.catchProcess();
+        this.processing = false;
+        GlobalContext.store('dlpFileName', this.srcFileName);
+        GlobalContext.store('dlpProperty', _dlp);
+        router.replaceUrl({
+          url: 'pages/encryptionSuccess',
+          params: {
+            staffDataArrayReadOnly: this.staffDataArrayReadOnly,
+            staffDataArrayEdit: this.staffDataArrayEdit,
+            selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
+            selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
+          }
+        })
+      }
+    });
+  }
 
+  async beginEncrypt() {
+    this.processing = true;
+    console.info(TAG, 'begin encryption for', this.srcFileName, this.srcFd);
+    let uri: string = '';
+    let displayName: string = this.srcFileName;
     try {
-      console.info(TAG, 'recoverDLPFile', this.srcFileName, this.srcFd);
-      await this.dlpFile.recoverDLPFile(tempFd);
-    } catch (err) {
-      console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-      fileio.closeSync(tempFd);
-      fileio.unlinkSync(filePath);
-      let errorInfo = getAlertMessage(err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
-      this.showErrorDialog(errorInfo.title, errorInfo.msg);
-      await this.catchProcess();
-      return;
-    }
-    let accountInfo: osAccount.OsAccountInfo;
-    try {
-      accountInfo = await getOsAccountInfo();
-    } catch (err) {
-      console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-      fileio.closeSync(tempFd);
-      fileio.unlinkSync(filePath);
-      this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'));
-      await this.catchProcess();
-      return;
-    }
-    let codeMessage = checkDomainAccountInfo(accountInfo);
-    if (codeMessage) {
-      fileio.closeSync(tempFd);
-      fileio.unlinkSync(filePath);
-      this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'));
-      await this.catchProcess();
-      return;
-    }
-    let property: dlpPermission.DLPProperty = this.dlpFile.dlpProperty;
-    try {
-      console.info(TAG, 'closeDLPFile', this.srcFileName, this.srcFd);
-      await this.dlpFile.closeDLPFile();
-    } catch (err) {
-      console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-    }
+      let srcFileUri: string = GlobalContext.load('uri');
+      let srcFileMsg: FileMsg = getFileMsgByUri(srcFileUri);
+      let DocumentSaveOptions = new picker.DocumentSaveOptions();
+      displayName = displayName + '.dlp';
+      DocumentSaveOptions.newFileNames = [decodeURI(srcFileMsg.fileName)];
+      DocumentSaveOptions.fileSuffixChoices = [srcFileMsg.fileType + '.dlp'];
+      DocumentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
+        srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length);
+      let documentPicker = new picker.DocumentViewPicker();
+      documentPicker.save(DocumentSaveOptions).then(async (saveRes) => {
+        if (saveRes === undefined || saveRes.length === 0) {
+          console.error(TAG, 'fail to get uri');
+          this.processing = false;
+          return;
+        }
+        console.info(TAG, 'get uri', saveRes)
+        uri = saveRes[0];
+        let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
+        try {
+          uriInfo = new fileUri.FileUri(uri);
+        } catch (err) {
+          console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
+        }
+        let _dlp = this.tempData();
+        this.homeFeature.genDlpFileHome(srcFileUri, uri, _dlp, async (err: number) => {
+          if (err !== 0) {
+            if (err === 100) {
+              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+              this.processing = false;
+              return;
+            }
+            let ansErr: BusinessError<void> = {
+              code: err,
+              name: '',
+              message: ''
+            }
 
+            await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
+            let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
+            this.showErrorDialog(errorInfo.title, errorInfo.msg);
+            this.processing = false;
+            return;
+          } else {
+            await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
+            GlobalContext.store('dlpFileName', uriInfo.name);
+            GlobalContext.store('dlpProperty', _dlp);
+            GlobalContext.store('uri', uri);
+            this.processing = false;
+            router.replaceUrl({
+              url: 'pages/encryptionSuccess',
+              params: {
+                staffDataArrayReadOnly: this.staffDataArrayReadOnly,
+                staffDataArrayEdit: this.staffDataArrayEdit,
+                selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
+                selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
+              }
+            })
+          }
+        });
+      }).catch((err: BusinessError) => {
+        console.error('DocumentViewPicker save failed', err.code, err.message);
+        let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+        this.showErrorDialog(errorInfo.title, errorInfo.msg);
+        this.processing = false;
+        return;
+      });
+    } catch (err) {
+      console.error('DocumentViewPicker failed', (err as BusinessError).code, (err as BusinessError).message);
+      this.processing = false;
+      return;
+    }
+  }
+
+  tempData() {
+    let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
+    let property: dlpPermission.DLPProperty = GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
     this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
     this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
-    this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
+    this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount));
     if (GlobalContext.load('domainAccount') as boolean) {
       property.ownerAccount = accountInfo.domainInfo.accountName;
       property.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
@@ -301,7 +436,7 @@ struct DlpDialog {
       property.ownerAccount = accountInfo.distributedInfo.name;
       property.ownerAccountID = accountInfo.distributedInfo.id;
     }
-    property.authUserList = []
+    property.authUserList = [];
     property.everyoneAccessList = [];
     property.offlineAccess = this.selectedIndex === 0 ? true : false;
     property.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(this.validity).getTime();
@@ -317,10 +452,9 @@ struct DlpDialog {
       if (this.selectedPermissionTypeReadOnly.data === 'all') {
         this.staffDataArrayReadOnly = []
       }
-      if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? '')) {
+      if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
         this.staffDataArrayEdit = [];
       }
-      // foreach
       this.staffDataArrayReadOnly && this.staffDataArrayReadOnly.forEach(item => {
         property.authUserList?.push({
           authAccount: item.authAccount,
@@ -339,207 +473,49 @@ struct DlpDialog {
       })
     }
 
-    let newDlpFile: dlpPermission.DLPFile;
-    try {
-      console.info(TAG, 'generateDLPFile', this.srcFd);
-      newDlpFile = await dlpPermission.generateDLPFile(tempFd, this.srcFd, property);
-    } catch (err) {
-      console.error(TAG, 'generateDLPFile', this.srcFd, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-      fileio.closeSync(tempFd);
-      fileio.unlinkSync(filePath);
-      let errorInfo = getAlertMessage(err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
-      this.showErrorDialog(errorInfo.title, errorInfo.msg);
-      await this.catchProcess();
-      return;
-    }
-    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-      for (let key of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
-        for (let j of key) {
-          if (j[1] === this.linkFileName) {
-            j[0] = newDlpFile;
-          }
-        }
-      }
-      try {
-        await newDlpFile.replaceDLPLinkFile(this.linkFileName);
-      } catch (err) {
-        console.error(TAG, 'replaceDLPLinkFile failed', (err as BusinessError).code, (err as BusinessError).message);
-      }
-    }
-    fileio.closeSync(tempFd);
-    fileio.unlinkSync(filePath);
-    this.dlpFile = newDlpFile;
-    await this.catchProcess();
-    this.processing = false;
-    // update global dlp resource
-    GlobalContext.store('dlpFileName', this.srcFileName);
-    GlobalContext.store('dlpFile', this.dlpFile);
-    GlobalContext.store('dlpFd', this.srcFd);
-    router.replaceUrl({
-      url: 'pages/encryptionSuccess',
-      params: {
-        staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-        staffDataArrayEdit: this.staffDataArrayEdit,
-        selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
-        selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
-      }
+    let authUserListNew: IAuthUser[] = [];
+    property.authUserList.forEach(item => {
+      authUserListNew.push(
+        new IAuthUser(
+          item.authAccount,
+          item.authAccountType,
+          item.dlpFileAccess,
+          item.permExpiryTime
+        )
+      )
     })
-    return;
-  }
-
-  async beginEncrypt() {
-    this.processing = true;
-    console.info(TAG, 'begin encryption for', this.srcFileName, this.srcFd);
-    let uri: string = '';
-    let displayName: string = this.srcFileName;
-    try {
-      let DocumentSaveOptions = new picker.DocumentSaveOptions();
-      displayName = displayName + '.dlp';
-      DocumentSaveOptions.newFileNames = [displayName];
-      let documentPicker = new picker.DocumentViewPicker();
-      documentPicker.save(DocumentSaveOptions).then(async (saveRes) => {
-        if (saveRes === undefined || saveRes.length === 0) {
-          console.error(TAG, 'fail to get uri');
-          this.processing = false;
-          return;
-        }
-        console.info(TAG, 'get uri', saveRes)
-        uri = saveRes[0];
-        let dstFd: number = -1;
-        let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
-        let file: fs.File;
-        try {
-          uriInfo = new fileUri.FileUri(uri);
-        } catch (err) {
-          console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
-        }
-        try {
-          file = await fs.open(uri, fs.OpenMode.READ_WRITE);
-          dstFd = file.fd;
-        } catch (error) {
-          console.error(TAG, 'open', uri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
-          try {
-            await fs.unlink(uriInfo.path);
-          } catch (err) {
-            console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
-          }
-          this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
-          this.processing = false;
-          return;
-        };
-        this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
-        this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
-        this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount))
-        this.dlpFile.dlpProperty.offlineAccess = this.selectedIndex === 0 ? true : false;
-        this.dlpFile.dlpProperty.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(this.validity).getTime();
-        if (this.selectedPermissionTypeEdit.data === 'all') {
-          this.dlpFile.dlpProperty.everyoneAccessList = [ dlpPermission.DLPFileAccess.CONTENT_EDIT ];
-          this.staffDataArrayReadOnly = []
-        } else {
-          let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all'
-          if (isReadyOnlyAll) {
-            this.dlpFile.dlpProperty.everyoneAccessList = [ dlpPermission.DLPFileAccess.READ_ONLY ];
-          }
-          // foreach
-          if (this.selectedPermissionTypeReadOnly.data === 'all') {
-            this.staffDataArrayReadOnly = []
-          }
-          if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
-            this.staffDataArrayEdit = [];
-          }
-          this.dlpFile.dlpProperty.authUserList = []
-          this.staffDataArrayReadOnly && this.staffDataArrayReadOnly.forEach(item => {
-            this.dlpFile.dlpProperty.authUserList?.push({
-              authAccount: item.authAccount,
-              dlpFileAccess: dlpPermission.DLPFileAccess.READ_ONLY,
-              permExpiryTime: Date.UTC(9999, 1, 1),
-              authAccountType: this.domainOrCloudAccount,
-            })
-          })
-          this.staffDataArrayEdit && this.staffDataArrayEdit.forEach(item => {
-            this.dlpFile.dlpProperty.authUserList?.push({
-              authAccount: item.authAccount,
-              dlpFileAccess: dlpPermission.DLPFileAccess.CONTENT_EDIT,
-              permExpiryTime: Date.UTC(9999, 1, 1),
-              authAccountType: this.domainOrCloudAccount,
-            })
-          })
-        }
-        hiTraceMeter.startTrace("DlpGenerateDlpFileJs", this.srcFd);
-        try {
-          console.info(TAG, 'generateDLPFile', dstFd);
-          this.dlpFile = await dlpPermission.generateDLPFile(this.srcFd, dstFd, this.dlpFile.dlpProperty);
-        } catch (err) {
-          await this.sendDlpFileCreateFault(102, (err as BusinessError<string>).data); // 102: DLP_FILE_CREATE_ERORR
-          hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
-          console.info(TAG, 'generateDLPFile failed', err.code, err.message);
-          try {
-            await fs.close(file);
-          } catch (err) {
-            console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
-          }
-          try {
-            await fs.unlink(uriInfo.path);
-          } catch (err) {
-            console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
-          }
-          let errorInfo = getAlertMessage(err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
-          this.showErrorDialog(errorInfo.title, errorInfo.msg);
-          this.processing = false;
-          return;
-        }
-        await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
-        hiTraceMeter.finishTrace("DlpGenerateDlpFileJs", this.srcFd);
-        this.processing = false;
-
-        // update global dlp resource
-        GlobalContext.store('dlpFileName', uriInfo.name);
-
-        GlobalContext.store('dlpFile', this.dlpFile);
-        GlobalContext.store('dlpFd', dstFd);
-        router.replaceUrl({
-          url: 'pages/encryptionSuccess',
-          params: {
-            staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-            staffDataArrayEdit: this.staffDataArrayEdit,
-            selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
-            selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
-          }
-        })
-      }).catch((err: BusinessError) => {
-        console.error('DocumentViewPicker save failed', err.code, err.message);
-        let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
-        this.showErrorDialog(errorInfo.title, errorInfo.msg);
-        this.processing = false;
-        return;
-      });
-    } catch (err) {
-      console.error('DocumentViewPicker failed', (err as BusinessError).code, (err as BusinessError).message);
-      this.processing = false;
-      return;
-    }
+    let _dlp = new IDLDLPProperty(
+      property.ownerAccount,
+      property.ownerAccountID,
+      property.ownerAccountType,
+      authUserListNew,
+      property.contactAccount,
+      property.offlineAccess,
+      property.everyoneAccessList,
+      property.expireTime
+    );
+    return _dlp;
   }
 
   async prepareDlpProperty() {
     if (GlobalContext.load('domainAccount') as boolean) {
       let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
-      this.dlpFile.dlpProperty.ownerAccount = accountInfo.domainInfo.accountName;
-      this.dlpFile.dlpProperty.contactAccount = accountInfo.domainInfo.accountName;
-      this.dlpFile.dlpProperty.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
+      this.dlpProperty.ownerAccount = accountInfo.domainInfo.accountName;
+      this.dlpProperty.contactAccount = accountInfo.domainInfo.accountName;
+      this.dlpProperty.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
     } else {
       let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
-      this.dlpFile.dlpProperty.ownerAccount = accountInfo.distributedInfo.name;
-      this.dlpFile.dlpProperty.contactAccount = accountInfo.distributedInfo.name;
-      this.dlpFile.dlpProperty.ownerAccountID = accountInfo.distributedInfo.id;
+      this.dlpProperty.ownerAccount = accountInfo.distributedInfo.name;
+      this.dlpProperty.contactAccount = accountInfo.distributedInfo.name;
+      this.dlpProperty.ownerAccountID = accountInfo.distributedInfo.id;
     }
     let ownerAccount: dlpPermission.AuthUser = {
-      authAccount: this.dlpFile.dlpProperty.ownerAccount,
+      authAccount: this.dlpProperty.ownerAccount,
       dlpFileAccess: dlpPermission.DLPFileAccess.FULL_CONTROL,
       permExpiryTime: Date.UTC(9999, 1, 1),
       authAccountType: this.domainOrCloudAccount,
     }
-    this.dlpFile.dlpProperty.authUserList?.push(ownerAccount)
+    this.dlpProperty.authUserList?.push(ownerAccount)
     return
   }
 
@@ -605,10 +581,9 @@ struct DlpDialog {
       console.info(TAG, 'encryption request from sandbox');
       this.linkFileName = GlobalContext.load('linkFileName') as string;
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
-      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
-      this.srcFd = GlobalContext.load('dlpFd') as number;
+      // this.srcFd = GlobalContext.load('dlpFd') as number;
       setTimeout(() => {
-        this.showData(this.dlpFile.dlpProperty);
+        this.showData(GlobalContext.load('dlpProperty'));
       }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
       this.isDlpFile = true;
       setTimeout(() => {
@@ -620,11 +595,9 @@ struct DlpDialog {
       if (routerParams !== undefined) { // is a dlp file
         console.info(TAG, 'encryption request from router');
         this.srcFileName = GlobalContext.load('dlpFileName') as string;
-        this.srcFd = GlobalContext.load('dlpFd') as number;
       } else { // not a dlp file
         console.info(TAG, 'encryption request from ability');
         this.srcFileName = GlobalContext.load('originFileName') as string;
-        this.srcFd = GlobalContext.load('originFd') as number;
       }
     }
 
@@ -633,9 +606,8 @@ struct DlpDialog {
       await this.prepareDlpProperty();
       this.isDlpFile = false;
     } else {
-      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
       setTimeout(() => {
-        this.showData(this.dlpFile.dlpProperty);
+        this.showData(GlobalContext.load('dlpProperty'));
       }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
       this.isDlpFile = true;
     }
@@ -841,7 +813,7 @@ struct DlpDialog {
                 if (this.isDlpFile && !(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                   try {
                     console.info(TAG, 'closeDLPFile', this.srcFileName, this.srcFd);
-                    await this.dlpFile.closeDLPFile();
+                    this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), () => {});
                   } catch (err) {
                     console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                   }
@@ -852,11 +824,20 @@ struct DlpDialog {
                     console.error(TAG, 'refresh dlp file failed', (err as BusinessError).code, (err as BusinessError).message);
                   }
                 }
-                if (GlobalContext.load('fileOpenHistoryFromMain')) {
-                  (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+                if (this.session !== undefined) {
+                  this.session.terminateSelfWithResult({
+                    'resultCode': 0,
+                    'want': {
+                      'bundleName': 'com.ohos.dlpmanager',
+                    },
+                  });
+                } else {
+                  if (GlobalContext.load('fileOpenHistoryFromMain')) {
+                    (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+                  }
+                  abilityResult.resultCode = 0;
+                  (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                 }
-                abilityResult.resultCode = 0;
-                (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
               })
               .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
             Button($r('app.string.sure'), {
@@ -899,13 +880,14 @@ struct DlpDialog {
         .visibility(this.processing ? Visibility.Hidden : Visibility.Visible)
         .width(Constants.FOOTER_ROW_WIDTH)
         .backgroundColor($r('app.color.da_button_color'))
-        .borderRadius(Constants.INDEX_BORDER_RADIUS)
+        .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
       }
     }
   }
 }
 
-@Entry
+let storage = LocalStorage.GetShared();
+@Entry(storage)
 @Component
 struct encryptionProtection {
   aboutToAppear() {

@@ -48,6 +48,7 @@ export default class Constants {
   static ENCRYPTION_PERMISSION_STATUS_WIDTH = '70%';
   static ENCRYPTION_PERMISSION_STATUS_IMAGE = '90%';
   static PP_TEXT_MAX_LINE = 1;
+  static MAIN_FLAG_MAX_NUMBER = 1;
   static PP_TEXT_PAD_RIGHT= 4;
   static PP_IMAGE_WIDTH = 24;
   static PP_IMAGE_HEIGHT = 24;
@@ -121,6 +122,8 @@ export default class Constants {
   static ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING = 72;
   static ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP = 0;
   static ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1 = 24;
+  static ENCRYPTION_MESSAGE_ALERT_MESSAGE_PADDING_LEFT = 24;
+  static ENCRYPTION_MESSAGE_ALERT_MESSAGE_PADDING_TOP = 16;
 
   static FOOTER_OPACITY_ONE = 1;
   static FOOTER_OPACITY_SEPC= 0.6;
@@ -133,6 +136,7 @@ export default class Constants {
   static readonly ERR_JS_APP_ENCRYPTION_REJECTED = 7;
   static readonly ERR_JS_APP_SYSTEM_IS_AUTHENTICATED = 8;
   static readonly ERR_JS_APP_NETWORK_INVALID = 9;
+  static readonly ERR_JS_APP_ENCRYPTING = 10;
   static readonly ERR_JS_CREDENTIAL_TIMEOUT = 19100003;
   static readonly ERR_JS_CREDENTIAL_SERVICE_ERROR = 19100004;
   static readonly ERR_JS_CREDENTIAL_SERVER_ERROR = 19100005;

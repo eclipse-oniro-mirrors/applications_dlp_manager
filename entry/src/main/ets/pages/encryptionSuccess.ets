@@ -13,16 +13,26 @@
  * limitations under the License.
  */
 
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import router from '@ohos.router';
 import fs from '@ohos.file.fs';
-import staffItem from '../common/encryptionComponents/staff';
-import Constants from '../common/constant';
-import { AuthAccount, PermissionType, calculate, toggleShow, directionStatus, getTime } from '../common/utils';
-import ability from '@ohos.ability.ability';
 import common from '@ohos.app.ability.common';
-import GlobalContext from '../common/GlobalContext'
-import dlpPermission from '@ohos.dlpPermission';
+import { staffItem } from '../common/encryptionComponents/staff';
+import Constants from '../common/constant';
+import ability from '@ohos.ability.ability';
+import {
+  AuthAccount,
+  PermissionType,
+  calculate,
+  toggleShow,
+  directionStatus,
+  getTime,
+  getAlertMessage,
+  goToAlertMessagePage
+} from '../common/utils';
+import GlobalContext from '../common/GlobalContext';
 import { BusinessError } from '@ohos.base';
+import HomeFeature from '../feature/HomeFeature';
 
 const TAG = "[DLPManager_EncSucc]";
 let abilityResult: ability.AbilityResult = {
@@ -36,9 +46,11 @@ let abilityResult: ability.AbilityResult = {
   .fontWeight(FontWeight.Medium)
 }
 
-@Entry
+let storage: LocalStorage = LocalStorage.GetShared();
+@Entry(storage)
 @Component
 struct encryptionSuccess {
+  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   private routerParams: Record<string, AuthAccount[] | PermissionType> = router.getParams() as Record<string, AuthAccount[] | PermissionType>;
   @State directionStatus: number = 0;
   @State flag: boolean = false;
@@ -550,10 +562,19 @@ struct encryptionSuccess {
                     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                       let dlpFileName: string = GlobalContext.load('dlpFileName') as string;
                       let dlpFd: number = GlobalContext.load('dlpFd') as number;
-                      let dlpFile: dlpPermission.DLPFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
                       try {
                         console.info(TAG, 'closeDLPFile', dlpFileName, dlpFd);
-                        await dlpFile.closeDLPFile();
+                        let hF = GlobalContext.load('homeFeature') as HomeFeature;
+                        await new Promise<void>((resolve, reject) => {
+                          hF.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+                            if (err !== 0) {
+                              let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+                              goToAlertMessagePage(errInfo.title, errInfo.msg);
+                              reject();
+                            }
+                            resolve();
+                          });
+                        })
                       } catch (err) {
                         console.error(TAG, 'closeDLPFile', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                       }
@@ -564,11 +585,20 @@ struct encryptionSuccess {
                         console.error(TAG, 'refresh dlp file', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                       }
                     }
-                    if (GlobalContext.load('fileOpenHistoryFromMain')) {
-                      (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+                    if (this.session !== undefined) {
+                      this.session.terminateSelfWithResult({
+                        'resultCode': 0,
+                        'want': {
+                          'bundleName': 'com.ohos.dlpmanager',
+                        },
+                      });
+                    } else {
+                      if (GlobalContext.load('fileOpenHistoryFromMain')) {
+                        (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+                      }
+                      abilityResult.resultCode = 0;
+                      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                     }
-                    abilityResult.resultCode = 0;
-                    (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                   })
               }
               .justifyContent(FlexAlign.Center)
@@ -583,7 +613,7 @@ struct encryptionSuccess {
             }
             .width(Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('app.color.da_button_color'))
-            .borderRadius(Constants.INDEX_BORDER_RADIUS)
+            .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
           }
         }
       }

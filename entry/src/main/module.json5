@@ -18,7 +18,6 @@
     "type": "entry",
     "srcEntry": "./ets/Application/AbilityStage.ets",
     "description": "$string:entry_desc",
-    "mainElement": "MainAbility",
     "deviceTypes": [
       "default",
       "tablet",
@@ -68,12 +67,26 @@
     ],
     "extensionAbilities": [
       {
+        "name": "MainAbilityEx",
+        "icon": "$media:icon",
+        "description": "MainAbilityEx",
+        "type": "sys/commonUI",
+        "exported": true,
+        "srcEntrance": "./ets/MainAbility/MainAbilityEx.ets",
+        "metadata": [
+          {
+            "name": "ohos.extension.servicetype",
+            "value": "share"
+          }
+        ]
+      },
+      {
         "name": "ViewAbility",
         "srcEntrance": "./ets/ViewAbility/ViewAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service",
-        "visible": true
+        "exported": true,
       },
       {
         "name": "DataAbility",
@@ -81,6 +94,14 @@
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service"
+      },
+      {
+        "name": "ServiceExtAbility",
+        "icon": "$media:icon",
+        "description": "service",
+        "type": "service",
+        "exported": true,
+        "srcEntrance": "./ets/serviceExtensionAbility/ServiceExtAbility.ets"
       }
     ],
     "requestPermissions": [
@@ -97,13 +118,13 @@
         "name": "ohos.permission.MANAGE_LOCAL_ACCOUNTS"
       },
       {
-        "name":"ohos.permission.FILE_ACCESS_MANAGER"
+        "name": "ohos.permission.FILE_ACCESS_MANAGER"
       },
       {
-        "name":"ohos.permission.START_ABILIIES_FROM_BACKGROUND"
+        "name": "ohos.permission.START_ABILIIES_FROM_BACKGROUND"
       },
       {
-        "name":"ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
+        "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
       },
       {
         "name": "ohos.permission.MEDIA_LOCATION"

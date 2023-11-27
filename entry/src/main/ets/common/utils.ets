@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import emitter from '@ohos.events.emitter';
@@ -19,15 +20,16 @@ import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
 import fileuri from "@ohos.file.fileuri";
-import window from '@ohos.window';
 import { BusinessError, Callback } from '@ohos.base'
 import deviceInfo from '@ohos.deviceInfo';
-import Constants from '../common/constant';
 import Want from '@ohos.app.ability.Want';
-import GlobalContext from './GlobalContext'
 import common from '@ohos.app.ability.common';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import Constants from '../common/constant';
+import GlobalContext from './GlobalContext';
 
 let TAG = "[DLPManager_Utils]";
+const TRANSPARENT_BACKGROUND_COLOR: string = '#33182431';
 
 interface AuthAccount {
   authAccount: string;
@@ -37,6 +39,12 @@ interface PermissionType {
   value: Resource;
   data: string;
   index: number;
+}
+
+export interface FileMsg {
+  fileName: string;
+  filePath: string;
+  fileType: string;
 }
 
 function getFileUriByPath(filePath: string): string {
@@ -140,6 +148,8 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_OPEN_REJECT') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED') } as Record<string, Resource>;
+    case Constants.ERR_JS_APP_ENCRYPTING:
+      return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_NETWORK_INVALID:
       return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:
@@ -283,13 +293,31 @@ async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
   if (abilityWant.parameters) {
     abilityWant.parameters.error = error;
   }
-  let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
-  GlobalContext.store('alertContext', context);
-  (GlobalContext.load('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
-    if (err.code !== 0) {
-      console.error(TAG, 'loadContent failed', err.code, err.message);
-    }
-  });
+  let storage: LocalStorage = new LocalStorage({
+    'session': GlobalContext.load('session'),
+    'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
+  } as Record<string, UIExtensionContentSession | string>);
+  GlobalContext.load('session').loadContent('pages/alert', storage);
+  try {
+    GlobalContext.load('session').setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+  } catch (exception) {
+    console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+  }
+}
+
+async function goToAlertMessagePage(title?: Resource, message?: Resource, messageName?: Object) {
+  let storage: LocalStorage = new LocalStorage({
+    'session': GlobalContext.load('session'),
+    'title': title,
+    'message': message,
+    'messageName': messageName
+  } as Record<string, UIExtensionContentSession | Object | Resource>);
+  GlobalContext.load('session').loadContent('pages/alertMessage', storage);
+  try {
+    GlobalContext.load('session').setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+  } catch (exception) {
+    console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+  }
 }
 
 function getAppId(bundleName: string) {
@@ -326,6 +354,27 @@ function getTime() {
   return `${year}/${month}/${day} ${hour}:${minute}`;
 }
 
+function getFileMsgByUri(uri: string): FileMsg {
+  let strArray: string[] = uri.split('/');
+  let len: number = strArray.length;
+  if (len < 1) {
+    throw new Error('getFileMsgByUri,srcfile name len is 0');
+  }
+  let fileName: string = strArray[len - 1];
+  let filePath: string = strArray.slice(0, len - 1).join();
+  let pointIndex: number = fileName.indexOf('.');
+  if (pointIndex < 0) {
+    throw new Error('getFileMsgByUri,srcfile name invalid');
+  }
+  let fileType: string = fileName.slice(pointIndex, fileName.length);
+  let result: FileMsg = {
+    fileName: fileName.split('.')[0],
+    filePath: filePath,
+    fileType: fileType,
+  };
+  return result;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -345,6 +394,8 @@ export {
   directionStatus,
   isPC,
   showErrorDialogAndExit,
+  goToAlertMessagePage,
   getAppId,
-  getTime
+  getTime,
+  getFileMsgByUri
 };

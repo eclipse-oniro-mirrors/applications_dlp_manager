@@ -16,9 +16,9 @@ import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import Want from '@ohos.app.ability.Want';
 import fileio from '@ohos.fileio';
 import dlpPermission from '@ohos.dlpPermission';
-import GlobalContext from '../common/GlobalContext';
-import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
+import { BusinessError } from '@ohos.base';
+import GlobalContext from '../common/GlobalContext';
 
 let TAG = '[DLPManager_DataAbility]';
 const INDEX_TWO = 2;

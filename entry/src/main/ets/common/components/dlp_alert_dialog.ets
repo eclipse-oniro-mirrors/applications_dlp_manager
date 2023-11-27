@@ -58,7 +58,6 @@ struct DlpAlertDialog {
           Text(this.title)
             .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
             .width(Constants.DU_WIDTH_FULL)
-            .fontFamily($r('app.string.typeface'))
             .fontSize(Constants.DA_FONT_SIZE)
             .fontColor($r('sys.color.ohos_id_color_text_primary'))
             .fontWeight(FontWeight.Medium)
@@ -73,10 +72,8 @@ struct DlpAlertDialog {
       }
       Row() {
         Text(this.message)
-          .lineHeight(Constants.DA_SCROLL_LINE_HEIGHT)
-          .fontFamily($r('app.string.typeface'))
           .fontSize($r('sys.float.ohos_id_text_size_body1'))
-          .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+          .fontColor($r('sys.color.ohos_id_color_text_primary'))
           .fontWeight(FontWeight.Regular)
           .textAlign(TextAlign.Start)
       }
@@ -134,7 +131,7 @@ struct DlpAlertDialog {
       })
     }
     .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
-    .borderRadius(Constants.DA_COLOUM_RADIUS)
+    .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('app.color.da_button_color'))
   }
