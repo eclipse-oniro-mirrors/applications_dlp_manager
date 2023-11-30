@@ -506,6 +506,7 @@ export default class SaveAsAbility extends UIAbility {
         newDlpFile = await dlpPermission.openDLPFile(dstFd, callerAppId);
       } catch (err) {
         console.error(TAG, 'generateDlpFile', dstFd, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, err);
         try {
           await fs.close(file);
         } catch (err) {

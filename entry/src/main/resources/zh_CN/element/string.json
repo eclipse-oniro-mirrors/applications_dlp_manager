@@ -213,6 +213,10 @@
       "value": "服务内部错误，请重试。"
     },
     {
+      "name": "MESSAGE_NOT_AUTHORIZED_APPLICATION",
+      "value": "该应用无法打开此文件。"
+    },
+    {
       "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
       "value": "连接服务器失败，请检查网络后重试。"
     },
