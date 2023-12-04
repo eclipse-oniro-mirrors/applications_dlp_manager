@@ -19,7 +19,7 @@ import fileUri from '@ohos.file.fileuri';
 import ServiceExtension from '@ohos.app.ability.ServiceExtensionAbility';
 import fs from '@ohos.file.fs';
 import dlpPermission from '@ohos.dlpPermission';
-import IdlDlpRpcServiceStub from '../MainAbility/data/IIdlDlpRpcServiceTS/id_dlpRpc_service_stub';
+import IdlDlpRpcServiceStub from '../MainAbility/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_stub';
 import {
   closeDlpFileCallback,
   sandBoxLinkFileCallback,
@@ -30,7 +30,7 @@ import {
   replaceDlpLinkFileCallback,
   resumeFuseLinkCallback,
   stopFuseLinkCallback
-} from '../MainAbility/data/IIdlDlpRpcServiceTS/i_id_dlpRpc_service';
+} from '../MainAbility/data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
 import IDLDLPProperty from './sequenceable/dlpClass';
 import { IAuthUser } from './sequenceable/dlpClass';
 import GlobalContext from '../common/GlobalContext';
@@ -46,7 +46,6 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   getOpeningFile(inputUri: string) : dlpPermission.DLPFile | null {
-
     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
     if (sandbox2linkFile !== undefined) {
       for (let key of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {

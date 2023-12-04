@@ -15,7 +15,6 @@
 
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
-import IdlDlpRpcServiceProxy from '../MainAbility/data/IIdlDlpRpcServiceTS/id_dlpRpc_service_proxy';
 import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
 import GlobalContext from '../common/GlobalContext';
 import {
@@ -28,17 +27,17 @@ import {
   replaceDlpLinkFileCallback,
   resumeFuseLinkCallback,
   stopFuseLinkCallback
-} from '../MainAbility/data/IIdlDlpRpcServiceTS/i_id_dlpRpc_service';
-import IdDlpRpcServiceProxy from '../MainAbility/data/IIdlDlpRpcServiceTS/id_dlpRpc_service_proxy';
+} from '../MainAbility/data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
+import IdDlpRpcServiceProxy from '../MainAbility/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 
 const BUNDLE_NAME = 'com.ohos.dlpmanager';
 const SERVICE_EXTENSION_ABILITY_NAME = 'ServiceExtAbility';
-const ERROR_CODE = -1; // 失败
-const SUCCESS_CODE = 0; // 成功
+const ERROR_CODE = -1;
+const SUCCESS_CODE = 0;
 const TAG = "[DLPManager_HomeFeature]";
 
 export default class HomeFeature {
-  connection = -1; // 初始值
+  connection = -1;
   remoteCallback!: () => void;
   context: ESObject;
   options: common.ConnectOptions;
@@ -47,11 +46,9 @@ export default class HomeFeature {
   constructor(context: ESObject) {
     this.context = context;
     this.options = {
-      // 连接成功时回调
       onConnect: (elementName, proxy) => {
         console.info(TAG, 'onConnect success');
-        // 接收来自服务返回的实例
-        this.dlpRpcProxy = new IdlDlpRpcServiceProxy(proxy);
+        this.dlpRpcProxy = new IdDlpRpcServiceProxy(proxy);
         GlobalContext.store('dlpRpcProxy', this.dlpRpcProxy);
         console.info(TAG, 'DLPManager IDL' + 'onConnect success', JSON.stringify(this.dlpRpcProxy));
         console.info(TAG, 'onConnect success, dlpRpcProxy', this.dlpRpcProxy);

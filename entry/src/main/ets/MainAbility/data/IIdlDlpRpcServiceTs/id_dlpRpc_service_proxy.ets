@@ -14,7 +14,6 @@
  */
 
 import rpc from '@ohos.rpc';
-import { AsyncCallback } from '@ohos.base';
 import {
   IDlpServiceCmdCode,
   genDlpFileCallback,
@@ -29,7 +28,7 @@ import {
   } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
 import IDLDLPProperty from "../../../serviceExtensionAbility/sequenceable/dlpClass";
-
+import Constants from '../../../common/constant';
 
 const TAG = '[DLPManager_service_proxy]';
 
@@ -50,7 +49,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeParcelable(dlp);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_GEN_DLP_FILE, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
@@ -70,7 +69,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeString(callerAppId);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_OPEN_DLP_FILE, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-      if (result.errCode === 0) {
+      if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
         let _errCode = result.reply.readInt();
         result.reply.readParcelable(_dlp);
         let _msg = result.reply.readString();
@@ -90,7 +89,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_STOP_FUSE_LINK, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
@@ -108,7 +107,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_RESUME_FUSE_LINK, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
@@ -127,7 +126,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeString(linkFileName);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_REPLACE_DLP_LINK_FILE, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
@@ -146,7 +145,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeString(pathUri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_RECOVER_DLP_FILE, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
@@ -165,7 +164,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
 
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_CLOSE_DLP_FILE, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
@@ -185,7 +184,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeLong(callerToken);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_SANDBOX_LINK_FILE, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           result.reply.readParcelable(_dlp);
           let _fileUri = result.reply.readString();
@@ -205,7 +204,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_FILE_OPEN_HISTORY, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
-        if (result.errCode === 0) {
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
