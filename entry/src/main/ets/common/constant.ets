@@ -192,4 +192,9 @@ export default class Constants {
   static VALIDITY_IMAGE_HEIGHT = 40;
   static VALIDITY_IMAGE_PADDING_RIGHT = 12;
   static VALIDITY_IMAGE_PADDING_LEFT = 8;
+
+  static TIPS_WIDTH = 292;
+  static TIPS_HEIGHT_ITEM = 20;
+  static TIPS_DES_WIDTH = 30;
+  static TIPS_COLON_WIDTH = 9;
 }

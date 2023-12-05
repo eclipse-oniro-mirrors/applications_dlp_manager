@@ -1,0 +1,28 @@
+[
+  {
+    "key": "accountName",
+    "description": "工号",
+    "isShow": true,
+    "isTextContent": true
+  },
+  {
+    "key": "domain",
+    "description": "域",
+    "isShow": true
+  },
+  {
+    "key": "cnName",
+    "description": "姓名",
+    "isShow": false
+  },
+  {
+    "key": "dept",
+    "description": "部门",
+    "isShow": false
+  },
+  {
+    "key": "mail",
+    "description": "邮箱",
+    "isShow": false
+  }
+]
