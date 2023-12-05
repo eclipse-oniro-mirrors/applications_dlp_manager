@@ -13,13 +13,17 @@
  * limitations under the License.
  */
 
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import ability from '@ohos.ability.ability';
 import router from '@ohos.router';
 import dlpPermission from '@ohos.dlpPermission';
 import picker from '@ohos.file.picker';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
-import staffItem from '../common/encryptionComponents/staff';
+import { BusinessError } from '@ohos.base';
+import osAccount from '@ohos.account.osAccount';
+import common from '@ohos.app.ability.common';
+import { staffItem } from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
 import {
   getAlertMessage,
@@ -29,13 +33,13 @@ import {
   toggleShow,
   directionStatus,
   showErrorDialogAndExit,
-  getTime
+  getTime,
+  getFileMsgByUri,
+  FileMsg
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
-import osAccount from '@ohos.account.osAccount';
-import common from '@ohos.app.ability.common';
-import { BusinessError } from '@ohos.base';
+import HomeFeature from '../feature/HomeFeature';
 
 const TAG = '[DLPManager_ModEnc]';
 
@@ -46,8 +50,8 @@ class PermissionValue {
 }
 
 let abilityResult: ability.AbilityResult = {
-  'resultCode': 0,
-  'want': {}
+  "resultCode": 0,
+  "want": {}
 };
 
 interface AuthAccount {
@@ -70,20 +74,14 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccountID: '',
   everyoneAccessList: []
 };
-let defaultDlpFile: dlpPermission.DLPFile = {
-  dlpProperty: defaultDlpProperty,
-  recoverDLPFile: async() => {},
-  closeDLPFile: async() => {},
-  addDLPLinkFile: async() => {},
-  stopFuseLink: async() => {},
-  resumeFuseLink: async() => {},
-  replaceDLPLinkFile: async() => {},
-  deleteDLPLinkFile: async() => {}
-};
 
-@Entry
+let storage = LocalStorage.GetShared();
+@Entry(storage)
 @Component
 struct changeEncryption {
+  private acontext: Context = getContext(this);
+  private homeFeature = new HomeFeature(this.acontext);
+  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   dlpAlertDialog?: CustomDialogController;
   srcFileName: string = '';
   linkFileName: string = '';
@@ -91,7 +89,6 @@ struct changeEncryption {
   @State handlePopup: boolean = false;
   @State handlePopupReadOnly: boolean = false;
   @State handlePopupEdit: boolean = false;
-  @State dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   @State authPerm: number = 2;
   @State routerFlag: boolean = false;
   @State editFlag: boolean = false;
@@ -106,7 +103,6 @@ struct changeEncryption {
   @State staffDataArrayReadOnly: AuthAccount[] = [];
   @State staffDataArrayEdit: AuthAccount[] = [];
   private routerData: Record<string, AuthAccount[]> = {};
-  private dlpFd: number = 0;
   @State permissionDict: PermissionValue[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as Resource, data: 'target', index: 0
@@ -178,7 +174,7 @@ struct changeEncryption {
     if (GlobalContext.load('requestIsFromSandBox')) {
       try {
         console.info(TAG, 'resumeFuseLink', this.srcFileName);
-        await this.dlpFile.resumeFuseLink();
+        this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), () =>{});
       } catch (err) {
         console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
       }
@@ -186,11 +182,10 @@ struct changeEncryption {
   }
 
   async unEncrypt() {
-    let plaintextFile = this.srcFileName.split('.')[0] + '.' + this.srcFileName.split('.')[1];
+    let plaintextFile = this.srcFileName.split('.')[0];
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
-        console.info(TAG, 'stopFuseLink', this.srcFileName);
-        await this.dlpFile.stopFuseLink();
+        this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), () =>{});
       } catch (err) {
         console.error(TAG, 'stopFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
         this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
@@ -199,8 +194,14 @@ struct changeEncryption {
     }
     console.info(TAG, 'Decrypt DLP file', this.srcFileName)
     try {
+      let srcFileUri: string = GlobalContext.load('uri');
+      let srcFileMsg: FileMsg = getFileMsgByUri(srcFileUri);
       let DocumentSaveOptions = new picker.DocumentSaveOptions();
       DocumentSaveOptions.newFileNames = [plaintextFile];
+      let fileSuffixChoicesName = this.srcFileName.split('.')[1];
+      DocumentSaveOptions.fileSuffixChoices = [`.${fileSuffixChoicesName}`];
+      DocumentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
+        srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length);
       let documentPicker = new picker.DocumentViewPicker();
       documentPicker.save(DocumentSaveOptions).then(async (saveRes) => {
         if (saveRes === undefined || saveRes.length === 0) {
@@ -210,7 +211,6 @@ struct changeEncryption {
         }
         console.info(TAG, 'get uri', saveRes)
         let uri = saveRes[0];
-        let dstFd: number = 0;
         let uriInfo: fileUri.FileUri | undefined = undefined;
         let file: fs.File | undefined = undefined;
         try {
@@ -220,7 +220,6 @@ struct changeEncryption {
         }
         try {
           file = await fs.open(uri, fs.OpenMode.READ_WRITE);
-          dstFd = file.fd;
         } catch (err) {
           console.error(TAG, 'open', uri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           try {
@@ -233,8 +232,22 @@ struct changeEncryption {
           return;
         };
         try {
-          console.info(TAG, 'recoverDLPFile', this.srcFileName, this.dlpFd);
-          await this.dlpFile.recoverDLPFile(dstFd);
+          console.info(TAG, 'recoverDLPFile', this.srcFileName);
+          await this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), uri, async (err: number) => {
+            if (err !== 0) {
+              let ansErr: BusinessError<void> = {
+                code: err,
+                name: '',
+                message: ''
+              }
+
+              console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as number));
+              let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
+              this.showErrorDialog(errorInfo.title, errorInfo.msg);
+              await this.catchProcess();
+              return;
+            }
+          });
         } catch (err) {
           console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           try {
@@ -262,24 +275,32 @@ struct changeEncryption {
         if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
           try {
             console.info(TAG, 'resumeFuseLink', this.srcFileName);
-            await this.dlpFile.resumeFuseLink();
+            this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), () =>{});
           } catch (err) {
             console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
           }
         } else {
           try {
-            console.info(TAG, 'closeDLPFile', this.srcFileName, this.dlpFd);
-            await this.dlpFile.closeDLPFile();
+            console.info(TAG, 'closeDLPFile', this.srcFileName);
+            this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), () =>{});
           } catch (err) {
             console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           }
         }
-        if (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>) {
-          (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>).delete(GlobalContext.load('uri') as string);
+        if (this.session !== undefined) {
+          this.session.terminateSelfWithResult({
+            'resultCode': 0,
+            'want': {
+              'bundleName': 'com.ohos.dlpmanager',
+            },
+          });
+        } else {
+          if (GlobalContext.load('fileOpenHistoryFromMain')) {
+            (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+          }
+          abilityResult.resultCode = 0;
+          (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
         }
-        abilityResult.resultCode = 0;
-        (GlobalContext
-          .load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
       }).catch((err: number) => {
         console.error(TAG, 'DocumentViewPicker save failed', JSON.stringify(err));
       });
@@ -346,16 +367,12 @@ struct changeEncryption {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       console.info(TAG, 'request from sandbox');
       this.linkFileName = GlobalContext.load('linkFileName') as string;
-      this.dlpFd = GlobalContext.load('dlpFd') as number;
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
-      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
     } else {
       console.info(TAG, 'request from normal');
-      this.dlpFd = GlobalContext.load('dlpFd') as number;
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
-      this.dlpFile = GlobalContext.load('dlpFile') as dlpPermission.DLPFile;
     }
-    await this.showData(this.dlpFile.dlpProperty);
+    await this.showData(GlobalContext.load('dlpProperty'));
     setTimeout(() => {
       this.prepareData = false;
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
@@ -758,8 +775,6 @@ struct changeEncryption {
                   .fontColor($r('app.color.encryption_cancel'))
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
-                    // update the global resource;
-                    GlobalContext.store('dlpFile', this.dlpFile);
                     router.replaceUrl({
                       url: 'pages/encryptionProtection',
                       params: this.routerData
@@ -777,7 +792,7 @@ struct changeEncryption {
             .visibility(this.prepareData ? Visibility.Hidden : Visibility.Visible)
             .width(Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('app.color.da_button_color'))
-            .borderRadius(Constants.INDEX_BORDER_RADIUS)
+            .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
           }
         }
       }

@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import UIAbility from '@ohos.app.ability.UIAbility';
 import Want from '@ohos.app.ability.Want';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
-import GlobalContext from '../common/GlobalContext';
 import window from '@ohos.window';
 import { BusinessError } from '@ohos.base';
+import GlobalContext from '../common/GlobalContext';
 
 const TAG = '[DLPManager_Alert]';
 export default class AlertAbility extends UIAbility {

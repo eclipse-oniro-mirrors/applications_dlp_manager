@@ -19,7 +19,7 @@ import picker from '@ohos.file.picker';
 import StartOptions from '@ohos.app.ability.StartOptions';
 import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
 import { Permissions } from '@ohos.abilityAccessCtrl';
-import GlobalContext from '../common/GlobalContext';
+import fileAccess from '@ohos.file.fileAccess';
 import Want from '@ohos.app.ability.Want';
 import common from '@ohos.app.ability.common';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
@@ -32,7 +32,7 @@ import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
 import { startAlertAbility, getFileUriByPath, getFileFd, getAppId } from '../common/utils';
 import Constants from '../common/constant';
-import fileAccess from '@ohos.file.fileAccess';
+import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
 import File from '@system.file';
 
@@ -586,5 +586,4 @@ export default class SaveAsAbility extends UIAbility {
       return;
     }
   }
-
 };

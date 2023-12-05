@@ -105,10 +105,6 @@
       "value": "拥有编辑权限的用户可查看、编辑、复制、录屏或保存，但不能打印文件。"
     },
     {
-      "name": "header_title_full_control_tips",
-      "value": "拥有完全控制权限的用户可不受限制的操作此文件。"
-    },
-    {
       "name": "file_encrypted",
       "value": "文件已加密"
     },
@@ -266,11 +262,7 @@
     },
     {
       "name": "apply_for_the_permission",
-      "value": "申请权限请联系："
-    },
-    {
-      "name": "colon",
-      "value": "："
+      "value": "申请权限请联系：%s"
     },
     {
       "name": "delete_account",
@@ -298,11 +290,11 @@
     },
     {
       "name": "encrypt_employee_id",
-      "value": "工号"
+      "value": "工号：%s"
     },
     {
       "name": "encrypt_domain",
-      "value": "域"
+      "value": "域：%s"
     },
     {
       "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",
@@ -315,6 +307,10 @@
     {
       "name": "MESSAGE_DLP_KNOWING_THAT",
       "value": "知道了"
+    },
+    {
+      "name": "MESSAGE_DLP_ENCRYPTION",
+      "value": "正在加密，请稍后再试。"
     },
     {
       "name": "Document_valid",

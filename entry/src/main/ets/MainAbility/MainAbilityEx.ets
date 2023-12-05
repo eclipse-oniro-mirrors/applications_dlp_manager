@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-import UIAbility from '@ohos.app.ability.UIAbility';
-import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
-import { Permissions } from '@ohos.abilityAccessCtrl';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import deviceInfo from '@ohos.deviceInfo';
 import Want from '@ohos.app.ability.Want';
+import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import { Configuration } from '@ohos.app.ability.Configuration';
 import Constants from '../common/constant';
@@ -35,47 +35,40 @@ import {
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
-import AbilityConstant from '@ohos.app.ability.AbilityConstant';
-import { BusinessError } from '@ohos.base';
-import window from '@ohos.window';
-import common from '@ohos.app.ability.common';
-import account_osAccount from '@ohos.account.osAccount';
 
 const PHONE = 'phone';
 const TAG = '[DLPManager_Main]';
-let permissionList: Array<Permissions> = [
-  'ohos.permission.READ_MEDIA',
-  'ohos.permission.WRITE_MEDIA',
-  'ohos.permission.FILE_ACCESS_MANAGER'
-];
 
 let direction: number = -1;
+const TRANSPARENT_BACKGROUND_COLOR: string = '#33182431';
 
-export default class MainAbility extends UIAbility {
+export default class MainAbility extends UIExtensionAbility {
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   callerToken:number = 0;
   private homeFeature!: HomeFeature;
+  flag: number = 0;
 
-  async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
+  async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     console.log(TAG, 'want', JSON.stringify(want));
-    GlobalContext.store('abilityWant', want);
-    if (!GlobalContext.load('fileOpenHistoryFromMain')) {
-      GlobalContext.store('fileOpenHistoryFromMain', new Map<string, string>());
-    }
-    if (GlobalContext.load('fileOpenHistoryFromMain').has(want.uri)) {
+    GlobalContext.store('session', session);
+    this.flag++;
+    if (this.flag > Constants.MAIN_FLAG_MAX_NUMBER) {
       let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_ENCRYPTING } as BusinessError);
-      goToAlertMessagePage(errInfo.title, errInfo.msg, want.parameters?.fileName);
+      goToAlertMessagePage(errInfo.title, errInfo.msg, GlobalContext.load('abilityWant').parameters?.displayName);
       return;
     }
+    GlobalContext.store('abilityWant', want);
     GlobalContext.store('context', this.context);
     GlobalContext.store('domainAccount', deviceInfo.deviceType === PHONE ? false : true);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
-    if (!GlobalContext.load('linkSet')) {
-      GlobalContext.store('linkSet', new Set<string>());
-    }
+
     this.homeFeature = new HomeFeature(this.context);
     GlobalContext.store('homeFeature', this.homeFeature);
+
+    this.homeFeature.connectServiceExtAbility(()=>{
+      this.getNewWantPage(session);
+    });
   }
 
   onConfigurationUpdate(newConfig: Configuration): void {
@@ -93,22 +86,12 @@ export default class MainAbility extends UIAbility {
     emitter.emit(innerEvent, eventData);
   }
 
-  onDestroy(): void {
+  onSessionDestroy(): void {
     console.info(TAG, 'onDestroy');
-    if (GlobalContext.load('fileOpenHistoryFromMain')) {
-      (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
-    }
+    this.flag--;
   }
 
-  onNewWant(want: Want) {
-    console.log(TAG, 'onNewWant', JSON.stringify(want));
-    GlobalContext.store('abilityWant', want);
-    GlobalContext.store('uri', (GlobalContext.load('abilityWant') as Want).uri as string);
-
-    this.getNewWantPage();
-  }
-
-  async gotoPage(windowStage: window.WindowStage): Promise<void> {
+  async gotoPage(session: UIExtensionContentSession): Promise<void> {
     let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
     let accountName: string = (GlobalContext.load('domainAccount') as boolean) ? accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
     this.authPerm = getAuthPerm(accountName, GlobalContext.load('dlpProperty'));
@@ -123,21 +106,28 @@ export default class MainAbility extends UIAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      windowStage.loadContent('pages/changeEncryption', (err: BusinessError) =>{
-        if (err.code !== 0) {
-          console.error(TAG, 'loadContent failed', err.code, err.message);
-        }
-      });
+      let storage: LocalStorage = new LocalStorage({
+        'session': session,
+        'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
+      } as Record<string, UIExtensionContentSession | string>);
+      session.loadContent('pages/changeEncryption', storage);
+      try {
+        session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+      } catch (exception) {
+        console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+      }
     } else {
-      windowStage.loadContent('pages/permissionStatus', (err: BusinessError) =>{
-        if (err.code !== 0) {
-          console.error(TAG, 'loadContent failed', err.code, err.message);
-        }
-      });
+      let storage: LocalStorage = new LocalStorage({
+        'session': session,
+        'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
+      } as Record<string, UIExtensionContentSession | string>);
+      session.loadContent('pages/permissionStatus', storage);
+      try {
+        session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+      } catch (exception) {
+        console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+      }
     }
-    windowStage.getMainWindow().then((win: window.Window) => {
-      win.setBackgroundColor('#00FFFFFF');
-    });
   }
 
   checkValidWant(): boolean {
@@ -165,10 +155,10 @@ export default class MainAbility extends UIAbility {
       return false;
     }
     let uri = String((GlobalContext.load('abilityWant') as Want).uri);
-    if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
-      console.error(TAG, 'invalid uri for opened link uri');
-      return false;
-    }
+    // if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
+    //   console.error(TAG, 'invalid uri for opened link uri');
+    //   return false;
+    // }
 
     if (uri.indexOf(Constants.FUSE_PATH) !== -1) {
       console.error(TAG, 'invalid uri in want.uri');
@@ -197,22 +187,20 @@ export default class MainAbility extends UIAbility {
         reject();
         return;
       }
-      let codeMessage = checkDomainAccountInfo(accountInfo);
-      if (codeMessage) {
-        let errInfo = getAlertMessage({ code: codeMessage } as BusinessError);
-        goToAlertMessagePage(errInfo.title, errInfo.msg);
-        reject();
-        return;
-      }
     })
   }
 
-  async getNewWantPage(): Promise<void> {
+  async getNewWantPage(session: UIExtensionContentSession): Promise<void> {
     console.log(TAG, 'getNewWantPage start');
-    let windowStage: window.WindowStage = GlobalContext.load('windowStage') as window.WindowStage;
     try {
       await this.checkValidWantAndAccount()
     } catch {
+      return;
+    }
+    let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
+    if (codeMessage) {
+      let errInfo = getAlertMessage({ code: codeMessage } as BusinessError);
+      goToAlertMessagePage(errInfo.title, errInfo.msg);
       return;
     }
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
@@ -229,12 +217,12 @@ export default class MainAbility extends UIAbility {
         GlobalContext.store('dlpFileName', dlpFileName);
         GlobalContext.store('linkFileName', linkFileName);
         GlobalContext.store('dlpProperty', data);
+        GlobalContext.store('uri', uri ?? '');
         GlobalContext.store('permanent', data.expireTime === 0);
         if (data.expireTime !== 0) {
           GlobalContext.store('validity', new Date(data.expireTime as number));
         }
-        GlobalContext.store('uri', uri ?? '');
-        this.gotoPage(windowStage);
+        this.gotoPage(session);
       });
     } else {
       let fileName: string = ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
@@ -243,14 +231,16 @@ export default class MainAbility extends UIAbility {
         console.info(TAG, fileName, 'is not a dlp file');
         GlobalContext.store('originFileName', fileName);
         GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
-        windowStage.loadContent('pages/encryptionProtection', (err: BusinessError) =>{
-          if (err.code !== 0) {
-            console.error(TAG, 'loadContent failed', err.code, err.message);
-          }
-        });
-        windowStage.getMainWindow().then((win: window.Window) => {
-          win.setWindowBackgroundColor('#00FFFFFF');
-        });
+        let storage: LocalStorage = new LocalStorage({
+          'session': session,
+          'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
+        } as Record<string, UIExtensionContentSession | string>);
+        session.loadContent('pages/encryptionProtection', storage);
+        try {
+          session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+        } catch (exception) {
+          console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+        }
         return;
       } else {
         let uri: string = GlobalContext.load('uri') as string;
@@ -268,7 +258,7 @@ export default class MainAbility extends UIAbility {
         } catch {
           return;
         }
-        let dlpFileName: string = ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
+        let dlpFileName: string = ((GlobalContext.load('abilityWant')as Want).parameters?.fileName as Record<string, string>)?.name;
         GlobalContext.store('dlpFileName', dlpFileName);
         let callerAppId: string;
         try {
@@ -293,35 +283,14 @@ export default class MainAbility extends UIAbility {
           } else {
             GlobalContext.store('dlpProperty', data);
             GlobalContext.store('permanent', data.expireTime === 0);
-            GlobalContext.store('fileOpenHistoryFromMain', new Map<string, string>());
             if (data.expireTime !== 0) {
               GlobalContext.store('validity', new Date(data.expireTime as number));
             }
-            let fileOpenHistoryFromMain: Map<string, string> = GlobalContext.load('fileOpenHistoryFromMain') as Map<string, string>;
-            fileOpenHistoryFromMain.set(uri, uri);
-            console.log(TAG, 'fileOpenHistoryFromMain add', JSON.stringify(fileOpenHistoryFromMain));
-            this.gotoPage(windowStage);
+            this.gotoPage(session);
           }
         })
       }
     }
-  }
-
-  async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
-    console.info(TAG, 'onWindowStageCreate');
-    GlobalContext.store('windowStage', windowStage);
-    try {
-      let atManager = abilityAccessCtrl.createAtManager();
-      await atManager.requestPermissionsFromUser(GlobalContext.load('context') as common.UIAbilityContext, permissionList);
-    } catch (err) {
-      console.error(TAG, 'requestPermissionsFromUser failed', (err as BusinessError).code, (err as BusinessError).message);
-      return;
-    }
-    this.homeFeature.connectServiceExtAbility(()=>{
-      console.info(TAG, 'onWindowStageCreate callback');
-      this.getNewWantPage();
-    });
-    console.info(TAG, 'onWindowStageCreate end');
   }
 
   onWindowStageDestroy(): void {

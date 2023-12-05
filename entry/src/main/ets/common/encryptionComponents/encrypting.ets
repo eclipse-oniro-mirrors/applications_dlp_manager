@@ -57,7 +57,7 @@ struct EncryptingPanel {
           .width(Constants.HEADER_COLUMN_WIDTH)
           .height(Constants.ENCRYPTION_LOADING_HEIGHT)
           .backgroundColor($r('app.color.da_button_color'))
-          .borderRadius(Constants.INDEX_BORDER_RADIUS)
+          .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
         }
       }
     }

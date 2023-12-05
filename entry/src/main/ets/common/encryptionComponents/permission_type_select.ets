@@ -14,10 +14,10 @@
  */
 
 import emitter from '@ohos.events.emitter';
-import Constants from '../constant';
-import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
+import Constants from '../constant';
+import GlobalContext from '../GlobalContext';
 
 const TAG = '[DLPManager_Select]';
 

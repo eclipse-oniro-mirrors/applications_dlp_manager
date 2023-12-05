@@ -13,12 +13,19 @@
  * limitations under the License.
  */
 
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import ability from '@ohos.ability.ability';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import { directionStatus } from '../common/utils';
 import common from '@ohos.app.ability.common';
 
 const TAG = "[DLPManager_PermStat]";
+
+let abilityResult: ability.AbilityResult = {
+  "resultCode": 0,
+  "want": {}
+};
 
 class Content_ {
   label: Resource | undefined = undefined
@@ -31,9 +38,11 @@ class TitleContent {
   content: Content_[] = []
 }
 
-@Entry
+let storage = LocalStorage.GetShared();
+@Entry(storage)
 @Component
 struct PermissionStatus {
+  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State directionStatus: number = 0;
   @State authPerm: number = Constants.PP_IMAGE_PAD;
   @State authPermFlag: boolean = false;
@@ -220,7 +229,6 @@ struct PermissionStatus {
               Row() {
                 Text($r('app.string.header_title'))
                   .fontWeight(FontWeight.Medium)
-                  .fontFamily($r('app.string.typeface'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
                   .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
@@ -294,16 +302,10 @@ struct PermissionStatus {
               })
 
               Row() {
-                Text($r('app.string.apply_for_the_permission'))
-                  .fontFamily($r('app.string.typeface'))
+                Text($r('app.string.apply_for_the_permission', this.accountId))
                   .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
                   .align(Alignment.Start)
-                  .fontWeight(FontWeight.Regular)
-                Text(this.accountId)
-                  .fontFamily($r('app.string.typeface'))
-                  .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
                   .fontWeight(FontWeight.Regular)
               }
               .width(Constants.HEADER_COLUMN_WIDTH)
@@ -320,7 +322,20 @@ struct PermissionStatus {
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
                   .height(Constants.FOOTER_BUTTON_HEIGHT)
                   .onClick(() => {
-                    (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf()
+                    if (this.session !== undefined) {
+                      this.session.terminateSelfWithResult({
+                        'resultCode': 0,
+                        'want': {
+                          'bundleName': 'com.ohos.dlpmanager',
+                        },
+                      });
+                    } else {
+                      if (GlobalContext.load('fileOpenHistoryFromMain')) {
+                        (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+                      }
+                      abilityResult.resultCode = 0;
+                      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                    }
                   })
               }
               .justifyContent(FlexAlign.Center)

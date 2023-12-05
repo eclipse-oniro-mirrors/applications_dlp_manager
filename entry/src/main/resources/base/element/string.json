@@ -105,10 +105,6 @@
       "value": "Users with the change permission can view, edit, copy, record, or save the file, but cannot print it."
     },
     {
-      "name": "header_title_full_control_tips",
-      "value": "Users with the full control permission can operate the file without restrictions."
-    },
-    {
       "name": "file_encrypted",
       "value": "File protected"
     },
@@ -266,11 +262,7 @@
     },
     {
       "name": "apply_for_the_permission",
-      "value": "To apply for permissions, contact:"
-    },
-    {
-      "name": "colon",
-      "value": ":"
+      "value": "To apply for permissions, contact: %s"
     },
     {
       "name": "delete_account",
@@ -298,11 +290,11 @@
     },
     {
       "name": "encrypt_employee_id",
-      "value": "Employee ID"
+      "value": "Employee ID：%s"
     },
     {
       "name": "encrypt_domain",
-      "value": "Domain"
+      "value": "Domain：%s"
     },
     {
       "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",
@@ -315,6 +307,10 @@
     {
       "name": "MESSAGE_DLP_KNOWING_THAT",
       "value": "Got it"
+    },
+    {
+      "name": "MESSAGE_DLP_ENCRYPTION",
+      "value": "Encryption in progress. Please try again later."
     },
     {
       "name": "Document_valid",

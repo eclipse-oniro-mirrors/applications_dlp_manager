@@ -23,6 +23,10 @@ import wantConstant from '@ohos.app.ability.wantConstant';
 import deviceInfo from '@ohos.deviceInfo';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
+import common from '@ohos.app.ability.common';
+import { BusinessError } from '@ohos.base';
+import osAccount from '@ohos.account.osAccount';
+import uriPermissionManager from '@ohos.application.uriPermissionManager';
 import {
   getOsAccountInfo,
   getUserId,
@@ -35,10 +39,6 @@ import {
 } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext'
-import common from '@ohos.app.ability.common';
-import { BusinessError } from '@ohos.base';
-import osAccount from '@ohos.account.osAccount';
-import uriPermissionManager from '@ohos.application.uriPermissionManager';
 
 const TAG = '[DLPManager_View]';
 const PHONE = 'phone';
@@ -143,7 +143,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           sandbox2linkFile.set(this.sandboxBundleName + this.appIndex, new Array);
         }
         if (!this.alreadyOpen) {
-          sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push([this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId]);
+          sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push([this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId, this.uri]);
           (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri]);
           (GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>).set(this.authPerm, [this.sandboxBundleName, this.appIndex]);
           (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile |dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId, [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
@@ -479,7 +479,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async onRequest(want: Want, startId: number): Promise<void> {
     console.debug(TAG, 'enter onRequest');
     this.callerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
-    if ((GlobalContext.load('fileOpenHistoryFromMain') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
+    if ((GlobalContext.load('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
       await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
       return;
     }
@@ -496,6 +496,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.fileName = obj.name;
     this.uri = want.uri as string;
     this.dlpFd = getFileFd(this.uri);
+    GlobalContext.store('uri', this.uri);
     console.debug(TAG, 'dlpFd:', this.dlpFd);
     if (this.dlpFd === -1) {
       opening = false;

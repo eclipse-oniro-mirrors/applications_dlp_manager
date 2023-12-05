@@ -22,7 +22,7 @@ import { BusinessError } from '@ohos.base'
 
 const TAG = '[DLPManager_Alert]';
 
-@Entry
+@Entry()
 @Component
 struct Index {
   dlpAlertDialog?: CustomDialogController;
@@ -46,6 +46,7 @@ struct Index {
   }
 
   async aboutToAppear() {
+    console.log(TAG, 'alertaboutToAppear start')
     try {
       let errInfo = getAlertMessage((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError);
       this.showErrorDialogAndExit(errInfo.title as Resource, errInfo.msg as Resource, errInfo?.cancel as Resource, errInfo?.ok as Resource);

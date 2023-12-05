@@ -18,6 +18,7 @@ import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
+
 const TAG = "[DLPManager_staff]";
 
 @Component
@@ -46,32 +47,18 @@ struct staffItem {
   @Builder popupBuilderTips() {
     Column() {
       Row() {
-        Text($r('app.string.encrypt_employee_id'))
-          .fontFamily('HarmonyHeiTi')
+        Text($r('app.string.encrypt_employee_id', this.accountNameTips))
           .fontSize($r('sys.float.ohos_id_text_size_body2'))
           .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-        Text(' : ')
-          .fontFamily('HarmonyHeiTi')
-          .fontSize($r('sys.float.ohos_id_text_size_body2'))
-          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-        Text(this.accountNameTips)
-          .fontFamily('HarmonyHeiTi')
-          .fontSize($r('sys.float.ohos_id_text_size_body2'))
-          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis
+          })
+          .maxLines(Constants.PP_TEXT_MAX_LINE)
       }
       .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
       if (GlobalContext.load('domainAccount')) {
         Row() {
-          Text($r('app.string.encrypt_domain'))
-            .fontFamily('HarmonyHeiTi')
-            .fontSize($r('sys.float.ohos_id_text_size_body2'))
-            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-          Text(' : ')
-            .fontFamily('HarmonyHeiTi')
-            .fontSize($r('sys.float.ohos_id_text_size_body2'))
-            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-          Text(this.domainTips)
-            .fontFamily('HarmonyHeiTi')
+          Text($r('app.string.encrypt_domain', this.domainTips))
             .fontSize($r('sys.float.ohos_id_text_size_body2'))
             .fontColor($r('sys.color.ohos_id_color_primary_dark'))
         }
@@ -171,4 +158,4 @@ struct staffItem {
   }
 }
 
-export default staffItem;
+export { staffItem };
