@@ -35,7 +35,10 @@ import {
   startAlertAbility,
   getFileFd,
   getFileUriByPath,
-  getAppId
+  getAppId,
+  DLPInfo,
+  getDLPInfo,
+  sendDlpFileOpenEvent
 } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext'
@@ -107,6 +110,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (!GlobalContext.load('linkSet')) {
       GlobalContext.store('linkSet', new Set<string>());
     }
+    let dlpInfo:DLPInfo = await getDLPInfo();
+    GlobalContext.store('hiPNameId', dlpInfo.name);
+    GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
   }
 
   async startDataAbility(): Promise<void> {
@@ -373,6 +379,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await this.closeFile();
         reject(); return;
       }
+      GlobalContext.store('hiSandboxIndex', this.appIndex);
       hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
       await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex); // 202: DLP_INSTALL_SANDBOX_SUCCESS
       if (!this.alreadyOpen) {
@@ -469,6 +476,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       try {
         this.stat = await fs.stat(this.uriInfo.path);
+        GlobalContext.store('hiFileSize', this.stat.size);
+        GlobalContext.store('hiPolicySizeEnc', this.stat.size);
       } catch (err) {
         console.info(TAG, 'stat fail', (err as BusinessError).code, (err as BusinessError).message);
       }
@@ -479,6 +488,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async onRequest(want: Want, startId: number): Promise<void> {
     console.debug(TAG, 'enter onRequest');
     this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
+    GlobalContext.store('hiSandboxPkgName', this.callerBundleName);
     if ((GlobalContext.load('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
       await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
       return;
@@ -536,6 +546,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
     }
     this.startSandboxApp(startId);
+    GlobalContext.store('hiCode', Constants.DLP_START_SANDBOX_SUCCESS);
+    sendDlpFileOpenEvent();
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
   }
 }

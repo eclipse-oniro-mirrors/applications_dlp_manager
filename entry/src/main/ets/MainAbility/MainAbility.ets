@@ -31,7 +31,10 @@ import {
   getFileFd,
   getAlertMessage,
   goToAlertMessagePage,
-  getAppId
+  getAppId,
+  getDLPInfo,
+  sendDlpManagerAccountLogin,
+  DLPInfo
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -164,6 +167,7 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need caller info in want.parameters');
       return false;
     }
+    GlobalContext.store('hiPkgName', callerBundleName);
     let uri = String((GlobalContext.load('abilityWant') as Want).uri);
     if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
       console.error(TAG, 'invalid uri for opened link uri');
@@ -215,6 +219,7 @@ export default class MainAbility extends UIAbility {
     } catch {
       return;
     }
+    await sendDlpManagerAccountLogin(0);
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
     console.info(TAG, 'request is from sandbox', requestIsFromSandBox);
@@ -310,6 +315,9 @@ export default class MainAbility extends UIAbility {
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     console.info(TAG, 'onWindowStageCreate');
     GlobalContext.store('windowStage', windowStage);
+    let dlpInfo:DLPInfo = await getDLPInfo();
+    GlobalContext.store('hiPNameId', dlpInfo.name);
+    GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
     try {
       let atManager = abilityAccessCtrl.createAtManager();
       await atManager.requestPermissionsFromUser(GlobalContext.load('context') as common.UIAbilityContext, permissionList);

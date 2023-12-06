@@ -37,7 +37,9 @@ const TAG = "[DLPManager_AddStaff]";
 }
 @Component
 struct AddStaff {
-  @State inputId: string = ''
+  @State succ: number = 0;
+  @State fail: number = 0;
+  @State inputId: string = '';
   @State isAccountCheckSuccess: boolean = true;
   @State staffArrayLength: boolean = false;
   @State isInputInvalid: boolean = false;
@@ -230,8 +232,12 @@ struct AddStaff {
                       authAccount: this.inputId.toLocaleLowerCase(),
                     }
                     this.staffArray.push(o1)
+                    this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
+                    GlobalContext.store('hiAccountVerifySucc', this.succ);
                     this.inputId = '';
                   } else {
+                    this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
+                    GlobalContext.store('hiAccountVerifyFail', this.fail);
                     if ([Constants.ERR_JS_INVALID_PARAMETER, Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(err.code)){
                       this.isInputInvalid = true;
                       return;
@@ -246,11 +252,15 @@ struct AddStaff {
                 let o2: Staff = {
                   authAccount: this.inputId,
                 }
-                this.staffArray.push(o2)
+                this.staffArray.push(o2);
+                this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
+                GlobalContext.store('hiAccountVerifySucc', this.succ);
                 this.inputId = ''
               }
             } catch (err) {
               this.isAccountCheckSuccess = true;
+              this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
+              GlobalContext.store('hiAccountVerifyFail', this.fail);
               console.error(TAG, (err as BusinessError).code);
             }
           })
