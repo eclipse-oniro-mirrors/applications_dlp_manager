@@ -25,7 +25,6 @@ const TAG = "[DLPManager_staff]";
 @Extend(Text) function TipsTextStyle(){
   .fontSize($r('sys.float.ohos_id_text_size_body2'))
   .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-  .textAlign(TextAlign.Start)
   .textOverflow({
     overflow: TextOverflow.Ellipsis
   })
@@ -65,13 +64,11 @@ struct staffItem {
           ForEach(this.accountTipsArray, (item: AccountTips) => {
             if (item.isShow) {
               ListItem() {
-                Row({ space: Constants.TIPS_ROW_SPACE }) {
-                  Flex({ direction: FlexDirection.Row }) {
-                    if(AccountTipsConfig.isSysLanguage()){
-                      Text(item.description?.replace('%s',item.value)?.split('').join('\u200B')).TipsTextStyle()
-                    }else{
-                      Text(item.descriptionEn?.replace('%s',item.value)?.split('').join('\u200B')).TipsTextStyle()
-                    }
+                Row() {
+                  if (AccountTipsConfig.isSysLanguage()) {
+                    Text(item.description?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
+                  } else {
+                    Text(item.descriptionEn?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
                   }
                 }.width(Constants.TIPS_WIDTH).height(Constants.TIPS_HEIGHT_ITEM)
               }
@@ -104,8 +101,7 @@ struct staffItem {
   async aboutToAppear(){
     if (GlobalContext.load('domainAccount')) {
       if (!this.textContent) {
-        await AccountTipsConfig.getConfigTips();
-        this.accountTipsArray = AccountTipsConfig.configTipsArray;
+        this.accountTipsArray = await AccountTipsConfig.getConfigTips();
         AccountTipsConfig.getAccountInfo(this.authAccount).then((result: account_osAccount.DomainAccountInfo) => {
           this.textContent = result[AccountTipsConfig.showContentKey] as string;
         })
@@ -132,7 +128,7 @@ struct staffItem {
       Text(this.textContent?.split('')
         .join('\u200B'))
         .constraintSize({
-          maxWidth: Constants.ENCRYPTION_STAFF_MAX_WIDTH
+          maxWidth: this.authAccount === this.textContent ? Constants.ENCRYPTION_STAFF_MAX_WIDTH : Constants.TIPS_STAFF_MAX_WIDTH
         })
         .textOverflow({
           overflow: TextOverflow.Ellipsis
@@ -143,7 +139,8 @@ struct staffItem {
     .onClick(() => {
       if (GlobalContext.load('domainAccount')) {
         try {
-          AccountTipsConfig.getAccountInfo(this.authAccount).then((result: account_osAccount.DomainAccountInfo) => {
+          AccountTipsConfig.getAccountInfo(this.authAccount).then(async (result: account_osAccount.DomainAccountInfo) => {
+            this.accountTipsArray = await AccountTipsConfig.getConfigTips();
             this.handlePopupTips = !this.handlePopupTips;
             this.accountTipsArray?.forEach((item: AccountTips) => {
               let value: string = result[item.key];
@@ -160,7 +157,7 @@ struct staffItem {
     .bindPopup(this.handlePopupTips, {
       builder: this.popupBuilderTips,
       placement: Placement.BottomLeft,
-      popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+      popupColor: ($r('sys.color.ohos_id_color_help_tip_bg')),
       enableArrow: true,
       showInSubWindow: false,
       arrowOffset: Constants.TIPS_ARROW_OFFSET,
@@ -170,7 +167,7 @@ struct staffItem {
         }
       }
     })
-    .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
+    .width(this.authAccount === this.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
     .alignItems(VerticalAlign.Center)
     .backgroundColor(this.isActive ? '#1A0A59F7' : this.containerBackgroundColor)
     .borderRadius(Constants.ENCRYPTION_SUCCESS_CHANGE_TOP)

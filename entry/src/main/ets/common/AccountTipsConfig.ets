@@ -41,18 +41,26 @@ export class AccountTipsConfig {
   private static ccmConfigPath: string = "etc/dlp_manager/account_tips.json";
   private static configName: string = "account_tips.json";
 
-  public static async getConfigTips() {
-    try {
-      if (AccountTipsConfig.configTipsArray?.length === 0) {
-        AccountTipsConfig.configTipsArray = await AccountTipsConfig.loadCcmConfigs();
-        return AccountTipsConfig.configTipsArray;
-      } else {
-        let accountTipsArray: Array<AccountTips> = JSON.parse(JSON.stringify(AccountTipsConfig.configTipsArray));
-        return accountTipsArray;
+  public static getConfigTips(): Promise<Array<AccountTips>> {
+    return new Promise((resolve, reject) => {
+      try {
+        if (AccountTipsConfig.configTipsArray?.length === 0) {
+          AccountTipsConfig.loadCcmConfigs().then((accountTipsArray: Array<AccountTips>) => {
+            AccountTipsConfig.configTipsArray = accountTipsArray;
+            resolve(AccountTipsConfig.configTipsArray);
+          }).catch((err: BusinessError) => {
+            console.error(`${TAG} getConfigTips failed, error: ${JSON.stringify(err)}`);
+            reject(err);
+          });
+        } else {
+          let accountTipsArray: Array<AccountTips> = JSON.parse(JSON.stringify(AccountTipsConfig.configTipsArray));
+          resolve(accountTipsArray);
+        }
+      } catch (error) {
+        console.error(`${TAG} getConfigTips error: ${JSON.stringify(error)}`);
+        reject(error);
       }
-    } catch (error) {
-      console.error(`${TAG} getConfigTips error: ${JSON.stringify(error)}`);
-    }
+    })
   }
 
   public static isSysLanguage(): boolean {
@@ -77,7 +85,7 @@ export class AccountTipsConfig {
         }).catch((err: BusinessError) => {
           console.error(`${TAG} getAccountInfo failed, error: ${JSON.stringify(err)}`);
           reject(err);
-        })
+        });
       } catch (error) {
         console.error(`${TAG} getAccountInfo error: ${JSON.stringify(error)}`);
         reject(error);

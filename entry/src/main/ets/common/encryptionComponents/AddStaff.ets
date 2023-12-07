@@ -41,7 +41,6 @@ const TAG: string = "[DLPManager_AddStaff]";
 @Extend(Text) function TipsTextStyle(){
   .fontSize($r('sys.float.ohos_id_text_size_body2'))
   .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-  .textAlign(TextAlign.Start)
   .textOverflow({
     overflow: TextOverflow.Ellipsis
   })
@@ -84,13 +83,11 @@ struct AddStaff {
           ForEach(this.accountTipsArray, (item: AccountTips) => {
             if (item.isShow) {
               ListItem() {
-                Row({ space: Constants.TIPS_ROW_SPACE }) {
-                  Flex({ direction: FlexDirection.Row }) {
-                    if(AccountTipsConfig.isSysLanguage()){
-                      Text(item.description?.replace('%s',item.value)?.split('').join('\u200B')).TipsTextStyle()
-                    }else{
-                      Text(item.descriptionEn?.replace('%s',item.value)?.split('').join('\u200B')).TipsTextStyle()
-                    }
+                Row() {
+                  if (AccountTipsConfig.isSysLanguage()) {
+                    Text(item.description?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
+                  } else {
+                    Text(item.descriptionEn?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
                   }
                 }.width(Constants.TIPS_WIDTH).height(Constants.TIPS_HEIGHT_ITEM)
               }
@@ -121,8 +118,7 @@ struct AddStaff {
 
   async aboutToAppear(){
     if (GlobalContext.load('domainAccount')) {
-      await AccountTipsConfig.getConfigTips();
-      this.accountTipsArray = AccountTipsConfig.configTipsArray;
+      this.accountTipsArray = await AccountTipsConfig.getConfigTips();
       this.textContent = AccountTipsConfig.showContentKey;
     }
   }
@@ -161,7 +157,8 @@ struct AddStaff {
                   if (GlobalContext.load('domainAccount')) {
                     try {
                       AccountTipsConfig.getAccountInfo(item.authAccount)
-                        .then((result: account_osAccount.DomainAccountInfo) => {
+                        .then(async (result: account_osAccount.DomainAccountInfo) => {
+                          this.accountTipsArray = await AccountTipsConfig.getConfigTips();
                           this.activeStaffIndex = index!;
                           this.accountTipsArray?.forEach((accountTips: AccountTips) => {
                             accountTips.value = result[accountTips.key];
@@ -190,7 +187,7 @@ struct AddStaff {
                 .bindPopup(this.activeStaffIndex === index, {
                   builder: this.popupBuilderTips,
                   placement: Placement.BottomLeft,
-                  popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                  popupColor: ($r('sys.color.ohos_id_color_help_tip_bg')),
                   enableArrow: true,
                   showInSubWindow: false,
                   arrowOffset: Constants.TIPS_ARROW_OFFSET,
@@ -201,7 +198,7 @@ struct AddStaff {
                   }
                 })
                 .bindContextMenu(this.MenuBuilder(index!), isPC() ? ResponseType.RightClick : ResponseType.LongPress)
-                .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
+                .width(item.authAccount === item.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
                 .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
             }
           },
