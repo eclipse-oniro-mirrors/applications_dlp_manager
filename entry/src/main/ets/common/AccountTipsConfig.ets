@@ -22,7 +22,7 @@ import { BusinessError } from '@ohos.base';
 import GlobalContext from './GlobalContext';
 import I18n from '@ohos.i18n';
 
-const TAG: string = "AccountTipsConfig";
+const TAG: string = "DLPManager_ATC";
 const DOMAIN_CHINA: string = "china";
 const SYS_LANGUAGE: string = "zh-Hans";
 
@@ -41,17 +41,21 @@ export class AccountTipsConfig {
   private static ccmConfigPath: string = "etc/dlp_manager/account_tips.json";
   private static configName: string = "account_tips.json";
 
-  public static async getConfigTips(){
-    if(AccountTipsConfig.configTipsArray?.length === 0){
-      AccountTipsConfig.configTipsArray = await AccountTipsConfig.loadCcmConfigs();
-      return AccountTipsConfig.configTipsArray;
-    }else{
-      let accountTipsArray: Array<AccountTips> = JSON.parse(JSON.stringify(AccountTipsConfig.configTipsArray));
-      return accountTipsArray;
+  public static async getConfigTips() {
+    try {
+      if (AccountTipsConfig.configTipsArray?.length === 0) {
+        AccountTipsConfig.configTipsArray = await AccountTipsConfig.loadCcmConfigs();
+        return AccountTipsConfig.configTipsArray;
+      } else {
+        let accountTipsArray: Array<AccountTips> = JSON.parse(JSON.stringify(AccountTipsConfig.configTipsArray));
+        return accountTipsArray;
+      }
+    } catch (error) {
+      console.error(`${TAG} getConfigTips error: ${JSON.stringify(error)}`);
     }
   }
 
-  public static isSysLanguage(): boolean{
+  public static isSysLanguage(): boolean {
     let systemLanguage: string = I18n.System.getSystemLanguage();
     return systemLanguage.indexOf(SYS_LANGUAGE) > -1;
   }
