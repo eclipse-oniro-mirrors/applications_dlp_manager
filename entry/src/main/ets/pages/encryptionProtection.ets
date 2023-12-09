@@ -39,7 +39,10 @@ import {
   showErrorDialogAndExit,
   getFileUriByPath,
   getFileMsgByUri,
-  FileMsg
+  FileMsg,
+  sendDlpFileCreateEvent,
+  sendDlpManagerFileConfiguration,
+  getFileSizeByUri
 } from '../common/utils';
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
@@ -244,8 +247,24 @@ struct DlpDialog {
     }
   }
 
+  async setUserStat() {
+    if (this.selectedPermissionTypeReadOnly.index === 0) {
+      GlobalContext.store('hiReadScope', 'User');
+    } else if (this.selectedPermissionTypeReadOnly.index === 1) {
+      GlobalContext.store('hiReadScope', 'Everyone');
+    }
+    if (this.selectedPermissionTypeEdit.index === 0) {
+      GlobalContext.store('hiWriteScope', 'User');
+    } else if (this.selectedPermissionTypeEdit.index === 1) {
+      GlobalContext.store('hiWriteScope', 'Everyone');
+    } else {
+      GlobalContext.store('hiWriteScope', 'Onlyme');
+    }
+  }
+
   async changeEncrypt() {
     this.processing = true;
+    await this.setUserStat();
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
         await new Promise<void>((resolve, reject) => {
@@ -331,6 +350,7 @@ struct DlpDialog {
         this.processing = false;
         GlobalContext.store('dlpFileName', this.srcFileName);
         GlobalContext.store('dlpProperty', _dlp);
+        await sendDlpManagerFileConfiguration();
         router.replaceUrl({
           url: 'pages/encryptionSuccess',
           params: {
@@ -349,9 +369,13 @@ struct DlpDialog {
     console.info(TAG, 'begin encryption for', this.srcFileName, this.srcFd);
     let uri: string = '';
     let displayName: string = this.srcFileName;
+    await this.setUserStat();
     try {
       let srcFileUri: string = GlobalContext.load('uri');
       let srcFileMsg: FileMsg = getFileMsgByUri(srcFileUri);
+      let srcFileSize: number = await getFileSizeByUri(srcFileUri);
+      GlobalContext.store('hiFileSize', srcFileSize);
+      GlobalContext.store('hiFileType', srcFileMsg.fileType);
       let DocumentSaveOptions = new picker.DocumentSaveOptions();
       displayName = displayName + '.dlp';
       DocumentSaveOptions.newFileNames = [decodeURI(srcFileMsg.fileName)];
@@ -394,10 +418,15 @@ struct DlpDialog {
             return;
           } else {
             await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
+            let dstFileSize: number = await getFileSizeByUri(uri);
+            GlobalContext.store('hiPolicySizeEnc', dstFileSize);
+            GlobalContext.store('hiCode', 201);
+            await sendDlpFileCreateEvent(); // 201: DLP_FILE_CREATE_SUCCESS
             GlobalContext.store('dlpFileName', uriInfo.name);
             GlobalContext.store('dlpProperty', _dlp);
             GlobalContext.store('uri', uri);
             this.processing = false;
+            await sendDlpManagerFileConfiguration();
             router.replaceUrl({
               url: 'pages/encryptionSuccess',
               params: {
@@ -577,6 +606,8 @@ struct DlpDialog {
   async aboutToAppear() {
     this.prepareData = true;
     await this.checkAccount();
+    GlobalContext.store('hiAccountVerifySucc', 0);
+    GlobalContext.store('hiAccountVerifyFail', 0);
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       console.info(TAG, 'encryption request from sandbox');
       this.linkFileName = GlobalContext.load('linkFileName') as string;
@@ -852,6 +883,7 @@ struct DlpDialog {
               Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
               .height(Constants.FOOTER_BUTTON_HEIGHT)
               .onClick(async (event) => {
+                GlobalContext.store('hiValidDate', false);
                 if (this.selectedIndex === 1) {
                   let currentTime = new Date().getTime();
                   let validity = this.reconfigurationTime(this.validity).getTime();
@@ -860,11 +892,16 @@ struct DlpDialog {
                     return;
                   }
                   GlobalContext.store('validity', this.reconfigurationTime(this.validity));
+                  GlobalContext.store('hiValidDate', true);
                 }
                 GlobalContext.store('permanent', this.selectedIndex ? false : true);
+                GlobalContext.store('hiAdvancedSettings', false);
+                GlobalContext.store('hiStorePath', false);
                 if (this.isDlpFile) {
+                  GlobalContext.store('hiOperation', 'Change_policy');
                   await this.changeEncrypt();
                 } else {
+                  GlobalContext.store('hiOperation', 'Pack_policy');
                   await this.beginEncrypt();
                 }
               })

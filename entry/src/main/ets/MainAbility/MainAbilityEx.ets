@@ -31,7 +31,10 @@ import {
   getFileFd,
   getAlertMessage,
   goToAlertMessagePage,
-  getAppId
+  getAppId,
+  DLPInfo,
+  getDLPInfo,
+  sendDlpManagerAccountLogin
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -51,6 +54,9 @@ export default class MainAbility extends UIExtensionAbility {
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     console.log(TAG, 'want', JSON.stringify(want));
     GlobalContext.store('session', session);
+    let dlpInfo:DLPInfo = await getDLPInfo();
+    GlobalContext.store('hiPNameId', dlpInfo.name);
+    GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
     this.flag++;
     if (this.flag > Constants.MAIN_FLAG_MAX_NUMBER) {
       let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_ENCRYPTING } as BusinessError);
@@ -154,6 +160,7 @@ export default class MainAbility extends UIExtensionAbility {
       console.error(TAG, 'need caller info in want.parameters');
       return false;
     }
+    GlobalContext.store('hiPkgName', callerBundleName);
     let uri = String((GlobalContext.load('abilityWant') as Want).uri);
     // if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
     //   console.error(TAG, 'invalid uri for opened link uri');
@@ -198,6 +205,7 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
+    await sendDlpManagerAccountLogin(0);
     if (codeMessage) {
       let errInfo = getAlertMessage({ code: codeMessage } as BusinessError);
       goToAlertMessagePage(errInfo.title, errInfo.msg);
