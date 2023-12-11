@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import emitter from '@ohos.events.emitter';
 import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import Constants from '../constant';
@@ -153,6 +152,7 @@ struct permissionTypeSelect {
         weight: FontWeight.Regular
       })
       .selectedOptionBgColor(Color.Transparent)
+      .menuAlign(MenuAlignType.END, {dx:0, dy:0})
       .selected(this.index)
       .value(`${this.text}${
       this.selectedItem?.data === 'target' && this.staffArray.length > 0 ?

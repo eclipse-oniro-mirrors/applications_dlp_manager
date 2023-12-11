@@ -18,7 +18,6 @@ import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
 import { Permissions } from '@ohos.abilityAccessCtrl';
 import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
-import deviceInfo from '@ohos.deviceInfo';
 import Want from '@ohos.app.ability.Want';
 import osAccount from '@ohos.account.osAccount';
 import { Configuration } from '@ohos.app.ability.Configuration';
@@ -31,6 +30,7 @@ import {
   getFileFd,
   getAlertMessage,
   goToAlertMessagePage,
+  isPC,
   getAppId,
   getDLPInfo,
   sendDlpManagerAccountLogin,
@@ -42,9 +42,7 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import { BusinessError } from '@ohos.base';
 import window from '@ohos.window';
 import common from '@ohos.app.ability.common';
-import account_osAccount from '@ohos.account.osAccount';
 
-const PHONE = 'phone';
 const TAG = '[DLPManager_Main]';
 let permissionList: Array<Permissions> = [
   'ohos.permission.READ_MEDIA',
@@ -60,7 +58,6 @@ export default class MainAbility extends UIAbility {
   private homeFeature!: HomeFeature;
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
-    console.log(TAG, 'want', JSON.stringify(want));
     GlobalContext.store('abilityWant', want);
     if (!GlobalContext.load('fileOpenHistoryFromMain')) {
       GlobalContext.store('fileOpenHistoryFromMain', new Map<string, string>());
@@ -71,7 +68,7 @@ export default class MainAbility extends UIAbility {
       return;
     }
     GlobalContext.store('context', this.context);
-    GlobalContext.store('domainAccount', deviceInfo.deviceType === PHONE ? false : true);
+    GlobalContext.store('domainAccount', !isPC() ? false : true);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
     if (!GlobalContext.load('linkSet')) {

@@ -46,7 +46,7 @@ struct Index {
   }
 
   async aboutToAppear() {
-    console.log(TAG, 'alertaboutToAppear start')
+    console.log(TAG, 'alert aboutToAppear start')
     try {
       let errInfo = getAlertMessage((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError);
       this.showErrorDialogAndExit(errInfo.title as Resource, errInfo.msg as Resource, errInfo?.cancel as Resource, errInfo?.ok as Resource);

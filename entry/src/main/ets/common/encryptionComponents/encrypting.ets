@@ -14,6 +14,7 @@
  */
 
 import Constants from '../constant';
+import { isPC } from '../utils';
 
 @Component
 struct EncryptingPanel {
@@ -30,7 +31,7 @@ struct EncryptingPanel {
                 .fontWeight(FontWeight.Medium)
                 .fontFamily($r('app.string.typeface'))
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+                .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
                 .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                 .width(Constants.HEADER_TEXT_WIDTH)
                 .align(Alignment.Start)
@@ -43,21 +44,21 @@ struct EncryptingPanel {
             })
             Column() {
               LoadingProgress()
-                .color(Color.Blue)
+                .color($r('sys.color.ohos_id_color_progress'))
                 .height(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
                 .width(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
               Text($r('app.string.encryption_loading_title'))
-                .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                .fontColor(0xCCCCCC)
+                .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                .fontColor($r('sys.color.ohos_id_color_text_secondary'))
             }
             .height(Constants.ENCRYPTION_LOADING_CONTENT_HEIGHT)
             .alignItems(HorizontalAlign.Center)
             .justifyContent(FlexAlign.Center)
           }
-          .width(Constants.HEADER_COLUMN_WIDTH)
+          .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
           .height(Constants.ENCRYPTION_LOADING_HEIGHT)
-          .backgroundColor($r('app.color.da_button_color'))
-          .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
+          .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+          .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
         }
       }
     }

@@ -20,7 +20,6 @@ import Want from '@ohos.app.ability.Want';
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import hiSysEvent from '@ohos.hiSysEvent';
 import wantConstant from '@ohos.app.ability.wantConstant';
-import deviceInfo from '@ohos.deviceInfo';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
 import common from '@ohos.app.ability.common';
@@ -36,6 +35,7 @@ import {
   getFileFd,
   getFileUriByPath,
   getAppId,
+  isPC,
   DLPInfo,
   getDLPInfo,
   sendDlpFileOpenEvent
@@ -44,7 +44,6 @@ import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext'
 
 const TAG = '[DLPManager_View]';
-const PHONE = 'phone';
 const SUFFIX_INDEX = 2;
 
 let defaultDlpFile: dlpPermission.DLPFile = {
@@ -103,7 +102,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (!GlobalContext.load('authPerm2Sandbox')) {
       GlobalContext.store('authPerm2Sandbox', new Map<dlpPermission.DLPFileAccess, (number | string)[]>());
     }
-    GlobalContext.store('domainAccount', deviceInfo.deviceType === PHONE ? false : true);
+    GlobalContext.store('domainAccount', !isPC() ? false : true);
     if (!GlobalContext.load('token2File')) {
       GlobalContext.store('token2File', new Map<number, (number | string | dlpPermission.DLPFile)[]>());
     }

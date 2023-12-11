@@ -28,7 +28,8 @@ import {
   directionStatus,
   getTime,
   getAlertMessage,
-  goToAlertMessagePage
+  goToAlertMessagePage,
+  isPC
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import { BusinessError } from '@ohos.base';
@@ -148,7 +149,7 @@ struct encryptionSuccess {
                   .fontWeight(FontWeight.Medium)
                   .fontFamily($r('app.string.typeface'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                  .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+                  .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
                   .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                   .width(Constants.HEADER_TEXT_WIDTH)
                   .align(Alignment.Start)
@@ -202,6 +203,7 @@ struct encryptionSuccess {
                       .textAlign(TextAlign.Center)
                     Image($r("app.media.icon_change"))
                       .draggable(false)
+                      .fillColor($r('sys.color.ohos_id_color_tertiary'))
                       .width(Constants.PP_IMAGE_HEIGHT)
                       .height(Constants.PP_TEXT_FONT_SIZE2)
                       .objectFit(ImageFit.Contain)
@@ -238,7 +240,7 @@ struct encryptionSuccess {
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                            .fillColor($r('sys.color.ohos_id_color_secondary'))
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
@@ -278,7 +280,7 @@ struct encryptionSuccess {
                               .width(Constants.FOOTER_ROW_PAD_RIGHT)
                               .height(Constants.FOOTER_ROW_PAD_RIGHT)
                               .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                              .fillColor($r('sys.color.ohos_id_color_secondary'))
                               .onClick(() => {
                                 this.handlePopupReadOnly = !this.handlePopupReadOnly
                               })
@@ -318,16 +320,18 @@ struct encryptionSuccess {
                               if (Number(this.hideNamesNumReadOnly) > 0) {
                                 Row() {
                                   if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly.length) {
-                                    Text('+')
-                                      .customizeText()
-                                    Text(this.hideNamesNumReadOnly)
-                                      .customizeText()
+                                    Text(){
+                                      Span('+')
+                                      Span(this.hideNamesNumReadOnly)
+                                    }
+                                    .customizeText()
                                   }
                                   Image($r("app.media.icon_change"))
                                     .draggable(false)
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
+                                    .fillColor($r('sys.color.ohos_id_color_secondary'))
                                     .rotate({
                                       angle: !this.ReadOnlyFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
@@ -378,7 +382,7 @@ struct encryptionSuccess {
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                            .fillColor($r('sys.color.ohos_id_color_secondary'))
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
@@ -419,7 +423,7 @@ struct encryptionSuccess {
                               .width(Constants.FOOTER_ROW_PAD_RIGHT)
                               .height(Constants.FOOTER_ROW_PAD_RIGHT)
                               .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                              .fillColor($r('sys.color.ohos_id_color_secondary'))
                               .onClick(() => {
                                 this.handlePopupEdit = !this.handlePopupEdit
                               })
@@ -460,9 +464,10 @@ struct encryptionSuccess {
                               if (Number(this.hideNamesNumEdit) > 0) {
                                 Row() {
                                   if (this.showNamesArrEdit.length !== this.staffDataArrayEdit.length) {
-                                    Text('+')
-                                      .customizeText()
-                                    Text(this.hideNamesNumEdit)
+                                    Text(){
+                                      Span('+')
+                                      Span(this.hideNamesNumEdit)
+                                    }
                                       .customizeText()
                                   }
                                   Image($r("app.media.icon_change"))
@@ -470,6 +475,7 @@ struct encryptionSuccess {
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
+                                    .fillColor($r('sys.color.ohos_id_color_secondary'))
                                     .rotate({
                                       angle: !this.editFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
@@ -611,9 +617,9 @@ struct encryptionSuccess {
                 right: Constants.FOOTER_ROW_PAD_RIGHT
               })
             }
-            .width(Constants.HEADER_COLUMN_WIDTH)
-            .backgroundColor($r('app.color.da_button_color'))
-            .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
+            .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+            .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+            .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
           }
         }
       }
