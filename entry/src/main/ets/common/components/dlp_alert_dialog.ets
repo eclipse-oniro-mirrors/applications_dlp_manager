@@ -19,7 +19,7 @@ import Want from '@ohos.app.ability.Want';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';
-import { showErrorDialogAndExit } from '../utils';
+import { showErrorDialogAndExit, sendDlpManagerAccountLogin } from '../utils';
 
 const TAG = '[DLPManager_dialog]';
 
@@ -37,6 +37,7 @@ struct DlpAlertDialog {
     try {
       account_osAccount.DomainAccountManager.authWithPopup({
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
+          await sendDlpManagerAccountLogin(resultCode);
           if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
             await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
             return;

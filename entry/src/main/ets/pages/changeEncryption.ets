@@ -35,7 +35,8 @@ import {
   showErrorDialogAndExit,
   getTime,
   getFileMsgByUri,
-  FileMsg
+  FileMsg,
+  sendDlpManagerFileConfiguration
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
@@ -323,23 +324,31 @@ struct changeEncryption {
     const filterEditFilter = () => {
       if (editData.length === 0) {
         this.selectedPermissionTypeEdit = this.permissionDict[2];
+        GlobalContext.store('hiWriteScope', 'Onlyme');
       } else {
         this.staffDataArrayEdit = editData;
         this.selectedPermissionTypeEdit = this.permissionDict[0];
+        GlobalContext.store('hiWriteScope', 'User');
       }
     }
     if ((defaultDlpProperty.everyoneAccessList !== undefined) && (defaultDlpProperty.everyoneAccessList.length > 0)) {
       let perm = Math.max(...defaultDlpProperty.everyoneAccessList);
       if (perm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
+        GlobalContext.store('hiReadScope', 'Everyone');
         this.selectedPermissionTypeEdit = this.permissionDict[1];
+        GlobalContext.store('hiWriteScope', 'Everyone');
         this.staffDataArrayReadOnly = readOnlyData;
       } else if (perm === dlpPermission.DLPFileAccess.READ_ONLY) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
+        GlobalContext.store('hiReadScope', 'Everyone');
         this.staffDataArrayReadOnly = [];
         filterEditFilter()
+      } else {
+        GlobalContext.store('hiReadScope', 'User');
       }
     } else {
+      GlobalContext.store('hiReadScope', 'User');
       this.staffDataArrayReadOnly = readOnlyData;
       filterEditFilter()
     }
@@ -766,7 +775,14 @@ struct changeEncryption {
                   .height(Constants.FOOTER_HEIGHT)
                   .fontColor($r('app.color.encryption_cancel'))
                   .onClick(async (event) => {
+                    GlobalContext.store('hiOperation', 'Delete_policy');
+                    GlobalContext.store('hiAdvancedSettings', false);
+                    GlobalContext.store('hiStorePath', false);
+                    GlobalContext.store('hiValidDate', false);
+                    GlobalContext.store('hiAccountVerifySucc', 0);
+                    GlobalContext.store('hiAccountVerifyFail', 0);
                     this.unEncrypt();
+                    sendDlpManagerFileConfiguration();
                   })
                   .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })

@@ -27,6 +27,8 @@ import common from '@ohos.app.ability.common';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Constants from '../common/constant';
 import GlobalContext from './GlobalContext';
+import hiSysEvent from '@ohos.hiSysEvent';
+import fileUri from '@ohos.file.fileuri';
 
 let TAG = "[DLPManager_Utils]";
 const TRANSPARENT_BACKGROUND_COLOR: string = '#33182431';
@@ -39,6 +41,11 @@ interface PermissionType {
   value: Resource;
   data: string;
   index: number;
+}
+
+interface DLPInfo {
+  name: string;
+  versionCode: string;
 }
 
 export interface FileMsg {
@@ -75,19 +82,25 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
 
 function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number | boolean {
   if (GlobalContext.load('domainAccount') as boolean) {
+    GlobalContext.store('hiAccountType', 'Domain_Account');
     if (accountInfo.domainInfo.accountName === '' &&
       accountInfo.domainInfo.accountId === '') {
+      GlobalContext.store('hiAccountStatus', 0);
       return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
     }
     if (!accountInfo.domainInfo.isAuthenticated) {
+      GlobalContext.store('hiAccountStatus', 0);
       return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
     }
   } else {
+    GlobalContext.store('hiAccountType', 'Cloud_Account');
     if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
       accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+      GlobalContext.store('hiAccountStatus', 0);
       return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
     }
   }
+  GlobalContext.store('hiAccountStatus', 1);
   return false;
 }
 
@@ -370,9 +383,136 @@ function getFileMsgByUri(uri: string): FileMsg {
   let result: FileMsg = {
     fileName: fileName.split('.')[0],
     filePath: filePath,
-    fileType: fileType,
+    fileType: fileType
   };
   return result;
+}
+
+function getFileSizeByUri(uri: string) {
+  return new Promise<number>(async (resolve, reject) => {
+    let uriInfo = new fileUri.FileUri(uri);
+    fs.stat(uriInfo.path).then((stat: fs.Stat) => {
+      console.info(TAG, "get file info succeed, the size of file is " + stat.size);
+      resolve(stat.size);
+    }).catch((err: BusinessError) => {
+      console.info(TAG, "get file info failed with error message: " + err.message + ", error code: " + err.code);
+      reject(-1);
+    });
+  })
+}
+
+function getDLPInfo() {
+  return new Promise<DLPInfo>(async (resolve, reject) => {
+    let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_DEFAULT;
+    try {
+      bundleManager.getBundleInfoForSelf(bundleFlags, (err, data) => {
+        if (err) {
+          console.error(TAG, 'getBundleInfoForSelf failed. Cause: %{public}s', (err as BusinessError).message);
+          reject({name: '', versionCode: ''});
+        } else {
+          resolve({name: data.name, versionCode: data.versionCode.toString()});
+        }
+      });
+    } catch (err) {
+      console.error(TAG, 'getBundleInfoForSelf failed. Cause: %{public}s', (err as BusinessError).message);
+      reject({name: '', versionCode: ''});
+    }
+  })
+}
+
+function sendDlpManagerAccountLogin(errorCode: number) {
+  let event: hiSysEvent.SysEventInfo = {
+    domain: 'DLP_UE',
+    name: 'DLP_MANAGER_ACCOUNT_LOGIN',
+    eventType: hiSysEvent?.EventType?.BEHAVIOR,
+    params: {
+      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
+      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
+      'ACCOUNT_TYPE': GlobalContext.load('hiAccountType') ?? '',
+      'ACCOUNT_STATUS': GlobalContext.load('hiAccountStatus') ?? -1,
+      'LOGIN_FAIL_CODE': errorCode ?? -1,
+      'PKG_NAME': GlobalContext.load('hiPkgName') ?? '',
+    } as Record<string, number>
+  };
+
+  try {
+    hiSysEvent.write(event);
+  } catch (err) {
+    console.error(TAG, 'sendDlpManagerAccountLogin failed');
+  }
+}
+
+function sendDlpManagerFileConfiguration() {
+  let event: hiSysEvent.SysEventInfo = {
+    domain: 'DLP_UE',
+    name: 'DLP_MANAGER_FILE_CONFIGURATION',
+    eventType: hiSysEvent?.EventType?.BEHAVIOR,
+    params: {
+      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
+      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
+      'OPERATION': GlobalContext.load('hiOperation') ?? '',
+      'READ_SCOPE': GlobalContext.load('hiReadScope') ?? '',
+      'WRITE_SCOPE': GlobalContext.load('hiWriteScope') ?? '',
+      'ADVANCED_SETTINGS': GlobalContext.load('hiAdvancedSettings') ?? false,
+      'STORE_PATH': GlobalContext.load('hiStorePath') ?? false,
+      'ACCOUNT_VERIFY_SUCC': GlobalContext.load('hiAccountVerifySucc') ?? -1,
+      'ACCOUNT_VERIFY_FAIL': GlobalContext.load('hiAccountVerifyFail') ?? -1,
+      'VALID_DATE': GlobalContext.load('hiValidDate') ?? false,
+    } as Record<string, number>
+  };
+
+  try {
+    hiSysEvent.write(event);
+  } catch (err) {
+    console.error(TAG, 'sendDlpManagerFileConfiguration failed');
+  }
+}
+
+function sendDlpFileCreateEvent() {
+  let event: hiSysEvent.SysEventInfo = {
+    domain: 'DLP_UE',
+    name: 'DLP_FILE_CREATE_EVENT',
+    eventType: hiSysEvent?.EventType?.BEHAVIOR,
+    params: {
+      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
+      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
+      'CODE': GlobalContext.load('hiCode') ?? -1,
+      'FILE_SIZE': GlobalContext.load('hiFileSize') ?? -1,
+      'FILE_TYPE': GlobalContext.load('hiFileType') ?? '',
+      'POLICY_SIZE_ENC': GlobalContext.load('hiPolicySizeEnc') ?? -1,
+      'PKG_NAME': GlobalContext.load('hiPkgName') ?? '',
+    } as Record<string, number>
+  };
+
+  try {
+    hiSysEvent.write(event);
+  } catch (err) {
+    console.error(TAG, 'sendDlpFileCreateEvent failed');
+  }
+}
+
+function sendDlpFileOpenEvent() {
+  let event: hiSysEvent.SysEventInfo = {
+    domain: 'DLP_UE',
+    name: 'DLP_FILE_OPEN_EVENT',
+    eventType: hiSysEvent?.EventType?.BEHAVIOR,
+    params: {
+      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
+      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
+      'CODE': GlobalContext.load('hiCode') ?? -1,
+      'SANDBOX_PKGNAME': GlobalContext.load('hiSandboxPkgName') ?? '',
+      'SANDBOX_INDEX': GlobalContext.load('hiSandboxIndex') ?? -1,
+      'ACCOUNT_TYPE': GlobalContext.load('hiAccountType') ?? '',
+      'FILE_SIZE': GlobalContext.load('hiFileSize') ?? -1,
+      'POLICY_SIZE_ENC': GlobalContext.load('hiPolicySizeEnc') ?? -1,
+    } as Record<string, number>
+  };
+
+  try {
+    hiSysEvent.write(event);
+  } catch (err) {
+    console.error(TAG, 'sendDlpFileOpenEvent failed');
+  }
 }
 
 export {
@@ -397,5 +537,12 @@ export {
   goToAlertMessagePage,
   getAppId,
   getTime,
-  getFileMsgByUri
+  getFileMsgByUri,
+  getFileSizeByUri,
+  getDLPInfo,
+  sendDlpManagerAccountLogin,
+  sendDlpManagerFileConfiguration,
+  sendDlpFileCreateEvent,
+  sendDlpFileOpenEvent,
+  DLPInfo
 };
