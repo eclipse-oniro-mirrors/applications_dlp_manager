@@ -1,0 +1,33 @@
+[
+  {
+    "key": "accountName",
+    "description": "工号: %s",
+    "descriptionEn": "Employee ID: %s",
+    "isShow": true,
+    "isTextContent": true
+  },
+  {
+    "key": "domain",
+    "description": "域名: %s",
+    "descriptionEn": "Domain: %s",
+    "isShow": true
+  },
+  {
+    "key": "cnName",
+    "description": "姓名: %s",
+    "descriptionEn": "Name: %s",
+    "isShow": false
+  },
+  {
+    "key": "dept",
+    "description": "部门: %s",
+    "descriptionEn": "Dept: %s",
+    "isShow": false
+  },
+  {
+    "key": "mail",
+    "description": "邮箱: %s",
+    "descriptionEn": "Mail: %s",
+    "isShow": false
+  }
+]

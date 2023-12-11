@@ -21,12 +21,15 @@ import { staffItem } from './staff';
 import Constants from '../constant';
 import { isPC } from '../utils';
 import GlobalContext from '../GlobalContext';
+import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 
 interface Staff {
   authAccount: string;
+  textContent?: string;
 }
 
-const TAG = "[DLPManager_AddStaff]";
+const TAG: string = "[DLPManager_AddStaff]";
+
 @Extend(Text) function inputMessageText() {
   .fontSize($r('sys.float.ohos_fa_text_size_body'))
   .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
@@ -35,6 +38,15 @@ const TAG = "[DLPManager_AddStaff]";
   .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
   .textAlign(TextAlign.Start)
 }
+@Extend(Text) function TipsTextStyle(){
+  .fontSize($r('sys.float.ohos_id_text_size_body2'))
+  .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+  .textOverflow({
+    overflow: TextOverflow.Ellipsis
+  })
+  .maxLines(Constants.PP_TEXT_MAX_LINE)
+}
+
 @Component
 struct AddStaff {
   @State succ: number = 0;
@@ -48,9 +60,11 @@ struct AddStaff {
   @State domainTips: string = '';
   @State accountNameTips: string = '';
   @State handlePopupTips: boolean = false;
+  @State textContent: string = '';
+  @State accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
   @Link staffArray: Staff[];
-
   @Prop isDisable: boolean = false;
+
   @Builder MenuBuilder(index: number) {
     Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
       Text($r('app.string.delete_account'))
@@ -66,21 +80,26 @@ struct AddStaff {
 
   @Builder popupBuilderTips() {
     Column() {
-      Row() {
-        Text($r('app.string.encrypt_employee_id', this.accountNameTips))
-          .fontSize($r('sys.float.ohos_id_text_size_body2'))
-          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-          .textOverflow({
-            overflow: TextOverflow.Ellipsis
-          })
-          .maxLines(Constants.PP_TEXT_MAX_LINE)
-      }
-      .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
-      if (GlobalContext.load('domainAccount')) {
+      if(GlobalContext.load('domainAccount')){
+        List() {
+          ForEach(this.accountTipsArray, (item: AccountTips) => {
+            if (item.isShow) {
+              ListItem() {
+                Row() {
+                  if (AccountTipsConfig.isSysLanguage()) {
+                    Text(item.description?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
+                  } else {
+                    Text(item.descriptionEn?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
+                  }
+                }.width(Constants.TIPS_WIDTH).height(Constants.TIPS_HEIGHT_ITEM)
+              }
+            }
+          }, (item: AccountTips) => item.key)
+        }.width(Constants.TIPS_WIDTH)
+      }else{
         Row() {
-          Text($r('app.string.encrypt_domain', this.domainTips))
-            .fontSize($r('sys.float.ohos_id_text_size_body2'))
-            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+          Text($r('app.string.encrypt_employee_id', this.accountNameTips))
+            .TipsTextStyle()
         }
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
       }
@@ -99,6 +118,13 @@ struct AddStaff {
     this.staffArrayLength = false;
   }
 
+  async aboutToAppear(){
+    if (GlobalContext.load('domainAccount')) {
+      this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+      this.textContent = AccountTipsConfig.showContentKey;
+    }
+  }
+
   build() {
     Column() {
       Flex({
@@ -111,6 +137,7 @@ struct AddStaff {
             Stack() {
               staffItem({
                 authAccount: item.authAccount,
+                textContent: item.textContent,
                 isActive: this.activeStaffIndex === index,
                 changeIndex: Number(index),
               })
@@ -129,24 +156,23 @@ struct AddStaff {
                   }
                 })
                 .onClick(() => {
-                  this.activeStaffIndex = index!;
-                  let domainAccountInfo: account_osAccount.GetDomainAccountInfoOptions = {
-                    domain: 'china',
-                    accountName: item.authAccount.toLocaleLowerCase()
-                  }
                   if (GlobalContext.load('domainAccount')) {
                     try {
-                      account_osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo)
-                        .then((result: account_osAccount.DomainAccountInfo) => {
-                          this.domainTips = result.domain;
-                          this.accountNameTips = result.accountName;
+                      AccountTipsConfig.getAccountInfo(item.authAccount)
+                        .then(async (result: account_osAccount.DomainAccountInfo) => {
+                          this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+                          this.activeStaffIndex = index!;
+                          this.accountTipsArray?.forEach((accountTips: AccountTips) => {
+                            accountTips.value = result[accountTips.key];
+                          })
                         }).catch((err: BusinessError) => {
                         console.log(TAG, 'call getAccountInfo failed, error: ' + JSON.stringify(err));
                       });
-                    } catch (err) {
-                      console.log(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
+                    } catch (error) {
+                      console.error(TAG, 'getAccountInfo exception = ' + JSON.stringify(error));
                     }
                   } else {
+                    this.activeStaffIndex = index!;
                     this.accountNameTips = item.authAccount;
                   }
                 })
@@ -162,10 +188,11 @@ struct AddStaff {
                 })
                 .bindPopup(this.activeStaffIndex === index, {
                   builder: this.popupBuilderTips,
-                  placement: Placement.Bottom,
-                  popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                  placement: Placement.BottomLeft,
+                  popupColor: ($r('sys.color.ohos_id_color_help_tip_bg')),
                   enableArrow: true,
                   showInSubWindow: false,
+                  arrowOffset: Constants.TIPS_ARROW_OFFSET,
                   onStateChange: (e) => {
                     if (!e.isVisible) {
                       this.activeStaffIndex = -1;
@@ -173,7 +200,7 @@ struct AddStaff {
                   }
                 })
                 .bindContextMenu(this.MenuBuilder(index!), isPC() ? ResponseType.RightClick : ResponseType.LongPress)
-                .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
+                .width(item.authAccount === item.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
                 .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
             }
           },
@@ -228,13 +255,17 @@ struct AddStaff {
                 account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err, isExist) => {
                   this.isAccountCheckSuccess = true;
                   if (isExist) {
-                    let o1: Staff = {
-                      authAccount: this.inputId.toLocaleLowerCase(),
-                    }
-                    this.staffArray.push(o1)
-                    this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
-                    GlobalContext.store('hiAccountVerifySucc', this.succ);
-                    this.inputId = '';
+                    AccountTipsConfig.getAccountInfo(this.inputId)
+                      .then((result: account_osAccount.DomainAccountInfo) => {
+                        let o1: Staff = {
+                          authAccount: result.accountName,
+                          textContent: result[this.textContent] as string
+                        }
+                        this.staffArray.push(o1);
+                        this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
+                        GlobalContext.store('hiAccountVerifySucc', this.succ);
+                        this.inputId = '';
+                    })
                   } else {
                     this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
                     GlobalContext.store('hiAccountVerifyFail', this.fail);
@@ -251,6 +282,7 @@ struct AddStaff {
                 this.isAccountCheckSuccess = true;
                 let o2: Staff = {
                   authAccount: this.inputId,
+                  textContent: this.inputId
                 }
                 this.staffArray.push(o2);
                 this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;

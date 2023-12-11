@@ -18,8 +18,18 @@ import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
+import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 
 const TAG = "[DLPManager_staff]";
+
+@Extend(Text) function TipsTextStyle(){
+  .fontSize($r('sys.float.ohos_id_text_size_body2'))
+  .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+  .textOverflow({
+    overflow: TextOverflow.Ellipsis
+  })
+  .maxLines(Constants.PP_TEXT_MAX_LINE)
+}
 
 @Component
 struct staffItem {
@@ -44,23 +54,31 @@ struct staffItem {
   @State accountNameTips: string = '';
   @State handlePopupTips: boolean = false;
 
+  @Prop textContent: string = '';
+  @State accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
+
   @Builder popupBuilderTips() {
     Column() {
-      Row() {
-        Text($r('app.string.encrypt_employee_id', this.accountNameTips))
-          .fontSize($r('sys.float.ohos_id_text_size_body2'))
-          .fontColor($r('sys.color.ohos_id_color_primary_dark'))
-          .textOverflow({
-            overflow: TextOverflow.Ellipsis
-          })
-          .maxLines(Constants.PP_TEXT_MAX_LINE)
-      }
-      .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
-      if (GlobalContext.load('domainAccount')) {
+      if(GlobalContext.load('domainAccount')){
+        List() {
+          ForEach(this.accountTipsArray, (item: AccountTips) => {
+            if (item.isShow) {
+              ListItem() {
+                Row() {
+                  if (AccountTipsConfig.isSysLanguage()) {
+                    Text(item.description?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
+                  } else {
+                    Text(item.descriptionEn?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
+                  }
+                }.width(Constants.TIPS_WIDTH).height(Constants.TIPS_HEIGHT_ITEM)
+              }
+            }
+          }, (item: AccountTips) => item.key)
+        }.width(Constants.TIPS_WIDTH)
+      }else{
         Row() {
-          Text($r('app.string.encrypt_domain', this.domainTips))
-            .fontSize($r('sys.float.ohos_id_text_size_body2'))
-            .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+          Text($r('app.string.encrypt_employee_id', this.accountNameTips))
+            .TipsTextStyle()
         }
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
       }
@@ -80,6 +98,19 @@ struct staffItem {
     return this.color[this.changeIndex]
   }
 
+  async aboutToAppear(){
+    if (GlobalContext.load('domainAccount')) {
+      if (!this.textContent) {
+        this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+        AccountTipsConfig.getAccountInfo(this.authAccount).then((result: account_osAccount.DomainAccountInfo) => {
+          this.textContent = result[AccountTipsConfig.showContentKey] as string;
+        })
+      }
+    } else {
+      this.textContent = this.authAccount;
+    }
+  }
+
   build() {
     Row() {
       Text(this.authAccount?.[0]?.toLocaleUpperCase())
@@ -94,10 +125,10 @@ struct staffItem {
         .margin({
           right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
         })
-      Text(this.authAccount.split('')
+      Text(this.textContent?.split('')
         .join('\u200B'))
         .constraintSize({
-          maxWidth: Constants.ENCRYPTION_STAFF_MAX_WIDTH
+          maxWidth: this.authAccount === this.textContent ? Constants.ENCRYPTION_STAFF_MAX_WIDTH : Constants.TIPS_STAFF_MAX_WIDTH
         })
         .textOverflow({
           overflow: TextOverflow.Ellipsis
@@ -106,22 +137,18 @@ struct staffItem {
         .fontSize($r('sys.float.ohos_id_text_size_button2'))
     }
     .onClick(() => {
-      let domainAccountInfo: account_osAccount.GetDomainAccountInfoOptions = {
-        domain: 'china',
-        accountName: this.authAccount.toLocaleLowerCase()
-      }
       if (GlobalContext.load('domainAccount')) {
         try {
-          account_osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo)
-            .then((result: account_osAccount.DomainAccountInfo) => {
-              this.handlePopupTips = !this.handlePopupTips;
-              this.domainTips = result.domain;
-              this.accountNameTips = result.accountName;
-            }).catch((err: BusinessError) => {
-            console.log(TAG, 'call getAccountInfo failed, error: ' + JSON.stringify(err));
-          });
+          AccountTipsConfig.getAccountInfo(this.authAccount).then(async (result: account_osAccount.DomainAccountInfo) => {
+            this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+            this.handlePopupTips = !this.handlePopupTips;
+            this.accountTipsArray?.forEach((item: AccountTips) => {
+              let value: string = result[item.key];
+              item.value = value;
+            })
+          })
         } catch (err) {
-          console.log(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
+          console.error(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
         }
       } else {
         this.accountNameTips = this.authAccount;
@@ -129,17 +156,18 @@ struct staffItem {
     })
     .bindPopup(this.handlePopupTips, {
       builder: this.popupBuilderTips,
-      placement: Placement.Bottom,
-      popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+      placement: Placement.BottomLeft,
+      popupColor: ($r('sys.color.ohos_id_color_help_tip_bg')),
       enableArrow: true,
       showInSubWindow: false,
+      arrowOffset: Constants.TIPS_ARROW_OFFSET,
       onStateChange: (e) => {
         if (!e.isVisible) {
           this.handlePopupTips = false;
         }
       }
     })
-    .width(Constants.ENCRYPTION_ADD_STAFF_WIDTH)
+    .width(this.authAccount === this.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
     .alignItems(VerticalAlign.Center)
     .backgroundColor(this.isActive ? '#1A0A59F7' : this.containerBackgroundColor)
     .borderRadius(Constants.ENCRYPTION_SUCCESS_CHANGE_TOP)
