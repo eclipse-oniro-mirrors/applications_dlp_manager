@@ -22,7 +22,8 @@ import { BusinessError } from '@ohos.base'
 
 const TAG = '[DLPManager_Alert]';
 
-@Entry()
+let storage = LocalStorage.GetShared();
+@Entry(storage)
 @Component
 struct Index {
   dlpAlertDialog?: CustomDialogController;

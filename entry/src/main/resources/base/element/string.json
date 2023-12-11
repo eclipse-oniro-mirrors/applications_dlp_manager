@@ -213,6 +213,10 @@
       "value": "Internal service error. Please try again."
     },
     {
+      "name": "MESSAGE_NOT_AUTHORIZED_APPLICATION",
+      "value": "Application cannot open this file."
+    },
+    {
       "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
       "value": "Failed to connect to the server. Check the network and try again."
     },

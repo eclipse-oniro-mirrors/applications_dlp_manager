@@ -147,6 +147,7 @@ export default class Constants {
   static readonly ERR_JS_USER_NO_PERMISSION = 19100013;
   static readonly ERR_JS_ACCOUNT_NOT_LOGIN = 19100014;
   static readonly ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED = 19100015;
+  static readonly ERR_JS_NOT_AUTHORIZED_APPLICATION = 19100018;
   static readonly ERR_JS_FILE_EXPIRATION = 19100019;
   static readonly ERR_JS_OFFLINE = 19100020;
   static ERR_JS_INVALID_PARAMETER = 12300002;

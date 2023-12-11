@@ -277,8 +277,7 @@ export default class MainAbility extends UIAbility {
         GlobalContext.store('dlpFileName', dlpFileName);
         let callerAppId: string;
         try {
-          let callerBundleName = 
-            (GlobalContext.load('abilityWant') as Want).parameters?.['ohos.aafwk.param.callerBundleName'] as string;
+          let callerBundleName = 'com.ohos.dlpmanager';
           callerAppId = await getAppId(callerBundleName);
           console.info(TAG, 'get AppId', callerAppId);  
         } catch {
