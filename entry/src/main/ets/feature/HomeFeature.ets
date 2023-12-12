@@ -98,7 +98,7 @@ export default class HomeFeature {
   }
 
   replaceDLPLinkFileHome(src:string, linkFileName:string, callback: replaceDlpLinkFileCallback) {
-    console.log(TAG, 'replaceDLPLinkFileHome start', linkFileName);
+    console.log(TAG, 'replaceDLPLinkFileHome start');
     console.info(TAG, 'onConnect3 success, dlpRpcProxy', this.dlpRpcProxy);
     GlobalContext.load('dlpRpcProxy').replaceDlpLinkFile(src, linkFileName, callback);
   }

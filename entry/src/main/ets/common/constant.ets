@@ -184,7 +184,7 @@ export default class Constants {
   static DIALOG_LG_OFFSET = 3;
   static FUSE_PATH = '/mnt/data/fuse/';
   static RAND_START = 2;
-  static RAND_END = 10;
+  static RAND_END = 18;
   static BUNDLE_LEN = 20;
 
   static DLP_ZIP_MAGIC = 0x04034b50;
