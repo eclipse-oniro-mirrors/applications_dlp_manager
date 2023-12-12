@@ -60,7 +60,7 @@ struct AlertMessage {
                 Text(this.title)
                   .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
                   .width(Constants.DU_WIDTH_FULL)
-                  .fontSize(Constants.DA_FONT_SIZE)
+                  .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontWeight(FontWeight.Medium)
               }
@@ -90,11 +90,11 @@ struct AlertMessage {
                 top: this.title ? Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
               })
               Flex({ direction: FlexDirection.Row }) {
-                Button(this.cancel? this.cancel : $r('app.string.da_buttion'), { type: ButtonType.Capsule, stateEffect: true })
-                  .backgroundColor($r('app.color.base_button_color'))
+                Button(this.cancel? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
+                  .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                   .width(Constants.HEADER_TEXT_WIDTH)
                   .focusable(false)
-                  .fontColor($r('app.color.encryption_cancel'))
+                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
                     GlobalContext.load('session').terminateSelfWithResult({
@@ -107,10 +107,10 @@ struct AlertMessage {
                   .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 if (this.ok) {
                   Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
-                    .backgroundColor($r('app.color.base_button_color'))
+                    .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .focusable(false)
-                    .fontColor($r('app.color.encryption_cancel'))
+                    .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .height(Constants.FOOTER_BUTTON_HEIGHT)
                     .onClick(async (event) => {
                       GlobalContext.load('session').terminateSelfWithResult({
@@ -131,9 +131,9 @@ struct AlertMessage {
               })
             }
             .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
-            .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
+            .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
             .alignItems(HorizontalAlign.Center)
-            .backgroundColor($r('app.color.da_button_color'))
+            .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
           }
         }
       }

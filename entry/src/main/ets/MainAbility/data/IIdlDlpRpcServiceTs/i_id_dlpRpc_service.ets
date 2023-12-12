@@ -26,6 +26,7 @@ export default interface IIdDlpRpcService {
   closeDlpFile(srcUri: string, callback: closeDlpFileCallback): void;
   sandBoxLinkFile(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback): void;
   fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): void;
+  linkSet(uri: string, callback: linkSetCallback): void;
 }
 
 export enum IDlpServiceCmdCode {
@@ -38,6 +39,7 @@ export enum IDlpServiceCmdCode {
   COMMAND_CLOSE_DLP_FILE = 7,
   COMMAND_SANDBOX_LINK_FILE = 8,
   COMMAND_FILE_OPEN_HISTORY = 9,
+  COMMAND_FILE_LINK_SET = 10,
 }
 
 export type genDlpFileCallback = (errCode: number) => void;
@@ -49,3 +51,4 @@ export type recoverDlpFileCallback = (errCode: number) => void;
 export type closeDlpFileCallback = (errCode: number) => void;
 export type sandBoxLinkFileCallback = (errCode: number, dlp: IDLDLPProperty, fileUri: string) => void;
 export type fileOpenHistoryCallback = (errCode: number) => void;
+export type linkSetCallback = (errCode: number) => void;

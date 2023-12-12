@@ -17,7 +17,6 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
-import deviceInfo from '@ohos.deviceInfo';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
@@ -32,6 +31,7 @@ import {
   getAlertMessage,
   goToAlertMessagePage,
   getAppId,
+  isPC,
   DLPInfo,
   getDLPInfo,
   sendDlpManagerAccountLogin
@@ -39,7 +39,6 @@ import {
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
 
-const PHONE = 'phone';
 const TAG = '[DLPManager_Main]';
 
 let direction: number = -1;
@@ -65,7 +64,7 @@ export default class MainAbility extends UIExtensionAbility {
     }
     GlobalContext.store('abilityWant', want);
     GlobalContext.store('context', this.context);
-    GlobalContext.store('domainAccount', deviceInfo.deviceType === PHONE ? false : true);
+    GlobalContext.store('domainAccount', !isPC() ? false : true);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
 
@@ -136,7 +135,7 @@ export default class MainAbility extends UIExtensionAbility {
     }
   }
 
-  checkValidWant(): boolean {
+  async checkValidWant(): Promise<boolean> {
     let parameters = (GlobalContext.load('abilityWant') as Want).parameters;
     if (parameters === undefined) {
       console.error(TAG, 'need parameters in want');
@@ -162,10 +161,19 @@ export default class MainAbility extends UIExtensionAbility {
     }
     GlobalContext.store('hiPkgName', callerBundleName);
     let uri = String((GlobalContext.load('abilityWant') as Want).uri);
-    // if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
-    //   console.error(TAG, 'invalid uri for opened link uri');
-    //   return false;
-    // }
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.homeFeature.linkSetHome(uri, (err: number) => {
+          if (err === 0) {
+            console.error(TAG, 'invalid uri for opened link uri');
+            reject();
+          }
+          resolve();
+        })
+      })
+    } catch {
+      return false;
+    }
 
     if (uri.indexOf(Constants.FUSE_PATH) !== -1) {
       console.error(TAG, 'invalid uri in want.uri');

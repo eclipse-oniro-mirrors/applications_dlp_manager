@@ -24,7 +24,8 @@ import {
   recoverDlpFileCallback,
   closeDlpFileCallback,
   sandBoxLinkFileCallback,
-  fileOpenHistoryCallback
+  fileOpenHistoryCallback,
+  linkSetCallback
   } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
 import IDLDLPProperty from "../../../serviceExtensionAbility/sequenceable/dlpClass";
@@ -40,7 +41,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async genDlpFile(inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback): Promise<void> {
-    console.log(TAG, "genDlpFile called ++++++++++++++++++++++");
+    console.log(TAG, "genDlpFile called");
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -60,7 +61,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
-    console.log(TAG, "openDlpFile called ++++++++++++++++++++++");
+    console.log(TAG, "openDlpFile called");
     let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
@@ -82,7 +83,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async stopFuseLink(uri: string, callback: stopFuseLinkCallback): Promise<void> {
-    console.log(TAG, "stopFuseLink called ++++++++++++++++++++++");
+    console.log(TAG, "stopFuseLink called");
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -100,7 +101,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async resumeFuseLink(uri: string, callback: resumeFuseLinkCallback): Promise<void> {
-    console.log(TAG, "resumeFuseLink called ++++++++++++++++++++++");
+    console.log(TAG, "resumeFuseLink called");
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -118,7 +119,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async replaceDlpLinkFile(uri: string, linkFileName: string, callback: replaceDlpLinkFileCallback): Promise<void> {
-    console.log(TAG, "replaceDlpLinkFile called ++++++++++++++++++++++");
+    console.log(TAG, "replaceDlpLinkFile called");
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -137,7 +138,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async recoverDlpFile(srcUri: string, pathUri: string, callback: recoverDlpFileCallback): Promise<void> {
-    console.log(TAG, "recoverDlpFile called ++++++++++++++++++++++");
+    console.log(TAG, "recoverDlpFile called");
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -156,7 +157,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
   
   async closeDlpFile(srcUri: string, callback: closeDlpFileCallback): Promise<void> {
-    console.log(TAG, "closeDlpFile called ++++++++++++++++++++++");
+    console.log(TAG, "closeDlpFile called");
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -175,7 +176,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async sandBoxLinkFile(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback): Promise<void> {
-    console.log(TAG, "sandBoxLinkFile called ++++++++++++++++++++++");
+    console.log(TAG, "sandBoxLinkFile called");
     let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
@@ -197,12 +198,30 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   }
 
   async fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): Promise<void> {
-    console.log(TAG, "fileOpenHistory called ++++++++++++++++++++++");
+    console.log(TAG, "fileOpenHistory called");
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_FILE_OPEN_HISTORY, _data, _reply, _option)
+      .then((result: rpc.RequestResult)=>{
+        if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
+          let _errCode = result.reply.readInt();
+          callback(_errCode);
+        } else {
+          console.log("sendMessageRequest failed, errCode: " + result.errCode);
+          callback(result.errCode);
+        }
+    })
+  }
+
+  async linkSet(uri: string, callback: linkSetCallback): Promise<void> {
+    console.log(TAG, "linkSet called");
+    let _option = new rpc.MessageOption();
+    let _data = new rpc.MessageSequence();
+    let _reply = new rpc.MessageSequence();
+    _data.writeString(uri);
+    await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_FILE_LINK_SET, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
         if (result.errCode === Constants.DLPRPC_SERVICE_PROXY_ERRCODE) {
           let _errCode = result.reply.readInt();

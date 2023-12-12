@@ -21,6 +21,7 @@ import {
   closeDlpFileCallback,
   sandBoxLinkFileCallback,
   fileOpenHistoryCallback,
+  linkSetCallback,
   genDlpFileCallback,
   openDlpFileCallback,
   recoverDlpFileCallback,
@@ -51,7 +52,6 @@ export default class HomeFeature {
         this.dlpRpcProxy = new IdDlpRpcServiceProxy(proxy);
         GlobalContext.store('dlpRpcProxy', this.dlpRpcProxy);
         console.info(TAG, 'DLPManager IDL' + 'onConnect success', JSON.stringify(this.dlpRpcProxy));
-        console.info(TAG, 'onConnect success, dlpRpcProxy', this.dlpRpcProxy);
         this.remoteCallback();
       },
       onDisconnect: () => {
@@ -93,37 +93,31 @@ export default class HomeFeature {
 
   async openDlpFileHome(src:string, callerAppId: string, callback: openDlpFileCallback) {
     console.log(TAG, 'openDlpFileHome start');
-    console.info(TAG, 'onConnect3 success, dlpRpcProxy', JSON.stringify(GlobalContext.load('dlpRpcProxy')));
     await GlobalContext.load('dlpRpcProxy').openDlpFile(src, callerAppId, callback);
   }
 
   replaceDLPLinkFileHome(src:string, linkFileName:string, callback: replaceDlpLinkFileCallback) {
     console.log(TAG, 'replaceDLPLinkFileHome start', linkFileName);
-    console.info(TAG, 'onConnect3 success, dlpRpcProxy', this.dlpRpcProxy);
     GlobalContext.load('dlpRpcProxy').replaceDlpLinkFile(src, linkFileName, callback);
   }
 
   async closeDLPFileHome(src:string, callback: closeDlpFileCallback) {
     console.log(TAG, 'closeDLPFileHome start');
-    console.info(TAG, 'onConnect3 success, dlpRpcProxy', this.dlpRpcProxy);
     await GlobalContext.load('dlpRpcProxy').closeDlpFile(src, callback);
   }
 
   resumeFuseLinkHome(src:string, callback: resumeFuseLinkCallback) {
     console.log(TAG, 'resumeFuseLinkHome start');
-    console.info(TAG, 'onConnect3 success, dlpRpcProxy', this.dlpRpcProxy);
     GlobalContext.load('dlpRpcProxy').resumeFuseLink(src, callback);
   }
 
   stopFuseLinkHome(src:string, callback: stopFuseLinkCallback) {
     console.log(TAG, 'stopFuseLinkHome start');
-    console.info(TAG, 'onConnect3 success, dlpRpcProxy', this.dlpRpcProxy);
     GlobalContext.load('dlpRpcProxy').stopFuseLink(src, callback);
   }
 
   async recoverDLPFileHome(src:string, pathUri: string, callback: recoverDlpFileCallback) {
     console.log(TAG, 'recoverDLPFileHome start');
-    console.info(TAG, 'onConnect3 success, dlpRpcProxy recoverDLPFileHome', JSON.stringify(GlobalContext.load('dlpRpcProxy')));
     await GlobalContext.load('dlpRpcProxy').recoverDlpFile(src, pathUri, callback);
   }
 
@@ -135,6 +129,11 @@ export default class HomeFeature {
   async fileOpenHistoryHome(src:string, callback: fileOpenHistoryCallback) {
     console.log(TAG, 'fileOpenHistoryHome start', src);
     await GlobalContext.load('dlpRpcProxy').fileOpenHistory(src, callback);
+  }
+
+  async linkSetHome(src:string, callback: linkSetCallback) {
+    console.log(TAG, 'linkSetHome start', src);
+    await GlobalContext.load('dlpRpcProxy').linkSet(src, callback);
   }
 
   disconnectServiceExtAbility(callback: (ans:number) => void) {

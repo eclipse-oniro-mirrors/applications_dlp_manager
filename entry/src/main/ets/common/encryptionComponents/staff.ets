@@ -120,7 +120,7 @@ struct staffItem {
         .height(Constants.HEADER_ROW_FONT_SIZE)
         .borderRadius(Constants.ENCRYPTION_STAFF_BORDER_RADIUS)
         .backgroundColor(this.rollColor())
-        .fontColor(Color.White)
+        .fontColor($r('sys.color.ohos_fa_text_contrary'))
         .textAlign(TextAlign.Center)
         .margin({
           right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
