@@ -30,8 +30,8 @@ import {
   stopFuseLinkCallback
 } from '../MainAbility/data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
 import IdDlpRpcServiceProxy from '../MainAbility/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
+import Constants from '../common/constant';
 
-const BUNDLE_NAME = 'com.ohos.dlpmanager';
 const SERVICE_EXTENSION_ABILITY_NAME = 'ServiceExtAbility';
 const ERROR_CODE = -1;
 const SUCCESS_CODE = 0;
@@ -70,7 +70,7 @@ export default class HomeFeature {
     }
     this.remoteCallback = callback;
     let want = {
-      'bundleName': BUNDLE_NAME,
+      'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
       'abilityName': SERVICE_EXTENSION_ABILITY_NAME
     } as Record<string, string>;
     if (this.dlpRpcProxy === undefined) {

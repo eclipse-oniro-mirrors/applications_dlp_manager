@@ -116,7 +116,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async startDataAbility(): Promise<void> {
     let want: Want = {
-      bundleName: 'com.ohos.dlpmanager',
+      bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
       abilityName: 'DataAbility'
     };
     await (GlobalContext.load('viewContext') as common.ServiceExtensionContext).startAbility(want);

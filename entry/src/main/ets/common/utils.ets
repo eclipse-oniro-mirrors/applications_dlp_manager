@@ -209,7 +209,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
 
 async function startAlertAbility(context: common.UIAbilityContext | common.ServiceExtensionContext, error: BusinessError) {
   context.startAbility({
-    bundleName: 'com.ohos.dlpmanager',
+    bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
     abilityName: 'AlertAbility',
     parameters: {
       error: error,
