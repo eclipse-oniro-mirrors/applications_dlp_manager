@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import window from '@ohos.window';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import emitter from '@ohos.events.emitter';
@@ -29,6 +30,7 @@ import Constants from '../common/constant';
 import GlobalContext from './GlobalContext';
 import hiSysEvent from '@ohos.hiSysEvent';
 import fileUri from '@ohos.file.fileuri';
+
 
 let TAG = "[DLPManager_Utils]";
 const TRANSPARENT_BACKGROUND_COLOR: string = '#33182431';
@@ -306,16 +308,13 @@ async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
   if (abilityWant.parameters) {
     abilityWant.parameters.error = error;
   }
-  let storage: LocalStorage = new LocalStorage({
-    'session': GlobalContext.load('session'),
-    'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
-  } as Record<string, UIExtensionContentSession | string>);
-  GlobalContext.load('session').loadContent('pages/alert', storage);
-  try {
-    GlobalContext.load('session').setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
-  } catch (exception) {
-    console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
-  }
+  let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
+  GlobalContext.store('alertContext', context);
+  (GlobalContext.load('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
+    if (err.code !== 0) {
+      console.error(TAG, 'loadContent failed', err.code, err.message);
+    }
+  });
 }
 
 async function goToAlertMessagePage(title?: Resource, message?: Resource, messageName?: Object) {

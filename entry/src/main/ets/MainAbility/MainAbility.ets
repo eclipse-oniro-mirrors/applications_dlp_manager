@@ -28,13 +28,12 @@ import {
   getOsAccountInfo,
   judgeIsSandBox,
   getFileFd,
-  getAlertMessage,
-  goToAlertMessagePage,
   isPC,
   getAppId,
   getDLPInfo,
   sendDlpManagerAccountLogin,
-  DLPInfo
+  DLPInfo,
+  showErrorDialogAndExit
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -63,8 +62,7 @@ export default class MainAbility extends UIAbility {
       GlobalContext.store('fileOpenHistoryFromMain', new Map<string, string>());
     }
     if (GlobalContext.load('fileOpenHistoryFromMain').has(want.uri)) {
-      let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_ENCRYPTING } as BusinessError);
-      goToAlertMessagePage(errInfo.title, errInfo.msg, want.parameters?.fileName);
+      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_ENCRYPTING } as BusinessError);
       return;
     }
     GlobalContext.store('context', this.context);
@@ -118,8 +116,7 @@ export default class MainAbility extends UIAbility {
     AppStorage.setOrCreate('validity', GlobalContext.load('dlpProperty').expireTime)
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-      goToAlertMessagePage(errInfo.title, errInfo.msg);
+      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
@@ -181,8 +178,7 @@ export default class MainAbility extends UIAbility {
   async checkValidWantAndAccount(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!this.checkValidWant()) {
-        let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
-        goToAlertMessagePage(errInfo.title, errInfo.msg);
+        await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
         reject();
         return;
       }
@@ -193,15 +189,13 @@ export default class MainAbility extends UIAbility {
         resolve();
       } catch (err) {
         console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-        let errInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
-        goToAlertMessagePage(errInfo.title, errInfo.msg);
+        await showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         reject();
         return;
       }
       let codeMessage = checkDomainAccountInfo(accountInfo);
       if (codeMessage) {
-        let errInfo = getAlertMessage({ code: codeMessage } as BusinessError);
-        goToAlertMessagePage(errInfo.title, errInfo.msg);
+        await showErrorDialogAndExit({ code: codeMessage } as BusinessError);
         reject();
         return;
       }
@@ -258,10 +252,9 @@ export default class MainAbility extends UIAbility {
         let uri: string = GlobalContext.load('uri') as string;
         try {
           await new Promise<void>((resolve, reject) => {
-            this.homeFeature.fileOpenHistoryHome(uri, (err: number) => {
+            this.homeFeature.fileOpenHistoryHome(uri, async (err: number) => {
               if (err === 0) {
-                let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
-                goToAlertMessagePage(errInfo.title, errInfo.msg);
+                await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
                 reject();
               }
               resolve();
@@ -282,15 +275,14 @@ export default class MainAbility extends UIAbility {
           console.log(TAG, 'get AppId failed');
           return;
         }
-        this.homeFeature.openDlpFileHome(uri, callerAppId, (err: number, data: dlpPermission.DLPProperty, msg: string) => {
+        this.homeFeature.openDlpFileHome(uri, callerAppId, async (err: number, data: dlpPermission.DLPProperty, msg: string) => {
           if (err !== 0) {
             let ansErr: BusinessError<void> = {
               code: err,
               name: '',
               message: msg,
             }
-            let errInfo = getAlertMessage(ansErr as BusinessError<void>);
-            goToAlertMessagePage(errInfo.title, errInfo.msg);
+            await showErrorDialogAndExit(ansErr);
             return;
           } else {
             GlobalContext.store('dlpProperty', data);

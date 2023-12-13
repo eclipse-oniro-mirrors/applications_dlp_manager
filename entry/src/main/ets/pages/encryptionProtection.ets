@@ -590,12 +590,22 @@ struct DlpDialog {
       GlobalContext.store("accountInfo", await getOsAccountInfo());
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-      showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+      if (this.session !== undefined) {
+        let errorInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        this.showErrorDialog(errorInfo.title, errorInfo.msg);
+      } else {
+        showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+      }
       return;
     }
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
     if (codeMessage) {
-      showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+      if (this.session !== undefined) {
+        let errorInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        this.showErrorDialog(errorInfo.title, errorInfo.msg);
+      } else {
+        showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+      }
       return;
     }
   }
