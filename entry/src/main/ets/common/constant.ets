@@ -128,6 +128,7 @@ export default class Constants {
   static ENCRYPTION_PC_FIXING_WIDTH = 606;
 
   static DLPRPC_SERVICE_PROXY_ERRCODE = 0;
+  static DLP_MANAGER_BUNDLE_NAME = 'com.ohos.dlpmanager';
 
   static FOOTER_OPACITY_ONE = 1;
   static FOOTER_OPACITY_SEPC= 0.6;

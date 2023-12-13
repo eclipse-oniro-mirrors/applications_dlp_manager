@@ -326,7 +326,7 @@ struct PermissionStatus {
                       this.session.terminateSelfWithResult({
                         'resultCode': 0,
                         'want': {
-                          'bundleName': 'com.ohos.dlpmanager',
+                          'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
                         },
                       });
                     } else {

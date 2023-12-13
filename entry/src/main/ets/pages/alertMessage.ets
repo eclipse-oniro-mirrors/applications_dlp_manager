@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Constants from '../common/constant';
-import GlobalContext from '../common/GlobalContext';
 
 const TAG = "[DLPManager_alertMessage]";
 
@@ -22,6 +22,7 @@ let storage = LocalStorage.GetShared();
 @Entry(storage)
 @Component
 struct AlertMessage {
+  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State message?: Resource = storage.get<Resource>('message');
   @State messageName?: string = storage.get<string>('messageName');
   @State title?: Resource = storage.get<Resource>('title');
@@ -97,12 +98,14 @@ struct AlertMessage {
                   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
-                    GlobalContext.load('session').terminateSelfWithResult({
-                      'resultCode': 0,
-                      'want': {
-                        'bundleName': 'com.ohos.dlpmanager',
-                      },
-                    });
+                    if (this.session !== undefined) {
+                      this.session.terminateSelfWithResult({
+                        'resultCode': 0,
+                        'want': {
+                          'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+                        },
+                      });
+                    }
                   })
                   .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 if (this.ok) {
@@ -113,12 +116,14 @@ struct AlertMessage {
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .height(Constants.FOOTER_BUTTON_HEIGHT)
                     .onClick(async (event) => {
-                      GlobalContext.load('session').terminateSelfWithResult({
-                        'resultCode': 0,
-                        'want': {
-                          'bundleName': 'com.ohos.dlpmanager',
-                        },
-                      });
+                      if (this.session !== undefined) {
+                        this.session.terminateSelfWithResult({
+                          'resultCode': 0,
+                          'want': {
+                            'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+                          },
+                        });
+                      }
                     })
                     .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 }
