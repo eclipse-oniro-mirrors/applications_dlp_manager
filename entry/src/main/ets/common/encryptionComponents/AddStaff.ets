@@ -63,6 +63,8 @@ struct AddStaff {
   @State textContent: string = '';
   @State accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
   @Link staffArray: Staff[];
+  @State focusFlag: boolean = false;
+
   @Prop isDisable: boolean = false;
 
   @Builder MenuBuilder(index: number) {
@@ -214,7 +216,7 @@ struct AddStaff {
               : $r('app.string.enter_a_complete_account')) : undefined,
         })
           .flexGrow(Constants.ENCRYPTION_ADD_STAFF_FLEX_GROW)
-          .backgroundColor($r('app.color.da_button_color'))
+          .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
           .borderRadius(Constants.PP_ROW_RADIUS)
           .fontSize($r('sys.float.ohos_id_text_size_body1'))
           .fontColor(this.isInputInvalid ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_primary'))
@@ -297,16 +299,21 @@ struct AddStaff {
             }
           })
           .onFocus(() => {
+            this.focusFlag = !this.focusFlag;
             this.activeStaffIndex = -1;
+          })
+          .onBlur(() => {
+            this.focusFlag = !this.focusFlag;
           })
       }
       .padding({
         top: Constants.ENCRYPTION_ADD_STAFF_PADDING_TOP,
       })
       .border({
-        width: { bottom: Constants.ENCRYPTION_ADD_STAFF_BORDER },
+        width: { bottom: this.focusFlag ? Constants.ENCRYPTION_ADD_STAFF_BORDER2 : Constants.ENCRYPTION_ADD_STAFF_BORDER },
         color: (this.isInputInvalid || this.staffArrayLength || this.isNetworkInvalid )
-          ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'),
+          ? $r('sys.color.ohos_id_color_handup') :
+          this.focusFlag ? $r('sys.color.ohos_id_color_primary') : $r('sys.color.ohos_id_color_list_separator'),
       })
 
       Flex({ direction: FlexDirection.Row }) {

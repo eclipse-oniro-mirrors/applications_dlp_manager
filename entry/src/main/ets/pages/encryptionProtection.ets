@@ -40,6 +40,7 @@ import {
   getFileUriByPath,
   getFileMsgByUri,
   FileMsg,
+  isPC,
   sendDlpFileCreateEvent,
   sendDlpManagerFileConfiguration,
   getFileSizeByUri
@@ -47,10 +48,10 @@ import {
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
 import { AddStaff } from '../common/encryptionComponents/AddStaff';
-import GlobalContext from '../common/GlobalContext'
-import HomeFeature from '../feature/HomeFeature';
+import GlobalContext from '../common/GlobalContext';
 import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
 import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
+import HomeFeature from '../feature/HomeFeature';
 
 const TAG = "[DLPManager_Encrypt]"
 let abilityResult: ability.AbilityResult = {
@@ -92,8 +93,7 @@ let defaultDlpFile: dlpPermission.DLPFile = {
 @Component
 struct DlpDialog {
   @State dlpProperty: dlpDataType = GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
-  private acontext: Context = getContext(this);
-  private homeFeature = new HomeFeature(this.acontext);
+  private homeFeature: HomeFeature = GlobalContext.load('homeFeature');
   @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   srcFd: number = -1;
   srcFileName: string = '';
@@ -238,12 +238,12 @@ struct DlpDialog {
   async catchProcess() {
     this.processing = false;
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-      try {
-        console.info(TAG, 'resumeFuseLink', this.srcFileName);
-        this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), () => {});
-      } catch (err) {
-        console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
-      }
+      console.info(TAG, 'resumeFuseLink', this.srcFileName);
+      this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'resumeFuseLink failed', err);
+        }
+      });
     }
   }
 
@@ -410,7 +410,11 @@ struct DlpDialog {
               name: '',
               message: ''
             }
-
+            try {
+              await fs.unlink(uriInfo.path);
+            } catch (err) {
+              console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+            }
             await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
             let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
             this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -662,7 +666,7 @@ struct DlpDialog {
               .fontWeight(FontWeight.Medium)
               .fontFamily($r('app.string.typeface'))
               .fontColor($r('sys.color.ohos_id_color_text_primary'))
-              .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+              .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
               .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
               .width(Constants.HEADER_TEXT_WIDTH)
               .align(Alignment.Start)
@@ -695,7 +699,7 @@ struct DlpDialog {
                   .width(Constants.FOOTER_ROW_PAD_RIGHT)
                   .height(Constants.FOOTER_ROW_PAD_RIGHT)
                   .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                  .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                  .fillColor($r('sys.color.ohos_id_color_secondary'))
                   .onClick(() => {
                     this.handlePopupReadOnly = !this.handlePopupReadOnly
                   })
@@ -743,7 +747,7 @@ struct DlpDialog {
                   .width(Constants.FOOTER_ROW_PAD_RIGHT)
                   .height(Constants.FOOTER_ROW_PAD_RIGHT)
                   .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                  .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                  .fillColor($r('sys.color.ohos_id_color_secondary'))
                   .onClick(() => {
                     this.handlePopupEdit = !this.handlePopupEdit
                   })
@@ -835,19 +839,18 @@ struct DlpDialog {
 
           Flex({ direction: FlexDirection.Row }) {
             Button($r('app.string.ban'), { type: ButtonType.Capsule, stateEffect: true })
-              .backgroundColor($r('app.color.base_button_color'))
+              .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(false)
-              .fontColor($r('app.color.encryption_cancel'))
+              .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .height(Constants.FOOTER_HEIGHT)
               .onClick(async (event) => {
                 if (this.isDlpFile && !(GlobalContext.load('requestIsFromSandBox') as boolean)) {
-                  try {
-                    console.info(TAG, 'closeDLPFile', this.srcFileName, this.srcFd);
-                    this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), () => {});
-                  } catch (err) {
-                    console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-                  }
+                  this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+                    if (err !== 0) {
+                      console.error(TAG, 'closeDLPFile failed', err);
+                    }
+                  });
                   try {
                     console.info(TAG, 'refresh dlp file', GlobalContext.load('dlpFileName') as string, GlobalContext.load('dlpFd') as number);
                     await fs.close(GlobalContext.load('dlpFd') as number); // refresh file info
@@ -874,13 +877,11 @@ struct DlpDialog {
             Button($r('app.string.sure'), {
               type: ButtonType.Capsule, stateEffect: true
             })
-              .backgroundColor($r('app.color.base_button_color'))
+              .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(false)
-              .fontColor($r('app.color.encryption_cancel'))
+              .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .enabled((this.staffDataArrayReadOnly.length > 0 || this.staffDataArrayEdit.length > 0 || ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') || ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? '')))
-              .opacity((this.staffDataArrayReadOnly.length > 0 || this.staffDataArrayEdit.length > 0 || ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') || ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? '')) ?
-              Constants.FOOTER_OPACITY_ONE : Constants.FOOTER_OPACITY_SEPC)
               .height(Constants.FOOTER_BUTTON_HEIGHT)
               .onClick(async (event) => {
                 GlobalContext.store('hiValidDate', false);
@@ -915,9 +916,9 @@ struct DlpDialog {
           })
         }
         .visibility(this.processing ? Visibility.Hidden : Visibility.Visible)
-        .width(Constants.FOOTER_ROW_WIDTH)
-        .backgroundColor($r('app.color.da_button_color'))
-        .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
+        .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+        .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+        .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
       }
     }
   }

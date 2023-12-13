@@ -24,6 +24,7 @@ import {
   closeDlpFileCallback,
   sandBoxLinkFileCallback,
   fileOpenHistoryCallback,
+  linkSetCallback,
   genDlpFileCallback,
   openDlpFileCallback,
   recoverDlpFileCallback,
@@ -121,11 +122,6 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         await fs.close(outFile);
       } catch (err) {
         console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
-      }
-      try {
-        await fs.unlink(uriInfo.path);
-      } catch (err) {
-        console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
       }
       callback((err as BusinessError).code);
     }
@@ -234,7 +230,6 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     if (dlpFile !== null) {
       try {
         await dlpFile.closeDLPFile();
-        this.dlpFileMap.delete(srcUri);
         callback(0);
       } catch (err) {
         console.error(TAG, 'closeDlpFile file', (err as BusinessError).code, (err as BusinessError).message);
@@ -287,6 +282,15 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   async fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): Promise<void> {
     console.log(TAG, 'fileOpenHistory start');
     if ((GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>)?.has(uri)) {
+      callback(0);
+    } else {
+      callback(-1);
+    }
+  }
+
+  async linkSet(uri: string, callback: linkSetCallback): Promise<void> {
+    console.log(TAG, 'linkSet start');
+    if ((GlobalContext.load('linkSet') as Map<string, (number | string)[]>)?.has(uri)) {
       callback(0);
     } else {
       callback(-1);

@@ -17,7 +17,7 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import ability from '@ohos.ability.ability';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
-import { directionStatus } from '../common/utils';
+import { directionStatus, isPC } from '../common/utils';
 import common from '@ohos.app.ability.common';
 
 const TAG = "[DLPManager_PermStat]";
@@ -230,7 +230,7 @@ struct PermissionStatus {
                 Text($r('app.string.header_title'))
                   .fontWeight(FontWeight.Medium)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                  .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+                  .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
                   .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                   .width(Constants.HEADER_TEXT_WIDTH)
                   .align(Alignment.Start)
@@ -316,7 +316,7 @@ struct PermissionStatus {
               })
 
               Row() {
-                Button($r('app.string.da_buttion'), { type: ButtonType.Capsule, stateEffect: true })
+                Button($r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
                   .backgroundColor($r('app.color.base_button_color'))
                   .fontColor($r('app.color.encryption_cancel'))
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
@@ -346,9 +346,9 @@ struct PermissionStatus {
                 right: Constants.FOOTER_ROW_PAD_RIGHT
               })
             }
-            .width(Constants.HEADER_COLUMN_WIDTH)
-            .backgroundColor($r('app.color.da_button_color'))
-            .borderRadius(Constants.INDEX_BORDER_RADIUS)
+            .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+            .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+            .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
           }
         }
       }

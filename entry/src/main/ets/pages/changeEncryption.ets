@@ -36,6 +36,7 @@ import {
   getTime,
   getFileMsgByUri,
   FileMsg,
+  isPC,
   sendDlpManagerFileConfiguration
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
@@ -80,8 +81,7 @@ let storage = LocalStorage.GetShared();
 @Entry(storage)
 @Component
 struct changeEncryption {
-  private acontext: Context = getContext(this);
-  private homeFeature = new HomeFeature(this.acontext);
+  private homeFeature: HomeFeature = GlobalContext.load('homeFeature');
   @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   dlpAlertDialog?: CustomDialogController;
   srcFileName: string = '';
@@ -172,13 +172,13 @@ struct changeEncryption {
   }
 
   async catchProcess() {
-    if (GlobalContext.load('requestIsFromSandBox')) {
-      try {
-        console.info(TAG, 'resumeFuseLink', this.srcFileName);
-        this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), () =>{});
-      } catch (err) {
-        console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
-      }
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) {
+      console.info(TAG, 'resumeFuseLink', this.srcFileName);
+      this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'resumeFuseLink failed', err);
+        }
+      });
     }
   }
 
@@ -186,10 +186,17 @@ struct changeEncryption {
     let plaintextFile = this.srcFileName.split('.')[0];
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
-        this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), () =>{});
-      } catch (err) {
-        console.error(TAG, 'stopFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
-        this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
+        await new Promise<void>((resolve, reject) => {
+          this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+            if (err === 0) {
+              console.error(TAG, 'stopFuseLink failed', err);
+              this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
+              reject();
+            }
+            resolve();
+          });
+        })
+      } catch {
         return;
       }
     }
@@ -211,18 +218,18 @@ struct changeEncryption {
           return;
         }
         console.info(TAG, 'get uri', saveRes)
-        let uri = saveRes[0];
+        let plainUri = saveRes[0];
         let uriInfo: fileUri.FileUri | undefined = undefined;
         let file: fs.File | undefined = undefined;
         try {
-          uriInfo = new fileUri.FileUri(uri);
+          uriInfo = new fileUri.FileUri(plainUri);
         } catch (err) {
           console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
         }
         try {
-          file = await fs.open(uri, fs.OpenMode.READ_WRITE);
+          file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
         } catch (err) {
-          console.error(TAG, 'open', uri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+          console.error(TAG, 'open', plainUri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           try {
             await fs.unlink(uriInfo!.path);
           } catch (err) {
@@ -234,7 +241,7 @@ struct changeEncryption {
         };
         try {
           console.info(TAG, 'recoverDLPFile', this.srcFileName);
-          await this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), uri, async (err: number) => {
+          await this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), plainUri, async (err: number) => {
             if (err !== 0) {
               let ansErr: BusinessError<void> = {
                 code: err,
@@ -274,19 +281,19 @@ struct changeEncryption {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
         if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
-          try {
-            console.info(TAG, 'resumeFuseLink', this.srcFileName);
-            this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), () =>{});
-          } catch (err) {
-            console.error(TAG, 'resumeFuseLink failed', (err as BusinessError).code, (err as BusinessError).message);
-          }
+          console.info(TAG, 'resumeFuseLink', this.srcFileName);
+          this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+            if (err !== 0) {
+              console.error(TAG, 'resumeFuseLink failed', err);
+            }
+          });
         } else {
-          try {
-            console.info(TAG, 'closeDLPFile', this.srcFileName);
-            this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), () =>{});
-          } catch (err) {
-            console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-          }
+          console.info(TAG, 'closeDLPFile', this.srcFileName);
+          this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+            if (err !== 0) {
+              console.error(TAG, 'closeDLPFile failed', err);
+            }
+          });
         }
         if (this.session !== undefined) {
           this.session.terminateSelfWithResult({
@@ -426,7 +433,7 @@ struct changeEncryption {
                   .fontWeight(FontWeight.Medium)
                   .fontFamily($r('app.string.typeface'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
-                  .fontSize(Constants.HEADER_TEXT_FRONT_SIZE)
+                  .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
                   .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                   .width(Constants.HEADER_TEXT_WIDTH)
                   .align(Alignment.Start)
@@ -472,7 +479,7 @@ struct changeEncryption {
                           .width(Constants.FOOTER_ROW_PAD_RIGHT)
                           .height(Constants.FOOTER_ROW_PAD_RIGHT)
                           .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                          .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                          .fillColor($r('sys.color.ohos_id_color_secondary'))
                           .onClick(() => {
                             this.handlePopupReadOnly = !this.handlePopupReadOnly
                           })
@@ -512,7 +519,7 @@ struct changeEncryption {
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                            .fillColor($r('sys.color.ohos_id_color_secondary'))
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
@@ -553,16 +560,18 @@ struct changeEncryption {
                             if (Number(this.hideNamesNumReadOnly) > 0) {
                               Row() {
                                 if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly['length']) {
-                                  Text('+')
-                                    .customizeText()
-                                  Text(this.hideNamesNumReadOnly)
-                                    .customizeText()
+                                  Text(){
+                                    Span('+')
+                                    Span(this.hideNamesNumReadOnly)
+                                  }
+                                  .customizeText()
                                 }
                                 Image($r("app.media.icon_change"))
                                   .draggable(false)
                                   .width(Constants.PP_IMAGE_HEIGHT)
                                   .height(Constants.PP_TEXT_FONT_SIZE2)
                                   .objectFit(ImageFit.Contain)
+                                  .fillColor($r('sys.color.ohos_id_color_secondary'))
                                   .rotate({
                                     angle: !this.ReadOnlyFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                   })
@@ -612,7 +621,7 @@ struct changeEncryption {
                           .width(Constants.FOOTER_ROW_PAD_RIGHT)
                           .height(Constants.FOOTER_ROW_PAD_RIGHT)
                           .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                          .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                          .fillColor($r('sys.color.ohos_id_color_secondary'))
                           .onClick(() => {
                             this.handlePopupEdit = !this.handlePopupEdit
                           })
@@ -653,7 +662,7 @@ struct changeEncryption {
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_text_secondary'))
+                            .fillColor($r('sys.color.ohos_id_color_secondary'))
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
@@ -694,16 +703,18 @@ struct changeEncryption {
                             if (Number(this.hideNamesNumEdit) > 0) {
                               Row() {
                                 if (this.showNamesArrEdit.length !== this.staffDataArrayEdit['length']) {
-                                  Text('+')
-                                    .customizeText()
-                                  Text(this.hideNamesNumEdit)
-                                    .customizeText()
+                                  Text(){
+                                    Span('+')
+                                    Span(this.hideNamesNumEdit)
+                                  }
+                                  .customizeText()
                                 }
                                 Image($r("app.media.icon_change"))
                                   .draggable(false)
                                   .width(Constants.PP_IMAGE_HEIGHT)
                                   .height(Constants.PP_TEXT_FONT_SIZE2)
                                   .objectFit(ImageFit.Contain)
+                                  .fillColor($r('sys.color.ohos_id_color_secondary'))
                                   .rotate({
                                     angle: !this.editFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                   })
@@ -770,10 +781,10 @@ struct changeEncryption {
               })
               Flex({ direction: FlexDirection.Row }) {
                 Button($r('app.string.unencrypted'), { type: ButtonType.Capsule, stateEffect: true })
-                  .backgroundColor($r('app.color.base_button_color'))
+                  .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                   .width(Constants.HEADER_TEXT_WIDTH)
                   .height(Constants.FOOTER_HEIGHT)
-                  .fontColor($r('app.color.encryption_cancel'))
+                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .onClick(async (event) => {
                     GlobalContext.store('hiOperation', 'Delete_policy');
                     GlobalContext.store('hiAdvancedSettings', false);
@@ -786,9 +797,9 @@ struct changeEncryption {
                   })
                   .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })
-                  .backgroundColor($r('app.color.base_button_color'))
+                  .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                   .width(Constants.HEADER_TEXT_WIDTH)
-                  .fontColor($r('app.color.encryption_cancel'))
+                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
                     router.replaceUrl({
@@ -806,9 +817,9 @@ struct changeEncryption {
               })
             }
             .visibility(this.prepareData ? Visibility.Hidden : Visibility.Visible)
-            .width(Constants.HEADER_COLUMN_WIDTH)
-            .backgroundColor($r('app.color.da_button_color'))
-            .borderRadius($r('sys.float.ohos_id_corner_radius_default_l'))
+            .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+            .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+            .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
           }
         }
       }

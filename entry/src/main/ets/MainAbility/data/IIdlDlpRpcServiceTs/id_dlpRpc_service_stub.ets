@@ -25,7 +25,8 @@ import {
   recoverDlpFileCallback,
   closeDlpFileCallback,
   sandBoxLinkFileCallback,
-  fileOpenHistoryCallback
+  fileOpenHistoryCallback,
+  linkSetCallback
 } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
 import IDLDLPProperty from "../../../serviceExtensionAbility/sequenceable/dlpClass";
@@ -74,6 +75,10 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       }
       case IDlpServiceCmdCode.COMMAND_FILE_OPEN_HISTORY: {
         await this.fileOpenHistoryInner(data, reply);
+        return true;
+      }
+      case IDlpServiceCmdCode.COMMAND_FILE_LINK_SET: {
+        await this.linkSetInner(data, reply);
         return true;
       }
       default: {
@@ -201,6 +206,18 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
     }
   }
 
+  async linkSetInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
+    console.log(TAG, "linkSetInner start");
+    try {
+      let _uri = data.readString();
+      await this.linkSet(_uri, (errCode) => {
+        reply.writeInt(errCode);
+      });
+    } catch (err) {
+      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+    }
+  }
+
   genDlpFile(inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback): void {}
   openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): void {}
   stopFuseLink(uri: string, callback: stopFuseLinkCallback): void {}
@@ -210,4 +227,5 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   closeDlpFile(srcUri: string, callback: closeDlpFileCallback): void {}
   sandBoxLinkFile(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback): void {}
   fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): void {}
+  linkSet(uri: string, callback: linkSetCallback): void {}
 }
