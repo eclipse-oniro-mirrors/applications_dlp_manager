@@ -48,7 +48,6 @@ export default class MainAbility extends UIExtensionAbility {
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   callerToken:number = 0;
   private homeFeature!: HomeFeature;
-  flag: number = 0;
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     console.log(TAG, 'want', JSON.stringify(want));
@@ -56,8 +55,10 @@ export default class MainAbility extends UIExtensionAbility {
     let dlpInfo:DLPInfo = await getDLPInfo();
     GlobalContext.store('hiPNameId', dlpInfo.name);
     GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
-    this.flag++;
-    if (this.flag > Constants.MAIN_FLAG_MAX_NUMBER) {
+    let flag: number = GlobalContext.load('flag') ?? 0;
+    flag++;
+    GlobalContext.store('flag', flag);
+    if (flag > Constants.MAIN_FLAG_MAX_NUMBER) {
       let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_ENCRYPTING } as BusinessError);
       goToAlertMessagePage(errInfo.title, errInfo.msg, GlobalContext.load('abilityWant').parameters?.displayName);
       return;
@@ -92,8 +93,10 @@ export default class MainAbility extends UIExtensionAbility {
   }
 
   onSessionDestroy(): void {
-    console.info(TAG, 'onDestroy');
-    this.flag--;
+    console.info(TAG, 'onSessionDestroy');
+    let flag: number = GlobalContext.load('flag');
+    flag--;
+    GlobalContext.store('flag', flag);
   }
 
   async gotoPage(session: UIExtensionContentSession): Promise<void> {
