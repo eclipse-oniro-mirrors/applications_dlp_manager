@@ -319,16 +319,16 @@ async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
   });
 }
 
-async function goToAlertMessagePage(title?: Resource, message?: Resource, messageName?: Object) {
+async function goToAlertMessagePage(session: UIExtensionContentSession, title?: Resource, message?: Resource, messageName?: Object) {
   let storage: LocalStorage = new LocalStorage({
-    'session': GlobalContext.load('session'),
+    'session': session,
     'title': title,
     'message': message,
     'messageName': messageName
   } as Record<string, UIExtensionContentSession | Object | Resource>);
-  GlobalContext.load('session').loadContent('pages/alertMessage', storage);
+  session.loadContent('pages/alertMessage', storage);
   try {
-    GlobalContext.load('session').setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+    session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
   } catch (exception) {
     console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
   }
