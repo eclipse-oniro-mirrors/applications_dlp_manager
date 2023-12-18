@@ -101,6 +101,7 @@ struct AddStaff {
       }else{
         Row() {
           Text($r('app.string.encrypt_employee_id', this.accountNameTips))
+            .wordBreak(WordBreak.BREAK_ALL)
             .TipsTextStyle()
         }
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
@@ -310,7 +311,7 @@ struct AddStaff {
         top: Constants.ENCRYPTION_ADD_STAFF_PADDING_TOP,
       })
       .border({
-        width: { bottom: this.focusFlag ? Constants.ENCRYPTION_ADD_STAFF_BORDER2 : Constants.ENCRYPTION_ADD_STAFF_BORDER },
+        width: { bottom: this.focusFlag ? px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER2) : px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER) },
         color: (this.isInputInvalid || this.staffArrayLength || this.isNetworkInvalid )
           ? $r('sys.color.ohos_id_color_handup') :
           this.focusFlag ? $r('sys.color.ohos_id_color_primary') : $r('sys.color.ohos_id_color_list_separator'),
