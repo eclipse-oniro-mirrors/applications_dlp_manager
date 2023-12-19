@@ -341,7 +341,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     return new Promise(async (resolve, reject) => {
       this.alreadyOpen = false;
       try {
-        this.gatheringType = await dlpPermission.getDLPGatheringPolicy();
         let fileOpenHistory: Map<string, (number | string)[]> = GlobalContext.load('fileOpenHistory')  as Map<string, (number | string)[]>;
         if (fileOpenHistory.has(this.uri)) {
           console.info(TAG, 'file', this.fileName, 'already open');
@@ -354,7 +353,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         } else {
           await this.getOpenDLPFile(startId);
         }
-
+        this.gatheringType = await dlpPermission.getDLPGatheringPolicy();
         let authPerm2Sandbox: Map<dlpPermission.DLPFileAccess, (number | string)[]> = GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>;
         if (authPerm2Sandbox.has(this.authPerm) &&
           this.gatheringType === dlpPermission.GatheringPolicyType.GATHERING) {
@@ -521,13 +520,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
       console.error(TAG, 'get parameters failed');
       (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
     }
-    //uri permission just for pc
+    // uri permission just for domainAccount
     if (!this.uri.endsWith('.dlp')) {
       console.error(TAG, 'this.uri wrong');
       await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
       return;
     }
-    if(GlobalContext.load('domainAccount') as boolean){
+    if (GlobalContext.load('domainAccount') as boolean) {
       let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION | wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
       let targetBundleName = this.sandboxBundleName;
       uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName , (result) => {
