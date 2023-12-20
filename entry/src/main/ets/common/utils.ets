@@ -150,6 +150,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       } as Record<string, Resource>;
     case Constants.ERR_JS_APP_INSIDE_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') } as Record<string, Resource>;
+    case Constants.ERR_JS_ACCOUNT_NOT_FOUND:
     case Constants.ERR_JS_GET_ACCOUNT_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_NO_ACCOUNT_ERROR:
