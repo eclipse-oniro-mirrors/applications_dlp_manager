@@ -38,6 +38,7 @@ import {
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
+import { AccountTipsConfig } from '../common/AccountTipsConfig';
 
 const TAG = '[DLPManager_Main]';
 
@@ -114,6 +115,12 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
+      try {
+        await this.checkValidEnterpriseAndAccount();
+      } catch {
+        return;
+      }
+
       let storage: LocalStorage = new LocalStorage({
         'session': session,
         'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
@@ -183,6 +190,22 @@ export default class MainAbility extends UIExtensionAbility {
       return false;
     }
     return true;
+  }
+
+  async checkValidEnterpriseAndAccount(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
+      AccountTipsConfig.getAccountInfo(accountInfo.domainInfo.accountName)
+        .then(() => {
+          resolve();
+        })
+        .catch((error: BusinessError) => {
+          let errInfo = getAlertMessage(error);
+          goToAlertMessagePage(errInfo.title, errInfo.msg);
+          reject();
+          return;
+        })
+    })
   }
 
   async checkValidWantAndAccount(): Promise<void> {
