@@ -197,11 +197,13 @@ export default class Constants {
   static VALIDITY_IMAGE_PADDING_RIGHT = 12;
   static VALIDITY_IMAGE_PADDING_LEFT = 8;
 
-  static TIPS_ARROW_OFFSET = 25;
-  static TIPS_WIDTH = 292;
+  static TIPS_ARROW_OFFSET = 20;
   static TIPS_HEIGHT_ITEM = 20;
-  static TIPS_DES_WIDTH = 30;
   static TIPS_COLON_WIDTH = 9;
   static TIPS_STAFF_WIDTH = 80;
   static TIPS_STAFF_MAX_WIDTH = 50;
+  static TIPS_SPACE_ZERO = '\u200B';
+  static TIPS_SPACE_EN = '\u2002';
+  static TIPS_SPACE_EM = '\u2003';
+  static TIPS_NAME_LENGTH = 2;
 }

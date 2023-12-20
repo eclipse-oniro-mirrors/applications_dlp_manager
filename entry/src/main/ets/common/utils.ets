@@ -167,6 +167,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION') } as Record<string, Resource>;
     case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
+    case Constants.ERR_JS_NETWORK_INVALID:
     case Constants.ERR_JS_APP_NETWORK_INVALID:
       return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:

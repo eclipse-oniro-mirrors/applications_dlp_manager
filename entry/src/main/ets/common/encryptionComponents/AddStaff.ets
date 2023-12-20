@@ -19,9 +19,10 @@ import { BusinessError } from '@ohos.base';
 import account_osAccount from '@ohos.account.osAccount';
 import { staffItem } from './staff';
 import Constants from '../constant';
-import { isPC } from '../utils';
+import { getAlertMessage, isPC } from '../utils';
 import GlobalContext from '../GlobalContext';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
+import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 
 interface Staff {
   authAccount: string;
@@ -64,8 +65,8 @@ struct AddStaff {
   @State accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
   @Link staffArray: Staff[];
   @State focusFlag: boolean = false;
-
   @Prop isDisable: boolean = false;
+  dlpAlertDialog?: CustomDialogController;
 
   @Builder MenuBuilder(index: number) {
     Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
@@ -83,21 +84,17 @@ struct AddStaff {
   @Builder popupBuilderTips() {
     Column() {
       if(GlobalContext.load('domainAccount')){
-        List() {
-          ForEach(this.accountTipsArray, (item: AccountTips) => {
-            if (item.isShow) {
-              ListItem() {
-                Row() {
-                  if (AccountTipsConfig.isSysLanguage()) {
-                    Text(item.description?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
-                  } else {
-                    Text(item.descriptionEn?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
-                  }
-                }.width(Constants.TIPS_WIDTH).height(Constants.TIPS_HEIGHT_ITEM)
+        ForEach(this.accountTipsArray, (item: AccountTips) => {
+          if (item.isShow) {
+            Row() {
+              if (AccountTipsConfig.isSysLanguage()) {
+                Text(item.description?.replace('%s', item.value)).TipsTextStyle()
+              } else {
+                Text(item.descriptionEn?.replace('%s', item.value)).TipsTextStyle()
               }
-            }
-          }, (item: AccountTips) => item.key)
-        }.width(Constants.TIPS_WIDTH)
+            }.height(Constants.TIPS_HEIGHT_ITEM)
+          }
+        }, (item: AccountTips) => item.key)
       }else{
         Row() {
           Text($r('app.string.encrypt_employee_id', this.accountNameTips))
@@ -107,6 +104,7 @@ struct AddStaff {
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
       }
     }
+    .alignItems(HorizontalAlign.Start)
     .padding({
       left: Constants.ROW_FONT_SIZE,
       right: Constants.ROW_FONT_SIZE,
@@ -119,6 +117,20 @@ struct AddStaff {
     this.staffArray.splice(i, 1)
     this.activeStaffIndex = -1
     this.staffArrayLength = false;
+  }
+
+  private showErrorDialog(title: Resource, message: Resource) {
+    this.dlpAlertDialog = new CustomDialogController({
+      builder: DlpAlertDialog({
+        title: title,
+        message: message,
+        action: () => {
+        }
+      }),
+      autoCancel: true,
+      customStyle: true,
+    });
+    this.dlpAlertDialog.open();
   }
 
   async aboutToAppear(){
@@ -159,23 +171,26 @@ struct AddStaff {
                   }
                 })
                 .onClick(() => {
+                  this.activeStaffIndex = index!;
                   if (GlobalContext.load('domainAccount')) {
                     try {
                       AccountTipsConfig.getAccountInfo(item.authAccount)
                         .then(async (result: account_osAccount.DomainAccountInfo) => {
                           this.accountTipsArray = await AccountTipsConfig.getConfigTips();
-                          this.activeStaffIndex = index!;
+                          this.handlePopupTips = true;
                           this.accountTipsArray?.forEach((accountTips: AccountTips) => {
                             accountTips.value = result[accountTips.key];
                           })
                         }).catch((err: BusinessError) => {
-                        console.log(TAG, 'call getAccountInfo failed, error: ' + JSON.stringify(err));
+                        console.error(`${TAG} call getAccountInfo failed, error: ${JSON.stringify(err)}`);
+                        let errInfo = getAlertMessage(err);
+                        this.showErrorDialog(errInfo.title, errInfo.msg);
                       });
                     } catch (error) {
                       console.error(TAG, 'getAccountInfo exception = ' + JSON.stringify(error));
                     }
                   } else {
-                    this.activeStaffIndex = index!;
+                    this.handlePopupTips = true;
                     this.accountNameTips = item.authAccount;
                   }
                 })
@@ -189,16 +204,17 @@ struct AddStaff {
                   right: Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT,
                   bottom: Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
                 })
-                .bindPopup(this.activeStaffIndex === index, {
+                .bindPopup(this.handlePopupTips && this.activeStaffIndex === index, {
                   builder: this.popupBuilderTips,
                   placement: Placement.BottomLeft,
-                  popupColor: ($r('sys.color.ohos_id_color_help_tip_bg')),
+                  popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
                   enableArrow: true,
                   showInSubWindow: false,
                   arrowOffset: Constants.TIPS_ARROW_OFFSET,
                   onStateChange: (e) => {
                     if (!e.isVisible) {
                       this.activeStaffIndex = -1;
+                      this.handlePopupTips = false;
                     }
                   }
                 })
@@ -251,7 +267,7 @@ struct AddStaff {
             try {
               let domainAccountInfo: osAccount.DomainAccountInfo = {
                 domain: 'china',
-                accountName: this.inputId.toLocaleLowerCase()
+                accountName: this.inputId.toLocaleLowerCase().trim()
               }
               if (GlobalContext.load('domainAccount')) {
                 this.isAccountCheckSuccess = false;
@@ -268,6 +284,14 @@ struct AddStaff {
                         this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
                         GlobalContext.store('hiAccountVerifySucc', this.succ);
                         this.inputId = '';
+                    }).catch((error: BusinessError) => {
+                      if ([Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(error.code)){
+                        this.isInputInvalid = true;
+                        return;
+                      } else {
+                        this.isNetworkInvalid = true;
+                        return;
+                      }
                     })
                   } else {
                     this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
