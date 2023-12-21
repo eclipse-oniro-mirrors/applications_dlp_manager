@@ -289,7 +289,7 @@ export default class MainAbility extends UIAbility {
         GlobalContext.store('dlpFileName', dlpFileName);
         let callerAppId: string;
         try {
-          let callerBundleName = 'com.ohos.dlpmanager';
+          let callerBundleName = Constants.DLP_MANAGER_BUNDLE_NAME;
           callerAppId = await getAppId(callerBundleName);
           console.info(TAG, 'get AppId', callerAppId);  
         } catch {

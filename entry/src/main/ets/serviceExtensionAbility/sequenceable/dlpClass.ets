@@ -16,6 +16,8 @@
 import rpc from '@ohos.rpc';
 
 const TAG = '[DLPManager_dlpClass]';
+const ARRAY_LENGTH_MAX = 100;
+const ARRAY_LENGTH_MIN = 0;
 
 export class IAuthUser extends rpc.MessageSequence {
   authAccount: string;
@@ -102,6 +104,9 @@ export default class IDLDLPProperty extends rpc.MessageSequence {
     this.ownerAccountID = dataIn.readString();
     this.ownerAccountType = dataIn.readInt();
     let arrayLength:number = dataIn.readInt();
+    if (arrayLength < ARRAY_LENGTH_MIN || arrayLength > ARRAY_LENGTH_MAX) {
+      return false;
+    }
     for (let i = 0; i < arrayLength; i++) {
       this.authUserList.push(new IAuthUser("", 0, 0, 0));
     }

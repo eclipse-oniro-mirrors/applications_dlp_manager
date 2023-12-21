@@ -110,10 +110,21 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
       if (!this.dlpFileMap.has(outputUri)) {
         this.dlpFileMap.set(outputUri, dlpFile);
+        GlobalContext.store('dlpFileMap', this.dlpFileMap);
       } else {
         console.log(TAG, "map is overwrite", outputUri);
+        let rawDlpFile = this.dlpFileMap.get(outputUri) ?? null;
+        if (rawDlpFile !== null) {
+          try {
+            console.log(TAG, 'closeDLPFile start');
+            await rawDlpFile.closeDLPFile();
+          } catch (err) {
+            console.error(TAG, 'closeDlpFile file', (err as BusinessError).code, (err as BusinessError).message);
+          }
+        }
         this.dlpFileMap.delete(outputUri);
         this.dlpFileMap.set(outputUri, dlpFile);
+        GlobalContext.store('dlpFileMap', this.dlpFileMap);
       }
       callback(0);
     } catch (err) {
@@ -156,10 +167,12 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       callback(0, _dlp, '');
       if (!this.dlpFileMap.has(srcUri)) {
         this.dlpFileMap.set(srcUri, dlpFile);
+        GlobalContext.store('dlpFileMap', this.dlpFileMap);
       } else {
-        console.log(TAG, 'map is overwrite ++++++++++++++');
+        console.log(TAG, 'map is overwrite');
         this.dlpFileMap.delete(srcUri);
         this.dlpFileMap.set(srcUri, dlpFile);
+        GlobalContext.store('dlpFileMap', this.dlpFileMap);
       }
     } catch(err) {
       let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);

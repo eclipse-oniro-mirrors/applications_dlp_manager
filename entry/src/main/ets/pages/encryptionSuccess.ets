@@ -567,15 +567,14 @@ struct encryptionSuccess {
                   .onClick(async (event) => {
                     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                       let dlpFileName: string = GlobalContext.load('dlpFileName') as string;
-                      let dlpFd: number = GlobalContext.load('dlpFd') as number;
                       try {
-                        console.info(TAG, 'closeDLPFile', dlpFileName, dlpFd);
+                        console.info(TAG, 'closeDLPFile', dlpFileName);
                         let hF = GlobalContext.load('homeFeature') as HomeFeature;
                         await new Promise<void>((resolve, reject) => {
                           hF.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
                             if (err !== 0) {
                               let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-                              goToAlertMessagePage(errInfo.title, errInfo.msg);
+                              goToAlertMessagePage(this.session, errInfo.title, errInfo.msg);
                               reject();
                             }
                             resolve();
@@ -583,12 +582,6 @@ struct encryptionSuccess {
                         })
                       } catch (err) {
                         console.error(TAG, 'closeDLPFile', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-                      }
-                      try {
-                        console.info(TAG, 'refresh dlp file', dlpFileName, dlpFd);
-                        await fs.close(dlpFd); // refresh file info
-                      } catch (err) {
-                        console.error(TAG, 'refresh dlp file', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
                       }
                     }
                     if (this.session !== undefined) {

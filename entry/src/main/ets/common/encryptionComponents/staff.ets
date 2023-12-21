@@ -77,6 +77,7 @@ struct staffItem {
       }else{
         Row() {
           Text($r('app.string.encrypt_employee_id', this.accountNameTips))
+            .wordBreak(WordBreak.BREAK_ALL)
             .TipsTextStyle()
         }
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)

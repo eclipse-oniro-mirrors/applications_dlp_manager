@@ -167,9 +167,9 @@ struct PermissionStatus {
 
   aboutToAppear() {
     console.info(TAG, 'aboutToAppear');
-    this.authPerm = AppStorage.Get('authPerm') ?? 1;
-    this.accountId = AppStorage.Get('contactAccount') ?? '';
-    this.validity = AppStorage.Get('validity') ?? 0;
+    this.authPerm = AppStorage.get('authPerm') ?? 1;
+    this.accountId = AppStorage.get('contactAccount') ?? '';
+    this.validity = AppStorage.get('validity') ?? 0;
     this.directionStatus = (GlobalContext
       .load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {

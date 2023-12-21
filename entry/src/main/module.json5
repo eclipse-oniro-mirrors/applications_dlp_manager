@@ -86,7 +86,7 @@
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service",
-        "exported": true,
+        "exported": true
       },
       {
         "name": "DataAbility",
@@ -100,7 +100,7 @@
         "icon": "$media:icon",
         "description": "service",
         "type": "service",
-        "exported": true,
+        "exported": false,
         "srcEntrance": "./ets/serviceExtensionAbility/ServiceExtAbility.ets"
       }
     ],

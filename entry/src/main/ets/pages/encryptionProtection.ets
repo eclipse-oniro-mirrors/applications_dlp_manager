@@ -318,12 +318,6 @@ struct DlpDialog {
     } catch {
       return;
     }
-    console.info(TAG, 'closeDLPFile', this.srcFileName);
-    await this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
-      if (err !== 0) {
-        console.error(TAG, 'closeDLPFile', this.srcFileName, 'failed', err);
-      }
-    });
     let _dlp = this.tempData();
     this.homeFeature.genDlpFileHome(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
       if (err !== 0) {
@@ -626,7 +620,6 @@ struct DlpDialog {
       console.info(TAG, 'encryption request from sandbox');
       this.linkFileName = GlobalContext.load('linkFileName') as string;
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
-      // this.srcFd = GlobalContext.load('dlpFd') as number;
       setTimeout(() => {
         this.showData(GlobalContext.load('dlpProperty'));
       }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
@@ -861,12 +854,6 @@ struct DlpDialog {
                       console.error(TAG, 'closeDLPFile failed', err);
                     }
                   });
-                  try {
-                    console.info(TAG, 'refresh dlp file', GlobalContext.load('dlpFileName') as string, GlobalContext.load('dlpFd') as number);
-                    await fs.close(GlobalContext.load('dlpFd') as number); // refresh file info
-                  } catch (err) {
-                    console.error(TAG, 'refresh dlp file failed', (err as BusinessError).code, (err as BusinessError).message);
-                  }
                 }
                 if (this.session !== undefined) {
                   this.session.terminateSelfWithResult({
