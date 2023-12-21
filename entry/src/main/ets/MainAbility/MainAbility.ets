@@ -41,6 +41,7 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import { BusinessError } from '@ohos.base';
 import window from '@ohos.window';
 import common from '@ohos.app.ability.common';
+import { AccountTipsConfig } from '../common/AccountTipsConfig';
 
 const TAG = '[DLPManager_Main]';
 let permissionList: Array<Permissions> = [
@@ -120,6 +121,12 @@ export default class MainAbility extends UIAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
+      try {
+        await this.checkValidEnterpriseAndAccount();
+      } catch {
+        return;
+      }
+
       windowStage.loadContent('pages/changeEncryption', (err: BusinessError) =>{
         if (err.code !== 0) {
           console.error(TAG, 'loadContent failed', err.code, err.message);
@@ -173,6 +180,21 @@ export default class MainAbility extends UIAbility {
       return false;
     }
     return true;
+  }
+
+  async checkValidEnterpriseAndAccount(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
+      AccountTipsConfig.getAccountInfo(accountInfo.domainInfo.accountName)
+        .then(() => {
+          resolve();
+        })
+        .catch(async (error: BusinessError) => {
+          await showErrorDialogAndExit(error);
+          reject();
+          return;
+        })
+    })
   }
 
   async checkValidWantAndAccount(): Promise<void> {

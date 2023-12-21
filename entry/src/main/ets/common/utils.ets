@@ -150,6 +150,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       } as Record<string, Resource>;
     case Constants.ERR_JS_APP_INSIDE_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') } as Record<string, Resource>;
+    case Constants.ERR_JS_ACCOUNT_NOT_FOUND:
     case Constants.ERR_JS_GET_ACCOUNT_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_NO_ACCOUNT_ERROR:
@@ -167,6 +168,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION') } as Record<string, Resource>;
     case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
+    case Constants.ERR_JS_NETWORK_INVALID:
     case Constants.ERR_JS_APP_NETWORK_INVALID:
       return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:

@@ -19,6 +19,8 @@ import osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
+import { getAlertMessage } from '../utils';
+import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 
 const TAG = "[DLPManager_staff]";
 
@@ -56,25 +58,22 @@ struct staffItem {
 
   @Prop textContent: string = '';
   @State accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
+  dlpAlertDialog?: CustomDialogController;
 
   @Builder popupBuilderTips() {
     Column() {
       if(GlobalContext.load('domainAccount')){
-        List() {
-          ForEach(this.accountTipsArray, (item: AccountTips) => {
-            if (item.isShow) {
-              ListItem() {
-                Row() {
-                  if (AccountTipsConfig.isSysLanguage()) {
-                    Text(item.description?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
-                  } else {
-                    Text(item.descriptionEn?.replace('%s', item.value)?.split('').join('\u200B')).TipsTextStyle()
-                  }
-                }.width(Constants.TIPS_WIDTH).height(Constants.TIPS_HEIGHT_ITEM)
+        ForEach(this.accountTipsArray, (item: AccountTips) => {
+          if (item.isShow) {
+            Row() {
+              if (AccountTipsConfig.isSysLanguage()) {
+                Text(item.description?.replace('%s', item.value)).TipsTextStyle()
+              } else {
+                Text(item.descriptionEn?.replace('%s', item.value)).TipsTextStyle()
               }
-            }
-          }, (item: AccountTips) => item.key)
-        }.width(Constants.TIPS_WIDTH)
+            }.height(Constants.TIPS_HEIGHT_ITEM)
+          }
+        }, (item: AccountTips) => item.key)
       }else{
         Row() {
           Text($r('app.string.encrypt_employee_id', this.accountNameTips))
@@ -83,6 +82,7 @@ struct staffItem {
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
       }
     }
+    .alignItems(HorizontalAlign.Start)
     .padding({
       left: Constants.ROW_FONT_SIZE,
       right: Constants.ROW_FONT_SIZE,
@@ -98,12 +98,48 @@ struct staffItem {
     return this.color[this.changeIndex]
   }
 
+  private showErrorDialog(title: Resource, message: Resource) {
+    this.dlpAlertDialog = new CustomDialogController({
+      builder: DlpAlertDialog({
+        title: title,
+        message: message,
+        action: () => {
+        }
+      }),
+      autoCancel: false,
+      customStyle: true,
+    });
+    this.dlpAlertDialog.open();
+  }
+
+  private splitContent() {
+    if (this.textContent) {
+      if (this.textContent.length > Constants.TIPS_NAME_LENGTH) {
+        return this.textContent.split('').join(Constants.TIPS_SPACE_ZERO)
+      } else if (this.textContent.length === Constants.TIPS_NAME_LENGTH) {
+        return this.textContent.split('').join(Constants.TIPS_SPACE_EM)
+      } else {
+        return Constants.TIPS_SPACE_EN + this.textContent;
+      }
+    } else {
+      return this.textContent;
+    }
+  }
+
   async aboutToAppear(){
     if (GlobalContext.load('domainAccount')) {
       if (!this.textContent) {
         this.accountTipsArray = await AccountTipsConfig.getConfigTips();
         AccountTipsConfig.getAccountInfo(this.authAccount).then((result: account_osAccount.DomainAccountInfo) => {
           this.textContent = result[AccountTipsConfig.showContentKey] as string;
+        }).catch((error: BusinessError) => {
+          console.error(`${TAG} aboutToAppear textContent error: ${JSON.stringify(error)}`);
+          let isShowErrorDialog: boolean = GlobalContext.load('isShowErrorDialog') ?? false;
+          if (!isShowErrorDialog) {
+            GlobalContext.store('isShowErrorDialog', true);
+            let errorInfo = getAlertMessage(error);
+            this.showErrorDialog(errorInfo.title, errorInfo.msg);
+          }
         })
       }
     } else {
@@ -125,8 +161,7 @@ struct staffItem {
         .margin({
           right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
         })
-      Text(this.textContent?.split('')
-        .join('\u200B'))
+      Text(this.splitContent())
         .constraintSize({
           maxWidth: this.authAccount === this.textContent ? Constants.ENCRYPTION_STAFF_MAX_WIDTH : Constants.TIPS_STAFF_MAX_WIDTH
         })
@@ -139,14 +174,20 @@ struct staffItem {
     .onClick(() => {
       if (GlobalContext.load('domainAccount')) {
         try {
-          AccountTipsConfig.getAccountInfo(this.authAccount).then(async (result: account_osAccount.DomainAccountInfo) => {
-            this.accountTipsArray = await AccountTipsConfig.getConfigTips();
-            this.handlePopupTips = !this.handlePopupTips;
-            this.accountTipsArray?.forEach((item: AccountTips) => {
-              let value: string = result[item.key];
-              item.value = value;
+          AccountTipsConfig.getAccountInfo(this.authAccount)
+            .then(async (result: account_osAccount.DomainAccountInfo) => {
+              this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+              this.handlePopupTips = !this.handlePopupTips;
+              this.accountTipsArray?.forEach((item: AccountTips) => {
+                let value: string = result[item.key];
+                item.value = value;
+              })
             })
-          })
+            .catch((err: BusinessError) => {
+              console.error(`${TAG} getAccountInfo error: ${JSON.stringify(err)}`);
+              let errInfo = getAlertMessage(err);
+              this.showErrorDialog(errInfo.title, errInfo.msg);
+            })
         } catch (err) {
           console.error(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
         }
@@ -157,7 +198,7 @@ struct staffItem {
     .bindPopup(this.handlePopupTips, {
       builder: this.popupBuilderTips,
       placement: Placement.BottomLeft,
-      popupColor: ($r('sys.color.ohos_id_color_help_tip_bg')),
+      popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
       enableArrow: true,
       showInSubWindow: false,
       arrowOffset: Constants.TIPS_ARROW_OFFSET,
