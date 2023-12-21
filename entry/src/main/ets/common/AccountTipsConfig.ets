@@ -31,7 +31,7 @@ export interface AccountTips {
   description: string;
   descriptionEn: string;
   isShow: boolean;
-  value?: string;
+  value: string;
   isTextContent?: boolean;
 }
 
@@ -78,7 +78,7 @@ export class AccountTipsConfig {
         }
         let domainAccountInfo: osAccount.GetDomainAccountInfoOptions = {
           domain: DOMAIN_CHINA,
-          accountName: authAccount.toLocaleLowerCase()
+          accountName: authAccount.toLocaleLowerCase().trim()
         };
         osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo).then((result: osAccount.DomainAccountInfo) => {
           resolve(result);
