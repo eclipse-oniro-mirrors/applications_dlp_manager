@@ -13,12 +13,15 @@
  * limitations under the License.
  */
 
+import account_osAccount from '@ohos.account.osAccount';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import { BusinessError } from '@ohos.base';
 import Constants from '../common/constant';
+import { showErrorDialogAndExit, sendDlpManagerAccountLogin } from '../common/utils';
 
 const TAG = "[DLPManager_alertMessage]";
 
-let storage = LocalStorage.GetShared();
+let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct AlertMessage {
@@ -26,8 +29,35 @@ struct AlertMessage {
   @State message?: Resource = storage.get<Resource>('message');
   @State messageName?: string = storage.get<string>('messageName');
   @State title?: Resource = storage.get<Resource>('title');
-  cancel?: Resource
-  ok?: Resource
+  @State cancel?: Resource = storage.get<Resource>('cancel');
+  @State ok?: Resource = storage.get<Resource>('ok');
+
+  authWithPop(): void {
+    console.log(TAG, 'authwithpop start');
+    try {
+      account_osAccount.DomainAccountManager.authWithPopup({
+        onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
+          await sendDlpManagerAccountLogin(resultCode);
+          if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
+            await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+            return;
+          }
+          if (this.session !== undefined) {
+            this.session.terminateSelfWithResult({
+              'resultCode': 0,
+              'want': {
+                'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+              },
+            });
+          }
+          console.log(TAG, 'auth resultCode = ' + resultCode);
+          console.log(TAG, 'auth authResult = ' + JSON.stringify(authResult));
+        }
+      })
+    } catch (err) {
+      console.log(TAG, 'auth exception = ' + JSON.stringify(err));
+    }
+  }
 
   build() {
     GridRow({
@@ -110,20 +140,12 @@ struct AlertMessage {
                   .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 if (this.ok) {
                   Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
-                    .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+                    .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .focusable(false)
-                    .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .height(Constants.FOOTER_BUTTON_HEIGHT)
                     .onClick(async (event) => {
-                      if (this.session !== undefined) {
-                        this.session.terminateSelfWithResult({
-                          'resultCode': 0,
-                          'want': {
-                            'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-                          },
-                        });
-                      }
+                      this.authWithPop();
                     })
                     .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
                 }

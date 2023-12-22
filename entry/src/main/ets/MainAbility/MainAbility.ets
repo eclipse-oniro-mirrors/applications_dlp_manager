@@ -140,7 +140,7 @@ export default class MainAbility extends UIAbility {
       });
     }
     windowStage.getMainWindow().then((win: window.Window) => {
-      win.setBackgroundColor('#00FFFFFF');
+      win.setWindowBackgroundColor('#00FFFFFF');
     });
   }
 

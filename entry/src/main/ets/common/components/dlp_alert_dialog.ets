@@ -32,26 +32,6 @@ struct DlpAlertDialog {
   ok?: Resource
   action?: () => void
 
-  authWithPop(): void {
-    console.log(TAG, 'authwithpop start');
-    try {
-      account_osAccount.DomainAccountManager.authWithPopup({
-        onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
-          await sendDlpManagerAccountLogin(resultCode);
-          if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
-            await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
-            return;
-          }
-          (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
-          console.log(TAG, 'auth resultCode = ' + resultCode);
-          console.log(TAG, 'auth authResult = ' + JSON.stringify(authResult));
-        }
-      })
-    } catch (err) {
-      console.log(TAG, 'auth exception = ' + JSON.stringify(err));
-    }
-  }
-
   build() {
     Column() {
       if (this.title) {
@@ -102,10 +82,9 @@ struct DlpAlertDialog {
           .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
         if (this.ok) {
           Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
-            .backgroundColor($r('app.color.encryption_cancel'))
             .width(Constants.HEADER_TEXT_WIDTH)
             .focusable(false)
-            .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
               let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
@@ -119,7 +98,6 @@ struct DlpAlertDialog {
                 (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
                 return;
               }
-              this.authWithPop();
             })
             .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
         }

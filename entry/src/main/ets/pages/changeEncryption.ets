@@ -77,7 +77,7 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   everyoneAccessList: []
 };
 
-let storage = LocalStorage.GetShared();
+let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct changeEncryption {
@@ -188,7 +188,7 @@ struct changeEncryption {
       try {
         await new Promise<void>((resolve, reject) => {
           this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
-            if (err === 0) {
+            if (err !== 0) {
               console.error(TAG, 'stopFuseLink failed', err);
               this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
               reject();
@@ -320,7 +320,7 @@ struct changeEncryption {
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
     this.permissionDict.forEach(async (item, index) => {
       this.permissionDict[index].value = $r(await (GlobalContext
-        .load('context') as common.UIAbilityContext).resourceManager.getString(item.value!.id))
+        .load('context') as common.UIAbilityContext).resourceManager.getStringValue(item.value!.id))
     })
     let readOnlyData = (defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 1;

@@ -38,7 +38,7 @@ class TitleContent {
   content: Content_[] = []
 }
 
-let storage = LocalStorage.GetShared();
+let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct PermissionStatus {
