@@ -109,7 +109,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (!GlobalContext.load('linkSet')) {
       GlobalContext.store('linkSet', new Set<string>());
     }
-    let dlpInfo:DLPInfo = await getDLPInfo();
+    let dlpInfo: DLPInfo = await getDLPInfo();
     GlobalContext.store('hiPNameId', dlpInfo.name);
     GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
   }
@@ -151,7 +151,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push([this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId, this.uri]);
           (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri]);
           (GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>).set(this.authPerm, [this.sandboxBundleName, this.appIndex]);
-          (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile |dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId, [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
+          (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId, [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
           (GlobalContext.load('linkSet') as Set<string>).add(this.linkUri);
         }
         await this.startDataAbility();
@@ -287,7 +287,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         let callerAppId: string;
         try {
           callerAppId = await getAppId(this.callerBundleName);
-          console.info(TAG, 'get AppId', callerAppId);;
+          console.info(TAG, 'get AppId', callerAppId);
         } catch {
           return;
         }
@@ -341,7 +341,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     return new Promise(async (resolve, reject) => {
       this.alreadyOpen = false;
       try {
-        let fileOpenHistory: Map<string, (number | string)[]> = GlobalContext.load('fileOpenHistory')  as Map<string, (number | string)[]>;
+        let fileOpenHistory: Map<string, (number | string)[]> = GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
         if (fileOpenHistory.has(this.uri)) {
           console.info(TAG, 'file', this.fileName, 'already open');
           let value: (number | string)[] = fileOpenHistory.get(this.uri) as (number | string)[];
@@ -437,6 +437,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       resolve();
     });
   }
+
   async getAddDLPLinkFile(startId: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -459,6 +460,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       resolve();
     });
   }
+
   async getUriInfo(startId: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -515,23 +517,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.sandboxModuleName = want.parameters?.['ohos.dlp.params.moduleName'] as string;
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
-      this.sandboxModuleName === undefined) {
+      this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
       opening = false;
       console.error(TAG, 'get parameters failed');
       (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
-    }
-    // uri permission just for domainAccount
-    if (!this.uri.endsWith('.dlp')) {
-      console.error(TAG, 'this.uri wrong');
-      await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
-      return;
-    }
-    if (GlobalContext.load('domainAccount') as boolean) {
-      let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION | wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
-      let targetBundleName = this.sandboxBundleName;
-      uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName , (result) => {
-        console.info(TAG, 'grandUriPermission result:', JSON.stringify(result));
-      });
     }
     try {
       await this.getAccountAndOpenDLPFile(startId);
@@ -547,6 +536,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
       await this.getUriInfo(startId);
     } catch {
       return;
+    }
+    // uri permission just for domainAccount
+    if (GlobalContext.load('domainAccount') as boolean) {
+      let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION | wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
+      let targetBundleName = this.sandboxBundleName;
+      uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
+        console.info(TAG, 'grandUriPermission result:', JSON.stringify(result));
+      });
     }
     this.startSandboxApp(startId);
     GlobalContext.store('hiCode', Constants.DLP_START_SANDBOX_SUCCESS);
