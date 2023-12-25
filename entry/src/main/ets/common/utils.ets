@@ -108,7 +108,7 @@ function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): n
 
 async function getUserId(): Promise<number> {
   let accountMgr = account_osAccount.getAccountManager();
-  return await accountMgr.getOsAccountLocalIdFromProcess();
+  return await accountMgr.getOsAccountLocalId();
 }
 
 function getAuthPerm(accountName: string, dlpProperty: dlpPermission.DLPProperty): dlpPermission.DLPFileAccess {
@@ -321,12 +321,21 @@ async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
   });
 }
 
-async function goToAlertMessagePage(session: UIExtensionContentSession, title?: Resource, message?: Resource, messageName?: Object) {
+async function goToAlertMessagePage(
+  session: UIExtensionContentSession, 
+  title?: Resource, 
+  message?: Resource, 
+  messageName?: Object, 
+  cancel?: Resource, 
+  ok?: Resource
+  ) {
   let storage: LocalStorage = new LocalStorage({
     'session': session,
     'title': title,
     'message': message,
-    'messageName': messageName
+    'messageName': messageName,
+    'cancel': cancel,
+    'ok': ok
   } as Record<string, UIExtensionContentSession | Object | Resource>);
   session.loadContent('pages/alertMessage', storage);
   try {

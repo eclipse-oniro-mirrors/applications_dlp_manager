@@ -47,7 +47,7 @@ let abilityResult: ability.AbilityResult = {
   .fontWeight(FontWeight.Medium)
 }
 
-let storage: LocalStorage = LocalStorage.GetShared();
+let storage: LocalStorage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct encryptionSuccess {

@@ -40,7 +40,7 @@ import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 
-const TAG = '[DLPManager_Main]';
+const TAG = '[DLPManager_MainEx]';
 
 let direction: number = -1;
 const TRANSPARENT_BACKGROUND_COLOR: string = '#33182431';
@@ -239,7 +239,7 @@ export default class MainAbility extends UIExtensionAbility {
     await sendDlpManagerAccountLogin(0);
     if (codeMessage) {
       let errInfo = getAlertMessage({ code: codeMessage } as BusinessError);
-      goToAlertMessagePage(session, errInfo.title, errInfo.msg);
+      goToAlertMessagePage(session, errInfo.title, errInfo.msg, '', errInfo?.cancel as Resource, errInfo?.ok as Resource);
       return;
     }
     let requestIsFromSandBox: boolean = await judgeIsSandBox();

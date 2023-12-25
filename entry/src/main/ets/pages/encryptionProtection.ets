@@ -548,7 +548,7 @@ struct DlpDialog {
 
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
     this.permissionDict.forEach(async (item, index) => {
-      this.permissionDict[index].value = $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getString(item.value.id))
+      this.permissionDict[index].value = $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getStringValue(item.value.id))
     })
     let readOnlyData: dlpPermission.AuthUser[] = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 1;
@@ -921,7 +921,7 @@ struct DlpDialog {
   }
 }
 
-let storage = LocalStorage.GetShared();
+let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct encryptionProtection {

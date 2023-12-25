@@ -21,8 +21,8 @@ import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base'
 
 const TAG = '[DLPManager_Alert]';
-
-let storage = LocalStorage.GetShared();
+ 
+let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct Index {

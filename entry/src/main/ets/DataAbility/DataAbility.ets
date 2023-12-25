@@ -47,8 +47,8 @@ export default class DataAbility extends ServiceExtensionAbility {
     let token2File:Map<number, (number | string | dlpPermission.DLPFile)[]> = GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile)[]>;
     for (let item of Array.from<(number|(number | string | dlpPermission.DLPFile)[])[]>(token2File)) {
       let itemKey = item[0];
-      let itemValue = item[1];
-      const APP_ID: string = (itemValue[INDEX_ONE]  as string) + (itemValue[INDEX_TWO] as number);
+      let itemValue = item[1] as Record<number, Object>;
+      const APP_ID: string = (itemValue[INDEX_ONE] as string) + (itemValue[INDEX_TWO] as number);
       if (key === APP_ID) {
         token2File.delete(itemKey as number);
       }
