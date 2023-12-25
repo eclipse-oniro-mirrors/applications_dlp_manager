@@ -121,10 +121,12 @@ export default class MainAbility extends UIAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      try {
-        await this.checkValidEnterpriseAndAccount();
-      } catch {
-        return;
+      if (GlobalContext.load('domainAccount') as boolean) {
+        try {
+          await this.checkValidEnterpriseAndAccount();
+        } catch {
+          return;
+        }
       }
 
       windowStage.loadContent('pages/changeEncryption', (err: BusinessError) =>{
