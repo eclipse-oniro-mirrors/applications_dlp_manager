@@ -112,10 +112,12 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      try {
-        await this.checkValidEnterpriseAndAccount(session);
-      } catch {
-        return;
+      if (GlobalContext.load('domainAccount') as boolean) {
+        try {
+          await this.checkValidEnterpriseAndAccount(session);
+        } catch {
+          return;
+        }
       }
 
       let storage: LocalStorage = new LocalStorage({
