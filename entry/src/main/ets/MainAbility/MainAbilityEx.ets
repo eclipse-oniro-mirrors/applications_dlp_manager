@@ -34,7 +34,8 @@ import {
   isPC,
   DLPInfo,
   getDLPInfo,
-  sendDlpManagerAccountLogin
+  sendDlpManagerAccountLogin,
+  isValidPath
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -170,6 +171,10 @@ export default class MainAbility extends UIExtensionAbility {
     }
     GlobalContext.store('hiPkgName', callerBundleName);
     let uri = String((GlobalContext.load('abilityWant') as Want).uri);
+    if (!isValidPath(uri)) {
+      console.error(TAG, 'invalid uri in want.uri');
+      return false;
+    }
     try {
       await new Promise<void>((resolve, reject) => {
         this.homeFeature.linkSetHome(uri, (err: number) => {

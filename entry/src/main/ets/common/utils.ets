@@ -527,6 +527,13 @@ function sendDlpFileOpenEvent() {
   }
 }
 
+function isValidPath(path: string): Boolean {
+  if (path.indexOf('/./') !== -1 || path.indexOf('/../') !== -1) {
+    return false;
+  }
+  return true;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -556,5 +563,6 @@ export {
   sendDlpManagerFileConfiguration,
   sendDlpFileCreateEvent,
   sendDlpFileOpenEvent,
-  DLPInfo
+  DLPInfo,
+  isValidPath
 };

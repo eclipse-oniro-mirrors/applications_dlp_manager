@@ -33,7 +33,8 @@ import {
   getDLPInfo,
   sendDlpManagerAccountLogin,
   DLPInfo,
-  showErrorDialogAndExit
+  showErrorDialogAndExit,
+  isValidPath
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -177,7 +178,7 @@ export default class MainAbility extends UIAbility {
       return false;
     }
 
-    if (uri.indexOf(Constants.FUSE_PATH) !== -1) {
+    if (uri.indexOf(Constants.FUSE_PATH) !== -1 || !isValidPath(uri)) {
       console.error(TAG, 'invalid uri in want.uri');
       return false;
     }

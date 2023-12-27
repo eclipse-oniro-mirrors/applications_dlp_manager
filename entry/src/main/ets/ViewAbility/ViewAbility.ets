@@ -38,7 +38,8 @@ import {
   isPC,
   DLPInfo,
   getDLPInfo,
-  sendDlpFileOpenEvent
+  sendDlpFileOpenEvent,
+  isValidPath
 } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext'
@@ -505,6 +506,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     let obj: Record<string, string> = (want.parameters?.fileName ?? { 'name': '' }) as Record<string, string>;
     this.fileName = obj.name;
     this.uri = want.uri as string;
+    if (!isValidPath(this.uri)) {
+      opening = false;
+      console.error(TAG, 'invalid uri in want.uri');
+      (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+    }
     this.dlpFd = getFileFd(this.uri);
     GlobalContext.store('uri', this.uri);
     console.debug(TAG, 'dlpFd:', this.dlpFd);
