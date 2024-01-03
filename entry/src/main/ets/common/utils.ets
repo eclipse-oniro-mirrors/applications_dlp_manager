@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import measure from '@ohos.measure';
 import window from '@ohos.window';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
@@ -30,10 +31,12 @@ import Constants from '../common/constant';
 import GlobalContext from './GlobalContext';
 import hiSysEvent from '@ohos.hiSysEvent';
 import fileUri from '@ohos.file.fileuri';
+import display from '@ohos.display';
+import StartOptions from '@ohos.app.ability.StartOptions';
 
 
 let TAG = "[DLPManager_Utils]";
-const TRANSPARENT_BACKGROUND_COLOR: string = '#33182431';
+const TRANSPARENT_BACKGROUND_COLOR: string = '#00000000';
 
 interface AuthAccount {
   authAccount: string;
@@ -197,13 +200,11 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_NOT_DLP_FILE:
-      return { 'title': $r('app.string.TITLE_APP_DLP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
+      return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
       return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
-      return { 'title': $r('app.string.TITLE_OPERATE_DENY'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') } as Record<string, Resource>;
-    case Constants.ERR_JS_FILENAME_TOO_LONG:
-      return { 'title': $r('app.string.TITLE_CANT_ENCRYPT'), 'msg': $r('app.string.MESSAGE_DLP_FILENAME_TOO_LONG')} as Record<string, Resource>;
+      return { 'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') } as Record<string, Resource>;
     default:
       if (defaultTitle !== undefined && defaultMessage != undefined) {
         return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
@@ -322,11 +323,11 @@ async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
 }
 
 async function goToAlertMessagePage(
-  session: UIExtensionContentSession, 
-  title?: Resource, 
-  message?: Resource, 
-  messageName?: Object, 
-  cancel?: Resource, 
+  session: UIExtensionContentSession,
+  title?: Resource,
+  message?: Resource,
+  messageName?: Object,
+  cancel?: Resource,
   ok?: Resource
   ) {
   let storage: LocalStorage = new LocalStorage({
@@ -534,6 +535,14 @@ function isValidPath(path: string): Boolean {
   return true;
 }
 
+function measureTextSizeWidth(str: Resource) {
+  let itemLenWithPX: SizeOptions = measure.measureTextSize({
+    textContent: str,
+    fontSize: '16fp'
+  })
+  return px2vp(Number(itemLenWithPX.width) + Constants.ENCRYPTION_PROTECTION_TIME_MENU_WIDTH);
+} 
+
 export {
   AuthAccount,
   PermissionType,
@@ -564,5 +573,6 @@ export {
   sendDlpFileCreateEvent,
   sendDlpFileOpenEvent,
   DLPInfo,
-  isValidPath
+  isValidPath,
+  measureTextSizeWidth
 };

@@ -123,7 +123,6 @@ export default class MainAbility extends UIExtensionAbility {
 
       let storage: LocalStorage = new LocalStorage({
         'session': session,
-        'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
       } as Record<string, UIExtensionContentSession | string>);
       session.loadContent('pages/changeEncryption', storage);
       try {
@@ -134,11 +133,10 @@ export default class MainAbility extends UIExtensionAbility {
     } else {
       let storage: LocalStorage = new LocalStorage({
         'session': session,
-        'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
       } as Record<string, UIExtensionContentSession | string>);
       session.loadContent('pages/permissionStatus', storage);
       try {
-        session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+        session.setWindowBackgroundColor('#00000000');
       } catch (exception) {
         console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
       }
@@ -279,7 +277,6 @@ export default class MainAbility extends UIExtensionAbility {
         GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
         let storage: LocalStorage = new LocalStorage({
           'session': session,
-          'srcFileUri': GlobalContext.load('abilityWant').parameters.fileUri as string,
         } as Record<string, UIExtensionContentSession | string>);
         session.loadContent('pages/encryptionProtection', storage);
         try {

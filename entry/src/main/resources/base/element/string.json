@@ -277,10 +277,6 @@
       "value": "Can't encrypt"
     },
     {
-      "name": "MESSAGE_DLP_FILENAME_TOO_LONG",
-      "value": "The encrypted file cannot be saved because the file name is too long. You are advised to shorten the file name by four characters before encrypting the file."
-    },
-    {
       "name": "MESSAGE_DLP_OPEN_REJECT",
       "value": "The file has been opened. Close the file before encrypting it."
     },
@@ -307,10 +303,6 @@
     {
       "name": "MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
       "value": "Login information could not be identified. Please log in to your work account to continue."
-    },
-    {
-      "name": "MESSAGE_DLP_KNOWING_THAT",
-      "value": "Got it"
     },
     {
       "name": "MESSAGE_DLP_ENCRYPTION",

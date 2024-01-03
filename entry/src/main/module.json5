@@ -32,20 +32,20 @@
         "value": "true"
       }
     ],
-    "uiSyntax": "ets",
     "abilities": [
       {
         "name": "AlertAbility",
-        "srcEntrance": "./ets/AlertAbility/AlertAbility.ets",
+        "srcEntry": "./ets/AlertAbility/AlertAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
         "startWindowIcon": "$media:icon",
-        "startWindowBackground": "$color:white"
+        "startWindowBackground": "$color:white",
+        "excludeFromMissions": true
       },
       {
         "name": "SaveAsAbility",
-        "srcEntrance": "./ets/SaveAsAbility/SaveAsAbility.ets",
+        "srcEntry": "./ets/SaveAsAbility/SaveAsAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
@@ -54,14 +54,14 @@
       },
       {
         "name": "MainAbility",
-        "srcEntrance": "./ets/MainAbility/MainAbility.ets",
+        "srcEntry": "./ets/MainAbility/MainAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:app_icon",
         "label": "$string:MainAbility_label",
         "startWindowIcon": "$media:app_icon",
         "startWindowBackground": "$color:white",
         "orientation": "auto_rotation_restricted",
-        "visible": true,
+        "exported": true,
         "removeMissionAfterTerminate": true
       }
     ],
@@ -72,7 +72,7 @@
         "description": "MainAbilityEx",
         "type": "sys/commonUI",
         "exported": true,
-        "srcEntrance": "./ets/MainAbility/MainAbilityEx.ets",
+        "srcEntry": "./ets/MainAbility/MainAbilityEx.ets",
         "metadata": [
           {
             "name": "ohos.extension.servicetype",
@@ -82,7 +82,7 @@
       },
       {
         "name": "ViewAbility",
-        "srcEntrance": "./ets/ViewAbility/ViewAbility.ets",
+        "srcEntry": "./ets/ViewAbility/ViewAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service",
@@ -90,18 +90,18 @@
       },
       {
         "name": "DataAbility",
-        "srcEntrance": "./ets/DataAbility/DataAbility.ets",
+        "srcEntry": "./ets/DataAbility/DataAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service"
       },
       {
         "name": "ServiceExtAbility",
+        "srcEntry": "./ets/serviceExtensionAbility/ServiceExtAbility.ets",
         "icon": "$media:icon",
         "description": "service",
         "type": "service",
-        "exported": false,
-        "srcEntrance": "./ets/serviceExtensionAbility/ServiceExtAbility.ets"
+        "exported": false
       }
     ],
     "requestPermissions": [
