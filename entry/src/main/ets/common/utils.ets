@@ -36,7 +36,6 @@ import StartOptions from '@ohos.app.ability.StartOptions';
 
 
 let TAG = "[DLPManager_Utils]";
-const TRANSPARENT_BACKGROUND_COLOR: string = '#00000000';
 
 interface AuthAccount {
   authAccount: string;
@@ -301,6 +300,15 @@ function directionStatus(func: Callback<number>) {
   });
 }
 
+function colorStatus(func: Callback<number>) {
+  let innerEvent: emitter.InnerEvent = {
+    eventId: Constants.ENCRYPTION_EMIT_COLOR_MODE
+  };
+  emitter.on(innerEvent, (eventData: emitter.EventData) => {
+    func(eventData.data?.colorMode);
+  });
+}
+
 function isPC(): boolean {
   let deviceTypeName = deviceInfo.deviceType;
   let productModel = deviceInfo.productModel;
@@ -340,7 +348,7 @@ async function goToAlertMessagePage(
   } as Record<string, UIExtensionContentSession | Object | Resource>);
   session.loadContent('pages/alertMessage', storage);
   try {
-    session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+    session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
   } catch (exception) {
     console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
   }
@@ -574,5 +582,6 @@ export {
   sendDlpFileOpenEvent,
   DLPInfo,
   isValidPath,
-  measureTextSizeWidth
+  measureTextSizeWidth,
+  colorStatus
 };

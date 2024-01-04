@@ -44,7 +44,7 @@ import { AccountTipsConfig } from '../common/AccountTipsConfig';
 const TAG = '[DLPManager_MainEx]';
 
 let direction: number = -1;
-const TRANSPARENT_BACKGROUND_COLOR: string = '#33182431';
+let colorMode: number = -1;
 
 export default class MainAbility extends UIExtensionAbility {
   authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
@@ -89,6 +89,19 @@ export default class MainAbility extends UIExtensionAbility {
       priority: emitter.EventPriority.HIGH
     };
     emitter.emit(innerEvent, eventData);
+
+    if (colorMode !== newConfig.colorMode) {
+      colorMode = newConfig.colorMode ?? -1;
+    }
+    let colorData: emitter.EventData = {
+      data: {
+        'colorMode': colorMode,
+      }};
+    let colorEvent: emitter.InnerEvent = {
+      eventId: Constants.ENCRYPTION_EMIT_COLOR_MODE,
+      priority: emitter.EventPriority.HIGH
+    };
+    emitter.emit(colorEvent, colorData);
   }
 
   onSessionDestroy(session: UIExtensionContentSession): void {
@@ -126,7 +139,7 @@ export default class MainAbility extends UIExtensionAbility {
       } as Record<string, UIExtensionContentSession | string>);
       session.loadContent('pages/changeEncryption', storage);
       try {
-        session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+        session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
       } catch (exception) {
         console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
       }
@@ -136,7 +149,7 @@ export default class MainAbility extends UIExtensionAbility {
       } as Record<string, UIExtensionContentSession | string>);
       session.loadContent('pages/permissionStatus', storage);
       try {
-        session.setWindowBackgroundColor('#00000000');
+        session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
       } catch (exception) {
         console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
       }
@@ -280,7 +293,7 @@ export default class MainAbility extends UIExtensionAbility {
         } as Record<string, UIExtensionContentSession | string>);
         session.loadContent('pages/encryptionProtection', storage);
         try {
-          session.setWindowBackgroundColor(TRANSPARENT_BACKGROUND_COLOR);
+          session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
         } catch (exception) {
           console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
         }
