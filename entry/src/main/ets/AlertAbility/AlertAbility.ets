@@ -40,6 +40,7 @@ export default class AlertAbility extends UIAbility {
         console.error(TAG, 'setUIContent failed', err.code, err.message);
       }
     });
+    windowStage.disableWindowDecor();
   }
 
   onWindowStageDestroy(): void {

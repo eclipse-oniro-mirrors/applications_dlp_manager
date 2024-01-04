@@ -262,7 +262,8 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
             console.error(TAG, 'found file, but token invalid', linkFileName);
             callback(-1, _dlp, '');
           } else {
-            linkFile[0]['dlpProperty'].authUserList.forEach((item: IAuthUser)=> {
+            let linkFileInfo: Record<number, number | string | dlpPermission.DLPFile> = linkFile[0] as Record<number, number | string | dlpPermission.DLPFile>;
+            linkFileInfo['dlpProperty'].authUserList.forEach((item: IAuthUser)=> {
               authUserListNew.push(
                 new IAuthUser(
                   item.authAccount,
@@ -272,14 +273,14 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
                 ))
             })
             _dlp = new IDLDLPProperty(
-              linkFile[0]['dlpProperty'].ownerAccount,
-              linkFile[0]['dlpProperty'].ownerAccountID,
-              linkFile[0]['dlpProperty'].ownerAccountType,
+              linkFileInfo['dlpProperty'].ownerAccount,
+              linkFileInfo['dlpProperty'].ownerAccountID,
+              linkFileInfo['dlpProperty'].ownerAccountType,
               authUserListNew,
-              linkFile[0]['dlpProperty'].contactAccount,
-              linkFile[0]['dlpProperty'].offlineAccess,
-              linkFile[0]['dlpProperty'].everyoneAccessList ?? [],
-              linkFile[0]['dlpProperty'].expireTime ?? 0
+              linkFileInfo['dlpProperty'].contactAccount,
+              linkFileInfo['dlpProperty'].offlineAccess,
+              linkFileInfo['dlpProperty'].everyoneAccessList ?? [],
+              linkFileInfo['dlpProperty'].expireTime ?? 0
             );
             let fileUri = linkFile[4];
             callback(0, _dlp, fileUri.toString());

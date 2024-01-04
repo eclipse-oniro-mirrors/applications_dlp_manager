@@ -161,6 +161,7 @@ struct AlertMessage {
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
             .alignItems(HorizontalAlign.Center)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+            .shadow(ShadowStyle.OUTER_DEFAULT_SM)
           }
         }
       }

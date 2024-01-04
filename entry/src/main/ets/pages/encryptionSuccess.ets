@@ -574,7 +574,7 @@ struct encryptionSuccess {
                           hF.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
                             if (err !== 0) {
                               let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-                              goToAlertMessagePage(this.session, errInfo.title, errInfo.msg);
+                              this.session && goToAlertMessagePage(this.session, errInfo.title, errInfo.msg);
                               reject();
                             }
                             resolve();

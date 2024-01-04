@@ -198,7 +198,7 @@
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
-      "value": "获取帐号信息失败，请重试。"
+      "value": "帐号信息获取失败。请稍后重试。"
     },
     {
       "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
@@ -246,7 +246,7 @@
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
-      "value": "您打开的文档格式不正确，请重试。"
+      "value": "无法打开此文件。请检查后重试。"
     },
     {
       "name": "TITLE_OPERATE_DENY",
@@ -277,10 +277,6 @@
       "value": "无法加密"
     },
     {
-      "name": "MESSAGE_DLP_FILENAME_TOO_LONG",
-      "value": "当前文件名超长导致加密文件无法保存，建议将文件名减短4个字符后再进行加密。"
-    },
-    {
       "name": "MESSAGE_DLP_OPEN_REJECT",
       "value": "文件已被打开，请先关闭后再进行加密。"
     },
@@ -307,10 +303,6 @@
     {
       "name": "MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
       "value": "未识别到您的登录信息，此功能仅支持企业用户使用，请先登录企业帐号。"
-    },
-    {
-      "name": "MESSAGE_DLP_KNOWING_THAT",
-      "value": "知道了"
     },
     {
       "name": "MESSAGE_DLP_ENCRYPTION",

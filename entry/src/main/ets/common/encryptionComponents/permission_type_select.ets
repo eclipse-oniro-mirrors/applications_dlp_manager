@@ -17,6 +17,7 @@ import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
+import { measureTextSizeWidth } from '../utils';
 
 const TAG = '[DLPManager_Select]';
 
@@ -153,6 +154,7 @@ struct permissionTypeSelect {
       })
       .selectedOptionBgColor(Color.Transparent)
       .menuAlign(MenuAlignType.END, {dx:0, dy:0})
+      .optionWidth(measureTextSizeWidth($r('app.string.PERMISSION_TYPE_SELECT_TARGET')))
       .selected(this.index)
       .value(`${this.text}${
       this.selectedItem?.data === 'target' && this.staffArray.length > 0 ?

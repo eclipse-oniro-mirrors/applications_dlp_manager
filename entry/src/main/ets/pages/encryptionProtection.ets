@@ -43,7 +43,8 @@ import {
   isPC,
   sendDlpFileCreateEvent,
   sendDlpManagerFileConfiguration,
-  getFileSizeByUri
+  getFileSizeByUri,
+  measureTextSizeWidth
 } from '../common/utils';
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
@@ -58,6 +59,23 @@ let abilityResult: ability.AbilityResult = {
   "resultCode": 0,
   "want": {}
 };
+
+@Extend(Text) function TimeTextStyle() {
+  .fontSize($r('sys.float.ohos_id_text_size_body1'))
+  .fontWeight(FontWeight.Regular)
+  .height(Constants.ENCRYPTION_PROTECTION_TIME_MENU_HEIGHT)
+  .width(Constants.HEADER_TEXT_WIDTH)
+  .textAlign(TextAlign.Start)
+  .margin({
+    left: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_LEFT,
+    right: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_RIGHT
+  })
+  .padding({
+    left: Constants.ENCRYPTION_PROTECTION_TIME_MENU_PADDING_LEFT,
+    right: Constants.ENCRYPTION_PROTECTION_TIME_MENU_PADDING_RIGHT,
+  })
+  .borderRadius($r('sys.float.ohos_id_corner_radius_default_m'))
+}
 
 interface dlpDataType {
   ownerAccount: string;
@@ -109,6 +127,8 @@ struct DlpDialog {
   @State prepareData: boolean = false;
   @State validity: Date = GlobalContext.load('validity') || new Date();
   @State selectedIndex: number = GlobalContext.load('permanent') === false ? 1 : 0;
+  @State colorTime1: Resource = $r('sys.color.ohos_id_color_dialog_bg');
+  @State colorTime: Resource = $r('sys.color.ohos_id_color_dialog_bg');
   @State domainOrCloudAccount: number = (GlobalContext.load('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
   @State permissionDict: PermissionType[] = [
     {
@@ -158,17 +178,40 @@ struct DlpDialog {
     })
   }
 
-  @Builder
-  SubMenu() {
-    Menu() {
-      MenuItem({ content: $r('app.string.permanently') })
+  @Builder MenuBuilder() {
+    Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
+      Text($r('app.string.permanently'))
         .onClick(() => {
           this.selectedIndex = 0;
+          this.colorTime1 = $r('sys.color.ohos_id_color_dialog_bg');
         })
-      MenuItem({ content: $r('app.string.Appointed_day') })
-        .contentFontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-    }
+        .TimeTextStyle()
+        .backgroundColor(this.colorTime1)
+        .onHover((isHover?: boolean) => {
+          if (isHover) {
+            this.colorTime1 = $r('sys.color.ohos_id_color_button_normal');
+          } else {
+            this.colorTime1 = $r('sys.color.ohos_id_color_dialog_bg');
+          }
+        })
+      Divider().width(Constants.ENCRYPTION_PROTECTION_TIME_MENU_DIVIDER_LENGTH)
+      Text($r('app.string.Appointed_day'))
+        .TimeTextStyle()
+        .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+        .backgroundColor(this.colorTime)
+        .onHover((isHover?: boolean) => {
+          if (isHover) {
+            this.colorTime = $r('sys.color.ohos_id_color_button_normal');
+          } else {
+            this.colorTime = $r('sys.color.ohos_id_color_dialog_bg');
+          }
+        })
+        .onClick(() => {
+          this.colorTime = $r('sys.color.ohos_id_color_dialog_bg');
+        })
+    }.width(measureTextSizeWidth($r('app.string.Appointed_day')))
   }
+
 
   showErrorDialog(title: Resource, message: Resource) {
     this.dlpAlertDialog = new CustomDialogController({
@@ -802,10 +845,11 @@ struct DlpDialog {
                   Row() {
                     Image($r('app.media.rectangle'))
                       .width(Constants.VALIDITY_IMAGE_WIDTH)
+                      .fillColor($r('sys.color.ohos_id_color_spinner_icon'))
                   }
                   .height(Constants.VALIDITY_IMAGE_HEIGHT)
                   .padding({ right: Constants.VALIDITY_IMAGE_PADDING_RIGHT, left: Constants.VALIDITY_IMAGE_PADDING_LEFT })
-                  .bindMenu(this.SubMenu())
+                  .bindMenu(this.MenuBuilder, {placement: Placement.BottomRight})
                 } else {
                   Select([{ value: $r('app.string.permanently') }, { value: $r('app.string.Appointed_day') }])
                     .font({
@@ -819,8 +863,10 @@ struct DlpDialog {
                       weight: FontWeight.Regular
                     })
                     .selectedOptionBgColor(Color.Transparent)
-                    .selected(GlobalContext.load('permanent') === false ? 1 : 0)
-                    .value(GlobalContext.load('permanent') === false ? $r('app.string.Appointed_day') : $r('app.string.permanently'))
+                    .menuAlign(MenuAlignType.END, {dx:0, dy:0})
+                    .optionWidth(measureTextSizeWidth($r('app.string.Appointed_day')))
+                    .selected(0)
+                    .value($r('app.string.permanently'))
                     .onSelect((index: number, text?: string) => {
                       this.selectedIndex = index;
                     })

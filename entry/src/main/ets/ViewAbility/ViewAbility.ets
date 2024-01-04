@@ -42,7 +42,7 @@ import {
   isValidPath
 } from '../common/utils';
 import Constants from '../common/constant';
-import GlobalContext from '../common/GlobalContext'
+import GlobalContext from '../common/GlobalContext';
 
 const TAG = '[DLPManager_View]';
 const SUFFIX_INDEX = 2;
@@ -417,7 +417,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
       try {
         this.linkFilePath = Constants.FUSE_PATH + this.linkFileName;
-        let stat: fileio.Stat = fileio.statSync(this.linkFilePath);
+        let stat = fs.statSync(this.linkFilePath);
         const WRITE_ACCESS: number = 0o0200;
         if (stat.mode & WRITE_ACCESS) {
           this.linkFileWriteable = true;

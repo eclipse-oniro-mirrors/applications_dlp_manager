@@ -13,13 +13,11 @@
  * limitations under the License.
  */
 
-import account_osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
 import Want from '@ohos.app.ability.Want';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';
-import { showErrorDialogAndExit, sendDlpManagerAccountLogin } from '../utils';
 
 const TAG = '[DLPManager_dialog]';
 
@@ -113,6 +111,7 @@ struct DlpAlertDialog {
     .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+    .shadow(ShadowStyle.OUTER_DEFAULT_SM)
   }
 }
 
