@@ -44,7 +44,8 @@ import {
   sendDlpFileCreateEvent,
   sendDlpManagerFileConfiguration,
   getFileSizeByUri,
-  measureTextSizeWidth
+  measureTextSizeWidth,
+  colorStatus
 } from '../common/utils';
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
@@ -97,30 +98,17 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   everyoneAccessList: []
 };
 
-let defaultDlpFile: dlpPermission.DLPFile = {
-  dlpProperty: defaultDlpProperty,
-  recoverDLPFile: async () => {},
-  closeDLPFile: async () => {},
-  addDLPLinkFile: async () => {},
-  stopFuseLink: async () => {},
-  resumeFuseLink: async () => {},
-  replaceDLPLinkFile: async () => {},
-  deleteDLPLinkFile: async () => {}
-};
-
 @Component
 struct DlpDialog {
   @State dlpProperty: dlpDataType = GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
   private homeFeature: HomeFeature = GlobalContext.load('homeFeature');
   @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
-  srcFd: number = -1;
   srcFileName: string = '';
   isDlpFile: boolean = false;
   linkFileName: string = '';
   dlpAlertDialog?: CustomDialogController;
   @State directionStatus: number = 0;
   @State authPerm: number = 2;
-  @State dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   @State handlePopupReadOnly: boolean = false;
   @State handlePopupEdit: boolean = false;
   @State processing: boolean = false;
@@ -211,7 +199,6 @@ struct DlpDialog {
         })
     }.width(measureTextSizeWidth($r('app.string.Appointed_day')))
   }
-
 
   showErrorDialog(title: Resource, message: Resource) {
     this.dlpAlertDialog = new CustomDialogController({
@@ -403,7 +390,7 @@ struct DlpDialog {
 
   async beginEncrypt() {
     this.processing = true;
-    console.info(TAG, 'begin encryption for', this.srcFileName, this.srcFd);
+    console.info(TAG, 'begin encryption for', this.srcFileName);
     let uri: string = '';
     let displayName: string = this.srcFileName;
     await this.setUserStat();
@@ -699,6 +686,9 @@ struct DlpDialog {
     this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
+    })
+    colorStatus((counter) => {
+      this.session && this.session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
     })
   }
 

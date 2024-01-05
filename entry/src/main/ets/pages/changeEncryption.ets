@@ -37,7 +37,8 @@ import {
   getFileMsgByUri,
   FileMsg,
   isPC,
-  sendDlpManagerFileConfiguration
+  sendDlpManagerFileConfiguration,
+  colorStatus
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
@@ -65,17 +66,6 @@ interface AuthAccount {
   .fontSize($r('sys.float.ohos_id_text_size_button2'))
   .fontWeight(FontWeight.Medium)
 }
-
-let defaultDlpProperty: dlpPermission.DLPProperty = {
-  ownerAccount: '',
-  ownerAccountType: GlobalContext.load('domainAccount') as Boolean
-    ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
-  authUserList: [],
-  contactAccount: '',
-  offlineAccess: true,
-  ownerAccountID: '',
-  everyoneAccessList: []
-};
 
 let storage = LocalStorage.getShared();
 @Entry(storage)
@@ -407,6 +397,9 @@ struct changeEncryption {
       .load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
+    })
+    colorStatus((counter) => {
+      this.session && this.session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
     })
   }
 

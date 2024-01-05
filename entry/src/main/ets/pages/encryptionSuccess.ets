@@ -15,7 +15,6 @@
 
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import router from '@ohos.router';
-import fs from '@ohos.file.fs';
 import common from '@ohos.app.ability.common';
 import { staffItem } from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
@@ -29,7 +28,8 @@ import {
   getTime,
   getAlertMessage,
   goToAlertMessagePage,
-  isPC
+  isPC,
+  colorStatus
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import { BusinessError } from '@ohos.base';
@@ -113,6 +113,9 @@ struct encryptionSuccess {
     this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
+    })
+    colorStatus((counter) => {
+      this.session && this.session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
     })
   }
 
