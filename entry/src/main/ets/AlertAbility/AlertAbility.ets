@@ -19,6 +19,7 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import window from '@ohos.window';
 import { BusinessError } from '@ohos.base';
 import GlobalContext from '../common/GlobalContext';
+import Constants from '../common/constant';
 
 const TAG = '[DLPManager_Alert]';
 export default class AlertAbility extends UIAbility {
@@ -41,6 +42,29 @@ export default class AlertAbility extends UIAbility {
       }
     });
     windowStage.disableWindowDecor();
+    let mainWindow: window.Window | undefined = undefined;
+
+    windowStage.getMainWindow((err, data) => {
+      if (err.code) {
+        console.error(TAG, 'Failed to obtain the main window. Cause: ' + JSON.stringify(err));
+        return;
+      }
+      mainWindow = data;
+      try {
+        mainWindow.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
+      } catch (exception) {
+        console.error(TAG, 'Failed to set the background color. Cause: ' + JSON.stringify(exception));
+      }
+
+      let enabled = false;
+      mainWindow.setResizeByDragEnabled(enabled, (err: BusinessError) => {
+        if (err.code) {
+          console.error(TAG, 'Failed to set the function of disabling the resize by dragg window. Cause: ' + JSON.stringify(err));
+          return;
+        }
+        console.info(TAG, 'Succeeded in setting the function of disabling the resize by dragg window.');
+      });
+    })
   }
 
   onWindowStageDestroy(): void {

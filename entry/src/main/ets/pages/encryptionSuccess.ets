@@ -26,14 +26,13 @@ import {
   toggleShow,
   directionStatus,
   getTime,
-  getAlertMessage,
-  goToAlertMessagePage,
   isPC,
   colorStatus
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import { BusinessError } from '@ohos.base';
 import HomeFeature from '../feature/HomeFeature';
+import emitter from '@ohos.events.emitter';
 
 const TAG = "[DLPManager_EncSucc]";
 let abilityResult: ability.AbilityResult = {
@@ -539,6 +538,7 @@ struct encryptionSuccess {
                             .width(Constants.HEADER_COLUMN_WIDTH)
                             .textAlign(TextAlign.Start)
                             .onClick(() => {
+                              emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
                               router.replaceUrl({
                                 url: 'pages/changeEncryption',
                                 params: this.routerParams
@@ -576,8 +576,6 @@ struct encryptionSuccess {
                         await new Promise<void>((resolve, reject) => {
                           hF.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
                             if (err !== 0) {
-                              let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-                              this.session && goToAlertMessagePage(this.session, errInfo.title, errInfo.msg);
                               reject();
                             }
                             resolve();

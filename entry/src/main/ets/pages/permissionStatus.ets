@@ -19,6 +19,7 @@ import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import { directionStatus, isPC } from '../common/utils';
 import common from '@ohos.app.ability.common';
+import emitter from '@ohos.events.emitter';
 
 const TAG = "[DLPManager_PermStat]";
 
@@ -198,6 +199,10 @@ struct PermissionStatus {
       .fontColor($r('sys.color.ohos_id_color_text_secondary'))
   }
 
+  aboutToDisappear() {
+    emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
+  }
+
   build() {
     GridRow({
       columns: {
@@ -349,6 +354,7 @@ struct PermissionStatus {
             .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
+            .shadow(ShadowStyle.OUTER_DEFAULT_SM)
           }
         }
       }

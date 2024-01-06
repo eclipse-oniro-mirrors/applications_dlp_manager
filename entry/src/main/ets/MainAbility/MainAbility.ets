@@ -34,7 +34,8 @@ import {
   sendDlpManagerAccountLogin,
   DLPInfo,
   showErrorDialogAndExit,
-  isValidPath
+  isValidPath,
+  startAlertAbility
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -203,7 +204,7 @@ export default class MainAbility extends UIAbility {
   async checkValidWantAndAccount(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!this.checkValidWant()) {
-        await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
         reject();
         return;
       }
@@ -214,13 +215,13 @@ export default class MainAbility extends UIAbility {
         resolve();
       } catch (err) {
         console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-        await showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         reject();
         return;
       }
       let codeMessage = checkDomainAccountInfo(accountInfo);
       if (codeMessage) {
-        await showErrorDialogAndExit({ code: codeMessage } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: codeMessage } as BusinessError);
         reject();
         return;
       }

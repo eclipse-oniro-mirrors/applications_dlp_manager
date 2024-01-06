@@ -24,8 +24,8 @@ const TAG = '[DLPManager_dialog]';
 @CustomDialog
 struct DlpAlertDialog {
   controller?: CustomDialogController
-  title?: Resource
-  message?: Resource
+  title?: string | Resource
+  message?: string | Resource
   cancel?: Resource
   ok?: Resource
   action?: () => void
@@ -56,6 +56,7 @@ struct DlpAlertDialog {
           .fontWeight(FontWeight.Regular)
           .textAlign(TextAlign.Start)
       }
+      .width(this.title ? Constants.HEADER_TEXT_WIDTH : '')
       .align(Alignment.Center)
       .padding({
         left: Constants.HEADER_COLUMN_PADDING_LEFT,
@@ -85,17 +86,7 @@ struct DlpAlertDialog {
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
-              let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
-              if (error.code === Constants.ERR_JS_OFFLINE) {
-                let want: Want = {
-                  bundleName: 'com.huawei.hmos.settings',
-                  abilityName: 'com.huawei.hmos.settings.MainAbility',
-                  uri: 'wifi_entry'
-                };
-                (GlobalContext.load('alertContext') as common.UIAbilityContext).startAbility(want);
-                (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
-                return;
-              }
+              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
             })
             .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
         }

@@ -186,15 +186,11 @@
     },
     {
       "name": "MESSAGE_APP_GET_FILE_ASSET_ERROR",
-      "value": "获取文件信息失败，请重试。"
+      "value": "文档权限获取失败。请稍后再试。"
     },
     {
       "name": "MESSAGE_APP_PARAM_ERROR",
       "value": "拉起DLP应用失败，请检查参数后重试。"
-    },
-    {
-      "name": "MESSAGE_APP_INSIDE_ERROR",
-      "value": "应用内部错误，请重试。"
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
@@ -210,27 +206,15 @@
     },
     {
       "name": "MESSAGE_SERVICE_INSIDE_ERROR",
-      "value": "服务内部错误，请重试。"
+      "value": "当前无法操作，请稍后重试。"
     },
     {
       "name": "MESSAGE_NOT_AUTHORIZED_APPLICATION",
       "value": "该应用无法打开此文件。"
     },
     {
-      "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
-      "value": "连接服务器失败，请检查网络后重试。"
-    },
-    {
-      "name": "MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR",
-      "value": "服务响应超时，请重试。"
-    },
-    {
-      "name": "MESSAGE_GENERATE_DLP_ERROR",
-      "value": "设置文档权限失败，请重试。"
-    },
-    {
       "name": "MESSAGE_RECOVER_DLP_ERROR",
-      "value": "删除文档权限失败，请重试。"
+      "value": "更改加密失败，请稍后重试。"
     },
     {
       "name": "TITLE_APP_VISIT_FILE_ERROR",
@@ -239,10 +223,6 @@
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
       "value": "您没有权限查看此文件。如需申请权限，请联系：%s"
-    },
-    {
-      "name": "TITLE_APP_DLP_ERROR",
-      "value": "DLP格式错误"
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
@@ -291,10 +271,6 @@
     {
       "name": "encrypt_employee_id",
       "value": "工号：%s"
-    },
-    {
-      "name": "encrypt_domain",
-      "value": "域：%s"
     },
     {
       "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",

@@ -129,6 +129,7 @@ struct AddStaff {
       }),
       autoCancel: true,
       customStyle: true,
+      maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
     });
     this.dlpAlertDialog.open();
   }

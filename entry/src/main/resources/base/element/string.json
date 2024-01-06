@@ -193,10 +193,6 @@
       "value": "Failed to start the DLP application. Check the parameters and try again."
     },
     {
-      "name": "MESSAGE_APP_INSIDE_ERROR",
-      "value": "Internal application error. Please try again."
-    },
-    {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
       "value": "Failed to obtain the account information. Please try again."
     },
@@ -217,18 +213,6 @@
       "value": "Application cannot open this file."
     },
     {
-      "name": "MESSAGE_DLP_CREDENTIAL_SERVER_ERROR",
-      "value": "Failed to connect to the server. Check the network and try again."
-    },
-    {
-      "name": "MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR",
-      "value": "Service response timed out. Please try again."
-    },
-    {
-      "name": "MESSAGE_GENERATE_DLP_ERROR",
-      "value": "Failed to set the document permission. Please try again."
-    },
-    {
       "name": "MESSAGE_RECOVER_DLP_ERROR",
       "value": "Failed to delete the document permission. Please try again."
     },
@@ -239,10 +223,6 @@
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
       "value": "You don't have permission to view this file. To apply for permission, contact:%s"
-    },
-    {
-      "name": "TITLE_APP_DLP_ERROR",
-      "value": "DLP format error"
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
@@ -291,10 +271,6 @@
     {
       "name": "encrypt_employee_id",
       "value": "Employee ID：%s"
-    },
-    {
-      "name": "encrypt_domain",
-      "value": "Domain：%s"
     },
     {
       "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",

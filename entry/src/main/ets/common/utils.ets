@@ -150,18 +150,17 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
         'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
         'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.message.split(", contact:")?.[1])
       } as Record<string, Resource>;
-    case Constants.ERR_JS_APP_INSIDE_ERROR:
-      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_ACCOUNT_NOT_FOUND:
     case Constants.ERR_JS_GET_ACCOUNT_ERROR:
-      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') } as Record<string, Resource>;
+      return { 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_NO_ACCOUNT_ERROR:
+      return { 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_ACCOUNT_NOT_LOGIN:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_PARAM_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_PARAM_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
-      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') } as Record<string, Resource>;
+      return { 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_OPEN_REJECTED:
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_OPEN_REJECT') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
@@ -174,7 +173,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_APP_NETWORK_INVALID:
       return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:
-      return { 
+      return {
         'title': $r('app.string.header_title'),
         'msg': $r('app.string.MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED'),
         'cancel': $r('app.string.ban'),
@@ -195,36 +194,87 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
         'ok': $r('app.string.Go_setting')
       } as Record<string, Resource>;
     case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
-      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
-      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_SERVER_ERROR') } as Record<string, Resource>;
+    case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
+    case Constants.ERR_JS_APP_INSIDE_ERROR:
+      return { 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_NOT_DLP_FILE:
       return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
-    case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
-      return { 'title': $r('app.string.TITLE_SERVICE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_CREDENTIAL_TIMEOUT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
       return { 'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') } as Record<string, Resource>;
     default:
       if (defaultTitle !== undefined && defaultMessage != undefined) {
         return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
       } else {
-        return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_INSIDE_ERROR') } as Record<string, Resource>;
+        return { 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
       }
   }
 }
 
-async function startAlertAbility(context: common.UIAbilityContext | common.ServiceExtensionContext, error: BusinessError) {
+async function startAlertAbility(
+  context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
+  error: BusinessError,
+  session?: UIExtensionContentSession
+) {
+  let dis = display.getDefaultDisplaySync();
+  let xNumber = Math.floor((dis.width - Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS) / 2);
+  let yNumber = Math.floor((dis.height - Constants.START_ABILITY_YNUMBER) / 2);
+  let windowHeight = Constants.START_ABILITY_HEIGHT_DEFAULT;
+  if ([
+    Constants.ERR_JS_GET_ACCOUNT_ERROR,
+    Constants.ERR_JS_NOT_DLP_FILE,
+  ].includes(error.code)) {
+    windowHeight = Constants.START_ABILITY_HEIGHT_ONE_ROWS;
+  }
+  if ([
+    Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION,
+    Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
+  ].includes(error.code)) {
+    windowHeight = Constants.START_ABILITY_HEIGHT_TWO_ROWS;
+  }
+  if ([
+    Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED,
+    Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
+    Constants.ERR_JS_OFFLINE,
+    Constants.ERR_JS_DLP_FILE_READ_ONLY,
+    Constants.ERR_JS_FILE_EXPIRATION,
+    Constants.ERR_JS_USER_NO_PERMISSION,
+    Constants.ERR_JS_APP_ENCRYPTING,
+    Constants.ERR_JS_APP_PARAM_ERROR,
+    Constants.ERR_JS_APP_OPEN_REJECTED,
+  ].includes(error.code)) {
+    windowHeight = Constants.START_ABILITY_HEIGHT_THREE_ROWS;
+  }
+  let options: StartOptions = {
+    withAnimation: true,
+    windowLeft: xNumber,
+    windowTop: yNumber,
+    windowWidth: Constants.START_ABILITY_WINDOW_WIDTH,
+    windowHeight: windowHeight
+  };
+  console.log(TAG, 'set options', JSON.stringify(options));
   context.startAbility({
     bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
     abilityName: 'AlertAbility',
     parameters: {
       error: error,
     }
-  }, async (err: BusinessError) => {
+  }, options, async (err: BusinessError) => {
     if (err.code !== 0) {
       console.error(TAG, 'start AlertAbility failed', err.code, err.message);
     }
-    context.terminateSelf()
+    if (session) {
+      session.terminateSelfWithResult({
+        'resultCode': 0,
+        'want': {
+          'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+        },
+      });
+    } else if (GlobalContext.load('context')) {
+      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
+    } else if (GlobalContext.load('viewContext')) {
+      (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+    }
   })
 }
 

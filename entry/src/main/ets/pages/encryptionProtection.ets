@@ -36,7 +36,6 @@ import {
   removeDuplicate,
   directionStatus,
   AuthAccount,
-  showErrorDialogAndExit,
   getFileUriByPath,
   getFileMsgByUri,
   FileMsg,
@@ -45,7 +44,8 @@ import {
   sendDlpManagerFileConfiguration,
   getFileSizeByUri,
   measureTextSizeWidth,
-  colorStatus
+  colorStatus,
+  startAlertAbility
 } from '../common/utils';
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
@@ -54,6 +54,7 @@ import GlobalContext from '../common/GlobalContext';
 import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
 import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
 import HomeFeature from '../feature/HomeFeature';
+import emitter from '@ohos.events.emitter';
 
 const TAG = "[DLPManager_Encrypt]"
 let abilityResult: ability.AbilityResult = {
@@ -200,7 +201,7 @@ struct DlpDialog {
     }.width(measureTextSizeWidth($r('app.string.Appointed_day')))
   }
 
-  showErrorDialog(title: Resource, message: Resource) {
+  showErrorDialog(title: string | Resource, message: string | Resource) {
     this.dlpAlertDialog = new CustomDialogController({
       builder: DlpAlertDialog({
         title: title,
@@ -210,6 +211,7 @@ struct DlpDialog {
       }),
       autoCancel: false,
       customStyle: true,
+      maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
     })
     this.dlpAlertDialog.open();
   }
@@ -223,6 +225,7 @@ struct DlpDialog {
       }),
       autoCancel: false,
       customStyle: true,
+      maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
     })
     this.dlpAlertDialog.open();
   }
@@ -301,7 +304,7 @@ struct DlpDialog {
           this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
             if (err !== 0) {
               console.error(TAG, 'stopFuseLink failed', err);
-              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
               this.processing = false;
               reject();
             }
@@ -320,7 +323,7 @@ struct DlpDialog {
       console.info(TAG, 'open temp file, fd', tempFd)
     } catch (err) {
       console.error(TAG, 'open temp failed', JSON.stringify(err));
-      this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+      this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
       await this.catchProcess();
       return;
     }
@@ -352,13 +355,8 @@ struct DlpDialog {
     this.homeFeature.genDlpFileHome(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
       if (err !== 0) {
         console.error(TAG, 'generateDLPFile', 'failed', err);
-        let ansErr: BusinessError<void> = {
-          code: err,
-          name: '',
-          message: ''
-        }
         fs.unlinkSync(filePath);
-        let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
+        let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         await this.catchProcess();
       } else {
@@ -375,6 +373,7 @@ struct DlpDialog {
         GlobalContext.store('dlpFileName', this.srcFileName);
         GlobalContext.store('dlpProperty', _dlp);
         await sendDlpManagerFileConfiguration();
+        emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
         router.replaceUrl({
           url: 'pages/encryptionSuccess',
           params: {
@@ -425,14 +424,9 @@ struct DlpDialog {
         this.homeFeature.genDlpFileHome(srcFileUri, uri, _dlp, async (err: number) => {
           if (err !== 0) {
             if (err === 100) {
-              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
               this.processing = false;
               return;
-            }
-            let ansErr: BusinessError<void> = {
-              code: err,
-              name: '',
-              message: ''
             }
             try {
               await fs.unlink(uriInfo.path);
@@ -440,7 +434,7 @@ struct DlpDialog {
               console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
             }
             await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-            let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_GENERATE_DLP_ERROR'));
+            let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
             this.showErrorDialog(errorInfo.title, errorInfo.msg);
             this.processing = false;
             return;
@@ -455,6 +449,7 @@ struct DlpDialog {
             GlobalContext.store('uri', uri);
             this.processing = false;
             await sendDlpManagerFileConfiguration();
+            emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
             router.replaceUrl({
               url: 'pages/encryptionSuccess',
               params: {
@@ -468,7 +463,7 @@ struct DlpDialog {
         });
       }).catch((err: BusinessError) => {
         console.error('DocumentViewPicker save failed', err.code, err.message);
-        let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_APP_INSIDE_ERROR'));
+        let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         this.processing = false;
         return;
@@ -618,7 +613,7 @@ struct DlpDialog {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
@@ -628,7 +623,7 @@ struct DlpDialog {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
