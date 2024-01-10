@@ -201,10 +201,6 @@
       "value": "Log in to your account and try again."
     },
     {
-      "name": "TITLE_SERVICE_ERROR",
-      "value": "The service is abnormal"
-    },
-    {
       "name": "MESSAGE_SERVICE_INSIDE_ERROR",
       "value": "Internal service error. Please try again."
     },
@@ -229,10 +225,6 @@
       "value": "The document you opened is not in the correct format. Please try again."
     },
     {
-      "name": "TITLE_OPERATE_DENY",
-      "value": "Reject operation"
-    },
-    {
       "name": "MESSAGE_DLP_READ_ONLY",
       "value": "The file is read-only. You do not have the operation permission. Apply for the permission and try again."
     },
@@ -251,10 +243,6 @@
     {
       "name": "delete_account",
       "value": "Delete"
-    },
-    {
-      "name": "TITLE_CANT_ENCRYPT",
-      "value": "Can't encrypt"
     },
     {
       "name": "MESSAGE_DLP_OPEN_REJECT",
