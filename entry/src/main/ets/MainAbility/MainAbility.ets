@@ -103,10 +103,7 @@ export default class MainAbility extends UIAbility {
 
   onNewWant(want: Want) {
     console.log(TAG, 'onNewWant', JSON.stringify(want));
-    GlobalContext.store('abilityWant', want);
-    GlobalContext.store('uri', (GlobalContext.load('abilityWant') as Want).uri as string);
-
-    this.getNewWantPage();
+    this.getNewWantPage(want);
   }
 
   async gotoPage(windowStage: window.WindowStage): Promise<void> {
@@ -148,8 +145,8 @@ export default class MainAbility extends UIAbility {
     });
   }
 
-  checkValidWant(): boolean {
-    let parameters = (GlobalContext.load('abilityWant') as Want).parameters;
+  checkValidWant(want: Want): boolean {
+    let parameters = want.parameters;
     if (parameters === undefined) {
       console.error(TAG, 'need parameters in want');
       return false;
@@ -162,7 +159,7 @@ export default class MainAbility extends UIAbility {
       console.error(TAG, 'need name in want.parameters.fileName');
       return false;
     }
-    if ((GlobalContext.load('abilityWant') as Want).uri === undefined) {
+    if (want.uri === undefined) {
       console.error(TAG, 'need uri in want');
       return false;
     }
@@ -173,7 +170,7 @@ export default class MainAbility extends UIAbility {
       return false;
     }
     GlobalContext.store('hiPkgName', callerBundleName);
-    let uri = String((GlobalContext.load('abilityWant') as Want).uri);
+    let uri = String(want.uri);
     if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
       console.error(TAG, 'invalid uri for opened link uri');
       return false;
@@ -201,9 +198,9 @@ export default class MainAbility extends UIAbility {
     })
   }
 
-  async checkValidWantAndAccount(): Promise<void> {
+  async checkValidWantAndAccount(want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      if (!this.checkValidWant()) {
+      if (!this.checkValidWant(want)) {
         await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
         reject();
         return;
@@ -228,14 +225,16 @@ export default class MainAbility extends UIAbility {
     })
   }
 
-  async getNewWantPage(): Promise<void> {
+  async getNewWantPage(want: Want): Promise<void> {
     console.log(TAG, 'getNewWantPage start');
     let windowStage: window.WindowStage = GlobalContext.load('windowStage') as window.WindowStage;
     try {
-      await this.checkValidWantAndAccount()
+      await this.checkValidWantAndAccount(want)
     } catch {
       return;
     }
+    GlobalContext.store('abilityWant', want);
+    GlobalContext.store('uri', (GlobalContext.load('abilityWant') as Want).uri as string);
     await sendDlpManagerAccountLogin(0);
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
@@ -341,7 +340,7 @@ export default class MainAbility extends UIAbility {
     }
     this.homeFeature.connectServiceExtAbility(()=>{
       console.info(TAG, 'onWindowStageCreate callback');
-      this.getNewWantPage();
+      this.getNewWantPage(GlobalContext.load('abilityWant') as Want);
     });
     console.info(TAG, 'onWindowStageCreate end');
   }
