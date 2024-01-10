@@ -32,17 +32,18 @@ import {
   calculate,
   toggleShow,
   directionStatus,
-  showErrorDialogAndExit,
   getTime,
   getFileMsgByUri,
   FileMsg,
   isPC,
   sendDlpManagerFileConfiguration,
-  colorStatus
+  colorStatus,
+  startAlertAbility
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
+import emitter from '@ohos.events.emitter';
 
 const TAG = '[DLPManager_ModEnc]';
 
@@ -147,7 +148,7 @@ struct changeEncryption {
     })
   }
 
-  showErrorDialog(title: Resource, message: Resource) {
+  showErrorDialog(title: string | Resource, message: string | Resource) {
     this.dlpAlertDialog = new CustomDialogController({
       builder: DlpAlertDialog({
         title: title,
@@ -157,6 +158,7 @@ struct changeEncryption {
       }),
       autoCancel: false,
       customStyle: true,
+      maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
     });
     this.dlpAlertDialog.open();
   }
@@ -180,7 +182,7 @@ struct changeEncryption {
           this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
             if (err !== 0) {
               console.error(TAG, 'stopFuseLink failed', err);
-              this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
+              this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
               reject();
             }
             resolve();
@@ -225,27 +227,23 @@ struct changeEncryption {
           } catch (err) {
             console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
           }
-          this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_APP_INSIDE_ERROR') as Resource);
+          this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
           await this.catchProcess();
           return;
         };
         try {
-          console.info(TAG, 'recoverDLPFile', this.srcFileName);
-          await this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), plainUri, async (err: number) => {
-            if (err !== 0) {
-              let ansErr: BusinessError<void> = {
-                code: err,
-                name: '',
-                message: ''
+          await new Promise<void>((resolve, reject) => {
+            this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), plainUri, async (err: number) => {
+              if (err !== 0) {
+                console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as number));
+                let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+                this.showErrorDialog(errorInfo.title, errorInfo.msg);
+                await this.catchProcess();
+                reject();
               }
-
-              console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as number));
-              let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
-              this.showErrorDialog(errorInfo.title, errorInfo.msg);
-              await this.catchProcess();
-              return;
-            }
-          });
+              resolve();
+            });
+          })
         } catch (err) {
           console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
           try {
@@ -259,7 +257,7 @@ struct changeEncryption {
             console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
           }
           let errorInfo = getAlertMessage(
-              err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
+            err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
           this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
           await this.catchProcess();
           return;
@@ -365,7 +363,7 @@ struct changeEncryption {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        showErrorDialogAndExit({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
@@ -375,7 +373,7 @@ struct changeEncryption {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
@@ -805,6 +803,7 @@ struct changeEncryption {
                   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .height(Constants.FOOTER_HEIGHT)
                   .onClick(async (event) => {
+                    emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
                     router.replaceUrl({
                       url: 'pages/encryptionProtection',
                       params: this.routerData

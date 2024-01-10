@@ -13,48 +13,196 @@
  * limitations under the License.
  */
 
-import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import { getAlertMessage } from '../common/utils';
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
-import { BusinessError } from '@ohos.base'
+import { BusinessError } from '@ohos.base';
+import Constants from '../common/constant';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import ability from '@ohos.ability.ability';
+import account_osAccount from '@ohos.account.osAccount';
+import { showErrorDialogAndExit, sendDlpManagerAccountLogin, colorStatus } from '../common/utils';
 
 const TAG = '[DLPManager_Alert]';
+let abilityResult: ability.AbilityResult = {
+  "resultCode": 0,
+  "want": {}
+};
 
 let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct Index {
-  dlpAlertDialog?: CustomDialogController;
+  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+  @State title: string | Resource = '';
+  @State message: string | Resource = '';
+  @State messageName: string | void = '';
+  @State cancel: string | Resource = '';
+  @State ok: string | Resource = '';
+  @State messageHeight: string = '';
 
-  showErrorDialogAndExit(title: Resource, message: Resource, cancel?: Resource, ok?: Resource) {
-    this.dlpAlertDialog = new CustomDialogController({
-      builder: DlpAlertDialog({
-        title: title,
-        message: message,
-        cancel: cancel,
-        ok: ok
-      }),
-      autoCancel: false,
-      cancel: () => {
-        (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
-      },
-      alignment: DialogAlignment.Center,
-      customStyle: true,
-    })
-    this.dlpAlertDialog.open();
+  authWithPop(): void {
+    console.log(TAG, 'authwithpop start');
+    try {
+      account_osAccount.DomainAccountManager.authWithPopup({
+        onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
+          await sendDlpManagerAccountLogin(resultCode);
+          if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
+            await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+            return;
+          }
+          if (this.session !== undefined) {
+            this.session.terminateSelfWithResult({
+              'resultCode': 0,
+              'want': {
+                'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+              },
+            });
+          }
+          console.log(TAG, 'auth resultCode = ' + resultCode);
+          console.log(TAG, 'auth authResult = ' + JSON.stringify(authResult));
+        }
+      })
+    } catch (err) {
+      console.log(TAG, 'auth exception = ' + JSON.stringify(err));
+    }
   }
 
   async aboutToAppear() {
     console.log(TAG, 'alert aboutToAppear start')
     try {
+      let messageCode = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError).code;
+      let messageData = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError)?.data;
       let errInfo = getAlertMessage((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError);
-      this.showErrorDialogAndExit(errInfo.title as Resource, errInfo.msg as Resource, errInfo?.cancel as Resource, errInfo?.ok as Resource);
+      this.title = errInfo.title;
+      this.message = errInfo.msg;
+      this.cancel = errInfo.cancel;
+      this.ok = errInfo.ok;
+      this.messageName = messageData;
+      if ([
+        Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
+        Constants.ERR_JS_APP_ENCRYPTING,
+        Constants.ERR_JS_OFFLINE,
+      ].includes(messageCode)) {
+        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT;
+      }
+      if ([
+        Constants.ERR_JS_APP_PARAM_ERROR,
+        Constants.ERR_JS_APP_OPEN_REJECTED,
+      ].includes(messageCode)) {
+        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_ONE;
+      }
+      if ([
+        Constants.ERR_JS_GET_ACCOUNT_ERROR,
+        Constants.ERR_JS_NOT_DLP_FILE,
+      ].includes(messageCode)) {
+        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_TWO;
+      }
+      if ([
+        Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED
+      ].includes(messageCode)) {
+        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_THREE;
+      }
     } catch (err) {
       console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err as BusinessError));
     }
   }
 
-  build() { }
+  build() {
+    Column() {
+      if (this.title) {
+        Row() {
+          Text(this.title)
+            .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
+            .width(Constants.DU_WIDTH_FULL)
+            .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
+            .fontColor($r('sys.color.ohos_id_color_text_primary'))
+            .fontWeight(FontWeight.Medium)
+            .align(Alignment.Start)
+        }
+        .width(Constants.HEADER_COLUMN_WIDTH)
+        .height(this.title ? Constants.DA_ROW_HEIGHT : '')
+        .padding({
+          left: Constants.HEADER_COLUMN_PADDING_LEFT,
+          right: Constants.HEADER_COLUMN_PADDING_RIGHT
+        })
+      }
+      Row() {
+        Text() {
+          if (this.messageName) {
+            Span('“')
+            Span(this.messageName)
+            Span('”')
+          }
+          Span(this.message)
+        }
+        .fontWeight(FontWeight.Regular)
+        .fontColor($r('sys.color.ohos_id_color_text_primary'))
+        .fontSize($r('sys.float.ohos_id_text_size_body1'))
+        .textAlign(TextAlign.Start)
+      }
+      .height(this.messageHeight)
+      .width(this.title ? Constants.HEADER_TEXT_WIDTH : '')
+      .align(Alignment.Center)
+      .padding({
+        left: Constants.HEADER_COLUMN_PADDING_LEFT,
+        right: Constants.HEADER_COLUMN_PADDING_RIGHT,
+        top: this.title ? Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
+      })
+      Flex({ direction: FlexDirection.Row }) {
+        Button(this.cancel? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
+          .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+          .width(Constants.HEADER_TEXT_WIDTH)
+          .focusable(false)
+          .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+          .height(Constants.FOOTER_HEIGHT)
+          .onClick(async (event) => {
+            if (this.session !== undefined) {
+              this.session.terminateSelfWithResult({
+                'resultCode': 0,
+                'want': {
+                  'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+                },
+              });
+            } else {
+              abilityResult.resultCode = 0;
+              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+            }
+          })
+          .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+        if (this.ok) {
+          Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
+            .width(Constants.HEADER_TEXT_WIDTH)
+            .focusable(false)
+            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
+            .height(Constants.FOOTER_BUTTON_HEIGHT)
+            .onClick(async (event) => {
+              let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
+              if (error.code === Constants.ERR_JS_OFFLINE) {
+                let want: Want = {
+                  action: 'action.settings.wifi',
+                };
+                (GlobalContext.load('alertContext') as common.UIAbilityContext).startAbility(want);
+                (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
+                return;
+              }
+              this.authWithPop();
+            })
+            .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+        }
+      }
+      .margin({
+        left: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
+        right: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
+        bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM,
+        top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
+      })
+    }
+    .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
+    .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
+    .alignItems(HorizontalAlign.Center)
+    .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+    .height(Constants.HEADER_COLUMN_WIDTH)
+  }
 }

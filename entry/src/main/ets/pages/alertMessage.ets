@@ -17,7 +17,7 @@ import account_osAccount from '@ohos.account.osAccount';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { BusinessError } from '@ohos.base';
 import Constants from '../common/constant';
-import { showErrorDialogAndExit, sendDlpManagerAccountLogin } from '../common/utils';
+import { showErrorDialogAndExit, sendDlpManagerAccountLogin, colorStatus } from '../common/utils';
 
 const TAG = "[DLPManager_alertMessage]";
 
@@ -98,7 +98,7 @@ struct AlertMessage {
               .height(this.title ? Constants.DA_ROW_HEIGHT : '')
               .padding({
                 left: Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_PADDING_LEFT,
-                top: Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_PADDING_TOP
+                top: this.title ? Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_PADDING_TOP : 0
               })
               Row() {
                 Text() {

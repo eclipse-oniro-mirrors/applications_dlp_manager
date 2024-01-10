@@ -126,7 +126,8 @@ struct permissionTypeSelect {
       console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
     }
     setTimeout(() => {
-      this.selectedItem = this.permissionTypes[0];
+      let selectIndex = this.selectedItem.index === -1 ? 0 : this.selectedItem.index;
+      this.selectedItem = this.permissionTypes[selectIndex];
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
   }
 
