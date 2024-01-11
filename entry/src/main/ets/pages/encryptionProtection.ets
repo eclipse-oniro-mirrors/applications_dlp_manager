@@ -340,7 +340,7 @@ struct DlpDialog {
             }
             fs.unlinkSync(filePath);
             console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', err);
-            let errorInfo = getAlertMessage(ansErr as BusinessError<void>, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
+            let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
             this.showErrorDialog(errorInfo.title, errorInfo.msg);
             await this.catchProcess();
             reject();

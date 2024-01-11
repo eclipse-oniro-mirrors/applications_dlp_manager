@@ -256,8 +256,7 @@ struct changeEncryption {
           } catch (err) {
             console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
           }
-          let errorInfo = getAlertMessage(
-            err, $r('app.string.TITLE_SERVICE_ERROR'), $r('app.string.MESSAGE_RECOVER_DLP_ERROR'));
+          let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
           this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
           await this.catchProcess();
           return;

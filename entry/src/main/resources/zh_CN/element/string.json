@@ -201,10 +201,6 @@
       "value": "帐号未登录，请登录帐号后重试。"
     },
     {
-      "name": "TITLE_SERVICE_ERROR",
-      "value": "服务异常"
-    },
-    {
       "name": "MESSAGE_SERVICE_INSIDE_ERROR",
       "value": "当前无法操作，请稍后重试。"
     },
@@ -229,10 +225,6 @@
       "value": "无法打开此文件。请检查后重试。"
     },
     {
-      "name": "TITLE_OPERATE_DENY",
-      "value": "拒绝操作"
-    },
-    {
       "name": "MESSAGE_DLP_READ_ONLY",
       "value": "当前是只读文件，您没有操作权限，请申请权限后重试。"
     },
@@ -251,10 +243,6 @@
     {
       "name": "delete_account",
       "value": "删除"
-    },
-    {
-      "name": "TITLE_CANT_ENCRYPT",
-      "value": "无法加密"
     },
     {
       "name": "MESSAGE_DLP_OPEN_REJECT",

@@ -329,8 +329,13 @@ export default class MainAbility extends UIExtensionAbility {
         }
         this.homeFeature.openDlpFileHome(uri, callerAppId, async (err: number, data: dlpPermission.DLPProperty, msg: string) => {
           if (err !== 0) {
+            let ansErr: BusinessError<void> = {
+              code: err,
+              name: '',
+              message: msg,
+            }
             await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
-              { code: err } as BusinessError, session);
+              ansErr as BusinessError, session);
             return;
           } else {
             GlobalContext.store('dlpProperty', data);
