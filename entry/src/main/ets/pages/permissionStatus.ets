@@ -351,10 +351,11 @@ struct PermissionStatus {
                 right: Constants.FOOTER_ROW_PAD_RIGHT
               })
             }
-            .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+            .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
             .shadow(ShadowStyle.OUTER_DEFAULT_SM)
+            .constraintSize({ minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
           }
         }
       }

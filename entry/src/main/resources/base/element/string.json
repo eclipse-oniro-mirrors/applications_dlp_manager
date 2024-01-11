@@ -121,10 +121,6 @@
       "value": "Save path"
     },
     {
-      "name": "document_valid_until",
-      "value": "File valid until:"
-    },
-    {
       "name": "permanently",
       "value": "Permanent"
     },
@@ -218,7 +214,7 @@
     },
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-      "value": "You don't have permission to view this file. To apply for permission, contact:%s"
+      "value": "You don't have permission to view this file. To apply for permission, contact %s."
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
@@ -230,11 +226,11 @@
     },
     {
       "name": "permission_status_readOnly",
-      "value": "This file is protected. You have the read-only permission."
+      "value": "This file is protected. You have \"Read-only\" permission."
     },
     {
       "name": "permission_status_title",
-      "value": "This file is protected. You have the read-only and change permissions."
+      "value": "This file is protected. You have \"Read-only\" and \"Edit\" permissions."
     },
     {
       "name": "apply_for_the_permission",
@@ -258,7 +254,7 @@
     },
     {
       "name": "encrypt_employee_id",
-      "value": "Employee ID：%s"
+      "value": "Employee ID: %s"
     },
     {
       "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",

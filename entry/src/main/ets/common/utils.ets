@@ -305,8 +305,9 @@ let removeDuplicate = (arr: AuthAccount[], arg: string) => {
 
 let calculate = (newValue: Area, allNames: AuthAccount[]) => {
   let editLength = allNames.length;
-  let screenWidth = Number(newValue['width']) - Constants.HEADER_COLUMN_PADDING_LEFT;
-  let rowNamesLen = Math.floor(screenWidth / (Constants.ENCRYPTION_STAFF_WIDTH + Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT));
+  let screenWidth = Number(newValue['width']);
+  let nameChange = GlobalContext.load('domainAccount') ? Constants.ENCRYPTION_STAFF_WIDTH_NAME : Constants.ENCRYPTION_STAFF_WIDTH;
+  let rowNamesLen = Math.floor(screenWidth / (nameChange + Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT));
   let showNamesArr = editLength > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
     ? allNames.slice(0, 2 * rowNamesLen - 1)
     : allNames.slice(0, 2 * rowNamesLen);
