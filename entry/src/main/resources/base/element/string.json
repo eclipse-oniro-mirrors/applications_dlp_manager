@@ -121,10 +121,6 @@
       "value": "Save path"
     },
     {
-      "name": "document_valid_until",
-      "value": "File valid until:"
-    },
-    {
       "name": "permanently",
       "value": "Permanent"
     },
@@ -234,7 +230,7 @@
     },
     {
       "name": "permission_status_title",
-      "value": "This file is protected. You have \"read-only\" and \"Edit\" permissions."
+      "value": "This file is protected. You have \"Read-only\" and \"Edit\" permissions."
     },
     {
       "name": "apply_for_the_permission",

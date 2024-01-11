@@ -121,10 +121,6 @@
       "value": "储存路径"
     },
     {
-      "name": "document_valid_until",
-      "value": "文件有效期至:"
-    },
-    {
       "name": "permanently",
       "value": "永久"
     },
