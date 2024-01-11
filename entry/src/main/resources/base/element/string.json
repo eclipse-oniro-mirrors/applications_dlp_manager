@@ -142,11 +142,11 @@
     },
     {
       "name": "enter_a_complete_work_ID",
-      "value": "Enter an employee ID and press Enter. Example: a00123456"
+      "value": "Enter employee ID and press Enter. Ex: a00123456"
     },
     {
       "name": "incorrect_work_ID",
-      "value": "Invalid employee ID. Please reenter."
+      "value": "Invalid employee ID. Please re-enter."
     },
     {
       "name": "network_invalid",
@@ -162,7 +162,7 @@
     },
     {
       "name": "encryption_loading_title",
-      "value": "Encrypting the file..."
+      "value": "Encrypting file…"
     },
     {
       "name": "PERMISSION_TYPE_SELECT_TARGET",
@@ -182,7 +182,7 @@
     },
     {
       "name": "MESSAGE_APP_GET_FILE_ASSET_ERROR",
-      "value": "Failed to get file information. Please try again."
+      "value": "Unable to obtain permission. Try again later."
     },
     {
       "name": "MESSAGE_APP_PARAM_ERROR",
@@ -190,7 +190,7 @@
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
-      "value": "Failed to obtain the account information. Please try again."
+      "value": "Unable to obtain account information. Try again later."
     },
     {
       "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
@@ -206,7 +206,7 @@
     },
     {
       "name": "MESSAGE_RECOVER_DLP_ERROR",
-      "value": "Failed to delete the document permission. Please try again."
+      "value": "Unable to change encryption. Try again later."
     },
     {
       "name": "TITLE_APP_VISIT_FILE_ERROR",
@@ -218,7 +218,7 @@
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
-      "value": "The document you opened is not in the correct format. Please try again."
+      "value": "Unable to open file. Check and try again."
     },
     {
       "name": "MESSAGE_DLP_READ_ONLY",
@@ -242,11 +242,11 @@
     },
     {
       "name": "MESSAGE_DLP_OPEN_REJECT",
-      "value": "The file has been opened. Close the file before encrypting it."
+      "value": "Close this file before encrypting it."
     },
     {
       "name": "MESSAGE_DLP_ENCRYPTION_REJECTED",
-      "value": "The file is being encrypted. Please open it after the encryption is complete."
+      "value": "This file is currently being encrypted. Wait for encryption to finish and try again."
     },
     {
       "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
