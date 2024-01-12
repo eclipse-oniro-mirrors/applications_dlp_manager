@@ -199,11 +199,16 @@ export default class SaveAsAbility extends UIAbility {
     this.authPerm = (GlobalContext.load('token2File') as
     Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
       .get(this.tokenId)?.[3] as dlpPermission.DLPFileAccess;
+    let DLPFileInfo = (GlobalContext.load('token2File') as
+    Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
+      .get(this.tokenId)?.[0] as dlpPermission.DLPFile;
+    let ownerAccount = DLPFileInfo.dlpProperty.ownerAccount;
 
     if (this.authPerm != dlpPermission.DLPFileAccess.CONTENT_EDIT
     && this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
       console.error(TAG, 'invalid authPerm ', this.authPerm);
       this.isOK = false;
+      AppStorage.setOrCreate('ownerAccount', ownerAccount);
       await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
         {
           code: Constants.ERR_JS_DLP_FILE_READ_ONLY
