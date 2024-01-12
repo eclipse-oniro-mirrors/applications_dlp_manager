@@ -83,9 +83,13 @@ struct Index {
       if ([
         Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
         Constants.ERR_JS_APP_ENCRYPTING,
-        Constants.ERR_JS_OFFLINE,
       ].includes(messageCode)) {
         this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT;
+      }
+      if ([
+        Constants.ERR_JS_OFFLINE,
+      ].includes(messageCode)) {
+        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT1;
       }
       if ([
         Constants.ERR_JS_APP_PARAM_ERROR,
@@ -94,15 +98,20 @@ struct Index {
         this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_ONE;
       }
       if ([
-        Constants.ERR_JS_GET_ACCOUNT_ERROR,
-        Constants.ERR_JS_NOT_DLP_FILE,
+        Constants.ERR_JS_DLP_FILE_READ_ONLY,
       ].includes(messageCode)) {
         this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_TWO;
       }
       if ([
-        Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED
+        Constants.ERR_JS_GET_ACCOUNT_ERROR,
+        Constants.ERR_JS_NOT_DLP_FILE,
       ].includes(messageCode)) {
         this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_THREE;
+      }
+      if ([
+        Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED
+      ].includes(messageCode)) {
+        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_FOUR;
       }
     } catch (err) {
       console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err as BusinessError));

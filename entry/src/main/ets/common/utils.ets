@@ -154,9 +154,8 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_GET_ACCOUNT_ERROR:
       return { 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_NO_ACCOUNT_ERROR:
-      return { 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_ACCOUNT_NOT_LOGIN:
-      return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') } as Record<string, Resource>;
+      return { 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_PARAM_ERROR:
       return { 'title': $r('app.string.TITLE_APP_ERROR'), 'msg': $r('app.string.MESSAGE_APP_PARAM_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
@@ -168,7 +167,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_APP_ENCRYPTING:
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION') } as Record<string, Resource>;
     case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
-      return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
+      return { 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
     case Constants.ERR_JS_NETWORK_INVALID:
     case Constants.ERR_JS_APP_NETWORK_INVALID:
       return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
@@ -201,7 +200,10 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_NOT_DLP_FILE:
       return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
     case Constants.ERR_JS_DLP_FILE_READ_ONLY:
-      return { 'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'), 'msg': $r('app.string.MESSAGE_DLP_READ_ONLY') } as Record<string, Resource>;
+      return {
+        'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
+        'msg': $r('app.string.MESSAGE_DLP_READ_ONLY', AppStorage.get('ownerAccount'))
+      } as Record<string, Resource>;
     default:
       if (defaultTitle !== undefined && defaultMessage != undefined) {
         return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
@@ -227,7 +229,6 @@ async function startAlertAbility(
     windowHeight = Constants.START_ABILITY_HEIGHT_ONE_ROWS;
   }
   if ([
-    Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION,
     Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
   ].includes(error.code)) {
     windowHeight = Constants.START_ABILITY_HEIGHT_TWO_ROWS;
@@ -244,6 +245,11 @@ async function startAlertAbility(
     Constants.ERR_JS_APP_OPEN_REJECTED,
   ].includes(error.code)) {
     windowHeight = Constants.START_ABILITY_HEIGHT_THREE_ROWS;
+  }
+  if ([
+    Constants.ERR_JS_DLP_FILE_READ_ONLY,
+  ].includes(error.code)) {
+    windowHeight = Constants.START_ABILITY_HEIGHT_FOUR_ROWS;
   }
   let options: StartOptions = {
     withAnimation: true,

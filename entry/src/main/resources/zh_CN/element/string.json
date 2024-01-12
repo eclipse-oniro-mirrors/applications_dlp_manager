@@ -222,7 +222,7 @@
     },
     {
       "name": "MESSAGE_DLP_READ_ONLY",
-      "value": "当前是只读文件，您没有操作权限，请申请权限后重试。"
+      "value": "您没有“另存为”权限，无法使用此功能。如需申请权限，请联系 %s。"
     },
     {
       "name": "permission_status_readOnly",
