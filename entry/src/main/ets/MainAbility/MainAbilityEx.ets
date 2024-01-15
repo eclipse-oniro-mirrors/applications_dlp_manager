@@ -256,7 +256,7 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
-    await sendDlpManagerAccountLogin(0);
+    sendDlpManagerAccountLogin(0);
     if (codeMessage) {
       await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
         { code: codeMessage } as BusinessError, session);

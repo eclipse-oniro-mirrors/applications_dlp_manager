@@ -235,7 +235,7 @@ export default class MainAbility extends UIAbility {
     }
     GlobalContext.store('abilityWant', want);
     GlobalContext.store('uri', (GlobalContext.load('abilityWant') as Want).uri as string);
-    await sendDlpManagerAccountLogin(0);
+    sendDlpManagerAccountLogin(0);
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
     console.info(TAG, 'request is from sandbox', requestIsFromSandBox);

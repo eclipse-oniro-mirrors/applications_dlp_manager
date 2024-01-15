@@ -37,7 +37,7 @@ struct AlertMessage {
     try {
       account_osAccount.DomainAccountManager.authWithPopup({
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
-          await sendDlpManagerAccountLogin(resultCode);
+          sendDlpManagerAccountLogin(resultCode);
           if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
             await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
             return;

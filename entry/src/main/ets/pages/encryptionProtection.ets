@@ -372,7 +372,7 @@ struct DlpDialog {
         this.processing = false;
         GlobalContext.store('dlpFileName', this.srcFileName);
         GlobalContext.store('dlpProperty', _dlp);
-        await sendDlpManagerFileConfiguration();
+        sendDlpManagerFileConfiguration();
         emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
         router.replaceUrl({
           url: 'pages/encryptionSuccess',
@@ -443,12 +443,12 @@ struct DlpDialog {
             let dstFileSize: number = await getFileSizeByUri(uri);
             GlobalContext.store('hiPolicySizeEnc', dstFileSize);
             GlobalContext.store('hiCode', 201);
-            await sendDlpFileCreateEvent(); // 201: DLP_FILE_CREATE_SUCCESS
+            sendDlpFileCreateEvent(); // 201: DLP_FILE_CREATE_SUCCESS
             GlobalContext.store('dlpFileName', uriInfo.name);
             GlobalContext.store('dlpProperty', _dlp);
             GlobalContext.store('uri', uri);
             this.processing = false;
-            await sendDlpManagerFileConfiguration();
+            sendDlpManagerFileConfiguration();
             emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
             router.replaceUrl({
               url: 'pages/encryptionSuccess',
