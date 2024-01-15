@@ -190,7 +190,7 @@
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
-      "value": "帐号信息获取失败。请稍后再试。"
+      "value": "帐号信息获取失败。请稍后重试。"
     },
     {
       "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
@@ -198,7 +198,7 @@
     },
     {
       "name": "MESSAGE_SERVICE_INSIDE_ERROR",
-      "value": "服务内部错误，请重试。"
+      "value": "当前无法操作，请稍后重试。"
     },
     {
       "name": "MESSAGE_NOT_AUTHORIZED_APPLICATION",
@@ -206,7 +206,7 @@
     },
     {
       "name": "MESSAGE_RECOVER_DLP_ERROR",
-      "value": "更改加密失败，请稍后再试。"
+      "value": "更改加密失败，请稍后重试。"
     },
     {
       "name": "TITLE_APP_VISIT_FILE_ERROR",
