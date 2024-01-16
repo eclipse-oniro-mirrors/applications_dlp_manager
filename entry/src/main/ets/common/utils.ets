@@ -466,17 +466,24 @@ function getFileMsgByUri(uri: string): FileMsg {
   return result;
 }
 
-function getFileSizeByUri(uri: string) {
-  return new Promise<number>(async (resolve, reject) => {
-    let uriInfo = new fileUri.FileUri(uri);
-    fs.stat(uriInfo.path).then((stat: fs.Stat) => {
-      console.info(TAG, "get file info succeed, the size of file is " + stat.size);
-      resolve(stat.size);
-    }).catch((err: BusinessError) => {
-      console.info(TAG, "get file info failed with error message: " + err.message + ", error code: " + err.code);
-      reject(-1);
-    });
-  })
+async function getFileSizeByUri(uri: string): Promise<number> {
+  let inFile: fs.File;
+
+  try {
+    inFile = await fs.open(uri, fs.OpenMode.READ_ONLY);
+  } catch (error) {
+    console.error(TAG, 'open', uri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
+    return -1;
+  }
+
+  try {
+    let stat = await fs.stat(inFile.fd);
+    console.info(TAG, "get file info succeed, the size of file is " + stat.size);
+    return stat.size;
+  } catch (err) {
+    console.info(TAG, "get file info failed with error message: " + err.message + ", error code: " + err.code);
+    return -1;
+  }
 }
 
 function getDLPInfo() {
