@@ -37,7 +37,6 @@ const TAG = "[DLPManager_staff]";
 struct staffItem {
   @Prop authAccount: string = '';
   @Prop isActive: boolean = false;
-  @State containerBackgroundColor: string = '#0D000000';
   @State color: Resource[] = [
     $r('sys.color.ohos_id_color_special1'),
     $r('sys.color.ohos_id_color_special2'),
@@ -114,17 +113,18 @@ struct staffItem {
   }
 
   private splitContent() {
-    if (this.textContent) {
-      if (this.textContent.length > Constants.TIPS_NAME_LENGTH) {
-        return this.textContent.split('').join(Constants.TIPS_SPACE_ZERO)
-      } else if (this.textContent.length === Constants.TIPS_NAME_LENGTH) {
-        return this.textContent.split('').join(Constants.TIPS_SPACE_EM)
-      } else {
-        return Constants.TIPS_SPACE_EN + this.textContent;
+    if (GlobalContext.load('domainAccount')) {
+      if (this.textContent) {
+        if (this.textContent.length > Constants.TIPS_NAME_LENGTH) {
+          return this.textContent.split('').join(Constants.TIPS_SPACE_ZERO)
+        } else if (this.textContent.length === Constants.TIPS_NAME_LENGTH) {
+          return this.textContent.split('').join(Constants.TIPS_SPACE_EM)
+        } else {
+          return Constants.TIPS_SPACE_EN + this.textContent;
+        }
       }
-    } else {
-      return this.textContent;
     }
+    return this.textContent;
   }
 
   async aboutToAppear(){
@@ -211,7 +211,7 @@ struct staffItem {
     })
     .width(this.authAccount === this.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
     .alignItems(VerticalAlign.Center)
-    .backgroundColor(this.isActive ? '#1A0A59F7' : this.containerBackgroundColor)
+    .backgroundColor(this.isActive ? '#1A0A59F7' : $r('sys.color.ohos_id_color_button_normal'))
     .borderRadius(Constants.ENCRYPTION_SUCCESS_CHANGE_TOP)
     .padding(
       {

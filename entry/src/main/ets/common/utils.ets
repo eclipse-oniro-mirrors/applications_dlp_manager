@@ -34,7 +34,6 @@ import fileUri from '@ohos.file.fileuri';
 import display from '@ohos.display';
 import StartOptions from '@ohos.app.ability.StartOptions';
 
-
 let TAG = "[DLPManager_Utils]";
 
 interface AuthAccount {
@@ -165,7 +164,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
       return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED') } as Record<string, Resource>;
     case Constants.ERR_JS_APP_ENCRYPTING:
-      return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION') } as Record<string, Resource>;
+      return { 'title': $r('app.string.header_title'), 'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION', err.data) } as Record<string, Resource>;
     case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
       return { 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
     case Constants.ERR_JS_NETWORK_INVALID:
@@ -223,6 +222,19 @@ async function startAlertAbility(
   let yNumber = Math.floor((dis.height - Constants.START_ABILITY_YNUMBER) / 2);
   let windowHeight = Constants.START_ABILITY_HEIGHT_DEFAULT;
   if ([
+    Constants.ERR_JS_APP_ENCRYPTING,
+  ].includes(error.code)) {
+    let errInfo = getAlertMessage(error as BusinessError);
+    let width = measureTextSizeWidth(`${error?.data}${errInfo.msg}`);
+    let rowsNum = Math.ceil(width / Constants.START_ABILITY_BASIC_WIDTH);
+    let rowsNumYu: number = Number((width / Constants.START_ABILITY_BASIC_WIDTH).toFixed(1));
+    if (Math.floor(rowsNumYu * 10) % 10 > 5) {
+      rowsNum += 1;
+    }
+    console.log(TAG, 'rowsNum', rowsNum, 'rowsNumYu', rowsNumYu);
+    windowHeight = Constants.START_ABILITY_HEIGHT_DEFAULT1 + Constants.START_ABILITY_MSG_HEIGHT_ROWS * rowsNum;
+  }
+  if ([
     Constants.ERR_JS_GET_ACCOUNT_ERROR,
     Constants.ERR_JS_NOT_DLP_FILE,
   ].includes(error.code)) {
@@ -236,11 +248,9 @@ async function startAlertAbility(
   if ([
     Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED,
     Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
-    Constants.ERR_JS_OFFLINE,
     Constants.ERR_JS_DLP_FILE_READ_ONLY,
     Constants.ERR_JS_FILE_EXPIRATION,
     Constants.ERR_JS_USER_NO_PERMISSION,
-    Constants.ERR_JS_APP_ENCRYPTING,
     Constants.ERR_JS_APP_PARAM_ERROR,
     Constants.ERR_JS_APP_OPEN_REJECTED,
   ].includes(error.code)) {
@@ -248,9 +258,10 @@ async function startAlertAbility(
   }
   if ([
     Constants.ERR_JS_DLP_FILE_READ_ONLY,
+    Constants.ERR_JS_OFFLINE,
   ].includes(error.code)) {
     windowHeight = Constants.START_ABILITY_HEIGHT_FOUR_ROWS;
-  }
+  };
   let options: StartOptions = {
     withAnimation: true,
     windowLeft: xNumber,
@@ -264,6 +275,7 @@ async function startAlertAbility(
     abilityName: 'AlertAbility',
     parameters: {
       error: error,
+      windowHeight
     }
   }, options, async (err: BusinessError) => {
     if (err.code !== 0) {
@@ -600,7 +612,7 @@ function isValidPath(path: string): Boolean {
   return true;
 }
 
-function measureTextSizeWidth(str: Resource) {
+function measureTextSizeWidth(str: Resource | string) {
   let itemLenWithPX: SizeOptions = measure.measureTextSize({
     textContent: str,
     fontSize: '16fp'
