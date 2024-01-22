@@ -186,7 +186,7 @@
     },
     {
       "name": "MESSAGE_APP_PARAM_ERROR",
-      "value": "Failed to start the DLP application. Check the parameters and try again."
+      "value": "DLP app did not launch. Check your parameters and try again."
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
@@ -266,43 +266,43 @@
     },
     {
       "name": "MESSAGE_DLP_ENCRYPTION",
-      "value": "Encryption in progress. Please try again later."
+      "value": "“%s” is currently being encrypted. Try again later."
     },
     {
       "name": "Document_valid",
-      "value": "Document validity period"
+      "value": "Validity"
     },
     {
       "name": "Document_valid_until",
-      "value": "Document valid until"
+      "value": "Valid until"
     },
     {
       "name": "Appointed_day",
-      "value": "Appointed day"
+      "value": "Specified date"
     },
     {
       "name": "Permission_has_expired",
-      "value": "Permission has expired"
+      "value": "Permissions expired"
     },
     {
       "name": "Permission_has_expired_description",
-      "value": "Permission on this file has expired. To continue viewing, please contact %s."
+      "value": "Your file permissions have expired. To regain access, contact %s."
     },
     {
       "name": "Network_not_connected",
-      "value": "Network not connected"
+      "value": "No Internet connection"
     },
     {
       "name": "Network_not_connected_description",
-      "value": "The validity period of the file has been set. Please check the file permission first."
+      "value": "A validity period has been set for access to this file. Please connect to the Internet to confirm permissions."
     },
     {
       "name": "Go_setting",
-      "value": "Go to Settings"
+      "value": "Settings"
     },
     {
       "name": "Timeout_is_not_supported",
-      "value": "You cannot set the validity period to a date that has passed. You need to reset the validity period."
+      "value": "The expiration date can't be in the past. Please set another date."
     }
   ]
 }

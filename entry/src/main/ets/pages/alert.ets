@@ -22,7 +22,8 @@ import Constants from '../common/constant';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
-import { showErrorDialogAndExit, sendDlpManagerAccountLogin, colorStatus } from '../common/utils';
+import { showErrorDialogAndExit, sendDlpManagerAccountLogin } from '../common/utils';
+import { isPC } from '../common/utils';
 
 const TAG = '[DLPManager_Alert]';
 let abilityResult: ability.AbilityResult = {
@@ -37,10 +38,10 @@ struct Index {
   @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State title: string | Resource = '';
   @State message: string | Resource = '';
-  @State messageName: string | void = '';
   @State cancel: string | Resource = '';
   @State ok: string | Resource = '';
   @State messageHeight: string = '';
+  @State windowHeight: number = 0;
 
   authWithPop(): void {
     console.log(TAG, 'authwithpop start');
@@ -73,16 +74,15 @@ struct Index {
     console.log(TAG, 'alert aboutToAppear start')
     try {
       let messageCode = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError).code;
-      let messageData = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError)?.data;
       let errInfo = getAlertMessage((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError);
+      this.windowHeight = (GlobalContext.load('abilityWant') as Want).parameters?.windowHeight as number;
+      this.windowHeight = Number(this.windowHeight) - Constants.START_ABILITY_MSG_HEIGHT_ROWS;
       this.title = errInfo.title;
       this.message = errInfo.msg;
       this.cancel = errInfo.cancel;
       this.ok = errInfo.ok;
-      this.messageName = messageData;
       if ([
         Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
-        Constants.ERR_JS_APP_ENCRYPTING,
       ].includes(messageCode)) {
         this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT;
       }
@@ -139,13 +139,9 @@ struct Index {
       }
       Row() {
         Text() {
-          if (this.messageName) {
-            Span('“')
-            Span(this.messageName)
-            Span('”')
-          }
           Span(this.message)
         }
+        .wordBreak(WordBreak.BREAK_ALL)
         .fontWeight(FontWeight.Regular)
         .fontColor($r('sys.color.ohos_id_color_text_primary'))
         .fontSize($r('sys.float.ohos_id_text_size_body1'))
@@ -190,7 +186,9 @@ struct Index {
               let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
               if (error.code === Constants.ERR_JS_OFFLINE) {
                 let want: Want = {
-                  action: 'action.settings.wifi',
+                  action: 'action.system.home',
+                  entities: ['entity.system.home'],
+                  uri: 'wifi_entry'
                 };
                 (GlobalContext.load('alertContext') as common.UIAbilityContext).startAbility(want);
                 (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
@@ -212,6 +210,6 @@ struct Index {
     .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
-    .height(Constants.HEADER_COLUMN_WIDTH)
+    .height( isPC() ? Constants.HEADER_COLUMN_WIDTH : this.windowHeight)
   }
 }

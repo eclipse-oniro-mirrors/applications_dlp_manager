@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 import osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
 import account_osAccount from '@ohos.account.osAccount';
