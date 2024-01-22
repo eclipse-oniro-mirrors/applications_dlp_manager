@@ -82,19 +82,8 @@ struct PermissionStatus {
         {
           label: ($r('app.string.duplicate')), value: false
         },
-      ]
-    },
-    {
-      title: ($r('app.string.perm_list_title_full_control')),
-      content: [
         {
           label: ($r('app.string.print')), value: false
-        },
-        {
-          label: ($r('app.string.export')), value: false
-        },
-        {
-          label: ($r('app.string.modifying_the_permissions_of_a_document')), value: false
         },
       ]
     },
@@ -140,19 +129,8 @@ struct PermissionStatus {
         {
           label: ($r('app.string.duplicate')), value: true
         },
-      ]
-    },
-    {
-      title: ($r('app.string.perm_list_title_full_control')),
-      content: [
         {
-          label: ($r('app.string.print')), value: false
-        },
-        {
-          label: ($r('app.string.export')), value: false
-        },
-        {
-          label: ($r('app.string.modifying_the_permissions_of_a_document')), value: false
+          label: ($r('app.string.print')), value: true
         },
       ]
     },
