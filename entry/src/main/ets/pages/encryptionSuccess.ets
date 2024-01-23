@@ -313,6 +313,7 @@ struct encryptionSuccess {
                                 (item: AuthAccount, index?: number) => {
                                   staffItem({
                                     authAccount: item.authAccount,
+                                    textContent: item.textContent,
                                     isActive: false,
                                     changeIndex: Number(index),
                                   })
@@ -457,6 +458,7 @@ struct encryptionSuccess {
                                 (item: AuthAccount, index?: number) => {
                                   staffItem({
                                     authAccount: item.authAccount,
+                                    textContent: item.textContent,
                                     isActive: false,
                                     changeIndex: Number(index),
                                   })

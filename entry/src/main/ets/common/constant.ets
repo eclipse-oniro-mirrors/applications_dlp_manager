@@ -234,4 +234,5 @@ export default class Constants {
   static TIPS_SPACE_EN = '\u2002';
   static TIPS_SPACE_EM = '\u2003';
   static TIPS_NAME_LENGTH = 2;
+  static LOAD_TYPE_CE = 1;
 }

@@ -128,22 +128,7 @@ struct staffItem {
   }
 
   async aboutToAppear(){
-    if (GlobalContext.load('domainAccount')) {
-      if (!this.textContent) {
-        this.accountTipsArray = await AccountTipsConfig.getConfigTips();
-        AccountTipsConfig.getAccountInfo(this.authAccount).then((result: account_osAccount.DomainAccountInfo) => {
-          this.textContent = result[AccountTipsConfig.showContentKey] as string;
-        }).catch((error: BusinessError) => {
-          console.error(`${TAG} aboutToAppear textContent error: ${JSON.stringify(error)}`);
-          let isShowErrorDialog: boolean = GlobalContext.load('isShowErrorDialog') ?? false;
-          if (!isShowErrorDialog) {
-            GlobalContext.store('isShowErrorDialog', true);
-            let errorInfo = getAlertMessage(error);
-            this.showErrorDialog(errorInfo.title, errorInfo.msg);
-          }
-        })
-      }
-    } else {
+    if (!GlobalContext.load('domainAccount')) {
       this.textContent = this.authAccount;
     }
   }
