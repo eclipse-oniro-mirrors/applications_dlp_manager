@@ -58,7 +58,7 @@
     },
     {
       "name": "modifying_the_permissions_of_a_document",
-      "value": "Modify permission"
+      "value": "Modify permissions"
     },
     {
       "name": "sure",
@@ -66,7 +66,7 @@
     },
     {
       "name": "header_title",
-      "value": "Protect file"
+      "value": "File permissions"
     },
     {
       "name": "perm_list_title_read_only",
@@ -221,8 +221,8 @@
       "value": "Unable to open file. Check and try again."
     },
     {
-      "name": "MESSAGE_DLP_READ_ONLY",
-      "value": "The file is read-only. You do not have the operation permission. Apply for the permission and try again."
+      "name": "MESSAGE_DLP_READ_ONLY", 
+      "value": "You don't have permission to save another copy of this file. To request permission, contact %s."
     },
     {
       "name": "permission_status_readOnly",

@@ -186,7 +186,7 @@
     },
     {
       "name": "MESSAGE_APP_PARAM_ERROR",
-      "value": "拉起DLP应用失败，请检查参数后重试。"
+      "value": "拉起 DLP 应用失败，请检查参数后重试。"
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
