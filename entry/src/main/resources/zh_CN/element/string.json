@@ -303,6 +303,10 @@
     {
       "name": "Timeout_is_not_supported",
       "value": "不支持将有效期设置为已经过去的日期，请重新设置。"
+    },
+    {
+      "name": "loading_title",
+      "value": "正在加载…"
     }
   ]
 }

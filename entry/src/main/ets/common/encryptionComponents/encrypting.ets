@@ -19,6 +19,15 @@ import { isPC } from '../utils';
 @Component
 struct EncryptingPanel {
   @Link processing: boolean;
+  @Prop loadingType: number = 0;
+
+  loadingText() {
+    if (this.loadingType === Constants.LOAD_TYPE_CE) {
+      return $r('app.string.loading_title');
+    } else {
+      return $r('app.string.encryption_loading_title');
+    }
+  }
 
   build() {
     if (this.processing) {
@@ -47,7 +56,7 @@ struct EncryptingPanel {
                 .color($r('sys.color.ohos_id_color_progress'))
                 .height(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
                 .width(Constants.ENCRYPTION_LOADING_ICON_HEIGHT)
-              Text($r('app.string.encryption_loading_title'))
+              Text(this.loadingText())
                 .fontSize($r('sys.float.ohos_id_text_size_body2'))
                 .fontColor($r('sys.color.ohos_id_color_text_secondary'))
             }

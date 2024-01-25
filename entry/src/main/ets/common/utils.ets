@@ -38,6 +38,7 @@ let TAG = "[DLPManager_Utils]";
 
 interface AuthAccount {
   authAccount: string;
+  textContent?: string;
 }
 
 interface PermissionType {

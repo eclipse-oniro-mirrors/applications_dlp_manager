@@ -572,6 +572,7 @@ struct DlpDialog {
   }
 
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
+    let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
     this.permissionDict.forEach(async (item, index) => {
       this.permissionDict[index].value = $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getStringValue(item.value.id))
     })
@@ -585,7 +586,7 @@ struct DlpDialog {
       if (editData.length === 0) {
         this.selectedPermissionTypeEdit = this.permissionDict[2];
       } else {
-        this.staffDataArrayEdit = editData;
+        this.staffDataArrayEdit = routerParams.staffDataArrayEdit as AuthAccount[];
       }
     }
     if ((defaultDlpProperty.everyoneAccessList !== undefined) && (defaultDlpProperty.everyoneAccessList.length > 0)) {
@@ -599,7 +600,7 @@ struct DlpDialog {
         filterEditFilter()
       }
     } else {
-      this.staffDataArrayReadOnly = readOnlyData;
+      this.staffDataArrayReadOnly = routerParams.staffDataArrayReadOnly as AuthAccount[];
       filterEditFilter()
     }
   }
