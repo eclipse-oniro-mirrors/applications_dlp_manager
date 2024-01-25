@@ -243,6 +243,10 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     if (dlpFile !== null) {
       try {
         await dlpFile.closeDLPFile();
+        if (this.dlpFileMap.has(srcUri)) {
+          this.dlpFileMap.delete(srcUri);
+          GlobalContext.store('dlpFileMap', this.dlpFileMap);
+        }
         callback(0);
       } catch (err) {
         console.error(TAG, 'closeDlpFile file', (err as BusinessError).code, (err as BusinessError).message);

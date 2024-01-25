@@ -221,7 +221,7 @@
       "value": "Unable to open file. Check and try again."
     },
     {
-      "name": "MESSAGE_DLP_READ_ONLY", 
+      "name": "MESSAGE_DLP_READ_ONLY",
       "value": "You don't have permission to save another copy of this file. To request permission, contact %s."
     },
     {
