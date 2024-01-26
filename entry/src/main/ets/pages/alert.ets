@@ -22,7 +22,7 @@ import Constants from '../common/constant';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
-import { showErrorDialogAndExit, sendDlpManagerAccountLogin } from '../common/utils';
+import { sendDlpManagerAccountLogin } from '../common/utils';
 import { isPC } from '../common/utils';
 
 const TAG = '[DLPManager_Alert]';
@@ -50,7 +50,23 @@ struct Index {
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
           sendDlpManagerAccountLogin(resultCode);
           if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
-            await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+            let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+            this.title = '';
+            this.message = errInfo.msg;
+            this.cancel = errInfo.cancel;
+            this.ok = errInfo.ok;
+            try {
+              GlobalContext.load('mainWindow').resize(Constants.START_ABILITY_WINDOW_WIDTH, Constants.START_ABILITY_HEIGHT_DEFAULT, (err: BusinessError) => {
+                const errCode: number = err.code;
+                if (errCode) {
+                  console.error('Failed to change the window size. Cause:' + JSON.stringify(err));
+                  return;
+                }
+                console.info('Succeeded in changing the window size.');
+              });
+            } catch (exception) {
+              console.error('Failed to change the window size. Cause:' + JSON.stringify(exception))
+            }
             return;
           }
           if (this.session !== undefined) {

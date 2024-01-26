@@ -21,7 +21,7 @@ import emitter from '@ohos.events.emitter';
 import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
-import fileuri from "@ohos.file.fileuri";
+import fileUri from "@ohos.file.fileuri";
 import { BusinessError, Callback } from '@ohos.base'
 import deviceInfo from '@ohos.deviceInfo';
 import Want from '@ohos.app.ability.Want';
@@ -30,7 +30,6 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import Constants from '../common/constant';
 import GlobalContext from './GlobalContext';
 import hiSysEvent from '@ohos.hiSysEvent';
-import fileUri from '@ohos.file.fileuri';
 import display from '@ohos.display';
 import StartOptions from '@ohos.app.ability.StartOptions';
 
@@ -60,7 +59,7 @@ export interface FileMsg {
 
 function getFileUriByPath(filePath: string): string {
   try {
-    let uri = fileuri.getUriFromPath(filePath);
+    let uri = fileUri.getUriFromPath(filePath);
     return uri;
   } catch (err) {
     console.info(TAG, 'getUriFromPath error:', JSON.stringify(err));
