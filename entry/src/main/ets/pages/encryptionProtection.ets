@@ -333,11 +333,6 @@ struct DlpDialog {
       await new Promise<void>((resolve, reject) => {
         this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), filePathUri, async (err: number) => {
           if (err !== 0) {
-            let ansErr: BusinessError<void> = {
-              code: err,
-              name: '',
-              message: ''
-            }
             fs.unlinkSync(filePath);
             console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', err);
             let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
