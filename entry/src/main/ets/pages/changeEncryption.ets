@@ -356,8 +356,6 @@ struct changeEncryption {
         'staffDataArrayEdit': this.staffDataArrayEdit,
       } as Record<string, AuthAccount[]>;
     } else { // ability
-
-
       if (GlobalContext.load("domainAccount")) {
         await AccountTipsConfig.getConfigTips();
         await this.getTextContent();
