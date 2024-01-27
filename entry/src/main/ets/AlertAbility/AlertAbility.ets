@@ -50,6 +50,7 @@ export default class AlertAbility extends UIAbility {
         return;
       }
       mainWindow = data;
+      GlobalContext.store('mainWindow', mainWindow);
       try {
         mainWindow.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
       } catch (exception) {
