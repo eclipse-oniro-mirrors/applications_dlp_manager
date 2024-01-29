@@ -304,6 +304,48 @@ struct changeEncryption {
   }
 
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
+    this.permissionDict.forEach(async (item, index) => {
+      this.permissionDict[index].value = $r((GlobalContext
+        .load('context') as common.UIAbilityContext).resourceManager.getStringSync(item.value!.id))
+    });
+    let readOnlyData = (defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
+      return item.dlpFileAccess === 1;
+    })) ?? [];
+    let editData = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
+      return item.dlpFileAccess === 2;
+    }) ?? [];
+    const filterEditFilter = () => {
+      if (editData.length === 0) {
+        this.selectedPermissionTypeEdit = this.permissionDict[2];
+        GlobalContext.store('hiWriteScope', 'Onlyme');
+      } else {
+        this.staffDataArrayEdit = editData;
+        this.selectedPermissionTypeEdit = this.permissionDict[0];
+        GlobalContext.store('hiWriteScope', 'User');
+      }
+    };
+    if ((defaultDlpProperty.everyoneAccessList !== undefined) && (defaultDlpProperty.everyoneAccessList.length > 0)) {
+      let perm = Math.max(...defaultDlpProperty.everyoneAccessList);
+      if (perm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
+        this.selectedPermissionTypeReadOnly = this.permissionDict[1];
+        GlobalContext.store('hiReadScope', 'Everyone');
+        this.selectedPermissionTypeEdit = this.permissionDict[1];
+        GlobalContext.store('hiWriteScope', 'Everyone');
+        this.staffDataArrayReadOnly = readOnlyData;
+      } else if (perm === dlpPermission.DLPFileAccess.READ_ONLY) {
+        this.selectedPermissionTypeReadOnly = this.permissionDict[1];
+        GlobalContext.store('hiReadScope', 'Everyone');
+        this.staffDataArrayReadOnly = [];
+        filterEditFilter();
+      } else {
+        GlobalContext.store('hiReadScope', 'User');
+      }
+    } else {
+      GlobalContext.store('hiReadScope', 'User');
+      this.staffDataArrayReadOnly = readOnlyData;
+      filterEditFilter();
+    }
+
     let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
     if (routerParams !== undefined) { // router
       this.staffDataArrayReadOnly = routerParams.staffDataArrayReadOnly as AuthAccount[];
@@ -314,48 +356,6 @@ struct changeEncryption {
         'staffDataArrayEdit': this.staffDataArrayEdit,
       } as Record<string, AuthAccount[]>;
     } else { // ability
-      this.permissionDict.forEach(async (item, index) => {
-        this.permissionDict[index].value = $r((GlobalContext
-          .load('context') as common.UIAbilityContext).resourceManager.getStringSync(item.value!.id))
-      })
-      let readOnlyData = (defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
-        return item.dlpFileAccess === 1;
-      })) ?? []
-      let editData = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
-        return item.dlpFileAccess === 2;
-      }) ?? []
-      const filterEditFilter = () => {
-        if (editData.length === 0) {
-          this.selectedPermissionTypeEdit = this.permissionDict[2];
-          GlobalContext.store('hiWriteScope', 'Onlyme');
-        } else {
-          this.staffDataArrayEdit = editData;
-          this.selectedPermissionTypeEdit = this.permissionDict[0];
-          GlobalContext.store('hiWriteScope', 'User');
-        }
-      }
-      if ((defaultDlpProperty.everyoneAccessList !== undefined) && (defaultDlpProperty.everyoneAccessList.length > 0)) {
-        let perm = Math.max(...defaultDlpProperty.everyoneAccessList);
-        if (perm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
-          this.selectedPermissionTypeReadOnly = this.permissionDict[1];
-          GlobalContext.store('hiReadScope', 'Everyone');
-          this.selectedPermissionTypeEdit = this.permissionDict[1];
-          GlobalContext.store('hiWriteScope', 'Everyone');
-          this.staffDataArrayReadOnly = readOnlyData;
-        } else if (perm === dlpPermission.DLPFileAccess.READ_ONLY) {
-          this.selectedPermissionTypeReadOnly = this.permissionDict[1];
-          GlobalContext.store('hiReadScope', 'Everyone');
-          this.staffDataArrayReadOnly = [];
-          filterEditFilter()
-        } else {
-          GlobalContext.store('hiReadScope', 'User');
-        }
-      } else {
-        GlobalContext.store('hiReadScope', 'User');
-        this.staffDataArrayReadOnly = readOnlyData;
-        filterEditFilter()
-      }
-
       if (GlobalContext.load("domainAccount")) {
         await AccountTipsConfig.getConfigTips();
         await this.getTextContent();
@@ -364,7 +364,7 @@ struct changeEncryption {
       this.routerData = {
         'staffDataArrayReadOnly': this.staffDataArrayReadOnly,
         'staffDataArrayEdit': this.staffDataArrayEdit,
-      } as Record<string, AuthAccount[]>
+      } as Record<string, AuthAccount[]>;
     }
   }
 
