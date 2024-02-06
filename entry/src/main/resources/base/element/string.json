@@ -202,7 +202,7 @@
     },
     {
       "name": "MESSAGE_NOT_AUTHORIZED_APPLICATION",
-      "value": "Application cannot open this file."
+      "value": "This app can't open this file."
     },
     {
       "name": "MESSAGE_RECOVER_DLP_ERROR",
@@ -234,7 +234,7 @@
     },
     {
       "name": "apply_for_the_permission",
-      "value": "To apply for permissions, contact: %s"
+      "value": "To request permissions, contact %s."
     },
     {
       "name": "delete_account",
@@ -250,7 +250,7 @@
     },
     {
       "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
-      "value": "The system version is too early to open encrypted files on the system of a later version. Upgrada the system and try again."
+      "value": "Unable to open files that were encrypted in a newer system version. Please update your system software and try again."
     },
     {
       "name": "encrypt_employee_id",
@@ -266,7 +266,7 @@
     },
     {
       "name": "MESSAGE_DLP_ENCRYPTION",
-      "value": "“%s” is currently being encrypted. Try again later."
+      "value": "\"%s\" is currently being encrypted. Try again later."
     },
     {
       "name": "Document_valid",
