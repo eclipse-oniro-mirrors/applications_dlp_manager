@@ -102,7 +102,7 @@
     },
     {
       "name": "header_title_edit_tips",
-      "value": "拥有编辑权限的用户可查看、编辑、复制、录屏或保存，但不能打印文件。"
+      "value": "拥有编辑权限的用户可查看、编辑、复制、录屏、保存和打印文件。"
     },
     {
       "name": "file_encrypted",
