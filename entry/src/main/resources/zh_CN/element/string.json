@@ -214,7 +214,7 @@
     },
     {
       "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-      "value": "您没有权限查看此文件。如需申请权限，请联系 %s。"
+      "value": "您没有权限查看此文件。如需申请权限，请联系：%s"
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
