@@ -20,7 +20,14 @@ import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import deviceInfo from '@ohos.deviceInfo';
 import Constants from '../common/constant';
-import { getAuthPerm, checkAccountLogin, getOsAccountInfo, judgeIsSandBox, getFileFd } from '../common/utils';
+import {
+  getAuthPerm,
+  checkAccountLogin,
+  getOsAccountInfo,
+  judgeIsSandBox,
+  getFileFd,
+  isValidPath
+} from '../common/utils';
 import GlobalContext from '../common/GlobalContext'
 import { Configuration } from '@ohos.app.ability.Configuration';
 import Want from '@ohos.app.ability.Want';
@@ -228,7 +235,7 @@ export default class MainAbility extends UIAbility {
       return false;
     }
 
-    if (uri.indexOf(Constants.FUSE_PATH) !== -1) {
+    if (uri.indexOf(Constants.FUSE_PATH) !== -1 || !isValidPath(uri)) {
       console.error(TAG, 'invalid uri in want.uri');
       return false;
     }

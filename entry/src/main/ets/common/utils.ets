@@ -253,6 +253,13 @@ function isPC(): boolean {
   return (deviceTypeName === 'tablet' || deviceTypeName === '2in1') && productModel?.startsWith('HYM') === true
 }
 
+function isValidPath(path: string): Boolean {
+  if (path.indexOf('/./') !== -1 || path.indexOf('/../') !== -1) {
+    return false;
+  }
+  return true;
+}
+
 
 export {
   AuthAccount,
@@ -271,5 +278,6 @@ export {
   calculate,
   toggleShow,
   directionStatus,
-  isPC
+  isPC,
+  isValidPath
 };

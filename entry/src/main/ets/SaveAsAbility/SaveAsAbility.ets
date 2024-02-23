@@ -30,7 +30,7 @@ import * as ns from '@ohos.app.ability.UIAbility';
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
-import { startAlertAbility, getFileUriByPath, getFileFd } from '../common/utils';
+import { startAlertAbility, getFileUriByPath, getFileFd, isValidPath } from '../common/utils';
 import Constants from '../common/constant';
 import fileAccess from '@ohos.file.fileAccess';
 
@@ -368,6 +368,10 @@ export default class SaveAsAbility extends UIAbility {
       }
       console.info(TAG, 'get uri', saveRes)
       uri = saveRes[0]
+      if (!isValidPath(uri)){
+        console.error(TAG, 'invalid uri');
+        return;
+      }
       try {
         file = await fs.open(uri, fs.OpenMode.READ_WRITE);
         dstFd = file.fd;
