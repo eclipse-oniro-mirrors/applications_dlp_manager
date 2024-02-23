@@ -415,7 +415,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       this.linkUri = getFileUriByPath(this.linkFilePath);
       if (this.linkUri === '') {
-        console.error(TAG, 'get linkUri ByPath fail', this.linkFilePath);
+        console.error(TAG, 'get linkUri ByPath fail');
         opening = false;
         (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
       }
@@ -506,7 +506,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
       (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
     }
     //uri permission just for pc
-    console.debug(TAG, 'domainAccount:', GlobalContext.load('domainAccount') as boolean);
+    if (!this.uri.endsWith('.dlp')) {
+      console.error(TAG, 'this.uri wrong');
+      await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
+      return;
+    }
     if(GlobalContext.load('domainAccount') as boolean){
       let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION | wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
       let targetBundleName = this.sandboxBundleName;
