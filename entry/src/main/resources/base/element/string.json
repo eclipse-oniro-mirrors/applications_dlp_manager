@@ -102,7 +102,7 @@
     },
     {
       "name": "header_title_edit_tips",
-      "value": "Users with the change permission can view, edit, copy, record, or save the file, but cannot print it."
+      "value": "Users with this permission can view, edit, copy, screen-record, save, and print this file."
     },
     {
       "name": "file_encrypted",
