@@ -190,7 +190,7 @@
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
-      "value": "帐号信息获取失败。请稍后重试。"
+      "value": "帐号信息获取失败，请稍后重试。"
     },
     {
       "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",

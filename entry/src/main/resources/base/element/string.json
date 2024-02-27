@@ -198,7 +198,7 @@
     },
     {
       "name": "MESSAGE_SERVICE_INSIDE_ERROR",
-      "value": "Internal service error. Please try again."
+      "value": "Unable to do this right now. Try again later."
     },
     {
       "name": "MESSAGE_NOT_AUTHORIZED_APPLICATION",
