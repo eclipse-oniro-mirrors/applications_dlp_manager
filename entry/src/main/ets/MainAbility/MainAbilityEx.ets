@@ -110,13 +110,13 @@ export default class MainAbility extends UIExtensionAbility {
     console.info(TAG, 'onSessionDestroy');
     if (session === GlobalContext.load('session')) {
       GlobalContext.store('session', '');
-    }
-    if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
-      this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
-        if (err !== 0) {
-          console.error(TAG, 'closeDLPFile failed', err);
-        }
-      });
+      if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
+        this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+          if (err !== 0) {
+            console.error(TAG, 'closeDLPFile failed', err);
+          }
+        });
+      }
     }
   }
 
