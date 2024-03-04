@@ -108,15 +108,16 @@ export default class MainAbility extends UIExtensionAbility {
 
   onSessionDestroy(session: UIExtensionContentSession): void {
     console.info(TAG, 'onSessionDestroy');
-    if (session === GlobalContext.load('session')) {
-      GlobalContext.store('session', '');
-      if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
-        this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
-          if (err !== 0) {
-            console.error(TAG, 'closeDLPFile failed', err);
-          }
-        });
-      }
+    if (session !== GlobalContext.load('session')) {
+      return;
+    }
+    GlobalContext.store('session', '');
+    if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
+      this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'closeDLPFile failed', err);
+        }
+      });
     }
   }
 
