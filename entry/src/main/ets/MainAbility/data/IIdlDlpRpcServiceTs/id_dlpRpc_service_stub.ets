@@ -29,9 +29,9 @@ import {
   linkSetCallback
 } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
-import IDLDLPProperty from "../../../serviceExtensionAbility/sequenceable/dlpClass";
+import IDLDLPProperty from '../../../serviceExtensionAbility/sequenceable/dlpClass';
 
-const TAG = "[DLPManager_service_stub]"
+const TAG = '[DLPManager_service_stub]'
 
 export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IIdDlpRpcService {
   constructor(des: string) {
@@ -39,8 +39,8 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<boolean> {
-    console.log(TAG, "onRemoteMessageRequest called, code = " + code);
-    switch(code) {
+    console.log(TAG, 'onRemoteMessageRequest called, code = ' + code);
+    switch (code) {
       case IDlpServiceCmdCode.COMMAND_GEN_DLP_FILE: {
         await this.genDlpFileInner(data, reply);
         return true;
@@ -82,7 +82,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         return true;
       }
       default: {
-        console.log(TAG + "invalid request code" + code);
+        console.log(TAG + 'invalid request code' + code);
         break;
       }
     }
@@ -94,7 +94,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
     try {
       let _inputUri = data.readString();
       let _outputUri = data.readString();
-      let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);
+      let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       data.readParcelable(_dlp);
       await this.genDlpFile(_inputUri, _outputUri, _dlp, (errCode) => {
         reply.writeInt(errCode);
@@ -107,7 +107,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   async openDlpFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
     try {
       let _srcUri = data.readString();
-      let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);
+      let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       let _callerAppId = data.readString();
       await this.openDlpFile(_srcUri, _callerAppId, (errCode, _dlp, _msg) => {
         reply.writeInt(errCode);
@@ -154,7 +154,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async recoverDlpFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, "recoverDlpFileInner start");
+    console.log(TAG, 'recoverDlpFileInner start');
     try {
       let _srcUri = data.readString();
       let _pathUri = data.readString();
@@ -167,7 +167,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async closeDlpFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, "closeDlpFileInner start");
+    console.log(TAG, 'closeDlpFileInner start');
     try {
       let _srcUri = data.readString();
       await this.closeDlpFile(_srcUri, (errCode) => {
@@ -179,11 +179,11 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async sandBoxLinkFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, "sandBoxLinkFileInner start");
+    console.log(TAG, 'sandBoxLinkFileInner start');
     try {
       let _linkFileName = data.readString();
       let _callerToken = data.readLong();
-      let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);
+      let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       await this.sandBoxLinkFile(_linkFileName, _callerToken, (errCode, _dlp, _fileUri) => {
         reply.writeInt(errCode);
         reply.writeParcelable(_dlp);
@@ -195,7 +195,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async fileOpenHistoryInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, "fileOpenHistoryInner start");
+    console.log(TAG, 'fileOpenHistoryInner start');
     try {
       let _uri = data.readString();
       await this.fileOpenHistory(_uri, (errCode) => {
@@ -207,7 +207,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async linkSetInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, "linkSetInner start");
+    console.log(TAG, 'linkSetInner start');
     try {
       let _uri = data.readString();
       await this.linkSet(_uri, (errCode) => {

@@ -51,17 +51,18 @@ import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 const TAG = '[DLPManager_ModEnc]';
 
 class PermissionValue {
-  value: Resource | undefined
-  data: string = ''
-  index: number = 0
+  public value: Resource | undefined
+  public data: string = ''
+  public index: number = 0
 }
 
 let abilityResult: ability.AbilityResult = {
-  "resultCode": 0,
-  "want": {}
+  'resultCode': 0,
+  'want': {}
 };
 
-@Extend(Text) function customizeText() {
+@Extend(Text)
+function customizeText() {
   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
   .fontSize($r('sys.float.ohos_id_text_size_button2'))
   .fontWeight(FontWeight.Medium)
@@ -83,7 +84,7 @@ struct changeEncryption {
   @State authPerm: number = 2;
   @State routerFlag: boolean = false;
   @State editFlag: boolean = false;
-  @State ReadOnlyFlag: boolean = false;
+  @State readOnlyFlag: boolean = false;
   @State rowNamesLenEdit: number = 0;
   @State rowNamesLenReadOnly: number = 0;
   @State hideNamesNumEdit: string = '0';
@@ -195,14 +196,14 @@ struct changeEncryption {
     try {
       let srcFileUri: string = GlobalContext.load('uri');
       let srcFileMsg: FileMsg = getFileMsgByUri(srcFileUri);
-      let DocumentSaveOptions = new picker.DocumentSaveOptions();
-      DocumentSaveOptions.newFileNames = [plaintextFile];
+      let documentSaveOptions = new picker.DocumentSaveOptions();
+      documentSaveOptions.newFileNames = [plaintextFile];
       let fileSuffixChoicesName = this.srcFileName.split('.')[1];
-      DocumentSaveOptions.fileSuffixChoices = [`.${fileSuffixChoicesName}`];
-      DocumentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
+      documentSaveOptions.fileSuffixChoices = [`.${fileSuffixChoicesName}`];
+      documentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
         srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length);
       let documentPicker = new picker.DocumentViewPicker();
-      documentPicker.save(DocumentSaveOptions).then(async (saveRes) => {
+      documentPicker.save(documentSaveOptions).then(async (saveRes) => {
         if (saveRes === undefined || saveRes.length === 0) {
           console.error(TAG, 'fail to get uri');
           await this.catchProcess();
@@ -356,7 +357,7 @@ struct changeEncryption {
         'staffDataArrayEdit': this.staffDataArrayEdit,
       } as Record<string, AuthAccount[]>;
     } else { // ability
-      if (GlobalContext.load("domainAccount")) {
+      if (GlobalContext.load('domainAccount')) {
         await AccountTipsConfig.getConfigTips();
         await this.getTextContent();
       }
@@ -391,7 +392,7 @@ struct changeEncryption {
   async aboutToAppear() {
     this.prepareData = true;
     try {
-      GlobalContext.store("accountInfo", await getOsAccountInfo());
+      GlobalContext.store('accountInfo', await getOsAccountInfo());
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
       if (this.session !== undefined) {
@@ -599,39 +600,46 @@ struct changeEncryption {
                               if (Number(this.hideNamesNumReadOnly) > 0) {
                                 Row() {
                                   if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly['length']) {
-                                    Text(){
+                                    Text() {
                                       Span('+')
                                       Span(this.hideNamesNumReadOnly)
                                     }
                                     .customizeText()
                                   }
-                                  Image($r("app.media.icon_change"))
+                                  Image($r('app.media.icon_change'))
                                     .draggable(false)
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
                                     .fillColor($r('sys.color.ohos_id_color_secondary'))
                                     .rotate({
-                                      angle: !this.ReadOnlyFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      angle: !this.readOnlyFlag ?
+                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
                                 .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                                 .onClick(() => {
-                                  let showValue = toggleShow(this.staffDataArrayReadOnly, this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
+                                  let showValue = toggleShow(
+                                    this.staffDataArrayReadOnly,
+                                    this.showNamesArrReadOnly,
+                                    this.readOnlyFlag,
+                                    this.rowNamesLenReadOnly
+                                  );
                                   this.showNamesArrReadOnly = showValue.showNamesArr as AuthAccount[];
-                                  this.ReadOnlyFlag = showValue.showFlag as boolean;
+                                  this.readOnlyFlag = showValue.showFlag as boolean;
                                 })
                               }
                             }
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
-                            if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                            if (oldValue.width ===
+                              Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
                               let nameValue = calculate(newValue, this.staffDataArrayReadOnly);
                               this.rowNamesLenReadOnly = nameValue.rowNamesLen as number;
                               this.showNamesArrReadOnly = nameValue.showNamesArr as AuthAccount[];
                               this.hideNamesNumReadOnly = nameValue.hideNamesNum as string;
-                              this.ReadOnlyFlag = false;
+                              this.readOnlyFlag = false;
                             }
                           })
                           .margin({
@@ -743,26 +751,32 @@ struct changeEncryption {
                               if (Number(this.hideNamesNumEdit) > 0) {
                                 Row() {
                                   if (this.showNamesArrEdit.length !== this.staffDataArrayEdit['length']) {
-                                    Text(){
+                                    Text() {
                                       Span('+')
                                       Span(this.hideNamesNumEdit)
                                     }
                                     .customizeText()
                                   }
-                                  Image($r("app.media.icon_change"))
+                                  Image($r('app.media.icon_change'))
                                     .draggable(false)
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
                                     .fillColor($r('sys.color.ohos_id_color_secondary'))
                                     .rotate({
-                                      angle: !this.editFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      angle: !this.editFlag ?
+                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
                                 .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                                 .onClick(() => {
-                                  let showValue = toggleShow(this.staffDataArrayEdit, this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
+                                  let showValue = toggleShow(
+                                    this.staffDataArrayEdit,
+                                    this.showNamesArrEdit,
+                                    this.editFlag,
+                                    this.rowNamesLenEdit
+                                  );
                                   this.showNamesArrEdit = showValue.showNamesArr as AuthAccount[];
                                   this.editFlag = showValue.showFlag as boolean;
                                 })
@@ -770,7 +784,8 @@ struct changeEncryption {
                             }
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
-                            if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                            if (oldValue.width ===
+                              Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
                               let nameValue = calculate(newValue, this.staffDataArrayEdit);
                               this.rowNamesLenEdit = nameValue.rowNamesLen as number;
                               this.showNamesArrEdit = nameValue.showNamesArr as AuthAccount[];
@@ -813,7 +828,8 @@ struct changeEncryption {
                     }
                   }
                 }.constraintSize({
-                  maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
+                  maxHeight: this.directionStatus ===
+                    0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
                 })
                 .padding({
                   left: Constants.HEADER_COLUMN_PADDING_LEFT,
@@ -861,7 +877,8 @@ struct changeEncryption {
               .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
               .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
               .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-              .constraintSize({ minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+              .constraintSize({ minWidth: isPC() ?
+                Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
             }
           }
         }

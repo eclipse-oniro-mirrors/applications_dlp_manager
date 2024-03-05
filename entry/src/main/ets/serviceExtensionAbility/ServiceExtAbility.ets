@@ -40,7 +40,7 @@ import Constants from '../common/constant';
 const TAG = '[DLPManager_service_extability]';
 
 class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
-  dlpFileMap: Map<string, dlpPermission.DLPFile | null> = new Map<string, dlpPermission.DLPFile | null>();
+  private dlpFileMap: Map<string, dlpPermission.DLPFile | null> = new Map<string, dlpPermission.DLPFile | null>();
   
   constructor(des: string) {
     super(des);
@@ -66,7 +66,9 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     return null;
   }
 
-  async genDlpFile(inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback): Promise<void> {
+  async genDlpFile(
+    inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback
+  ): Promise<void> {
     console.log(TAG, 'genDlpFile in service +++++++++++');
     let inFile: fs.File;
     let outFile: fs.File;
@@ -75,6 +77,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       inFile = await fs.open(inputUri, fs.OpenMode.READ_WRITE);
     } catch (error) {
       console.error(TAG, 'open', inputUri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
+      callback((error as BusinessError).code);
       return;
     }
     let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
@@ -96,14 +99,14 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     }
 
     let dlpP: dlpPermission.DLPProperty = {
-      "ownerAccount" : dlp.ownerAccount,
-      "ownerAccountID" : dlp.ownerAccountID,
-      "ownerAccountType" : dlp.ownerAccountType,
-      "authUserList" : dlp.authUserList,
-      "contactAccount" : dlp.contactAccount,
-      "offlineAccess" : dlp.offlineAccess,
-      "everyoneAccessList" : dlp.everyoneAccessList,
-      "expireTime": dlp.expireTime
+      'ownerAccount' : dlp.ownerAccount,
+      'ownerAccountID' : dlp.ownerAccountID,
+      'ownerAccountType' : dlp.ownerAccountType,
+      'authUserList' : dlp.authUserList,
+      'contactAccount' : dlp.contactAccount,
+      'offlineAccess' : dlp.offlineAccess,
+      'everyoneAccessList' : dlp.everyoneAccessList,
+      'expireTime': dlp.expireTime
     }
     try {
       let dlpFile = await dlpPermission.generateDLPFile( inFile.fd, outFile.fd, dlpP);
@@ -112,7 +115,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.dlpFileMap.set(outputUri, dlpFile);
         GlobalContext.store('dlpFileMap', this.dlpFileMap);
       } else {
-        console.log(TAG, "map is overwrite", outputUri);
+        console.log(TAG, 'map is overwrite', outputUri);
         let rawDlpFile = this.dlpFileMap.get(outputUri) ?? null;
         if (rawDlpFile !== null) {
           try {
@@ -139,7 +142,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
-    console.log(TAG, "openDlpFile start", srcUri);
+    console.log(TAG, 'openDlpFile start', srcUri);
     let inFile = await fs.open(srcUri, fs.OpenMode.READ_WRITE);
     let dlpFile: dlpPermission.DLPFile;
     let authUserListNew: IAuthUser[] = [];
@@ -174,8 +177,8 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.dlpFileMap.set(srcUri, dlpFile);
         GlobalContext.store('dlpFileMap', this.dlpFileMap);
       }
-    } catch(err) {
-      let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);
+    } catch (err) {
+      let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       callback((err as BusinessError).code, _dlp, (err as BusinessError).message);
     }
   }
@@ -259,14 +262,15 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
     for (let value of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
       for (let linkFile of value) {
-        let _dlp = new IDLDLPProperty("", "", 0, [], "", true, [], 0);
+        let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
         if (linkFile[Constants.FILE_OPEN_HISTORY_ONE] === linkFileName) {
           let authUserListNew: IAuthUser[] = [];
           if (callerToken !== linkFile[Constants.FILE_OPEN_HISTORY_THREE]) {
             console.error(TAG, 'found file, but token invalid', linkFileName);
             callback(-1, _dlp, '');
           } else {
-            let linkFileInfo: Record<number, number | string | dlpPermission.DLPFile> = linkFile[0] as Record<number, number | string | dlpPermission.DLPFile>;
+            let linkFileInfo: Record<number, number | string | dlpPermission.DLPFile> =
+              linkFile[0] as Record<number, number | string | dlpPermission.DLPFile>;
             linkFileInfo['dlpProperty'].authUserList.forEach((item: IAuthUser)=> {
               authUserListNew.push(
                 new IAuthUser(

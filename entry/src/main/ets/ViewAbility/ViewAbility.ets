@@ -47,16 +47,19 @@ import GlobalContext from '../common/GlobalContext';
 const TAG = '[DLPManager_View]';
 const SUFFIX_INDEX = 2;
 
+let defaultDlpProperty: dlpPermission.DLPProperty = {
+  ownerAccount: '',
+  ownerAccountType: GlobalContext.load('domainAccount') as boolean ?
+    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  authUserList: [],
+  contactAccount: '',
+  offlineAccess: true,
+  ownerAccountID: '',
+  everyoneAccessList: []
+}
+
 let defaultDlpFile: dlpPermission.DLPFile = {
-  dlpProperty: {
-    ownerAccount: '',
-    ownerAccountType: (GlobalContext.load('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
-    authUserList: [],
-    contactAccount: '',
-    offlineAccess: true,
-    ownerAccountID: '',
-    everyoneAccessList: []
-  },
+  dlpProperty: defaultDlpProperty,
   recoverDLPFile: async () => {},
   closeDLPFile: async () => {},
   addDLPLinkFile: async () => {},
@@ -68,29 +71,28 @@ let defaultDlpFile: dlpPermission.DLPFile = {
 
 let opening: boolean = false;
 export default class ViewAbility extends ServiceExtensionAbility {
-  dlpFd: number = -1;
-  linkFileName: string = '';
-  linkFilePath: string = '';
-  appIndex: number = -1;
-  tokenId: number = -1;
-  dlpFile: dlpPermission.DLPFile = defaultDlpFile;
-  authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
-  sandboxBundleName: string = '';
-  sandboxAbilityName: string = '';
-  sandboxModuleName: string = '';
-  fileName: string = '';
-  uri: string = '';
-  stat?: fs.Stat;
-  accountInfo?: osAccount.OsAccountInfo;
-  uriInfo: fileUri.FileUri = new fileUri.FileUri('');
-  linkUri: string = '';
-  isCreated: boolean = false;
-  gatheringType: number = dlpPermission.GatheringPolicyType.NON_GATHERING;
-  alreadyOpen: boolean = false;
-  sortByAuthPerm: boolean = false;
-  userId: number = -1;
-  linkFileWriteable: boolean = false;
-  callerBundleName: string = '';
+  private dlpFd: number = -1;
+  private linkFileName: string = '';
+  private linkFilePath: string = '';
+  private appIndex: number = -1;
+  private tokenId: number = -1;
+  private dlpFile: dlpPermission.DLPFile = defaultDlpFile;
+  private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  private sandboxBundleName: string = '';
+  private sandboxAbilityName: string = '';
+  private sandboxModuleName: string = '';
+  private fileName: string = '';
+  private uri: string = '';
+  private stat?: fs.Stat;
+  private accountInfo?: osAccount.OsAccountInfo;
+  private uriInfo: fileUri.FileUri = new fileUri.FileUri('');
+  private linkUri: string = '';
+  private gatheringType: number = dlpPermission.GatheringPolicyType.NON_GATHERING;
+  private alreadyOpen: boolean = false;
+  private sortByAuthPerm: boolean = false;
+  private userId: number = -1;
+  private linkFileWriteable: boolean = false;
+  private callerBundleName: string = '';
 
   async onCreate(want: Want): Promise<void> {
     GlobalContext.store('viewContext', this.context);
@@ -140,17 +142,29 @@ export default class ViewAbility extends ServiceExtensionAbility {
           console.error(TAG, 'dlpFile closeDLPFile failed', (err as BusinessError).code, (err as BusinessError).message);
         }
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-        await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.appIndex, undefined); // 105: DLP_START_SANDBOX_ERROR
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext,
+          {code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+        await this.sendDlpFileOpenFault(
+          Constants.DLP_START_SANDBOX_ERROR,
+          this.sandboxBundleName,
+          this.appIndex,
+          undefined
+        ); // 105: DLP_START_SANDBOX_ERROR
       } else {
-        await this.sendDlpFileOpenEvent(Constants.DLP_START_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex); // 203: DLP_START_SANDBOX_SUCCESS
+        await this.sendDlpFileOpenEvent(
+          Constants.DLP_START_SANDBOX_SUCCESS,
+          this.sandboxBundleName,
+          this.appIndex
+        ); // 203: DLP_START_SANDBOX_SUCCESS
         let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
         if (!sandbox2linkFile.has(this.sandboxBundleName + this.appIndex)) {
-          sandbox2linkFile.set(this.sandboxBundleName + this.appIndex, new Array);
+          sandbox2linkFile.set(this.sandboxBundleName + this.appIndex, []);
         }
         if (!this.alreadyOpen) {
           sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push([this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId, this.uri]);
-          (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri]);
+          (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(
+            this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri]
+          );
           (GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>).set(this.authPerm, [this.sandboxBundleName, this.appIndex]);
           (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId, [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
           (GlobalContext.load('linkSet') as Set<string>).add(this.linkUri);
@@ -170,7 +184,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       bundleName: this.sandboxBundleName,
       abilityName: this.sandboxAbilityName,
       uri: this.linkUri,
-      flags: this.linkFileWriteable ? wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION,
+      flags: this.linkFileWriteable ?
+        wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION,
       parameters: {
         'linkFileName': {
           'name': this.linkFileName
@@ -262,16 +277,19 @@ export default class ViewAbility extends ServiceExtensionAbility {
         hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         fileio.closeSync(this.dlpFd);
-        reject(err); return;
+        reject(err);
+        return;
       }
       hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
       let codeMessage = checkDomainAccountInfo(this.accountInfo);
       if (codeMessage) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject();
         return;
@@ -299,7 +317,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
           hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
           hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
           opening = false;
-          await this.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data); // 103:DLP_FILE_PARSE_ERROR
+          await this.sendDlpFileOpenFault(
+            Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
+          ); // 103:DLP_FILE_PARSE_ERROR
           await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, err);
         } catch (e) {
           console.error(TAG, 'openDLPFile2', this.fileName, 'failed', (e as BusinessError).code, (e as BusinessError).message, e);
@@ -329,7 +349,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
         this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
         return;
@@ -364,7 +385,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
         }
         if (!this.alreadyOpen && !this.sortByAuthPerm) {
           hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
-          let appInfo = await dlpPermission.installDLPSandbox(this.sandboxBundleName, this.authPerm, this.userId, this.uri);
+          let appInfo: dlpPermission.DLPSandboxInfo = await dlpPermission.installDLPSandbox(
+            this.sandboxBundleName, this.authPerm, this.userId, this.uri
+          );
           this.appIndex = appInfo.appIndex;
           this.tokenId = appInfo.tokenID;
         }
@@ -373,19 +396,25 @@ export default class ViewAbility extends ServiceExtensionAbility {
         hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await this.sendDlpFileOpenFault(Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data); // 104:DLP_INSTALL_SANDBOX_ERROR
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_INSIDE_ERROR }as BusinessError);
+        await this.sendDlpFileOpenFault(
+          Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
+        ); // 104:DLP_INSTALL_SANDBOX_ERROR
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
-        reject(); return;
+        reject();
+        return;
       }
       GlobalContext.store('hiSandboxIndex', this.appIndex);
       hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
-      await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex); // 202: DLP_INSTALL_SANDBOX_SUCCESS
+      // 202: DLP_INSTALL_SANDBOX_SUCCESS
+      await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex);
       if (!this.alreadyOpen) {
         try {
           await this.getAlreadyOpen(startId);
         } catch {
-          reject(); return;
+          reject();
+          return;
         }
       }
       resolve();
@@ -400,19 +429,22 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (splitNames.length <= SUFFIX_INDEX) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
-        reject(); return;
+        reject();
+        return;
       }
       let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
       this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + this.appIndex +
-       '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
-       secondarySuffix + '.dlp.link';
+        '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
+        secondarySuffix + '.dlp.link';
       hiTraceMeter.startTrace('DlpAddLinkFileJs', startId);
       try {
         await this.getAddDLPLinkFile(startId);
       } catch {
-        reject(); return;
+        reject();
+        return;
       }
       hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
       try {
@@ -469,7 +501,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (error) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR } as BusinessError);
         await this.closeFile();
         console.error(TAG, 'open', this.uri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
         reject();
@@ -491,7 +524,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
     GlobalContext.store('hiSandboxPkgName', this.callerBundleName);
     if ((GlobalContext.load('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
-      await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, { code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
+      await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
       return;
     }
     if (opening) {
@@ -530,22 +564,15 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     try {
       await this.getAccountAndOpenDLPFile(startId);
-    } catch {
-      return;
-    }
-    try {
       await this.getPolicyAndInstallSandbox(startId);
-    } catch {
-      return;
-    }
-    try {
       await this.getUriInfo(startId);
     } catch {
       return;
     }
     // uri permission just for domainAccount
     if (GlobalContext.load('domainAccount') as boolean) {
-      let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION | wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
+      let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
+        wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
       let targetBundleName = this.sandboxBundleName;
       uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
         console.info(TAG, 'grandUriPermission result:', JSON.stringify(result));
