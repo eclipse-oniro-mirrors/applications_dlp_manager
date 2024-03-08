@@ -21,7 +21,7 @@ import emitter from '@ohos.events.emitter';
 import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
-import fileUri from "@ohos.file.fileuri";
+import fileUri from '@ohos.file.fileuri';
 import { BusinessError, Callback } from '@ohos.base'
 import deviceInfo from '@ohos.deviceInfo';
 import Want from '@ohos.app.ability.Want';
@@ -33,7 +33,7 @@ import hiSysEvent from '@ohos.hiSysEvent';
 import display from '@ohos.display';
 import StartOptions from '@ohos.app.ability.StartOptions';
 
-let TAG = "[DLPManager_Utils]";
+let TAG = '[DLPManager_Utils]';
 
 interface AuthAccount {
   authAccount: string;
@@ -63,7 +63,7 @@ function getFileUriByPath(filePath: string): string {
     return uri;
   } catch (err) {
     console.info(TAG, 'getUriFromPath error:', JSON.stringify(err));
-    return "";
+    return '';
   }
 }
 
@@ -147,7 +147,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_USER_NO_PERMISSION:
       return {
         'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
-        'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.message.split(", contact:")?.[1])
+        'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.message.split(', contact:')?.[1])
       } as Record<string, Resource>;
     case Constants.ERR_JS_ACCOUNT_NOT_FOUND:
     case Constants.ERR_JS_GET_ACCOUNT_ERROR:
@@ -182,7 +182,7 @@ function getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMes
     case Constants.ERR_JS_FILE_EXPIRATION:
       return {
         'title': $r('app.string.Permission_has_expired'),
-        'msg': $r('app.string.Permission_has_expired_description', err.message.split(", contact:")?.[1])
+        'msg': $r('app.string.Permission_has_expired_description', err.message.split(', contact:')?.[1])
       } as Record<string, Resource>;
     case Constants.ERR_JS_OFFLINE:
       return {
@@ -490,10 +490,10 @@ async function getFileSizeByUri(uri: string): Promise<number> {
 
   try {
     let stat = await fs.stat(inFile.fd);
-    console.info(TAG, "get file info succeed, the size of file is " + stat.size);
+    console.info(TAG, 'get file info succeed, the size of file is ' + stat.size);
     return stat.size;
   } catch (err) {
-    console.info(TAG, "get file info failed with error message: " + err.message + ", error code: " + err.code);
+    console.info(TAG, 'get file info failed with error message: ' + err.message + ', error code: ' + err.code);
     return -1;
   }
 }

@@ -47,8 +47,8 @@ let direction: number = -1;
 let colorMode: number = -1;
 
 export default class MainAbility extends UIExtensionAbility {
-  authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
-  callerToken:number = 0;
+  private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  private callerToken:number = 0;
   private homeFeature!: HomeFeature;
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
@@ -277,7 +277,8 @@ export default class MainAbility extends UIExtensionAbility {
     if (requestIsFromSandBox) {
       let abilityWant: Want = GlobalContext.load('abilityWant') as Want;
       const linkFileName: string = (abilityWant.parameters?.linkFileName as Record<string, string>)?.name;
-      this.homeFeature.sandBoxLinkFileHome(linkFileName, this.callerToken, (err: number, data: dlpPermission.DLPProperty, uri: string) => {
+      this.homeFeature.sandBoxLinkFileHome(linkFileName, this.callerToken,
+        (err: number, data: dlpPermission.DLPProperty, uri: string) => {
         if (err !== 0) {
           return;
         }
@@ -325,7 +326,7 @@ export default class MainAbility extends UIExtensionAbility {
         } catch {
           return;
         }
-        let dlpFileName: string = ((GlobalContext.load('abilityWant')as Want).parameters?.fileName as Record<string, string>)?.name;
+        let dlpFileName: string = ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
         GlobalContext.store('dlpFileName', dlpFileName);
         let callerAppId: string;
         try {
@@ -336,7 +337,8 @@ export default class MainAbility extends UIExtensionAbility {
           console.log(TAG, 'get AppId failed');
           return;
         }
-        this.homeFeature.openDlpFileHome(uri, callerAppId, async (err: number, data: dlpPermission.DLPProperty, msg: string) => {
+        this.homeFeature.openDlpFileHome(uri, callerAppId,
+          async (err: number, data: dlpPermission.DLPProperty, msg: string) => {
           if (err !== 0) {
             let ansErr: BusinessError<void> = {
               code: err,

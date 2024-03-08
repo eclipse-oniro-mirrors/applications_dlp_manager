@@ -22,8 +22,8 @@ import { BusinessError } from '@ohos.base';
 import GlobalContext from './GlobalContext';
 import I18n from '@ohos.i18n';
 
-const TAG: string = "DLPManager_ATC";
-const SYS_LANGUAGE: string = "zh-Hans";
+const TAG: string = 'DLPManager_ATC';
+const SYS_LANGUAGE: string = 'zh-Hans';
 
 export interface AccountTips {
   key: string;
@@ -35,10 +35,10 @@ export interface AccountTips {
 }
 
 export class AccountTipsConfig {
-  public static configTipsArray: Array<AccountTips> = new Array<AccountTips>();
-  public static showContentKey: string = "";
-  private static ccmConfigPath: string = "etc/dlp_manager/account_tips.json";
-  private static configName: string = "account_tips.json";
+  public static configTipsArray: AccountTips[] = [];
+  public static showContentKey: string = '';
+  private static ccmConfigPath: string = 'etc/dlp_manager/account_tips.json';
+  private static configName: string = 'account_tips.json';
 
   public static getConfigTips(): Promise<Array<AccountTips>> {
     return new Promise((resolve, reject) => {
@@ -52,7 +52,7 @@ export class AccountTipsConfig {
             reject(err);
           });
         } else {
-          let accountTipsArray: Array<AccountTips> = JSON.parse(JSON.stringify(AccountTipsConfig.configTipsArray));
+          let accountTipsArray: AccountTips[] = JSON.parse(JSON.stringify(AccountTipsConfig.configTipsArray));
           resolve(accountTipsArray);
         }
       } catch (error) {
@@ -114,9 +114,9 @@ export class AccountTipsConfig {
           configStr = textDecoder.decodeWithStream(contentArray, { stream: false });
         }
 
-        let accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
+        let accountTipsArray: AccountTips[] = [];
         if (configStr) {
-          let jsonArray: Array<Object> = JSON.parse(configStr);
+          let jsonArray: Object[] = JSON.parse(configStr);
           for (let jsonObj of jsonArray) {
             let accountTips: AccountTips = jsonObj as AccountTips;
             if (accountTips.isTextContent) {

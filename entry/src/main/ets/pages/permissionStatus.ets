@@ -21,22 +21,22 @@ import { directionStatus, isPC } from '../common/utils';
 import common from '@ohos.app.ability.common';
 import emitter from '@ohos.events.emitter';
 
-const TAG = "[DLPManager_PermStat]";
+const TAG = '[DLPManager_PermStat]';
 
 let abilityResult: ability.AbilityResult = {
-  "resultCode": 0,
-  "want": {}
+  'resultCode': 0,
+  'want': {}
 };
 
-class Content_ {
-  label: Resource | undefined = undefined
-  value: boolean = false
-  date?: boolean
+class StatusContent {
+  public label: Resource | undefined = undefined
+  public value: boolean = false
+  public date?: boolean
 }
 
 class TitleContent {
-  title: Resource | undefined = undefined
-  content: Content_[] = []
+  public title: Resource | undefined = undefined
+  public content: StatusContent[] = []
 }
 
 let storage = LocalStorage.getShared();
@@ -239,9 +239,10 @@ struct PermissionStatus {
                   .margin({ bottom: Constants.DU_LINE_MARGIN_TOP2 })
 
                   List() {
-                    ForEach(this.authPerm === Constants.FOOTER_OPACITY_ONE ? this.array1 : this.array2, (item: TitleContent) => {
+                    ForEach(this.authPerm === Constants.FOOTER_OPACITY_ONE ?
+                      this.array1 : this.array2, (item: TitleContent) => {
                       ListItemGroup({ header: this.itemHead(item.title) }) {
-                        ForEach(item.content, (item: Content_) => {
+                        ForEach(item.content, (item: StatusContent) => {
                           ListItem() {
                             Row() {
                               Text(item.label)
@@ -267,7 +268,7 @@ struct PermissionStatus {
                             }
                             .width(Constants.HEADER_TEXT_WIDTH)
                           }
-                        }, (item: Content_) => JSON.stringify(item))
+                        }, (item: StatusContent) => JSON.stringify(item))
                       }
                       .divider({
                         strokeWidth: Constants.FOOTER_OPACITY_ONE,
@@ -277,7 +278,8 @@ struct PermissionStatus {
                   }
                 }
               }.constraintSize({
-                maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
+                maxHeight: this.directionStatus ===
+                  0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
               })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
@@ -333,7 +335,8 @@ struct PermissionStatus {
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
             .shadow(ShadowStyle.OUTER_DEFAULT_SM)
-            .constraintSize({ minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+            .constraintSize({ minWidth: isPC() ?
+              Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
           }
         }
       }

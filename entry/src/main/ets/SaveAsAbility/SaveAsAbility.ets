@@ -16,7 +16,6 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import datafile from '@ohos.file.fileAccess';
 import picker from '@ohos.file.picker';
-import StartOptions from '@ohos.app.ability.StartOptions';
 import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
 import { Permissions } from '@ohos.abilityAccessCtrl';
 import fileAccess from '@ohos.file.fileAccess';
@@ -26,7 +25,6 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import window from '@ohos.window';
 import { BusinessError } from '@ohos.base';
 import ability from '@ohos.ability.ability';
-import * as ns from '@ohos.app.ability.UIAbility';
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
@@ -34,45 +32,39 @@ import { startAlertAbility, getFileUriByPath, getFileFd, getAppId, isValidPath }
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
-import File from '@system.file';
 
 const TAG = '[DLPManager_SaveAs]';
-let permissionList: Array<Permissions> = [
+let permissionList: Permissions[] = [
   'ohos.permission.READ_MEDIA',
   'ohos.permission.WRITE_MEDIA',
   'ohos.permission.FILE_ACCESS_MANAGER'
 ];
 
-class option_ {
-  offset: number = 0
-  length: number = 0
+class ChangeOption {
+  public offset: number = 0
+  public length: number = 0
+}
+
+let defaultDlpProperty: dlpPermission.DLPProperty = {
+  ownerAccount: '',
+  ownerAccountType: GlobalContext.load('domainAccount') as boolean ?
+    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  authUserList: [],
+  contactAccount: '',
+  offlineAccess: true,
+  ownerAccountID: '',
+  everyoneAccessList: []
 }
 
 let defaultDlpFile: dlpPermission.DLPFile = {
-  dlpProperty: {
-    ownerAccount: '',
-    ownerAccountType: GlobalContext.load('domainAccount') as Boolean
-      ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
-    authUserList: [],
-    contactAccount: '',
-    offlineAccess: true,
-    ownerAccountID: '',
-    everyoneAccessList: []
-  },
-  recoverDLPFile: async () => {
-  },
-  closeDLPFile: async () => {
-  },
-  addDLPLinkFile: async () => {
-  },
-  stopFuseLink: async () => {
-  },
-  resumeFuseLink: async () => {
-  },
-  replaceDLPLinkFile: async () => {
-  },
-  deleteDLPLinkFile: async () => {
-  }
+  dlpProperty: defaultDlpProperty,
+  recoverDLPFile: async () => {},
+  closeDLPFile: async () => {},
+  addDLPLinkFile: async () => {},
+  stopFuseLink: async () => {},
+  resumeFuseLink: async () => {},
+  replaceDLPLinkFile: async () => {},
+  deleteDLPLinkFile: async () => {}
 };
 
 const SUFFIX_INDEX = 2;
@@ -90,19 +82,19 @@ const ACTION: Record<string, string> = {
   'SAVE_ACTION_MODAL': 'ohos.want.action.CREATE_FILE_SERVICE',
 };
 
-const ErrCode: Record<string, number> = {
+const errCode: Record<string, number> = {
   'INVALID_ARGS': 13900020,
   'RESULT_ERROR': 13900042,
   'NAME_TOO_LONG': 13900030,
 };
 
 const ERRCODE_MAP = new Map([
-  [ErrCode.INVALID_ARGS, 'Invalid argument'],
-  [ErrCode.RESULT_ERROR, 'Unknown error'],
-  [ErrCode.NAME_TOO_LONG, 'File name too long'],
+  [errCode.INVALID_ARGS, 'Invalid argument'],
+  [errCode.RESULT_ERROR, 'Unknown error'],
+  [errCode.NAME_TOO_LONG, 'File name too long'],
 ]);
 export default class SaveAsAbility extends UIAbility {
-  result: ability.AbilityResult = {
+  private result: ability.AbilityResult = {
     resultCode: -1,
     want: {
       bundleName: '',
@@ -113,15 +105,15 @@ export default class SaveAsAbility extends UIAbility {
       }
     }
   };
-  dlpFile: dlpPermission.DLPFile = defaultDlpFile;
-  sandboxBundleName: string = '';
-  resultUri: string = '';
-  tokenId: number = -1;
-  requestCode: number = -1;
-  fileName: string = '';
-  suffix: string = '';
-  authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
-  isOK: boolean = true; // use with startAlertAbility
+  private dlpFile: dlpPermission.DLPFile = defaultDlpFile;
+  private sandboxBundleName: string = '';
+  private resultUri: string = '';
+  private tokenId: number = -1;
+  private requestCode: number = -1;
+  private fileName: string = '';
+  private suffix: string = '';
+  private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  private isOK: boolean = true; // use with startAlertAbility
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     console.info(TAG, 'onCreate');
@@ -177,7 +169,7 @@ export default class SaveAsAbility extends UIAbility {
 
   async parseParams(): Promise<boolean | void> {
     if (GlobalContext.load('abilityWant') === undefined ||
-    (GlobalContext.load('abilityWant') as Want).parameters === undefined) {
+      (GlobalContext.load('abilityWant') as Want).parameters === undefined) {
       console.error(TAG, 'invalid abilityWant');
       return false;
     }
@@ -199,13 +191,13 @@ export default class SaveAsAbility extends UIAbility {
     this.authPerm = (GlobalContext.load('token2File') as
     Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
       .get(this.tokenId)?.[3] as dlpPermission.DLPFileAccess;
-    let DLPFileInfo = (GlobalContext.load('token2File') as
+    let dlpFileInfo = (GlobalContext.load('token2File') as
     Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
       .get(this.tokenId)?.[0] as dlpPermission.DLPFile;
-    let ownerAccount = DLPFileInfo.dlpProperty.ownerAccount;
+    let ownerAccount = dlpFileInfo.dlpProperty.ownerAccount as string;
 
-    if (this.authPerm != dlpPermission.DLPFileAccess.CONTENT_EDIT
-    && this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
+    if (this.authPerm != dlpPermission.DLPFileAccess.CONTENT_EDIT &&
+      this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
       console.error(TAG, 'invalid authPerm ', this.authPerm);
       this.isOK = false;
       AppStorage.setOrCreate('ownerAccount', ownerAccount);
@@ -264,11 +256,11 @@ export default class SaveAsAbility extends UIAbility {
   async copyDlpHead(srcFd: number, dstFd: number): Promise<boolean> {
     let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
     let appDir = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/';
-    let filePath = appDir + "saveAs" + random;
-    let dirPath = appDir + "saveAsUnzip" + random;
-    let encFile = dirPath + "/encrypted_data";
-    let zipPath = appDir + "saveAsZip" + random;
-    let zipName = zipPath + ".zip";
+    let filePath = appDir + 'saveAs' + random;
+    let dirPath = appDir + 'saveAsUnzip' + random;
+    let encFile = dirPath + '/encrypted_data';
+    let zipPath = appDir + 'saveAsZip' + random;
+    let zipName = zipPath + '.zip';
     let zipFlag = false;
     let retVal = false;
 
@@ -276,7 +268,7 @@ export default class SaveAsAbility extends UIAbility {
     let zf2:fs.File | undefined = undefined;
     try {
       let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
-      let option: option_ = {
+      let option: ChangeOption = {
         offset: 0,
         length: HEAD_LENGTH_IN_BYTE
       };
@@ -327,9 +319,9 @@ export default class SaveAsAbility extends UIAbility {
     }
 
     if (zipFlag) {
-      this.deleteFile(dirPath + "/encrypted_data");
-      this.deleteFile(dirPath + "/dlp_general_info");
-      this.deleteFile(dirPath + "/dlp_cert");
+      this.deleteFile(dirPath + '/encrypted_data');
+      this.deleteFile(dirPath + '/dlp_general_info');
+      this.deleteFile(dirPath + '/dlp_cert');
       this.rmDir(dirPath);
       this.deleteFile(filePath);
       this.deleteFile(zipName);
@@ -382,7 +374,7 @@ export default class SaveAsAbility extends UIAbility {
     } else if ((args.resultCode !== undefined && args.resultCode === -1)) {
       saveResult.data = [];
     } else {
-      saveResult.error = this.getErr(ErrCode.RESULT_ERROR) as BusinessError;
+      saveResult.error = this.getErr(errCode.RESULT_ERROR) as BusinessError;
     }
 
     console.log(TAG, '[picker] Save saveResult: ' + JSON.stringify(saveResult));
@@ -392,7 +384,7 @@ export default class SaveAsAbility extends UIAbility {
   getErr(errCode: number) {
     return {code: errCode, message: ERRCODE_MAP.get(errCode)} as BusinessError;
   }
-  async documentPickerSave(...args: Object[]): Promise<BusinessError | string[] | undefined>  {
+  async documentPickerSave(...args: Object[]): Promise<BusinessError | string[] | undefined> {
     let context = GlobalContext.load('context') as common.UIAbilityContext;
     let config: Record<string, string | Record<string, Object>>;
     let result: ability.AbilityResult;
@@ -434,23 +426,21 @@ export default class SaveAsAbility extends UIAbility {
     if (!ret) {
       return;
     }
-    let DocumentSaveOptions = new picker.DocumentSaveOptions();
+    let documentSaveOptions = new picker.DocumentSaveOptions();
     displayName = this.fileName;
-    DocumentSaveOptions.newFileNames = [displayName];
+    documentSaveOptions.newFileNames = [displayName];
     let documentPicker = new picker.DocumentViewPicker();
     let dstFd: number;
     let file: fs.File | undefined;
-
     try {
-
-      let saveRes: BusinessError | string[] | undefined = await this.documentPickerSave(DocumentSaveOptions);
+      let saveRes: BusinessError | string[] | undefined = await this.documentPickerSave(documentSaveOptions);
       if (saveRes == undefined || (saveRes instanceof Array && saveRes.length == 0)) {
         console.error(TAG, 'fail to get uri');
         return;
       }
 
       uri = saveRes[0]
-      if (!isValidPath(uri)){
+      if (!isValidPath(uri)) {
         console.error(TAG, 'invalid uri');
         return;
       }
@@ -475,14 +465,14 @@ export default class SaveAsAbility extends UIAbility {
         return;
       }
 
-      let token2File_value: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]
-        = (GlobalContext
+      let token2FileValue: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[] =
+        (GlobalContext
         .load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
         .get(this.tokenId) as (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[];
-      this.dlpFile = token2File_value[0] as dlpPermission.DLPFile;
-      this.sandboxBundleName = token2File_value[1] as string;
-      let appId: number = token2File_value[2] as number;
-      let srcUri: string = token2File_value[4] as string;
+      this.dlpFile = token2FileValue[0] as dlpPermission.DLPFile;
+      this.sandboxBundleName = token2FileValue[1] as string;
+      let appId: number = token2FileValue[2] as number;
+      let srcUri: string = token2FileValue[4] as string;
 
       let srcFd = getFileFd(srcUri);
       let copyRes = await this.copyDlpHead(srcFd, dstFd);
@@ -505,8 +495,8 @@ export default class SaveAsAbility extends UIAbility {
       try {
         let callerBundleName =
           (GlobalContext.load('abilityWant') as Want).parameters?.['ohos.aafwk.param.callerBundleName'] as string;
-          callerAppId = await getAppId(callerBundleName);
-          console.info(TAG, 'get AppId', callerAppId);
+        callerAppId = await getAppId(callerBundleName);
+        console.info(TAG, 'get AppId', callerAppId);
       } catch {
         return;
       }
@@ -531,7 +521,7 @@ export default class SaveAsAbility extends UIAbility {
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getMilliseconds()).getTime();
 
       let linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + appId +
-      '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
+        '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
       this.suffix + '.dlp.link';
 
       try {
@@ -560,17 +550,17 @@ export default class SaveAsAbility extends UIAbility {
 
       let linkFilePath = Constants.FUSE_PATH + linkFileName;
       let linkUri = getFileUriByPath(linkFilePath);
-      (GlobalContext.load("token2File") as Map<number, Object[]>)
+      (GlobalContext.load('token2File') as Map<number, Object[]>)
         .set(this.tokenId, [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri]);
-      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]>
-        = GlobalContext
-        .load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
+        GlobalContext
+          .load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       sandbox2linkFile.get(this.sandboxBundleName + appId)?.push([newDlpFile, linkFileName, dstFd, this.tokenId]);
 
-      (GlobalContext.load("fileOpenHistory") as Map<string, Object[]>)
+      (GlobalContext.load('fileOpenHistory') as Map<string, Object[]>)
         .set(uri, [this.sandboxBundleName, appId, linkFileName, linkUri]);
 
-      (GlobalContext.load("linkSet") as Set<string>).add(linkUri);
+      (GlobalContext.load('linkSet') as Set<string>).add(linkUri);
 
       this.resultUri = getFileUriByPath(linkFilePath);
 
