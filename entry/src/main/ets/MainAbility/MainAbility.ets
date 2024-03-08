@@ -46,7 +46,7 @@ import common from '@ohos.app.ability.common';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 
 const TAG = '[DLPManager_Main]';
-let permissionList: Array<Permissions> = [
+let permissionList: Permissions[] = [
   'ohos.permission.READ_MEDIA',
   'ohos.permission.WRITE_MEDIA',
   'ohos.permission.FILE_ACCESS_MANAGER'
@@ -55,8 +55,8 @@ let permissionList: Array<Permissions> = [
 let direction: number = -1;
 
 export default class MainAbility extends UIAbility {
-  authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
-  callerToken:number = 0;
+  private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  private callerToken:number = 0;
   private homeFeature!: HomeFeature;
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
@@ -242,7 +242,8 @@ export default class MainAbility extends UIAbility {
     if (requestIsFromSandBox) {
       let abilityWant: Want = GlobalContext.load('abilityWant') as Want;
       const linkFileName: string = (abilityWant.parameters?.linkFileName as Record<string, string>)?.name;
-      this.homeFeature.sandBoxLinkFileHome(linkFileName, this.callerToken, (err: number, data: dlpPermission.DLPProperty, uri: string) => {
+      this.homeFeature.sandBoxLinkFileHome(linkFileName, this.callerToken,
+        (err: number, data: dlpPermission.DLPProperty, uri: string) => {
         if (err !== 0) {
           return;
         }
@@ -299,7 +300,8 @@ export default class MainAbility extends UIAbility {
           console.log(TAG, 'get AppId failed');
           return;
         }
-        this.homeFeature.openDlpFileHome(uri, callerAppId, async (err: number, data: dlpPermission.DLPProperty, msg: string) => {
+        this.homeFeature.openDlpFileHome(uri, callerAppId,
+          async (err: number, data: dlpPermission.DLPProperty, msg: string) => {
           if (err !== 0) {
             let ansErr: BusinessError<void> = {
               code: err,

@@ -68,7 +68,8 @@ struct EncryptingPanel {
           .height(Constants.ENCRYPTION_LOADING_HEIGHT)
           .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
           .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-          .constraintSize({ minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+          .constraintSize({ minWidth: isPC() ?
+            Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
         }
       }
     }

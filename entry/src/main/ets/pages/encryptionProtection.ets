@@ -56,13 +56,14 @@ import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
 import HomeFeature from '../feature/HomeFeature';
 import emitter from '@ohos.events.emitter';
 
-const TAG = "[DLPManager_Encrypt]"
+const TAG = '[DLPManager_Encrypt]'
 let abilityResult: ability.AbilityResult = {
-  "resultCode": 0,
-  "want": {}
+  'resultCode': 0,
+  'want': {}
 };
 
-@Extend(Text) function TimeTextStyle() {
+@Extend(Text)
+function timeTextStyle() {
   .fontSize($r('sys.float.ohos_id_text_size_body1'))
   .fontWeight(FontWeight.Regular)
   .height(Constants.ENCRYPTION_PROTECTION_TIME_MENU_HEIGHT)
@@ -174,7 +175,7 @@ struct DlpDialog {
           this.selectedIndex = 0;
           this.colorTime1 = $r('sys.color.ohos_id_color_dialog_bg');
         })
-        .TimeTextStyle()
+        .timeTextStyle()
         .backgroundColor(this.colorTime1)
         .onHover((isHover?: boolean) => {
           if (isHover) {
@@ -185,7 +186,7 @@ struct DlpDialog {
         })
       Divider().width(Constants.ENCRYPTION_PROTECTION_TIME_MENU_DIVIDER_LENGTH)
       Text($r('app.string.Appointed_day'))
-        .TimeTextStyle()
+        .timeTextStyle()
         .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
         .backgroundColor(this.colorTime)
         .onHover((isHover?: boolean) => {
@@ -394,14 +395,14 @@ struct DlpDialog {
       let srcFileSize: number = await getFileSizeByUri(srcFileUri);
       GlobalContext.store('hiFileSize', srcFileSize);
       GlobalContext.store('hiFileType', srcFileMsg.fileType);
-      let DocumentSaveOptions = new picker.DocumentSaveOptions();
+      let documentSaveOptions = new picker.DocumentSaveOptions();
       displayName = displayName + '.dlp';
-      DocumentSaveOptions.newFileNames = [decodeURI(srcFileMsg.fileName)];
-      DocumentSaveOptions.fileSuffixChoices = [srcFileMsg.fileType + '.dlp'];
-      DocumentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
+      documentSaveOptions.newFileNames = [decodeURI(srcFileMsg.fileName)];
+      documentSaveOptions.fileSuffixChoices = [srcFileMsg.fileType + '.dlp'];
+      documentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
         srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length);
       let documentPicker = new picker.DocumentViewPicker();
-      documentPicker.save(DocumentSaveOptions).then(async (saveRes) => {
+      documentPicker.save(documentSaveOptions).then(async (saveRes) => {
         if (saveRes === undefined || saveRes.length === 0) {
           console.error(TAG, 'fail to get uri');
           this.processing = false;
@@ -475,7 +476,9 @@ struct DlpDialog {
     let property: dlpPermission.DLPProperty = GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
     this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
     this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
-    this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>!this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount));
+    this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) => 
+      !this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount)
+    );
     if (GlobalContext.load('domainAccount') as boolean) {
       property.ownerAccount = accountInfo.domainInfo.accountName;
       property.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
@@ -488,13 +491,13 @@ struct DlpDialog {
     property.offlineAccess = this.selectedIndex === 0 ? true : false;
     property.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(this.validity).getTime();
     if (this.selectedPermissionTypeEdit.data === 'all') {
-      property.everyoneAccessList = [ dlpPermission.DLPFileAccess.CONTENT_EDIT ];
+      property.everyoneAccessList = [dlpPermission.DLPFileAccess.CONTENT_EDIT];
       this.staffDataArrayReadOnly = [];
       this.staffDataArrayEdit = [];
     } else {
       let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all';
       if (isReadyOnlyAll) {
-        property.everyoneAccessList = [ dlpPermission.DLPFileAccess.READ_ONLY ];
+        property.everyoneAccessList = [dlpPermission.DLPFileAccess.READ_ONLY];
       }
       if (this.selectedPermissionTypeReadOnly.data === 'all') {
         this.staffDataArrayReadOnly = []
@@ -571,9 +574,10 @@ struct DlpDialog {
     this.permissionDict.forEach(async (item, index) => {
       this.permissionDict[index].value = $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getStringValue(item.value.id))
     })
-    let readOnlyData: dlpPermission.AuthUser[] = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
+    let readOnlyData: dlpPermission.AuthUser[] =
+      defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 1;
-      }) ?? []
+    }) ?? []
     let editData: dlpPermission.AuthUser[] = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 2;
     }) ?? []
@@ -602,7 +606,7 @@ struct DlpDialog {
 
   async checkAccount() {
     try {
-      GlobalContext.store("accountInfo", await getOsAccountInfo());
+      GlobalContext.store('accountInfo', await getOsAccountInfo());
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
       if (this.session !== undefined) {
@@ -660,7 +664,7 @@ struct DlpDialog {
       }
     }
 
-    let isDlpSuffix: boolean = this.srcFileName.endsWith(".dlp");
+    let isDlpSuffix: boolean = this.srcFileName.endsWith('.dlp');
     if (!isDlpSuffix) {
       await this.prepareDlpProperty();
       this.isDlpFile = false;
@@ -829,7 +833,10 @@ struct DlpDialog {
                       .fillColor($r('sys.color.ohos_id_color_spinner_icon'))
                   }
                   .height(Constants.VALIDITY_IMAGE_HEIGHT)
-                  .padding({ right: Constants.VALIDITY_IMAGE_PADDING_RIGHT, left: Constants.VALIDITY_IMAGE_PADDING_LEFT })
+                  .padding({
+                    right: Constants.VALIDITY_IMAGE_PADDING_RIGHT,
+                    left: Constants.VALIDITY_IMAGE_PADDING_LEFT
+                  })
                   .bindMenu(this.MenuBuilder, {placement: Placement.BottomRight})
                 } else {
                   Select([{ value: $r('app.string.permanently') }, { value: $r('app.string.Appointed_day') }])
@@ -860,7 +867,8 @@ struct DlpDialog {
 
             }
           }.constraintSize({
-            maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
+            maxHeight: this.directionStatus ===
+              0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
           })
           .padding({
             left: Constants.HEADER_COLUMN_PADDING_LEFT,
@@ -943,7 +951,8 @@ struct DlpDialog {
         .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
         .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
         .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-        .constraintSize({ minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+        .constraintSize({ minWidth: isPC() ?
+          Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
       }
     }
   }

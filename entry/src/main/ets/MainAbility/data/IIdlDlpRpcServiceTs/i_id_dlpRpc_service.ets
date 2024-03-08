@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import IDLDLPProperty from "../../../serviceExtensionAbility/sequenceable/dlpClass";
+import IDLDLPProperty from '../../../serviceExtensionAbility/sequenceable/dlpClass';
 import rpc from '@ohos.rpc';
 
 export default interface IIdDlpRpcService {

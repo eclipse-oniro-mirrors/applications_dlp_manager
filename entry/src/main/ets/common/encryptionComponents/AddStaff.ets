@@ -28,9 +28,10 @@ interface Staff {
   textContent?: string;
 }
 
-const TAG: string = "[DLPManager_AddStaff]";
+const TAG: string = '[DLPManager_AddStaff]';
 
-@Extend(Text) function inputMessageText() {
+@Extend(Text)
+function inputMessageText() {
   .fontSize($r('sys.float.ohos_fa_text_size_body'))
   .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
   .fontColor($r('sys.color.ohos_id_color_handup'))
@@ -38,7 +39,9 @@ const TAG: string = "[DLPManager_AddStaff]";
   .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
   .textAlign(TextAlign.Start)
 }
-@Extend(Text) function TipsTextStyle(){
+
+@Extend(Text)
+function tipsTextStyle() {
   .fontSize($r('sys.float.ohos_id_text_size_body2'))
   .fontColor($r('sys.color.ohos_id_color_primary_dark'))
   .textOverflow({
@@ -61,13 +64,14 @@ struct AddStaff {
   @State accountNameTips: string = '';
   @State handlePopupTips: boolean = false;
   @State textContent: string = '';
-  @State accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
+  @State accountTipsArray: AccountTips[] = [];
   @Link staffArray: Staff[];
   @State focusFlag: boolean = false;
   @Prop isDisable: boolean = false;
   dlpAlertDialog?: CustomDialogController;
 
-  @Builder MenuBuilder(index: number) {
+  @Builder
+  MenuBuilder(index: number) {
     Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
       Text($r('app.string.delete_account'))
         .fontSize($r('sys.float.ohos_id_text_size_body1'))
@@ -80,25 +84,26 @@ struct AddStaff {
     }.width(Constants.ENCRYPTION_ADD_STAFF_MENU_WIDTH)
   }
 
-  @Builder popupBuilderTips() {
+  @Builder
+  popupBuilderTips() {
     Column() {
-      if(GlobalContext.load('domainAccount')){
+      if (GlobalContext.load('domainAccount')) {
         ForEach(this.accountTipsArray, (item: AccountTips) => {
           if (item.isShow) {
             Row() {
               if (AccountTipsConfig.isSysLanguage()) {
-                Text(item.description?.replace('%s', item.value)).TipsTextStyle()
+                Text(item.description?.replace('%s', item.value)).tipsTextStyle()
               } else {
-                Text(item.descriptionEn?.replace('%s', item.value)).TipsTextStyle()
+                Text(item.descriptionEn?.replace('%s', item.value)).tipsTextStyle()
               }
             }.height(Constants.TIPS_HEIGHT_ITEM)
           }
         }, (item: AccountTips) => item.key)
-      }else{
+      } else {
         Row() {
           Text($r('app.string.encrypt_employee_id', this.accountNameTips))
             .wordBreak(WordBreak.BREAK_ALL)
-            .TipsTextStyle()
+            .tipsTextStyle()
         }
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
       }
@@ -133,7 +138,7 @@ struct AddStaff {
     this.dlpAlertDialog.open();
   }
 
-  async aboutToAppear(){
+  async aboutToAppear() {
     if (GlobalContext.load('domainAccount')) {
       this.accountTipsArray = await AccountTipsConfig.getConfigTips();
       this.textContent = AccountTipsConfig.showContentKey;
@@ -219,7 +224,8 @@ struct AddStaff {
                   }
                 })
                 .bindContextMenu(this.MenuBuilder(index!), isPC() ? ResponseType.RightClick : ResponseType.LongPress)
-                .width(item.authAccount === item.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
+                .width(item.authAccount === item.textContent ?
+                 Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
                 .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
             }
           },
@@ -228,8 +234,8 @@ struct AddStaff {
         TextInput({
           text: this.inputId,
           placeholder: !this.staffArray.length ?
-            ((GlobalContext.load('domainAccount') as boolean) 
-              ? $r('app.string.enter_a_complete_work_ID') 
+            ((GlobalContext.load('domainAccount') as boolean)
+              ? $r('app.string.enter_a_complete_work_ID')
               : $r('app.string.enter_a_complete_account')) : undefined,
         })
           .flexGrow(Constants.ENCRYPTION_ADD_STAFF_FLEX_GROW)
@@ -260,7 +266,9 @@ struct AddStaff {
               this.staffArrayLength = true;
               return;
             }
-            if (!this.isAccountCheckSuccess) return;
+            if (!this.isAccountCheckSuccess) {
+              return;
+            }
             if (!this.inputId) {
               return
             }
@@ -284,19 +292,19 @@ struct AddStaff {
                         this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
                         GlobalContext.store('hiAccountVerifySucc', this.succ);
                         this.inputId = '';
-                    }).catch((error: BusinessError) => {
-                      if ([Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(error.code)){
-                        this.isInputInvalid = true;
-                        return;
-                      } else {
-                        this.isNetworkInvalid = true;
-                        return;
-                      }
-                    })
+                      }).catch((error: BusinessError) => {
+                        if ([Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(error.code)) {
+                          this.isInputInvalid = true;
+                          return;
+                        } else {
+                          this.isNetworkInvalid = true;
+                          return;
+                        }
+                      })
                   } else {
                     this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
                     GlobalContext.store('hiAccountVerifyFail', this.fail);
-                    if ([Constants.ERR_JS_INVALID_PARAMETER, Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(err.code)){
+                    if ([Constants.ERR_JS_INVALID_PARAMETER, Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(err.code)) {
                       this.isInputInvalid = true;
                       return;
                     } else {
@@ -335,8 +343,9 @@ struct AddStaff {
         top: Constants.ENCRYPTION_ADD_STAFF_PADDING_TOP,
       })
       .border({
-        width: { bottom: this.focusFlag ? px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER2) : px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER) },
-        color: (this.isInputInvalid || this.staffArrayLength || this.isNetworkInvalid )
+        width: { bottom: this.focusFlag ?
+          px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER2) : px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER)},
+        color: (this.isInputInvalid || this.staffArrayLength || this.isNetworkInvalid)
           ? $r('sys.color.ohos_id_color_handup') :
           this.focusFlag ? $r('sys.color.ohos_id_color_primary') : $r('sys.color.ohos_id_color_list_separator'),
       })
@@ -344,16 +353,17 @@ struct AddStaff {
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid) {
           Text((GlobalContext
-          .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
+            .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         if (this.isNetworkInvalid) {
           Text((GlobalContext
-          .load('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
+            .load('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         Blank()
-        if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX * Constants.ENCRYPTION_ADD_STAFF_LENGTH) {
+        if (this.staffArray.length >=
+          Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX * Constants.ENCRYPTION_ADD_STAFF_LENGTH) {
           Text(`${this.staffArray.length}/${Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX}`)
             .fontSize($r('sys.float.ohos_fa_text_size_body'))
             .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
