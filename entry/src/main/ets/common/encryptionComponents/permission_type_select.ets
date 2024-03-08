@@ -21,16 +21,16 @@ import { measureTextSizeWidth } from '../utils';
 
 const TAG = '[DLPManager_Select]';
 
-class Types_ {
-  value: Resource = {
+class ChangeTypes {
+  public value: Resource = {
     id: 0,
     type: 0,
     params: [],
     bundleName: '',
     moduleName: ''
   }
-  data: string = ''
-  index: number = 0
+  public data: string = ''
+  public index: number = 0
 }
 
 interface Staff {
@@ -41,15 +41,15 @@ interface Staff {
 
 @Component
 struct permissionTypeSelect {
-  @State text: string = "";
+  @State text: string = '';
   @State index: number = 0
   @Prop isReadType: boolean = false;
-  @State permissionTypes: Types_[] = [
+  @State permissionTypes: ChangeTypes[] = [
     { value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_ALL'), data: 'all', index: 1 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_SELF'), data: 'self', index: 2 }
   ];
-  @Link @Watch('selectedItemUpdated') selectedItem: Types_;
+  @Link @Watch('selectedItemUpdated') selectedItem: ChangeTypes;
   @Link staffArray: Staff[];
   @Prop @Watch('onCountUpdated') isDisable: boolean = false;
 
@@ -63,7 +63,7 @@ struct permissionTypeSelect {
             .load('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
             .id, (error: BusinessError, value: string) => {
             if (error != null) {
-              console.log("error is " + error);
+              console.log('error is ' + error);
             } else {
               this.text = value;
             }
@@ -79,7 +79,7 @@ struct permissionTypeSelect {
             .load('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
             .id, (error: BusinessError, value: string) => {
             if (error != null) {
-              console.log("error is " + error);
+              console.log('error is ' + error);
             } else {
               this.text = value;
             }
@@ -97,7 +97,7 @@ struct permissionTypeSelect {
       (GlobalContext
         .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.selectedItem.value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
-          console.log("error is " + error);
+          console.log('error is ' + error);
         } else {
           this.text = value;
         }
@@ -117,7 +117,7 @@ struct permissionTypeSelect {
       (GlobalContext
         .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
-          console.log("error is " + error);
+          console.log('error is ' + error);
         } else {
           this.text = value;
         }
@@ -132,7 +132,7 @@ struct permissionTypeSelect {
   }
 
   private getSelectOptionArr(): Array<SelectOption> {
-    let ret: Array<SelectOption> = [];
+    let ret: SelectOption[] = [];
     this.permissionTypes.forEach(
       (item) => {
         ret.push({ value: item.value })

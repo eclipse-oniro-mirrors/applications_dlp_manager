@@ -34,13 +34,14 @@ import { BusinessError } from '@ohos.base';
 import HomeFeature from '../feature/HomeFeature';
 import emitter from '@ohos.events.emitter';
 
-const TAG = "[DLPManager_EncSucc]";
+const TAG = '[DLPManager_EncSucc]';
 let abilityResult: ability.AbilityResult = {
-  "resultCode": 0,
-  "want": {}
+  'resultCode': 0,
+  'want': {}
 };
 
-@Extend(Text) function customizeText() {
+@Extend(Text)
+function customizeText() {
   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
   .fontSize($r('sys.float.ohos_id_text_size_button2'))
   .fontWeight(FontWeight.Medium)
@@ -51,11 +52,12 @@ let storage: LocalStorage = LocalStorage.getShared();
 @Component
 struct encryptionSuccess {
   @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
-  private routerParams: Record<string, AuthAccount[] | PermissionType> = router.getParams() as Record<string, AuthAccount[] | PermissionType>;
+  private routerParams: Record<string, AuthAccount[] | PermissionType> =
+    router.getParams() as Record<string, AuthAccount[] | PermissionType>;
   @State directionStatus: number = 0;
   @State flag: boolean = false;
   @State editFlag: boolean = false;
-  @State ReadOnlyFlag: boolean = false;
+  @State readOnlyFlag: boolean = false;
   @State handlePopupReadOnly: boolean = false;
   @State handlePopupEdit: boolean = false;
   @State rowNamesLenEdit: number = 0;
@@ -203,7 +205,7 @@ struct encryptionSuccess {
                       .fontColor($r('sys.color.ohos_id_color_secondary'))
                       .fontWeight(FontWeight.Regular)
                       .textAlign(TextAlign.Center)
-                    Image($r("app.media.icon_change"))
+                    Image($r('app.media.icon_change'))
                       .draggable(false)
                       .fillColor($r('sys.color.ohos_id_color_tertiary'))
                       .width(Constants.PP_IMAGE_HEIGHT)
@@ -323,39 +325,47 @@ struct encryptionSuccess {
                               if (Number(this.hideNamesNumReadOnly) > 0) {
                                 Row() {
                                   if (this.showNamesArrReadOnly.length !== this.staffDataArrayReadOnly.length) {
-                                    Text(){
+                                    Text() {
                                       Span('+')
                                       Span(this.hideNamesNumReadOnly)
                                     }
                                     .customizeText()
                                   }
-                                  Image($r("app.media.icon_change"))
+                                  Image($r('app.media.icon_change'))
                                     .draggable(false)
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
                                     .fillColor($r('sys.color.ohos_id_color_secondary'))
                                     .rotate({
-                                      angle: !this.ReadOnlyFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      angle: !this.readOnlyFlag ?
+                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
                                 .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                                 .onClick(() => {
-                                  let tmp: Record<string, AuthAccount[] | boolean> = toggleShow(this.routerParams.staffDataArrayReadOnly as AuthAccount[], this.showNamesArrReadOnly, this.ReadOnlyFlag, this.rowNamesLenReadOnly);
+                                  let tmp: Record<string, AuthAccount[] | boolean> = toggleShow(
+                                    this.routerParams.staffDataArrayReadOnly as AuthAccount[],
+                                    this.showNamesArrReadOnly,
+                                    this.readOnlyFlag,
+                                    this.rowNamesLenReadOnly
+                                  );
                                   this.showNamesArrReadOnly = tmp.showNamesArr as AuthAccount[];
-                                  this.ReadOnlyFlag = tmp.showFlag as boolean;
+                                  this.readOnlyFlag = tmp.showFlag as boolean;
                                 })
                               }
                             }
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
-                            if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                              let tmp: Record<string, number | AuthAccount[] | string> = calculate(newValue, this.routerParams.staffDataArrayReadOnly as AuthAccount[]);
+                            if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH ||
+                              newValue.width !== oldValue.width) {
+                              let tmp: Record<string, number | AuthAccount[] | string> =
+                                calculate(newValue, this.routerParams.staffDataArrayReadOnly as AuthAccount[]);
                               this.rowNamesLenReadOnly = tmp.rowNamesLen as number;
                               this.showNamesArrReadOnly = tmp.showNamesArr as AuthAccount[];
                               this.hideNamesNumReadOnly = tmp.hideNamesNum as string;
-                              this.ReadOnlyFlag = false;
+                              this.readOnlyFlag = false;
                             }
                           })
                           .margin({
@@ -468,26 +478,32 @@ struct encryptionSuccess {
                               if (Number(this.hideNamesNumEdit) > 0) {
                                 Row() {
                                   if (this.showNamesArrEdit.length !== this.staffDataArrayEdit.length) {
-                                    Text(){
+                                    Text() {
                                       Span('+')
                                       Span(this.hideNamesNumEdit)
                                     }
                                       .customizeText()
                                   }
-                                  Image($r("app.media.icon_change"))
+                                  Image($r('app.media.icon_change'))
                                     .draggable(false)
                                     .width(Constants.PP_IMAGE_HEIGHT)
                                     .height(Constants.PP_TEXT_FONT_SIZE2)
                                     .objectFit(ImageFit.Contain)
                                     .fillColor($r('sys.color.ohos_id_color_secondary'))
                                     .rotate({
-                                      angle: !this.editFlag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      angle: !this.editFlag ?
+                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
                                 .height(Constants.ENCRYPTION_SUCCESS_TOGGLE_HEIGHT)
                                 .onClick(() => {
-                                  let tmp: Record<string, AuthAccount[] | boolean> = toggleShow(this.routerParams.staffDataArrayEdit as AuthAccount[], this.showNamesArrEdit, this.editFlag, this.rowNamesLenEdit);
+                                  let tmp: Record<string, AuthAccount[] | boolean> = toggleShow(
+                                    this.routerParams.staffDataArrayEdit as AuthAccount[],
+                                    this.showNamesArrEdit,
+                                    this.editFlag,
+                                    this.rowNamesLenEdit
+                                  );
                                   this.showNamesArrEdit = tmp.showNamesArr as AuthAccount[];
                                   this.editFlag = tmp.showFlag as boolean;
                                 })
@@ -495,8 +511,10 @@ struct encryptionSuccess {
                             }
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
-                            if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
-                              let tmp: Record<string, number | AuthAccount[] | string> = calculate(newValue, this.routerParams.staffDataArrayEdit as AuthAccount[]);
+                            if (oldValue.width === Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH ||
+                              newValue.width !== oldValue.width) {
+                              let tmp: Record<string, number | AuthAccount[] | string> =
+                                calculate(newValue, this.routerParams.staffDataArrayEdit as AuthAccount[]);
                               this.rowNamesLenEdit = tmp.rowNamesLen as number;
                               this.showNamesArrEdit = tmp.showNamesArr as AuthAccount[];
                               this.hideNamesNumEdit = tmp.hideNamesNum as string;
@@ -556,7 +574,8 @@ struct encryptionSuccess {
                   .clip(true)
                 }
               }.constraintSize({
-                maxHeight: this.directionStatus === 0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
+                maxHeight: this.directionStatus ===
+                  0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
               })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
@@ -616,7 +635,8 @@ struct encryptionSuccess {
             .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-            .constraintSize({ minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+            .constraintSize({ minWidth: isPC() ?
+              Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
           }
         }
       }

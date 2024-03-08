@@ -35,14 +35,14 @@ import Constants from '../common/constant';
 const SERVICE_EXTENSION_ABILITY_NAME = 'ServiceExtAbility';
 const ERROR_CODE = -1;
 const SUCCESS_CODE = 0;
-const TAG = "[DLPManager_HomeFeature]";
+const TAG = '[DLPManager_HomeFeature]';
 
 export default class HomeFeature {
-  connection = -1;
-  remoteCallback!: () => void;
-  context: ESObject;
-  options: common.ConnectOptions;
-  dlpRpcProxy?: IdDlpRpcServiceProxy = undefined;
+  private connection = -1;
+  private remoteCallback!: () => void;
+  private context: ESObject;
+  private options: common.ConnectOptions;
+  private dlpRpcProxy?: IdDlpRpcServiceProxy = undefined;
 
   constructor(context: ESObject) {
     this.context = context;
@@ -77,7 +77,7 @@ export default class HomeFeature {
       console.info(TAG, 'try connect');
       try {
         this.connection = this.context.connectServiceExtensionAbility(want, this.options);
-      } catch(err) {
+      } catch (err) {
         let code = (err as BusinessError).code;
         let message = (err as BusinessError).message;
         console.error(TAG, `connectServiceExtensionAbility failed, code is ${code}, message is ${message}`);

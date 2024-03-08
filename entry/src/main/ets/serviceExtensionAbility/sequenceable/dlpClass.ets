@@ -20,10 +20,10 @@ const ARRAY_LENGTH_MAX = 100;
 const ARRAY_LENGTH_MIN = 0;
 
 export class IAuthUser extends rpc.MessageSequence {
-  authAccount: string;
-  authAccountType: number;
-  dlpFileAccess: number;
-  permExpiryTime: number;
+  public authAccount: string;
+  public authAccountType: number;
+  public dlpFileAccess: number;
+  public permExpiryTime: number;
 
   constructor(
     authAccount: string,
@@ -56,14 +56,14 @@ export class IAuthUser extends rpc.MessageSequence {
 }
 
 export default class IDLDLPProperty extends rpc.MessageSequence {
-  ownerAccount: string;
-  ownerAccountID: string;
-  ownerAccountType: number;
-  authUserList: IAuthUser[];
-  contactAccount: string;
-  offlineAccess: boolean;
-  everyoneAccessList: number[];
-  expireTime: number;
+  public ownerAccount: string;
+  public ownerAccountID: string;
+  public ownerAccountType: number;
+  public authUserList: IAuthUser[];
+  public contactAccount: string;
+  public offlineAccess: boolean;
+  public everyoneAccessList: number[];
+  public expireTime: number;
 
   constructor(
     ownerAccount: string,
@@ -108,7 +108,7 @@ export default class IDLDLPProperty extends rpc.MessageSequence {
       return false;
     }
     for (let i = 0; i < arrayLength; i++) {
-      this.authUserList.push(new IAuthUser("", 0, 0, 0));
+      this.authUserList.push(new IAuthUser('', 0, 0, 0));
     }
     dataIn.readParcelableArray(this.authUserList);
     this.contactAccount = dataIn.readString();

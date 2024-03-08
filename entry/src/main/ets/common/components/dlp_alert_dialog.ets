@@ -61,10 +61,11 @@ struct DlpAlertDialog {
       .padding({
         left: Constants.HEADER_COLUMN_PADDING_LEFT,
         right: Constants.HEADER_COLUMN_PADDING_RIGHT,
-        top: this.title ? Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
+        top: this.title ?
+         Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
       })
       Flex({ direction: FlexDirection.Row }) {
-        Button(this.cancel? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
+        Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
           .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
           .width(Constants.HEADER_TEXT_WIDTH)
           .focusable(false)

@@ -22,9 +22,10 @@ import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 import { getAlertMessage } from '../utils';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 
-const TAG = "[DLPManager_staff]";
+const TAG = '[DLPManager_staff]';
 
-@Extend(Text) function TipsTextStyle(){
+@Extend(Text)
+function tipsTextStyle() {
   .fontSize($r('sys.float.ohos_id_text_size_body2'))
   .fontColor($r('sys.color.ohos_id_color_primary_dark'))
   .textOverflow({
@@ -56,28 +57,28 @@ struct staffItem {
   @State handlePopupTips: boolean = false;
 
   @Prop textContent: string = '';
-  @State accountTipsArray: Array<AccountTips> = new Array<AccountTips>();
+  @State accountTipsArray: AccountTips[] = [];
   dlpAlertDialog?: CustomDialogController;
 
   @Builder popupBuilderTips() {
     Column() {
-      if(GlobalContext.load('domainAccount')){
+      if (GlobalContext.load('domainAccount')) {
         ForEach(this.accountTipsArray, (item: AccountTips) => {
           if (item.isShow) {
             Row() {
               if (AccountTipsConfig.isSysLanguage()) {
-                Text(item.description?.replace('%s', item.value)).TipsTextStyle()
+                Text(item.description?.replace('%s', item.value)).tipsTextStyle()
               } else {
-                Text(item.descriptionEn?.replace('%s', item.value)).TipsTextStyle()
+                Text(item.descriptionEn?.replace('%s', item.value)).tipsTextStyle()
               }
             }.height(Constants.TIPS_HEIGHT_ITEM)
           }
         }, (item: AccountTips) => item.key)
-      }else{
+      } else {
         Row() {
           Text($r('app.string.encrypt_employee_id', this.accountNameTips))
             .wordBreak(WordBreak.BREAK_ALL)
-            .TipsTextStyle()
+            .tipsTextStyle()
         }
         .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
       }
@@ -127,7 +128,7 @@ struct staffItem {
     return this.textContent;
   }
 
-  async aboutToAppear(){
+  async aboutToAppear() {
     if (!GlobalContext.load('domainAccount')) {
       this.textContent = this.authAccount;
     }
@@ -149,7 +150,8 @@ struct staffItem {
         })
       Text(this.splitContent())
         .constraintSize({
-          maxWidth: this.authAccount === this.textContent ? Constants.ENCRYPTION_STAFF_MAX_WIDTH : Constants.TIPS_STAFF_MAX_WIDTH
+          maxWidth: this.authAccount === this.textContent ?
+            Constants.ENCRYPTION_STAFF_MAX_WIDTH : Constants.TIPS_STAFF_MAX_WIDTH
         })
         .textOverflow({
           overflow: TextOverflow.Ellipsis
