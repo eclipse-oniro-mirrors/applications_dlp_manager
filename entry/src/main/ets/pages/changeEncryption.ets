@@ -73,7 +73,8 @@ let storage = LocalStorage.getShared();
 @Component
 struct changeEncryption {
   private homeFeature: HomeFeature = GlobalContext.load('homeFeature');
-  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+  @State session: UIExtensionContentSession | undefined =
+    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   dlpAlertDialog?: CustomDialogController;
   srcFileName: string = '';
   linkFileName: string = '';
@@ -174,20 +175,41 @@ struct changeEncryption {
     }
   }
 
+  stopFuseLinkHome() {
+    return new Promise<void>((resolve, reject) => {
+      this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'stopFuseLink failed', err);
+          this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource,
+            $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
+          reject();
+        }
+        resolve();
+      });
+    })
+  }
+
+  recoverDLPFileHome(plainUri: string) {
+    return new Promise<void>((resolve, reject) => {
+      this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), plainUri, async (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as number));
+          let errorInfo =
+            {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+          this.showErrorDialog(errorInfo.title, errorInfo.msg);
+          await this.catchProcess();
+          reject();
+        }
+        resolve();
+      });
+    })
+  }
+
   async unEncrypt() {
     let plaintextFile = this.srcFileName.split('.')[0];
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
-        await new Promise<void>((resolve, reject) => {
-          this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
-            if (err !== 0) {
-              console.error(TAG, 'stopFuseLink failed', err);
-              this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
-              reject();
-            }
-            resolve();
-          });
-        })
+        await this.stopFuseLinkHome();
       } catch {
         return;
       }
@@ -210,97 +232,101 @@ struct changeEncryption {
           return;
         }
         console.info(TAG, 'get uri', saveRes)
-        let plainUri = saveRes[0];
-        let uriInfo: fileUri.FileUri | undefined = undefined;
-        let file: fs.File | undefined = undefined;
         try {
-          uriInfo = new fileUri.FileUri(plainUri);
-        } catch (err) {
-          console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
+          await this.fileDecryption(saveRes);
+        } catch {
+          console.log(TAG, 'file decryption fail');
         }
-        try {
-          file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
-        } catch (err) {
-          console.error(TAG, 'open', plainUri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-          try {
-            await fs.unlink(uriInfo!.path);
-          } catch (err) {
-            console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
-          }
-          this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
-          await this.catchProcess();
-          return;
-        };
-        try {
-          await new Promise<void>((resolve, reject) => {
-            this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), plainUri, async (err: number) => {
-              if (err !== 0) {
-                console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as number));
-                let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
-                this.showErrorDialog(errorInfo.title, errorInfo.msg);
-                await this.catchProcess();
-                reject();
-              }
-              resolve();
-            });
-          })
-        } catch (err) {
-          console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-          try {
-            await fs.close(file);
-          } catch (err) {
-            console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
-          }
-          try {
-            await fs.unlink(uriInfo!.path);
-          } catch (err) {
-            console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
-          }
-          let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
-          this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
-          await this.catchProcess();
-          return;
-        }
-
-        try {
-          await fs.close(file);
-        } catch (err) {
-          console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
-        }
-        if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
-          console.info(TAG, 'resumeFuseLink', this.srcFileName);
-          this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
-            if (err !== 0) {
-              console.error(TAG, 'resumeFuseLink failed', err);
-            }
-          });
-        } else {
-          console.info(TAG, 'closeDLPFile', this.srcFileName);
-          this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
-            if (err !== 0) {
-              console.error(TAG, 'closeDLPFile failed', err);
-            }
-          });
-        }
-        if (this.session !== undefined) {
-          this.session.terminateSelfWithResult({
-            'resultCode': 0,
-            'want': {
-              'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-            },
-          });
-        } else {
-          if (GlobalContext.load('fileOpenHistoryFromMain')) {
-            (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
-          }
-          abilityResult.resultCode = 0;
-          (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
-        }
+        
       }).catch((err: number) => {
         console.error(TAG, 'DocumentViewPicker save failed', JSON.stringify(err));
       });
     } catch (err) {
       console.error(TAG, 'Decrypt DLP file', this.srcFileName, 'failed', JSON.stringify(err as BusinessError));
+    }
+  }
+
+  async fileDecryption(saveRes: Array<string>) {
+    let plainUri = saveRes[0];
+    let uriInfo: fileUri.FileUri | undefined = undefined;
+    let file: fs.File | undefined = undefined;
+    try {
+      uriInfo = new fileUri.FileUri(plainUri);
+    } catch (err) {
+      console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
+    }
+    try {
+      file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
+    } catch (err) {
+      console.error(TAG, 'open', plainUri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+      try {
+        await fs.unlink(uriInfo!.path);
+      } catch (err) {
+        console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+      }
+      this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
+      await this.catchProcess();
+      return;
+    };
+    try {
+      await this.recoverDLPFileHome(plainUri);
+    } catch (err) {
+      console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed',
+        (err as BusinessError).code, (err as BusinessError).message);
+      try {
+        await fs.close(file);
+      } catch (err) {
+        console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
+      }
+      try {
+        await fs.unlink(uriInfo!.path);
+      } catch (err) {
+        console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+      }
+      let errorInfo =
+        {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+      this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
+      await this.catchProcess();
+      return;
+    }
+    try {
+      await fs.close(file);
+    } catch (err) {
+      console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
+    }
+    await this.terminateSelfWithResult();
+  }
+
+  async terminateSelfWithResult() {
+    if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
+      console.info(TAG, 'resumeFuseLink', this.srcFileName);
+      this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'resumeFuseLink failed', err);
+        }
+      });
+    } else {
+      console.info(TAG, 'closeDLPFile', this.srcFileName);
+      this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'closeDLPFile failed', err);
+        }
+      });
+    }
+    if (this.session !== undefined) {
+      this.session.terminateSelfWithResult({
+        'resultCode': 0,
+        'want': {
+          'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+        },
+      });
+    } else {
+      if (GlobalContext.load('fileOpenHistoryFromMain')) {
+        (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>)
+          .delete(GlobalContext.load('uri') as string)
+      }
+      abilityResult.resultCode = 0;
+      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
     }
   }
 
@@ -344,9 +370,16 @@ struct changeEncryption {
     } else {
       GlobalContext.store('hiReadScope', 'User');
       this.staffDataArrayReadOnly = readOnlyData;
-      filterEditFilter();
+      filterEditFilter(); 
     }
+    try {
+      await this.getRouterParams();
+    } catch (err) {
+      console.error(TAG, 'fail to get routerParams');
+    }
+  }
 
+  async getRouterParams() {
     let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
     if (routerParams !== undefined) { // router
       this.staffDataArrayReadOnly = routerParams.staffDataArrayReadOnly as AuthAccount[];
@@ -399,7 +432,8 @@ struct changeEncryption {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+          { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
@@ -409,11 +443,11 @@ struct changeEncryption {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+          { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
-
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       console.info(TAG, 'request from sandbox');
       this.linkFileName = GlobalContext.load('linkFileName') as string;
