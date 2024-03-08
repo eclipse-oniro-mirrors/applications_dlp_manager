@@ -49,7 +49,7 @@ import {
 } from '../common/utils';
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
-import { AddStaff } from '../common/encryptionComponents/AddStaff';
+import { AddStaff2PC } from '../common/encryptionComponents/AddStaff2PC';
 import GlobalContext from '../common/GlobalContext';
 import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
 import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
@@ -757,7 +757,7 @@ struct DlpDialog {
 
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeReadOnly?.data ?? '')) {
-                  AddStaff({
+                  AddStaff2PC({
                     staffArray: $staffDataArrayReadOnly,
                     isDisable: this.selectedPermissionTypeEdit?.data === 'all',
                   })
@@ -804,7 +804,7 @@ struct DlpDialog {
 
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeEdit?.data ?? '')) {
-                  AddStaff({
+                  AddStaff2PC({
                     staffArray: $staffDataArrayEdit,
                     isDisable: false
                   })

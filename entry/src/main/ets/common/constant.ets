@@ -235,4 +235,10 @@ export default class Constants {
   static TIPS_SPACE_EM = '\u2003';
   static TIPS_NAME_LENGTH = 2;
   static LOAD_TYPE_CE = 1;
+
+  public static ENTER_KEY_VALUE = '\n';
+  public static ENCRYPTION_ADD_STAFF_NO_MARGIN = 0;
+  public static TIMEOUT_TIME_MIN = 0;
+  public static RICH_EDITOR_MIN_HEIGHT = 32;
+  public static RICH_EDITOR_FIRST = 1;
 }

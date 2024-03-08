@@ -265,8 +265,9 @@ struct AddStaff {
               return
             }
             try {
+              let accountDomain: string = GlobalContext.load('accountDomain');
               let domainAccountInfo: osAccount.DomainAccountInfo = {
-                domain: 'china',
+                domain: accountDomain,
                 accountName: this.inputId.toLocaleLowerCase().trim()
               }
               if (GlobalContext.load('domainAccount')) {
