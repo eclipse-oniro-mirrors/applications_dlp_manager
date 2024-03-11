@@ -187,7 +187,7 @@ struct AddStaff {
     });
   }
 
-  async aboutToAppear(){
+  async aboutToAppear() {
     if (GlobalContext.load('domainAccount')) {
       await AccountTipsConfig.getConfigTips();
       this.textContent = AccountTipsConfig.showContentKey;
