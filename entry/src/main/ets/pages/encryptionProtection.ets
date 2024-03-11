@@ -92,7 +92,8 @@ interface dlpDataType {
 
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
-  ownerAccountType: (GlobalContext.load('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  ownerAccountType: (GlobalContext.load('domainAccount') as boolean) ?
+    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
   authUserList: [],
   contactAccount: '',
   offlineAccess: true,
@@ -102,9 +103,11 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 
 @Component
 struct DlpDialog {
-  @State dlpProperty: dlpDataType = GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
+  @State dlpProperty: dlpDataType =
+    GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
   private homeFeature: HomeFeature = GlobalContext.load('homeFeature');
-  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+  @State session: UIExtensionContentSession | undefined =
+    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   srcFileName: string = '';
   isDlpFile: boolean = false;
   linkFileName: string = '';
@@ -119,7 +122,8 @@ struct DlpDialog {
   @State selectedIndex: number = GlobalContext.load('permanent') === false ? 1 : 0;
   @State colorTime1: Resource = $r('sys.color.ohos_id_color_dialog_bg');
   @State colorTime: Resource = $r('sys.color.ohos_id_color_dialog_bg');
-  @State domainOrCloudAccount: number = (GlobalContext.load('domainAccount') as boolean) ? dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
+  @State domainOrCloudAccount: number = (GlobalContext.load('domainAccount') as boolean) ?
+    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
   @State permissionDict: PermissionType[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0
@@ -134,8 +138,10 @@ struct DlpDialog {
 
   @State staffDataArrayReadOnly: AuthAccount[] = [];
   @State staffDataArrayEdit: AuthAccount[] = [];
-  @State selectedPermissionTypeReadOnly: PermissionType = { data: '', value: { id: 0, type: 0, params: [], bundleName: '', moduleName: '' }, index: -1 };
-  @State selectedPermissionTypeEdit: PermissionType = { data: '', value: { id: 0, type: 0, params: [], bundleName: '', moduleName: '' }, index: -1 };
+  @State selectedPermissionTypeReadOnly: PermissionType =
+    { data: '', value: { id: 0, type: 0, params: [], bundleName: '', moduleName: '' }, index: -1 };
+  @State selectedPermissionTypeEdit: PermissionType =
+    { data: '', value: { id: 0, type: 0, params: [], bundleName: '', moduleName: '' }, index: -1 };
 
   @Builder popupBuilderReadOnly() {
     Row() {
@@ -301,27 +307,17 @@ struct DlpDialog {
     await this.setUserStat();
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
-        await new Promise<void>((resolve, reject) => {
-          this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
-            if (err !== 0) {
-              console.error(TAG, 'stopFuseLink failed', err);
-              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
-              this.processing = false;
-              reject();
-            }
-            resolve();
-          });
-        })
+        await this.stopFuseLinkHome();
       } catch {
         return;
       }
     }
     let filePath = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/' + (new Date().getTime());
-    let tempFd: number = 0;
+    let file: fs.File;
     try {
-      tempFd = fileio.openSync(filePath, 0o102, 0o660);
-      fileio.close(tempFd);
-      console.info(TAG, 'open temp file, fd', tempFd)
+      file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+      fs.close(file);
+      console.info(TAG, 'open temp file', file)
     } catch (err) {
       console.error(TAG, 'open temp failed', JSON.stringify(err));
       this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
@@ -329,14 +325,14 @@ struct DlpDialog {
       return;
     }
     let filePathUri = getFileUriByPath(filePath);
-    console.info(TAG, 'recoverDLPFile', this.srcFileName);
     try {
       await new Promise<void>((resolve, reject) => {
         this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), filePathUri, async (err: number) => {
           if (err !== 0) {
             fs.unlinkSync(filePath);
             console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', err);
-            let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+            let errorInfo =
+              {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
             this.showErrorDialog(errorInfo.title, errorInfo.msg);
             await this.catchProcess();
             reject();
@@ -347,12 +343,31 @@ struct DlpDialog {
     } catch {
       return;
     }
+    this.changeToGenDlpFileHome(filePathUri, filePath);
+  }
+
+  stopFuseLinkHome() {
+    return new Promise<void>((resolve, reject) => {
+      this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+        if (err !== 0) {
+          console.error(TAG, 'stopFuseLink failed', err);
+          this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+          this.processing = false;
+          reject();
+        }
+        resolve();
+      });
+    })
+  }
+
+  changeToGenDlpFileHome(filePathUri: string, filePath: string) {
     let _dlp = this.tempData();
     this.homeFeature.genDlpFileHome(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
       if (err !== 0) {
         console.error(TAG, 'generateDLPFile', 'failed', err);
         fs.unlinkSync(filePath);
-        let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
+        let errorInfo =
+          {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         await this.catchProcess();
       } else {
@@ -416,47 +431,7 @@ struct DlpDialog {
         } catch (err) {
           console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
         }
-        let _dlp = this.tempData();
-        this.homeFeature.genDlpFileHome(srcFileUri, uri, _dlp, async (err: number) => {
-          if (err !== 0) {
-            if (err === 100) {
-              this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
-              this.processing = false;
-              return;
-            }
-            try {
-              await fs.unlink(uriInfo.path);
-            } catch (err) {
-              console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
-            }
-            await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-            let errorInfo = {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
-            this.showErrorDialog(errorInfo.title, errorInfo.msg);
-            this.processing = false;
-            return;
-          } else {
-            await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
-            let dstFileSize: number = await getFileSizeByUri(uri);
-            GlobalContext.store('hiPolicySizeEnc', dstFileSize);
-            GlobalContext.store('hiCode', 201);
-            sendDlpFileCreateEvent(); // 201: DLP_FILE_CREATE_SUCCESS
-            GlobalContext.store('dlpFileName', uriInfo.name);
-            GlobalContext.store('dlpProperty', _dlp);
-            GlobalContext.store('uri', uri);
-            this.processing = false;
-            sendDlpManagerFileConfiguration();
-            emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
-            router.replaceUrl({
-              url: 'pages/encryptionSuccess',
-              params: {
-                staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-                staffDataArrayEdit: this.staffDataArrayEdit,
-                selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
-                selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
-              }
-            })
-          }
-        });
+        this.beginToGenDlpFileHome(srcFileUri, uri, uriInfo);
       }).catch((err: BusinessError) => {
         console.error('DocumentViewPicker save failed', err.code, err.message);
         let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
@@ -471,9 +446,55 @@ struct DlpDialog {
     }
   }
 
+  beginToGenDlpFileHome(srcFileUri: string, uri: string, uriInfo: fileUri.FileUri) {
+    let _dlp = this.tempData();
+    this.homeFeature.genDlpFileHome(srcFileUri, uri, _dlp, async (err: number) => {
+      if (err !== 0) {
+        if (err === 100) {
+          this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+          this.processing = false;
+          return;
+        }
+        try {
+          await fs.unlink(uriInfo.path);
+        } catch (err) {
+          console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+        }
+        await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
+        let errorInfo =
+          {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
+        this.showErrorDialog(errorInfo.title, errorInfo.msg);
+        this.processing = false;
+        return;
+      } else {
+        await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
+        let dstFileSize: number = await getFileSizeByUri(uri);
+        GlobalContext.store('hiPolicySizeEnc', dstFileSize);
+        GlobalContext.store('hiCode', 201);
+        sendDlpFileCreateEvent(); // 201: DLP_FILE_CREATE_SUCCESS
+        GlobalContext.store('dlpFileName', uriInfo.name);
+        GlobalContext.store('dlpProperty', _dlp);
+        GlobalContext.store('uri', uri);
+        this.processing = false;
+        sendDlpManagerFileConfiguration();
+        emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
+        router.replaceUrl({
+          url: 'pages/encryptionSuccess',
+          params: {
+            staffDataArrayReadOnly: this.staffDataArrayReadOnly,
+            staffDataArrayEdit: this.staffDataArrayEdit,
+            selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
+            selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
+          }
+        })
+      }
+    });
+  }
+
   tempData() {
     let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
-    let property: dlpPermission.DLPProperty = GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
+    let property: dlpPermission.DLPProperty = GlobalContext.load('dlpProperty') !==
+      undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
     this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
     this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
     this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) => 
@@ -495,34 +516,8 @@ struct DlpDialog {
       this.staffDataArrayReadOnly = [];
       this.staffDataArrayEdit = [];
     } else {
-      let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all';
-      if (isReadyOnlyAll) {
-        property.everyoneAccessList = [dlpPermission.DLPFileAccess.READ_ONLY];
-      }
-      if (this.selectedPermissionTypeReadOnly.data === 'all') {
-        this.staffDataArrayReadOnly = []
-      }
-      if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
-        this.staffDataArrayEdit = [];
-      }
-      this.staffDataArrayReadOnly && this.staffDataArrayReadOnly.forEach(item => {
-        property.authUserList?.push({
-          authAccount: item.authAccount,
-          dlpFileAccess: dlpPermission.DLPFileAccess.READ_ONLY,
-          permExpiryTime: Date.UTC(9999, 1, 1),
-          authAccountType: this.domainOrCloudAccount,
-        })
-      })
-      this.staffDataArrayEdit && this.staffDataArrayEdit.forEach(item => {
-        property.authUserList?.push({
-          authAccount: item.authAccount,
-          dlpFileAccess: dlpPermission.DLPFileAccess.CONTENT_EDIT,
-          permExpiryTime: Date.UTC(9999, 1, 1),
-          authAccountType: this.domainOrCloudAccount,
-        })
-      })
+      this.propertyAddData(property);
     }
-
     let authUserListNew: IAuthUser[] = [];
     property.authUserList.forEach(item => {
       authUserListNew.push(
@@ -545,6 +540,35 @@ struct DlpDialog {
       property.expireTime
     );
     return _dlp;
+  }
+
+  propertyAddData(property: dlpPermission.DLPProperty) {
+    let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all';
+    if (isReadyOnlyAll) {
+      property.everyoneAccessList = [dlpPermission.DLPFileAccess.READ_ONLY];
+    }
+    if (this.selectedPermissionTypeReadOnly.data === 'all') {
+      this.staffDataArrayReadOnly = []
+    }
+    if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
+      this.staffDataArrayEdit = [];
+    }
+    this.staffDataArrayReadOnly && this.staffDataArrayReadOnly.forEach(item => {
+      property.authUserList?.push({
+        authAccount: item.authAccount,
+        dlpFileAccess: dlpPermission.DLPFileAccess.READ_ONLY,
+        permExpiryTime: Date.UTC(9999, 1, 1),
+        authAccountType: this.domainOrCloudAccount,
+      })
+    })
+    this.staffDataArrayEdit && this.staffDataArrayEdit.forEach(item => {
+      property.authUserList?.push({
+        authAccount: item.authAccount,
+        dlpFileAccess: dlpPermission.DLPFileAccess.CONTENT_EDIT,
+        permExpiryTime: Date.UTC(9999, 1, 1),
+        authAccountType: this.domainOrCloudAccount,
+      })
+    })
   }
 
   async prepareDlpProperty() {
@@ -572,7 +596,8 @@ struct DlpDialog {
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
     let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
     this.permissionDict.forEach(async (item, index) => {
-      this.permissionDict[index].value = $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getStringValue(item.value.id))
+      this.permissionDict[index].value =
+        $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getStringValue(item.value.id))
     })
     let readOnlyData: dlpPermission.AuthUser[] =
       defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
@@ -613,7 +638,8 @@ struct DlpDialog {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+          { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
@@ -623,7 +649,8 @@ struct DlpDialog {
         let errorInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+          { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }

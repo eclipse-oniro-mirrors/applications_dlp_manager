@@ -43,6 +43,7 @@ import {
 } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
+import rpc from '@ohos.rpc';
 
 const TAG = '[DLPManager_View]';
 const SUFFIX_INDEX = 2;
@@ -134,39 +135,38 @@ export default class ViewAbility extends ServiceExtensionAbility {
         try {
           await this.dlpFile.deleteDLPLinkFile(this.linkFileName);
         } catch (err) {
-          console.error(TAG, 'dlpFile deleteDLPLinkFile failed', (err as BusinessError).code, (err as BusinessError).message);
+          console.error(TAG, 'dlpFile deleteDLPLinkFile failed',
+            (err as BusinessError).code, (err as BusinessError).message);
         }
         try {
           await this.dlpFile.closeDLPFile();
         } catch (err) {
-          console.error(TAG, 'dlpFile closeDLPFile failed', (err as BusinessError).code, (err as BusinessError).message);
+          console.error(TAG, 'dlpFile closeDLPFile failed', (err as BusinessError).code, (err as BusinessError).message)
         }
         opening = false;
         await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext,
           {code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-        await this.sendDlpFileOpenFault(
-          Constants.DLP_START_SANDBOX_ERROR,
-          this.sandboxBundleName,
-          this.appIndex,
-          undefined
-        ); // 105: DLP_START_SANDBOX_ERROR
+        await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.appIndex,
+          undefined); // 105: DLP_START_SANDBOX_ERROR
       } else {
-        await this.sendDlpFileOpenEvent(
-          Constants.DLP_START_SANDBOX_SUCCESS,
-          this.sandboxBundleName,
-          this.appIndex
-        ); // 203: DLP_START_SANDBOX_SUCCESS
-        let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+        // 203: DLP_START_SANDBOX_SUCCESS
+        await this.sendDlpFileOpenEvent(Constants.DLP_START_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex);
+        let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
+          GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
         if (!sandbox2linkFile.has(this.sandboxBundleName + this.appIndex)) {
           sandbox2linkFile.set(this.sandboxBundleName + this.appIndex, []);
         }
         if (!this.alreadyOpen) {
-          sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push([this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId, this.uri]);
+          sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push(
+            [this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId, this.uri]);
           (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(
             this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri]
           );
-          (GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>).set(this.authPerm, [this.sandboxBundleName, this.appIndex]);
-          (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId, [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
+          (GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess,
+            (number | string)[]>).set(this.authPerm, [this.sandboxBundleName, this.appIndex]);
+          (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile |
+            dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId,
+            [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
           (GlobalContext.load('linkSet') as Set<string>).add(this.linkUri);
         }
         await this.startDataAbility();
@@ -312,7 +312,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
         }
         this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd, callerAppId);
       } catch (err) {
-        console.error(TAG, 'openDLPFile', this.fileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+        console.error(TAG, 'openDLPFile', this.fileName, 'failed',
+          (err as BusinessError).code, (err as BusinessError).message);
         try {
           hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
           hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
@@ -322,7 +323,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
           ); // 103:DLP_FILE_PARSE_ERROR
           await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, err);
         } catch (e) {
-          console.error(TAG, 'openDLPFile2', this.fileName, 'failed', (e as BusinessError).code, (e as BusinessError).message, e);
+          console.error(TAG, 'openDLPFile2', this.fileName, 'failed',
+            (e as BusinessError).code, (e as BusinessError).message, e);
         }
         fileio.closeSync(this.dlpFd);
         reject();
@@ -363,45 +365,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
     return new Promise(async (resolve, reject) => {
       this.alreadyOpen = false;
       try {
-        let fileOpenHistory: Map<string, (number | string)[]> = GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
-        if (fileOpenHistory.has(this.uri)) {
-          console.info(TAG, 'file', this.fileName, 'already open');
-          let value: (number | string)[] = fileOpenHistory.get(this.uri) as (number | string)[];
-          this.appIndex = value[Constants.FILE_OPEN_HISTORY_ONE] as number;
-          this.linkFileName = value[Constants.FILE_OPEN_HISTORY_TWO] as string;
-          this.linkUri = value[Constants.FILE_OPEN_HISTORY_THREE] as string;
-          fileio.closeSync(this.dlpFd);
-          this.alreadyOpen = true;
-        } else {
-          await this.getOpenDLPFile(startId);
-        }
-        this.gatheringType = await dlpPermission.getDLPGatheringPolicy();
-        let authPerm2Sandbox: Map<dlpPermission.DLPFileAccess, (number | string)[]> = GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>;
-        if (authPerm2Sandbox.has(this.authPerm) &&
-          this.gatheringType === dlpPermission.GatheringPolicyType.GATHERING) {
-          this.appIndex = authPerm2Sandbox.get(this.authPerm)?.[1] as number;
-          console.info(TAG, 'Dlp gathering is on, send', this.fileName, 'to sandbox:', this.sandboxBundleName, this.appIndex);
-          this.sortByAuthPerm = true;
-        }
-        if (!this.alreadyOpen && !this.sortByAuthPerm) {
-          hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
-          let appInfo: dlpPermission.DLPSandboxInfo = await dlpPermission.installDLPSandbox(
-            this.sandboxBundleName, this.authPerm, this.userId, this.uri
-          );
-          this.appIndex = appInfo.appIndex;
-          this.tokenId = appInfo.tokenID;
-        }
-      } catch (err) {
-        console.error(TAG, 'installDLPSandbox failed', (err as BusinessError).code, (err as BusinessError).message);
-        hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
-        hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
-        opening = false;
-        await this.sendDlpFileOpenFault(
-          Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
-        ); // 104:DLP_INSTALL_SANDBOX_ERROR
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
-          code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-        await this.closeFile();
+        await this.sandboxSetData(startId);
+      } catch {
         reject();
         return;
       }
@@ -419,6 +384,56 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       resolve();
     });
+  }
+
+  async sandboxSetData(startId: number): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let fileOpenHistory: Map<string, (number | string)[]> =
+          GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
+        if (fileOpenHistory.has(this.uri)) {
+          console.info(TAG, 'file', this.fileName, 'already open');
+          let value: (number | string)[] = fileOpenHistory.get(this.uri) as (number | string)[];
+          this.appIndex = value[Constants.FILE_OPEN_HISTORY_ONE] as number;
+          this.linkFileName = value[Constants.FILE_OPEN_HISTORY_TWO] as string;
+          this.linkUri = value[Constants.FILE_OPEN_HISTORY_THREE] as string;
+          fileio.closeSync(this.dlpFd);
+          this.alreadyOpen = true;
+        } else {
+          await this.getOpenDLPFile(startId);
+        }
+        this.gatheringType = await dlpPermission.getDLPGatheringPolicy();
+        let authPerm2Sandbox: Map<dlpPermission.DLPFileAccess, (number | string)[]> =
+          GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>;
+        if (authPerm2Sandbox.has(this.authPerm) &&
+          this.gatheringType === dlpPermission.GatheringPolicyType.GATHERING) {
+          this.appIndex = authPerm2Sandbox.get(this.authPerm)?.[1] as number;
+          console.info(TAG, 'Dlp gathering is on', this.fileName, 'to sandbox:', this.sandboxBundleName, this.appIndex);
+          this.sortByAuthPerm = true;
+        }
+        if (!this.alreadyOpen && !this.sortByAuthPerm) {
+          hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
+          let appInfo: dlpPermission.DLPSandboxInfo = await dlpPermission.installDLPSandbox(
+            this.sandboxBundleName, this.authPerm, this.userId, this.uri
+          );
+          this.appIndex = appInfo.appIndex;
+          this.tokenId = appInfo.tokenID;
+        }
+        resolve();
+      } catch (err) {
+        console.error(TAG, 'installDLPSandbox failed', (err as BusinessError).code, (err as BusinessError).message);
+        hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
+        hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+        opening = false;
+        await this.sendDlpFileOpenFault(
+          Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
+        ); // 104:DLP_INSTALL_SANDBOX_ERROR
+        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+        await this.closeFile();
+        reject();
+      }
+    })
   }
 
   async getAlreadyOpen(startId: number): Promise<void> {
@@ -517,6 +532,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       resolve();
     });
+  }
+
+  onConnect(want: Want): rpc.RemoteObject {
+    return new rpc.RemoteObject(TAG);
+  }
+
+  onDisconnect(want: Want): void {
+    console.log(TAG);
   }
 
   async onRequest(want: Want, startId: number): Promise<void> {
