@@ -209,6 +209,7 @@ export default class MainAbility extends UIAbility {
       try {
         accountInfo = await getOsAccountInfo();
         GlobalContext.store('accountInfo', accountInfo);
+        GlobalContext.store('accountDomain', accountInfo.domainInfo.domain);
         resolve();
       } catch (err) {
         console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);

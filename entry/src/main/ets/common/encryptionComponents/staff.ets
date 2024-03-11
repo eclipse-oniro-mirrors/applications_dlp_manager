@@ -158,6 +158,7 @@ struct staffItem {
         })
         .maxLines(Constants.PP_TEXT_MAX_LINE)
         .fontSize($r('sys.float.ohos_id_text_size_button2'))
+        .height(Constants.HEADER_ROW_FONT_SIZE)
     }
     .onClick(() => {
       if (GlobalContext.load('domainAccount')) {
@@ -180,6 +181,7 @@ struct staffItem {
           console.error(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
         }
       } else {
+        this.handlePopupTips = !this.handlePopupTips;
         this.accountNameTips = this.authAccount;
       }
     })
@@ -197,8 +199,9 @@ struct staffItem {
       }
     })
     .width(this.authAccount === this.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
+    .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
     .alignItems(VerticalAlign.Center)
-    .backgroundColor(this.isActive ? '#1A0A59F7' : $r('sys.color.ohos_id_color_button_normal'))
+    .backgroundColor(this.isActive && this.handlePopupTips ? '#1A0A59F7' : $r('sys.color.ohos_id_color_button_normal'))
     .borderRadius(Constants.ENCRYPTION_SUCCESS_CHANGE_TOP)
     .padding(
       {
@@ -210,7 +213,7 @@ struct staffItem {
     )
     .margin({
       right: Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT,
-      bottom: Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
+      bottom: this.isActive ? Constants.ENCRYPTION_ADD_STAFF_NO_MARGIN : Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
     })
   }
 }

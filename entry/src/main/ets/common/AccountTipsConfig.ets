@@ -23,7 +23,6 @@ import GlobalContext from './GlobalContext';
 import I18n from '@ohos.i18n';
 
 const TAG: string = 'DLPManager_ATC';
-const DOMAIN_CHINA: string = 'china';
 const SYS_LANGUAGE: string = 'zh-Hans';
 
 export interface AccountTips {
@@ -76,8 +75,9 @@ export class AccountTipsConfig {
           reject();
           return;
         }
+        let accountDomain: string = GlobalContext.load('accountDomain');
         let domainAccountInfo: osAccount.GetDomainAccountInfoOptions = {
-          domain: DOMAIN_CHINA,
+          domain: accountDomain,
           accountName: authAccount.toLocaleLowerCase().trim()
         };
         osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo).then((result: osAccount.DomainAccountInfo) => {
