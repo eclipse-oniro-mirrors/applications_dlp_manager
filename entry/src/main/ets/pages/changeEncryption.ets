@@ -237,7 +237,6 @@ struct changeEncryption {
         } catch {
           console.log(TAG, 'file decryption fail');
         }
-        
       }).catch((err: number) => {
         console.error(TAG, 'DocumentViewPicker save failed', JSON.stringify(err));
       });
@@ -246,7 +245,7 @@ struct changeEncryption {
     }
   }
 
-  async fileDecryption(saveRes: Array<string>) {
+  async fileDecryption(saveRes: Array<string>): Promise<void> {
     let plainUri = saveRes[0];
     let uriInfo: fileUri.FileUri | undefined = undefined;
     let file: fs.File | undefined = undefined;
