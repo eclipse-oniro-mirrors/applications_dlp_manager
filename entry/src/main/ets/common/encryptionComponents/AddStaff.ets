@@ -85,57 +85,7 @@ struct AddStaff {
     }
     try {
       if (GlobalContext.load('domainAccount')) {
-        this.isAccountCheckSuccess = false;
-        let accountDomain: string = GlobalContext.load('accountDomain');
-        let domainAccountInfo: osAccount.DomainAccountInfo = {
-          domain: accountDomain,
-          accountName: inputId.toLocaleLowerCase().trim()
-        };
-        account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err: BusinessError, isExist: boolean) => {
-          this.isAccountCheckSuccess = true;
-          if (isExist) {
-            AccountTipsConfig.getAccountInfo(inputId)
-              .then((result: account_osAccount.DomainAccountInfo) => {
-                let o1: Staff = {
-                  authAccount: result.accountName,
-                  textContent: result[this.textContent] as string
-                }
-                this.staffArray.push(o1);
-                this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
-                GlobalContext.store('hiAccountVerifySucc', this.succ);
-
-                this.controller.deleteSpans({ start: startOffset, end: endOffset });
-                setTimeout(() => {
-                  let index: number = this.controller.getCaretOffset();
-                  let staffBuilder: CustomBuilder = () => {
-                    this.StaffItemBuilder(result.accountName, result[this.textContent], index);
-                  };
-                  this.controller.addBuilderSpan(staffBuilder);
-                }, this.staffArray['length'] > Constants.RICH_EDITOR_FIRST
-                  ? Constants.ENCRYPTION_SET_TIMEOUT_TIME : Constants.TIMEOUT_TIME_MIN)
-              }).catch((error: BusinessError) => {
-              this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
-              GlobalContext.store('hiAccountVerifyFail', this.fail);
-              if ([Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(error.code)) {
-                this.isInputInvalid = true;
-                return;
-              } else {
-                this.isNetworkInvalid = true;
-                return;
-              }
-            })
-          } else {
-            this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
-            GlobalContext.store('hiAccountVerifyFail', this.fail);
-            if ([Constants.ERR_JS_INVALID_PARAMETER, Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(err.code)) {
-              this.isInputInvalid = true;
-              return;
-            } else {
-              this.isNetworkInvalid = true;
-              return;
-            }
-          }
-        })
+        this.createStaffByDomain(inputId, startOffset, endOffset);
       } else {
         this.isAccountCheckSuccess = true;
         let o2: Staff = {
@@ -146,15 +96,7 @@ struct AddStaff {
         this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
         GlobalContext.store('hiAccountVerifySucc', this.succ);
 
-        this.controller.deleteSpans({ start: startOffset, end: endOffset });
-        setTimeout(() => {
-          let index: number = this.controller.getCaretOffset();
-          let staffBuilder: CustomBuilder = () => {
-            this.StaffItemBuilder(inputId, inputId, index);
-          };
-          this.controller.addBuilderSpan(staffBuilder);
-        }, this.staffArray['length'] > Constants.RICH_EDITOR_FIRST
-          ? Constants.ENCRYPTION_SET_TIMEOUT_TIME : Constants.TIMEOUT_TIME_MIN)
+        this.addBuildSpan(inputId, inputId, startOffset, endOffset);
       }
     } catch (err) {
       this.isAccountCheckSuccess = true;
@@ -162,6 +104,68 @@ struct AddStaff {
       GlobalContext.store('hiAccountVerifyFail', this.fail);
       console.error(TAG, (err as BusinessError).code);
     }
+  }
+
+  private createStaffByDomain(inputId: string, startOffset: number, endOffset: number) {
+    this.isAccountCheckSuccess = false;
+    let accountDomain: string = GlobalContext.load('accountDomain');
+    let domainAccountInfo: osAccount.DomainAccountInfo = {
+      domain: accountDomain,
+      accountName: inputId.toLocaleLowerCase().trim()
+    };
+    account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (err: BusinessError, isExist: boolean) => {
+      this.isAccountCheckSuccess = true;
+      if (isExist) {
+        this.createStaffItem(inputId, startOffset, endOffset);
+      } else {
+        this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
+        GlobalContext.store('hiAccountVerifyFail', this.fail);
+        if ([Constants.ERR_JS_INVALID_PARAMETER, Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(err.code)) {
+          this.isInputInvalid = true;
+          return;
+        } else {
+          this.isNetworkInvalid = true;
+          return;
+        }
+      }
+    })
+  }
+
+  private createStaffItem(inputId: string, startOffset: number, endOffset: number) {
+    AccountTipsConfig.getAccountInfo(inputId)
+      .then((result: account_osAccount.DomainAccountInfo) => {
+        let o1: Staff = {
+          authAccount: result.accountName,
+          textContent: result[this.textContent] as string
+        }
+        this.staffArray.push(o1);
+        this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
+        GlobalContext.store('hiAccountVerifySucc', this.succ);
+
+        this.addBuildSpan(result.accountName, result[this.textContent], startOffset, endOffset);
+      }).catch((error: BusinessError) => {
+      this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
+      GlobalContext.store('hiAccountVerifyFail', this.fail);
+      if ([Constants.ERR_JS_ACCOUNT_NOT_FOUND].includes(error.code)) {
+        this.isInputInvalid = true;
+        return;
+      } else {
+        this.isNetworkInvalid = true;
+        return;
+      }
+    })
+  }
+
+  private addBuildSpan(accountName: string, textContent: string, startOffset: number, endOffset: number) {
+    this.controller.deleteSpans({ start: startOffset, end: endOffset });
+    setTimeout(() => {
+      let index: number = this.controller.getCaretOffset();
+      let staffBuilder: CustomBuilder = () => {
+        this.StaffItemBuilder(accountName, textContent, index);
+      };
+      this.controller.addBuilderSpan(staffBuilder);
+    }, this.staffArray['length'] > Constants.RICH_EDITOR_FIRST
+      ? Constants.ENCRYPTION_SET_TIMEOUT_TIME : Constants.TIMEOUT_TIME_MIN)
   }
 
   private onDataChange() {
@@ -183,7 +187,7 @@ struct AddStaff {
     });
   }
 
-  async aboutToAppear(){
+  async aboutToAppear() {
     if (GlobalContext.load('domainAccount')) {
       await AccountTipsConfig.getConfigTips();
       this.textContent = AccountTipsConfig.showContentKey;
@@ -228,8 +232,8 @@ struct AddStaff {
               this.isNetworkInvalid = false;
             }
             if (value.insertValue === Constants.ENTER_KEY_VALUE) {
-              let richEditorSpans: Array<RichEditorTextSpanResult | RichEditorImageSpanResult>
-                = this.controller.getSpans();
+              let richEditorSpans: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
+              this.controller.getSpans();
               for (let index: number = 0; index < richEditorSpans.length; index++) {
                 let buildSpan: RichEditorTextSpanResult = richEditorSpans[index] as RichEditorTextSpanResult;
                 if (buildSpan.textStyle) {
@@ -249,8 +253,8 @@ struct AddStaff {
               this.isInputInvalid = false;
               this.isNetworkInvalid = false;
             }
-            let richEditorDeleteSpans: Array<RichEditorTextSpanResult | RichEditorImageSpanResult>
-              = value.richEditorDeleteSpans;
+            let richEditorDeleteSpans: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
+            value.richEditorDeleteSpans;
             for (let index: number = richEditorDeleteSpans.length - 1; index >= 0; index--) {
               let buildSpan: RichEditorImageSpanResult = richEditorDeleteSpans[index] as RichEditorImageSpanResult;
               if (buildSpan.imageStyle) {
