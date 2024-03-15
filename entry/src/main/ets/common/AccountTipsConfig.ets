@@ -68,7 +68,7 @@ export class AccountTipsConfig {
   }
 
   public static getAccountInfo(authAccount: string): Promise<osAccount.DomainAccountInfo> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (!authAccount) {
           console.error(`${TAG} getAccount failed, authAccount is null.`);
@@ -80,12 +80,8 @@ export class AccountTipsConfig {
           domain: accountDomain,
           accountName: authAccount.toLocaleLowerCase().trim()
         };
-        osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo).then((result: osAccount.DomainAccountInfo) => {
-          resolve(result);
-        }).catch((err: BusinessError) => {
-          console.error(`${TAG} getAccountInfo failed, error: ${JSON.stringify(err)}`);
-          reject(err);
-        });
+        let result = await osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo);
+        resolve(result);
       } catch (error) {
         console.error(`${TAG} getAccountInfo error: ${JSON.stringify(error)}`);
         reject(error);
