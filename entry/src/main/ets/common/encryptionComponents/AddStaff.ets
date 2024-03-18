@@ -96,6 +96,10 @@ struct AddStaff {
       if (!this.inputArray[i]) {
         continue;
       }
+      if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
+        this.errInput = [];
+        break;
+      }
       if (GlobalContext.load('domainAccount')) {
         await this.createStaffByDomain(i);
       } else {
@@ -104,19 +108,17 @@ struct AddStaff {
           authAccount: this.inputArray[i],
           textContent: this.inputArray[i]
         }
-        if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
-          this.staffArray.push(o2);
-          this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
-          GlobalContext.store('hiAccountVerifySucc', this.succ);
-          this.addBuildSpan(i, inputId);
-        } else {
-          this.errInput = [];
-        }
+        this.staffArray.push(o2);
+        this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
+        GlobalContext.store('hiAccountVerifySucc', this.succ);
+        this.addBuildSpan(i, inputId);
       }
     }
-    this.controller.addTextSpan(this.errInput.join(';'));
-    if (this.errInput.length && this.isInputInvalidFlag) {
-      this.isInputInvalid = true;
+    if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
+      this.controller.addTextSpan(this.errInput.join(';'));
+      if (this.errInput.length && this.isInputInvalidFlag) {
+        this.isInputInvalid = true;
+      }
     }
   }
 
@@ -134,6 +136,7 @@ struct AddStaff {
         if (isExist) {
           await this.createStaffItem(i);
         } else {
+          console.log(TAG, 'hasAccount fail', JSON.stringify(error));
           this.showErrInput(i, error);
         }
         resolve();
@@ -142,24 +145,21 @@ struct AddStaff {
   }
 
   private createStaffItem(i: number) {
-    return new Promise<void>((resolve, reject) => {
-      AccountTipsConfig.getAccountInfo(this.inputArray[i])
-        .then((result: account_osAccount.DomainAccountInfo) => {
-          let o1: Staff = {
-            authAccount: result.accountName,
-            textContent: result[this.textContent] as string
-          }
-          if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
-            this.staffArray.push(o1);
-            this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
-            GlobalContext.store('hiAccountVerifySucc', this.succ);
-            this.addBuildSpan(i, result[this.textContent]);
-          } else {
-            this.errInput = [];
-          }
-        }).catch((error: BusinessError) => {
-          this.showErrInput(i, error);
-      })
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        let result = await AccountTipsConfig.getAccountInfo(this.inputArray[i]);
+        let o1: Staff = {
+          authAccount: result.accountName,
+          textContent: result[this.textContent] as string
+        }
+        this.staffArray.push(o1);
+        this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
+        GlobalContext.store('hiAccountVerifySucc', this.succ);
+        this.addBuildSpan(i, result[this.textContent]);
+      } catch (error) {
+        console.log(TAG, 'getAccountInfo fail', JSON.stringify(error));
+        this.showErrInput(i, error);
+      }
       resolve();
     })
   }
@@ -173,21 +173,17 @@ struct AddStaff {
   }
 
   private showErrInput(i: number, error: BusinessError) {
-    if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
-      this.errInput.push(this.inputArray[i]);
-      this.isAccountCheckSuccess = true;
-      this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
-      GlobalContext.store('hiAccountVerifyFail', this.fail);
-      if ([
-        Constants.ERR_JS_INVALID_PARAMETER,
-        Constants.ERR_JS_ACCOUNT_NOT_FOUND
-      ].includes(error.code)) {
-        this.isInputInvalidFlag = true;
-      } else {
-        this.isNetworkInvalid = true;
-      }
+    this.errInput.push(this.inputArray[i]);
+    this.isAccountCheckSuccess = true;
+    this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
+    GlobalContext.store('hiAccountVerifyFail', this.fail);
+    if ([
+      Constants.ERR_JS_INVALID_PARAMETER,
+      Constants.ERR_JS_ACCOUNT_NOT_FOUND
+    ].includes(error.code)) {
+      this.isInputInvalidFlag = true;
     } else {
-      this.errInput = [];
+      this.isNetworkInvalid = true;
     }
   }
 
