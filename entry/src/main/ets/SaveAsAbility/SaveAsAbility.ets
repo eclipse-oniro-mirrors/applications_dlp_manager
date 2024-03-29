@@ -28,10 +28,11 @@ import ability from '@ohos.ability.ability';
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
-import { startAlertAbility, getFileUriByPath, getFileFd, getAppId, isValidPath } from '../common/utils';
+import { getFileUriByPath, getFileFd, getAppId, isValidPath } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
+import { GetAlertMessage } from '../common/GetAlertMessage';
 
 const TAG = '[DLPManager_SaveAs]';
 let permissionList: Permissions[] = [
@@ -114,6 +115,21 @@ export default class SaveAsAbility extends UIAbility {
   private suffix: string = '';
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private isOK: boolean = true; // use with startAlertAbility
+  private zipFlag: boolean = false;
+  private random: string = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
+  private filePath: string = '';
+  private dirPath: string = '';
+  private encFile: string = '';
+  private retVal: boolean = false;
+  private zipPath: string = '';
+  private ff: fs.File | undefined = undefined;
+  private zf2: fs.File | undefined = undefined;
+  private zipName: string = '';
+  private file: fs.File | undefined = undefined;
+  private dstFdPicker: number = -1;
+  private newDlpFile: dlpPermission.DLPFile = defaultDlpFile;
+  private srcFdPicker: number = -1;
+  private linkFileName: string = '';
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     console.info(TAG, 'onCreate');
@@ -187,48 +203,61 @@ export default class SaveAsAbility extends UIAbility {
       console.error(TAG, 'invalid tokenId');
       return false;
     }
-
-    this.authPerm = (GlobalContext.load('token2File') as
-    Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
-      .get(this.tokenId)?.[3] as dlpPermission.DLPFileAccess;
-    let dlpFileInfo = (GlobalContext.load('token2File') as
-    Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
-      .get(this.tokenId)?.[0] as dlpPermission.DLPFile;
-    let ownerAccount = dlpFileInfo.dlpProperty.ownerAccount as string;
-
-    if (this.authPerm != dlpPermission.DLPFileAccess.CONTENT_EDIT &&
-      this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      console.error(TAG, 'invalid authPerm ', this.authPerm);
-      this.isOK = false;
-      AppStorage.setOrCreate('ownerAccount', ownerAccount);
-      await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-        {
-          code: Constants.ERR_JS_DLP_FILE_READ_ONLY
-        } as BusinessError);
+    try {
+      await this.checkParseParams();
+      return true;
+    } catch {
       return false;
     }
-    if (!(GlobalContext.load('token2File') as Map<number, Object[]>).has(this.tokenId)) {
-      console.error(TAG, 'invalid token2File');
-      return;
-    }
+  }
 
-    this.fileName = (GlobalContext.load('abilityWant') as Want)
-      .parameters?.['key_pick_file_name'] as string;
-    if (this.fileName === undefined) {
-      console.error(TAG, 'invalid fileName');
-      return false;
-    }
-    this.fileName = String(this.fileName);
+  checkParseParams(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      this.authPerm = (GlobalContext.load('token2File') as
+      Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
+        .get(this.tokenId)?.[3] as dlpPermission.DLPFileAccess;
+      let dlpFileInfo = (GlobalContext.load('token2File') as
+      Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
+        .get(this.tokenId)?.[0] as dlpPermission.DLPFile;
+      let ownerAccount = dlpFileInfo.dlpProperty.ownerAccount as string;
 
-    let splitNames = this.fileName.split('.');
-    console.debug(TAG, 'splitNames:', splitNames);
-    if (splitNames.length <= SUFFIX_INDEX) {
-      console.error(TAG, 'get suffix failed');
-      return;
-    }
-    this.suffix = splitNames[splitNames.length - SUFFIX_INDEX];
-    console.info(TAG, 'suffix is', this.suffix);
-    return true;
+      if (this.authPerm != dlpPermission.DLPFileAccess.CONTENT_EDIT &&
+        this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
+        console.error(TAG, 'invalid authPerm ', this.authPerm);
+        this.isOK = false;
+        AppStorage.setOrCreate('ownerAccount', ownerAccount);
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+          {
+            code: Constants.ERR_JS_DLP_FILE_READ_ONLY
+          } as BusinessError);
+        reject();
+        return false;
+      }
+      if (!(GlobalContext.load('token2File') as Map<number, Object[]>).has(this.tokenId)) {
+        console.error(TAG, 'invalid token2File');
+        reject();
+        return;
+      }
+      this.fileName = (GlobalContext.load('abilityWant') as Want)
+        .parameters?.['key_pick_file_name'] as string;
+      if (this.fileName === undefined) {
+        console.error(TAG, 'invalid fileName');
+        reject();
+        return false;
+      }
+      this.fileName = String(this.fileName);
+      let splitNames = this.fileName.split('.');
+      console.debug(TAG, 'splitNames:', splitNames);
+      if (splitNames.length <= SUFFIX_INDEX) {
+        console.error(TAG, 'get suffix failed');
+        reject();
+        return;
+      }
+      this.suffix = splitNames[splitNames.length - SUFFIX_INDEX];
+      console.info(TAG, 'suffix is', this.suffix);
+      resolve();
+      return true;
+    })
   }
 
   deleteFile(file:string) {
@@ -253,81 +282,75 @@ export default class SaveAsAbility extends UIAbility {
     }
   }
 
-  async copyDlpHead(srcFd: number, dstFd: number): Promise<boolean> {
-    let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
+  async copyDlpHead(srcFd: number, dstFd: number) {
     let appDir = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/';
-    let filePath = appDir + 'saveAs' + random;
-    let dirPath = appDir + 'saveAsUnzip' + random;
-    let encFile = dirPath + '/encrypted_data';
-    let zipPath = appDir + 'saveAsZip' + random;
-    let zipName = zipPath + '.zip';
-    let zipFlag = false;
-    let retVal = false;
-
-    let ff:fs.File | undefined = undefined;
-    let zf2:fs.File | undefined = undefined;
+    this.filePath = appDir + 'saveAs' + this.random;
+    this.dirPath = appDir + 'saveAsUnzip' + this.random;
+    this.encFile = this.dirPath + '/encrypted_data';
+    this.zipPath = appDir + 'saveAsZip' + this.random;
+    this.zipName = this.zipPath + '.zip';
     try {
-      let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
-      let option: ChangeOption = {
-        offset: 0,
-        length: HEAD_LENGTH_IN_BYTE
-      };
-      let num = fs.readSync(srcFd, z, option);
-      let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
-
-      let magic = buf[0];
-      if (magic === Constants.DLP_ZIP_MAGIC) {
-        zipFlag = true;
-        ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
-        await fs.copyFile(srcFd, ff.fd);
-        await fs.mkdir(dirPath);
-        let options: zlib.Options = {
-          level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
-          memLevel:zlib.MemLevel.MEM_LEVEL_DEFAULT,
-          strategy:zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
-        };
-        await zlib.decompressFile(filePath, dirPath, options);
-        await fs.truncate(encFile);
-        await zlib.compressFile(dirPath, zipPath, options);
-
-        zf2 = await fs.open(zipName, fs.OpenMode.READ_WRITE);
-        await fs.copyFile(zf2.fd, dstFd);
-        await fs.close(ff);
-        await fs.close(zf2);
-        retVal = true;
-      } else {
-        let txtOffset = buf[TXT_OFFSET];
-        let head = new ArrayBuffer(txtOffset);
-        option = {
-          offset: 0,
-          length: txtOffset
-        };
-        num = fs.readSync(srcFd, head, option);
-        let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
-        buf2[SIZE_OFFSET] = 0;
-        num = fs.writeSync(dstFd, head, option);
-        retVal = true;
-      }
+      await this.copyDlpHeadData(srcFd, dstFd);
     } catch (err) {
       console.error(TAG, 'copyDlpHead ', (err as BusinessError).code, (err as BusinessError).message);
       try {
-        await fs.close(ff);
-        await fs.close(zf2);
+        await fs.close(this.ff);
+        await fs.close(this.zf2);
       } catch (error) {
         console.error(TAG, 'close ', (err as BusinessError).code, (err as BusinessError).message);
       }
     }
-
-    if (zipFlag) {
-      this.deleteFile(dirPath + '/encrypted_data');
-      this.deleteFile(dirPath + '/dlp_general_info');
-      this.deleteFile(dirPath + '/dlp_cert');
-      this.rmDir(dirPath);
-      this.deleteFile(filePath);
-      this.deleteFile(zipName);
+    if (this.zipFlag) {
+      this.deleteFile(this.dirPath + '/encrypted_data');
+      this.deleteFile(this.dirPath + '/dlp_general_info');
+      this.deleteFile(this.dirPath + '/dlp_cert');
+      this.rmDir(this.dirPath);
+      this.deleteFile(this.filePath);
+      this.deleteFile(this.zipName);
     }
+  }
 
-    return retVal;
+  async copyDlpHeadData(srcFd: number, dstFd: number) {
+    let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
+    let option: ChangeOption = {
+      offset: 0,
+      length: HEAD_LENGTH_IN_BYTE
+    };
+    let num = fs.readSync(srcFd, z, option);
+    let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
+
+    let magic = buf[0];
+    if (magic === Constants.DLP_ZIP_MAGIC) {
+      this.zipFlag = true;
+      this.ff = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+      await fs.copyFile(srcFd, this.ff.fd);
+      await fs.mkdir(this.dirPath);
+      let options: zlib.Options = {
+        level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
+        memLevel:zlib.MemLevel.MEM_LEVEL_DEFAULT,
+        strategy:zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
+      };
+      await zlib.decompressFile(this.filePath, this.dirPath, options);
+      await fs.truncate(this.encFile);
+      await zlib.compressFile(this.dirPath, this.zipPath, options);
+      this.zf2 = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
+      await fs.copyFile(this.zf2.fd, dstFd);
+      await fs.close(this.ff);
+      await fs.close(this.zf2);
+      this.retVal = true;
+    } else {
+      let txtOffset = buf[TXT_OFFSET];
+      let head = new ArrayBuffer(txtOffset);
+      option = {
+        offset: 0,
+        length: txtOffset
+      };
+      num = fs.readSync(srcFd, head, option);
+      let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
+      buf2[SIZE_OFFSET] = 0;
+      num = fs.writeSync(dstFd, head, option);
+      this.retVal = true;
+    }
   }
 
   parseDocumentPickerSaveOption(args: picker.DocumentSaveOptions[], action: string) {
@@ -429,42 +452,44 @@ export default class SaveAsAbility extends UIAbility {
     let documentSaveOptions = new picker.DocumentSaveOptions();
     displayName = this.fileName;
     documentSaveOptions.newFileNames = [displayName];
-    let documentPicker = new picker.DocumentViewPicker();
-    let dstFd: number;
-    let file: fs.File | undefined;
     try {
       let saveRes: BusinessError | string[] | undefined = await this.documentPickerSave(documentSaveOptions);
       if (saveRes == undefined || (saveRes instanceof Array && saveRes.length == 0)) {
         console.error(TAG, 'fail to get uri');
         return;
       }
-
       uri = saveRes[0]
       if (!isValidPath(uri)) {
         console.error(TAG, 'invalid uri');
         return;
       }
       try {
-        file = await fs.open(uri, fs.OpenMode.READ_WRITE);
-        dstFd = file.fd;
-      } catch (err) {
-        console.error(TAG, 'open', uri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-        try {
-          if (file != undefined) {
-            await fs.close(file);
-          }
-        } catch (err) {
-          console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
-        }
-        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
-        this.isOK = false;
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-          {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR
-          } as BusinessError);
+        await this.fileOpen(uri);
+        await this.pickerDialog(uri);
+      } catch {
         return;
       }
+    } catch (err) {
+      console.error(TAG, 'DocumentViewPicker failed', (err as BusinessError).code, (err as BusinessError).message);
+      try {
+        if (this.file != undefined) {
+          await fs.close(this.file);
+        }
+      } catch (err) {
+        console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
+      }
+      await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
+      this.isOK = false;
+      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        {
+          code: Constants.ERR_JS_APP_INSIDE_ERROR
+        } as BusinessError);
+      return;
+    }
+  }
 
+  pickerDialog(uri: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
       let token2FileValue: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[] =
         (GlobalContext
         .load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
@@ -473,24 +498,76 @@ export default class SaveAsAbility extends UIAbility {
       this.sandboxBundleName = token2FileValue[1] as string;
       let appId: number = token2FileValue[2] as number;
       let srcUri: string = token2FileValue[4] as string;
-
-      let srcFd = getFileFd(srcUri);
-      let copyRes = await this.copyDlpHead(srcFd, dstFd);
-      if (!copyRes) {
+      this.srcFdPicker = getFileFd(srcUri);
+      await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
+      if (!this.retVal) {
         try {
-          await fs.close(file);
+          await fs.close(this.file);
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
         await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
-        fs.closeSync(srcFd);
+        fs.closeSync(this.srcFdPicker);
         this.isOK = false;
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           {
             code: Constants.ERR_JS_APP_INSIDE_ERROR
           } as BusinessError);
-        return;
+        reject();
       }
+      try {
+        await this.openDLPFile(uri);
+        await this.addDLPLinkFile(appId, uri);
+      } catch {
+        reject();
+      }
+      let linkFilePath = Constants.FUSE_PATH + this.linkFileName;
+      let linkUri = getFileUriByPath(linkFilePath);
+      (GlobalContext.load('token2File') as Map<number, Object[]>)
+        .set(this.tokenId, [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri]);
+      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
+        GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+      sandbox2linkFile.get(this.sandboxBundleName + appId)
+        ?.push([this.newDlpFile, this.linkFileName, this.dstFdPicker, this.tokenId]);
+      (GlobalContext.load('fileOpenHistory') as Map<string, Object[]>)
+        .set(uri, [this.sandboxBundleName, appId, this.linkFileName, linkUri]);
+      (GlobalContext.load('linkSet') as Set<string>).add(linkUri);
+      this.resultUri = getFileUriByPath(linkFilePath);
+      (this.result.want?.parameters?.pick_path_return as string[]).push(this.resultUri);
+      this.result.resultCode = 0;
+      fs.closeSync(this.srcFdPicker);
+      resolve();
+    })
+  }
+
+  fileOpen(uri: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.file = await fs.open(uri, fs.OpenMode.READ_WRITE);
+        this.dstFdPicker = this.file.fd;
+        resolve();
+      } catch (err) {
+        console.error(TAG, 'open', uri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+        try {
+          if (this.file != undefined) {
+            await fs.close(this.file);
+          }
+        } catch (err) {
+          console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
+        }
+        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
+        this.isOK = false;
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+          {
+            code: Constants.ERR_JS_APP_INSIDE_ERROR
+          } as BusinessError);
+        reject();
+      }
+    })
+  }
+
+  openDLPFile(uri: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
       let callerAppId: string;
       try {
         let callerBundleName =
@@ -498,92 +575,63 @@ export default class SaveAsAbility extends UIAbility {
         callerAppId = await getAppId(callerBundleName);
         console.info(TAG, 'get AppId', callerAppId);
       } catch {
+        reject();
         return;
       }
-      let newDlpFile: dlpPermission.DLPFile;
       try {
-        newDlpFile = await dlpPermission.openDLPFile(dstFd, callerAppId);
+        this.newDlpFile = await dlpPermission.openDLPFile(this.dstFdPicker, callerAppId);
       } catch (err) {
-        console.error(TAG, 'generateDlpFile', dstFd, 'failed', (err as BusinessError).code, (err as BusinessError).message);
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, err);
+        console.error(TAG, 'generateDlpFile', this.dstFdPicker, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, err);
         try {
-          await fs.close(file);
+          await fs.close(this.file);
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
         await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
-        fs.closeSync(srcFd);
+        fs.closeSync(this.srcFdPicker);
+        reject();
         return;
       }
+      resolve();
+    })
+  }
 
+  async addDLPLinkFile(appId: number, uri: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
       let date = new Date();
       let timestamp = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getMilliseconds()).getTime();
 
-      let linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + appId +
+      this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + appId +
         '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
       this.suffix + '.dlp.link';
 
       try {
-        await newDlpFile.addDLPLinkFile(linkFileName);
+        await this.newDlpFile.addDLPLinkFile(this.linkFileName);
       } catch (err) {
         console.error(TAG, 'addDlpLinkFile failed', (err as BusinessError).code, (err as BusinessError).message);
         try {
-          await newDlpFile.closeDLPFile();
+          await this.newDlpFile.closeDLPFile();
         } catch (err) {
           console.error(TAG, 'closeDlpFile failed', (err as BusinessError).code, (err as BusinessError).message);
         }
         try {
-          await fs.close(file);
+          await fs.close(this.file);
         } catch (err) {
           console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
         }
         await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
-        fs.closeSync(srcFd);
+        fs.closeSync(this.srcFdPicker);
         this.isOK = false;
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           {
             code: Constants.ERR_JS_APP_INSIDE_ERROR
           } as BusinessError);
+        reject();
         return;
       }
-
-      let linkFilePath = Constants.FUSE_PATH + linkFileName;
-      let linkUri = getFileUriByPath(linkFilePath);
-      (GlobalContext.load('token2File') as Map<number, Object[]>)
-        .set(this.tokenId, [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri]);
-      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
-        GlobalContext
-          .load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-      sandbox2linkFile.get(this.sandboxBundleName + appId)?.push([newDlpFile, linkFileName, dstFd, this.tokenId]);
-
-      (GlobalContext.load('fileOpenHistory') as Map<string, Object[]>)
-        .set(uri, [this.sandboxBundleName, appId, linkFileName, linkUri]);
-
-      (GlobalContext.load('linkSet') as Set<string>).add(linkUri);
-
-      this.resultUri = getFileUriByPath(linkFilePath);
-
-      (this.result.want?.parameters?.pick_path_return as string[]).push(this.resultUri);
-      this.result.resultCode = 0;
-      fs.closeSync(srcFd);
-      return;
-    } catch (err) {
-      console.error(TAG, 'DocumentViewPicker failed', (err as BusinessError).code, (err as BusinessError).message);
-      try {
-        if (file != undefined) {
-          await fs.close(file);
-        }
-      } catch (err) {
-        console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
-      }
-      await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
-      this.isOK = false;
-      await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-        {
-          code: Constants.ERR_JS_APP_INSIDE_ERROR
-        } as BusinessError);
-      return;
-    }
+      resolve();
+    })
   }
 };

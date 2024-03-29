@@ -33,13 +33,13 @@ import {
   DLPInfo,
   getDLPInfo,
   sendDlpManagerAccountLogin,
-  isValidPath,
-  startAlertAbility
+  isValidPath
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import common from '@ohos.app.ability.common';
+import { GetAlertMessage } from '../common/GetAlertMessage';
 
 const TAG = '[DLPManager_MainEx]';
 
@@ -54,7 +54,7 @@ export default class MainAbility extends UIExtensionAbility {
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     console.log(TAG, 'want', JSON.stringify(want));
     if (GlobalContext.load('session')) {
-      await startAlertAbility(this.context as common.UIExtensionContext,
+      await GetAlertMessage.startAlertAbility(this.context as common.UIExtensionContext,
         { code: Constants.ERR_JS_APP_ENCRYPTING,
           data: GlobalContext.load('abilityWant').parameters?.displayName
         } as BusinessError, session);
@@ -132,7 +132,7 @@ export default class MainAbility extends UIExtensionAbility {
     AppStorage.setOrCreate('validity', GlobalContext.load('dlpProperty').expireTime)
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
         { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError, session);
       return;
     }
@@ -226,7 +226,7 @@ export default class MainAbility extends UIExtensionAbility {
           resolve();
         })
         .catch(async (error: BusinessError) => {
-          await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+          await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
             error, session);
           reject();
           return;
@@ -237,7 +237,7 @@ export default class MainAbility extends UIExtensionAbility {
   async checkValidWantAndAccount(session: UIExtensionContentSession): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!this.checkValidWant()) {
-        await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
           { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError, session);
         reject();
         return;
@@ -250,7 +250,7 @@ export default class MainAbility extends UIExtensionAbility {
         resolve();
       } catch (err) {
         console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-        await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError, session);
         reject();
         return;
@@ -268,7 +268,7 @@ export default class MainAbility extends UIExtensionAbility {
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
     sendDlpManagerAccountLogin(0);
     if (codeMessage) {
-      await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
         { code: codeMessage } as BusinessError, session);
       return;
     }
@@ -353,7 +353,7 @@ export default class MainAbility extends UIExtensionAbility {
           name: '',
           message: msg,
         }
-        await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
           ansErr as BusinessError, session);
         return;
       } else {
@@ -371,7 +371,7 @@ export default class MainAbility extends UIExtensionAbility {
     return new Promise<void>((resolve, reject) => {
       this.homeFeature.fileOpenHistoryHome(uri, async (err: number) => {
         if (err === 0) {
-          await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+          await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
             { code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError, session);
           reject();
         }

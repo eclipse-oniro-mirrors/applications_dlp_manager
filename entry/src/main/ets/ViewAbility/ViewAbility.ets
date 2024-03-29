@@ -31,7 +31,6 @@ import {
   getUserId,
   checkDomainAccountInfo,
   getAuthPerm,
-  startAlertAbility,
   getFileFd,
   getFileUriByPath,
   getAppId,
@@ -44,6 +43,7 @@ import {
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import rpc from '@ohos.rpc';
+import { GetAlertMessage } from '../common/GetAlertMessage';
 
 const TAG = '[DLPManager_View]';
 const SUFFIX_INDEX = 2;
@@ -144,7 +144,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           console.error(TAG, 'dlpFile closeDLPFile failed', (err as BusinessError).code, (err as BusinessError).message)
         }
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext,
           {code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.appIndex,
           undefined); // 105: DLP_START_SANDBOX_ERROR
@@ -277,7 +277,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
           code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject(err);
@@ -288,7 +288,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (codeMessage) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
           code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject();
@@ -321,7 +321,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           await this.sendDlpFileOpenFault(
             Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
           ); // 103:DLP_FILE_PARSE_ERROR
-          await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, err);
+          await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, err);
         } catch (e) {
           console.error(TAG, 'openDLPFile2', this.fileName, 'failed',
             (e as BusinessError).code, (e as BusinessError).message, e);
@@ -351,7 +351,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
         this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -428,7 +428,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await this.sendDlpFileOpenFault(
           Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
         ); // 104:DLP_INSTALL_SANDBOX_ERROR
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -444,7 +444,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (splitNames.length <= SUFFIX_INDEX) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -498,7 +498,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           console.error(TAG, 'closeDLPFile failed', (err as BusinessError).code, (err as BusinessError).message);
         }
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, error);
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, error);
         hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         await this.closeFile();
@@ -516,7 +516,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (error) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
           code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR } as BusinessError);
         await this.closeFile();
         console.error(TAG, 'open', this.uri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
@@ -542,39 +542,52 @@ export default class ViewAbility extends ServiceExtensionAbility {
     console.log(TAG);
   }
 
+  dlpFileMapHistory(want: Want): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
+      GlobalContext.store('hiSandboxPkgName', this.callerBundleName);
+      if ((GlobalContext.load('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+          code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
+        reject();
+        return;
+      }
+      if (opening) {
+        console.debug(TAG, 'file is opening', this.uri);
+        reject();
+        return;
+      } else {
+        opening = true;
+        console.debug(TAG, 'file is opened', this.uri);
+      }
+      let obj: Record<string, string> = (want.parameters?.fileName ?? { 'name': '' }) as Record<string, string>;
+      this.fileName = obj.name;
+      this.uri = want.uri as string;
+      if (!isValidPath(this.uri)) {
+        opening = false;
+        console.error(TAG, 'invalid uri in want.uri');
+        (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+      }
+      this.dlpFd = getFileFd(this.uri);
+      GlobalContext.store('uri', this.uri);
+      console.debug(TAG, 'dlpFd:', this.dlpFd);
+      if (this.dlpFd === -1) {
+        opening = false;
+        (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+      }
+      resolve();
+    })
+  }
+
   async onRequest(want: Want, startId: number): Promise<void> {
     console.debug(TAG, 'enter onRequest');
-    this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
-    GlobalContext.store('hiSandboxPkgName', this.callerBundleName);
-    if ((GlobalContext.load('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
-      await startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
-        code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
+    try {
+      await this.dlpFileMapHistory(want);
+    } catch {
       return;
-    }
-    if (opening) {
-      console.debug(TAG, 'file is opening', this.uri);
-      return;
-    } else {
-      opening = true;
-      console.debug(TAG, 'file is opened', this.uri);
     }
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
-    let obj: Record<string, string> = (want.parameters?.fileName ?? { 'name': '' }) as Record<string, string>;
-    this.fileName = obj.name;
-    this.uri = want.uri as string;
-    if (!isValidPath(this.uri)) {
-      opening = false;
-      console.error(TAG, 'invalid uri in want.uri');
-      (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
-    }
-    this.dlpFd = getFileFd(this.uri);
-    GlobalContext.store('uri', this.uri);
-    console.debug(TAG, 'dlpFd:', this.dlpFd);
-    if (this.dlpFd === -1) {
-      opening = false;
-      (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
-    }
     this.sandboxBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
     this.sandboxAbilityName = want.parameters?.['ohos.dlp.params.abilityName'] as string;
     this.sandboxModuleName = want.parameters?.['ohos.dlp.params.moduleName'] as string;

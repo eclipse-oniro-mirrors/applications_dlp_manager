@@ -14,7 +14,7 @@
  */
 
 import GlobalContext from '../common/GlobalContext';
-import { getAlertMessage } from '../common/utils';
+import { GetAlertMessage } from '../common/GetAlertMessage';
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
@@ -50,13 +50,15 @@ struct Index {
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
           sendDlpManagerAccountLogin(resultCode);
           if (resultCode === Constants.ERR_JS_NETWORK_INVALID) {
-            let errInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+            let errInfo = GetAlertMessage.getAlertMessage(
+              { code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
             this.title = '';
             this.message = errInfo.msg;
             this.cancel = errInfo.cancel;
             this.ok = errInfo.ok;
             try {
-              GlobalContext.load('mainWindow').resize(Constants.START_ABILITY_WINDOW_WIDTH, Constants.START_ABILITY_HEIGHT_DEFAULT, (err: BusinessError) => {
+              GlobalContext.load('mainWindow').resize(
+                Constants.START_ABILITY_WINDOW_WIDTH, Constants.START_ABILITY_HEIGHT_DEFAULT, (err: BusinessError) => {
                 const errCode: number = err.code;
                 if (errCode) {
                   console.error('Failed to change the window size. Cause:' + JSON.stringify(err));
@@ -86,49 +88,69 @@ struct Index {
     }
   }
 
+  setMessageHeight(messageCode: number) {
+    if ([
+      Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
+    ].includes(messageCode)) {
+      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT;
+    }
+    if ([
+      Constants.ERR_JS_OFFLINE,
+    ].includes(messageCode)) {
+      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT1;
+    }
+    if ([
+      Constants.ERR_JS_APP_PARAM_ERROR,
+      Constants.ERR_JS_APP_OPEN_REJECTED,
+    ].includes(messageCode)) {
+      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_ONE;
+    }
+    if ([
+      Constants.ERR_JS_DLP_FILE_READ_ONLY,
+    ].includes(messageCode)) {
+      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_TWO;
+    }
+    if ([
+      Constants.ERR_JS_GET_ACCOUNT_ERROR,
+      Constants.ERR_JS_NOT_DLP_FILE,
+    ].includes(messageCode)) {
+      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_THREE;
+    }
+    if ([
+      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED
+    ].includes(messageCode)) {
+      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_FOUR;
+    }
+  }
+
   async aboutToAppear() {
     console.log(TAG, 'alert aboutToAppear start')
     try {
       let messageCode = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError).code;
-      let errInfo = getAlertMessage((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError);
+      let errorMsg = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
+      let errInfo: Record<string, Resource> = {};
+      if ([
+        Constants.ERR_JS_USER_NO_PERMISSION,
+        Constants.ERR_JS_APP_PARAM_ERROR,
+        Constants.ERR_JS_APP_OPEN_REJECTED,
+        Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
+        Constants.ERR_JS_APP_ENCRYPTING,
+        Constants.ERR_JS_FILE_EXPIRATION,
+        Constants.ERR_JS_DLP_FILE_READ_ONLY,
+      ].includes(messageCode)) {
+        errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
+      } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED, Constants.ERR_JS_OFFLINE].includes(messageCode)) {
+        errInfo = GetAlertMessage.getAlertButtonMessage(errorMsg);
+      } else {
+        errInfo = GetAlertMessage.getAlertMessage(errorMsg);
+      }
       this.windowHeight = (GlobalContext.load('abilityWant') as Want).parameters?.windowHeight as number;
       this.windowHeight = Number(this.windowHeight) - Constants.START_ABILITY_MSG_HEIGHT_ROWS;
       this.title = errInfo.title;
       this.message = errInfo.msg;
       this.cancel = errInfo.cancel;
       this.ok = errInfo.ok;
-      if ([
-        Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
-      ].includes(messageCode)) {
-        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT;
-      }
-      if ([
-        Constants.ERR_JS_OFFLINE,
-      ].includes(messageCode)) {
-        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT1;
-      }
-      if ([
-        Constants.ERR_JS_APP_PARAM_ERROR,
-        Constants.ERR_JS_APP_OPEN_REJECTED,
-      ].includes(messageCode)) {
-        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_ONE;
-      }
-      if ([
-        Constants.ERR_JS_DLP_FILE_READ_ONLY,
-      ].includes(messageCode)) {
-        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_TWO;
-      }
-      if ([
-        Constants.ERR_JS_GET_ACCOUNT_ERROR,
-        Constants.ERR_JS_NOT_DLP_FILE,
-      ].includes(messageCode)) {
-        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_THREE;
-      }
-      if ([
-        Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED
-      ].includes(messageCode)) {
-        this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_FOUR;
-      }
+      this.setMessageHeight(messageCode);
     } catch (err) {
       console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err as BusinessError));
     }
@@ -157,7 +179,7 @@ struct Index {
         Text() {
           Span(this.message)
         }
-        .wordBreak(WordBreak.BREAK_ALL)
+        .wordBreak(WordBreak.BREAK_WORD)
         .fontWeight(FontWeight.Regular)
         .fontColor($r('sys.color.ohos_id_color_text_primary'))
         .fontSize($r('sys.float.ohos_id_text_size_body1'))
