@@ -41,7 +41,9 @@ const TAG = '[DLPManager_service_extability]';
 
 class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   private dlpFileMap: Map<string, dlpPermission.DLPFile | null> = new Map<string, dlpPermission.DLPFile | null>();
-  
+  private inFile: fs.File | undefined = undefined;
+  private outFile: fs.File | undefined = undefined;
+
   constructor(des: string) {
     super(des);
   }
@@ -69,35 +71,14 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   async genDlpFile(
     inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback
   ): Promise<void> {
-    console.log(TAG, 'genDlpFile in service +++++++++++');
-    let inFile: fs.File;
-    let outFile: fs.File;
-
+    console.log(TAG, 'genDlpFile in service');
+    let result: Record<string, number>;
     try {
-      inFile = await fs.open(inputUri, fs.OpenMode.READ_WRITE);
+      result = await this.genDlpFileFd(inputUri, outputUri);
     } catch (error) {
-      console.error(TAG, 'open', inputUri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
-      callback((error as BusinessError).code);
+      callback(error);
       return;
     }
-    let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
-    try {
-      uriInfo = new fileUri.FileUri(outputUri);
-    } catch (err) {
-      console.error(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
-    }
-    try {
-      outFile = await fs.open(outputUri, fs.OpenMode.READ_WRITE);
-    } catch (err) {
-      try {
-        await fs.unlink(uriInfo.path);
-      } catch (err) {
-        console.error(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
-      }
-      callback(100);
-      return;
-    }
-
     let dlpP: dlpPermission.DLPProperty = {
       'ownerAccount' : dlp.ownerAccount,
       'ownerAccountID' : dlp.ownerAccountID,
@@ -109,8 +90,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       'expireTime': dlp.expireTime
     }
     try {
-      let dlpFile = await dlpPermission.generateDLPFile( inFile.fd, outFile.fd, dlpP);
-
+      let dlpFile = await dlpPermission.generateDLPFile(result.inFileFd, result.outFileFd, dlpP);
       if (!this.dlpFileMap.has(outputUri)) {
         this.dlpFileMap.set(outputUri, dlpFile);
         GlobalContext.store('dlpFileMap', this.dlpFileMap);
@@ -133,12 +113,50 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     } catch (err) {
       console.log(TAG, 'genDlpFile file', JSON.stringify(err));
       try {
-        await fs.close(outFile);
+        await fs.close(this.outFile);
       } catch (err) {
         console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
       }
       callback((err as BusinessError).code);
     }
+  }
+
+  async genDlpFileFd(inputUri: string, outputUri: string): Promise<Record<string, number>> {
+    return new Promise(async (resolve, reject) => {
+      let inFileFd: number = -1;
+      let outFileFd: number = -1;
+      try {
+        this.inFile = await fs.open(inputUri, fs.OpenMode.READ_WRITE);
+        inFileFd = this.inFile.fd;
+      } catch (error) {
+        console.error(TAG, 'open', inputUri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
+        reject((error as BusinessError).code);
+        return;
+      }
+      let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
+      try {
+        uriInfo = new fileUri.FileUri(outputUri);
+      } catch (err) {
+        console.error(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
+      }
+      try {
+        this.outFile = await fs.open(outputUri, fs.OpenMode.READ_WRITE);
+        outFileFd = this.outFile.fd;
+      } catch (error) {
+        try {
+          await fs.unlink(uriInfo.path);
+        } catch (err) {
+          console.error(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+        }
+        reject((error as BusinessError).code);
+        return;
+      }
+      let result = {
+        'inFileFd': inFileFd,
+        'outFileFd': outFileFd
+      } as Record<string, number>;
+      resolve(result);
+    })
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {

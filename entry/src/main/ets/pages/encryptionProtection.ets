@@ -29,7 +29,6 @@ import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import {
   PermissionType,
-  getAlertMessage,
   getOsAccountInfo,
   checkDomainAccountInfo,
   getUserId,
@@ -44,8 +43,7 @@ import {
   sendDlpManagerFileConfiguration,
   getFileSizeByUri,
   measureTextSizeWidth,
-  colorStatus,
-  startAlertAbility
+  colorStatus
 } from '../common/utils';
 import Constants from '../common/constant';
 import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
@@ -55,6 +53,7 @@ import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
 import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
 import HomeFeature from '../feature/HomeFeature';
 import emitter from '@ohos.events.emitter';
+import { GetAlertMessage } from '../common/GetAlertMessage';
 
 const TAG = '[DLPManager_Encrypt]'
 let abilityResult: ability.AbilityResult = {
@@ -434,7 +433,7 @@ struct DlpDialog {
         this.beginToGenDlpFileHome(srcFileUri, uri, uriInfo);
       }).catch((err: BusinessError) => {
         console.error('DocumentViewPicker save failed', err.code, err.message);
-        let errorInfo = getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+        let errorInfo = GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         this.processing = false;
         return;
@@ -635,10 +634,10 @@ struct DlpDialog {
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
       if (this.session !== undefined) {
-        let errorInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
@@ -646,10 +645,11 @@ struct DlpDialog {
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
     if (codeMessage) {
       if (this.session !== undefined) {
-        let errorInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        let errorInfo = GetAlertMessage.getAlertMessage(
+          { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;
@@ -891,7 +891,6 @@ struct DlpDialog {
               .width(Constants.FOOTER_ROW_WIDTH)
               .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
               .margin({ top: Constants.FOOTER_ROW_MARGIN })
-
             }
           }.constraintSize({
             maxHeight: this.directionStatus ===

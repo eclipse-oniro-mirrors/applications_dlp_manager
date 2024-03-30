@@ -34,8 +34,7 @@ import {
   sendDlpManagerAccountLogin,
   DLPInfo,
   showErrorDialogAndExit,
-  isValidPath,
-  startAlertAbility
+  isValidPath
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -44,6 +43,7 @@ import { BusinessError } from '@ohos.base';
 import window from '@ohos.window';
 import common from '@ohos.app.ability.common';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
+import { GetAlertMessage } from '../common/GetAlertMessage';
 
 const TAG = '[DLPManager_Main]';
 let permissionList: Permissions[] = [
@@ -202,7 +202,7 @@ export default class MainAbility extends UIAbility {
   async checkValidWantAndAccount(want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!this.checkValidWant(want)) {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
         reject();
         return;
@@ -215,14 +215,14 @@ export default class MainAbility extends UIAbility {
         resolve();
       } catch (err) {
         console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         reject();
         return;
       }
       let codeMessage = checkDomainAccountInfo(accountInfo);
       if (codeMessage) {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: codeMessage } as BusinessError);
         reject();
         return;

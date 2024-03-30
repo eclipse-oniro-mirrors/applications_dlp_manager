@@ -27,7 +27,6 @@ import { staffItem } from '../common/encryptionComponents/staff';
 import Constants from '../common/constant';
 import {
   AuthAccount,
-  getAlertMessage,
   checkDomainAccountInfo,
   getOsAccountInfo,
   calculate,
@@ -38,8 +37,7 @@ import {
   FileMsg,
   isPC,
   sendDlpManagerFileConfiguration,
-  colorStatus,
-  startAlertAbility
+  colorStatus
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
@@ -47,6 +45,7 @@ import HomeFeature from '../feature/HomeFeature';
 import emitter from '@ohos.events.emitter';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
+import { GetAlertMessage } from '../common/GetAlertMessage';
 
 const TAG = '[DLPManager_ModEnc]';
 
@@ -414,7 +413,7 @@ struct changeEncryption {
         }
       } catch (err) {
         let session: UIExtensionContentSession = GlobalContext.load('session') as UIExtensionContentSession;
-        await startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
           err as BusinessError, session);
         return Promise.reject();
       }
@@ -428,10 +427,10 @@ struct changeEncryption {
     } catch (err) {
       console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
       if (this.session !== undefined) {
-        let errorInfo = getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
@@ -439,10 +438,11 @@ struct changeEncryption {
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
     if (codeMessage) {
       if (this.session !== undefined) {
-        let errorInfo = getAlertMessage({ code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+        let errorInfo = GetAlertMessage.getAlertMessage(
+          { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;

@@ -19,7 +19,7 @@ import osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
-import { getAlertMessage } from '../utils';
+import { GetAlertMessage } from '../GetAlertMessage';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 
 const TAG = '[DLPManager_staff]';
@@ -174,7 +174,7 @@ struct staffItem {
             })
             .catch((err: BusinessError) => {
               console.error(`${TAG} getAccountInfo error: ${JSON.stringify(err)}`);
-              let errInfo = getAlertMessage(err);
+              let errInfo = GetAlertMessage.getAlertMessage(err);
               this.showErrorDialog(errInfo.title, errInfo.msg);
             })
         } catch (err) {
