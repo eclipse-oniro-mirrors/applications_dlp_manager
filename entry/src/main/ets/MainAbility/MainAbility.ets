@@ -44,8 +44,9 @@ import window from '@ohos.window';
 import common from '@ohos.app.ability.common';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import { GetAlertMessage } from '../common/GetAlertMessage';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_Main]';
+const TAG = 'Main';
 let permissionList: Permissions[] = [
   'ohos.permission.READ_MEDIA',
   'ohos.permission.WRITE_MEDIA',
@@ -95,14 +96,14 @@ export default class MainAbility extends UIAbility {
   }
 
   onDestroy(): void {
-    console.info(TAG, 'onDestroy');
+    HiLog.info(TAG, `onDestroy`);
     if (GlobalContext.load('fileOpenHistoryFromMain')) {
       (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
     }
   }
 
   onNewWant(want: Want) {
-    console.log(TAG, 'onNewWant', JSON.stringify(want));
+    HiLog.info(TAG, `onNewWant: ${JSON.stringify(want)}`);
     this.getNewWantPage(want);
   }
 
@@ -131,13 +132,13 @@ export default class MainAbility extends UIAbility {
 
       windowStage.loadContent('pages/changeEncryption', (err: BusinessError) =>{
         if (err.code !== 0) {
-          console.error(TAG, 'loadContent failed', err.code, err.message);
+          HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
         }
       });
     } else {
       windowStage.loadContent('pages/permissionStatus', (err: BusinessError) =>{
         if (err.code !== 0) {
-          console.error(TAG, 'loadContent failed', err.code, err.message);
+          HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
         }
       });
     }
@@ -149,36 +150,36 @@ export default class MainAbility extends UIAbility {
   checkValidWant(want: Want): boolean {
     let parameters = want.parameters;
     if (parameters === undefined) {
-      console.error(TAG, 'need parameters in want');
+      HiLog.error(TAG, `need parameters in want`);
       return false;
     }
     if (parameters.fileName === undefined) {
-      console.error(TAG, 'need fileName in want.parameters');
+      HiLog.error(TAG, `need fileName in want.parameters`);
       return false;
     }
     if ((parameters.fileName as Record<string, string>).name === undefined) {
-      console.error(TAG, 'need name in want.parameters.fileName');
+      HiLog.error(TAG, `need name in want.parameters.fileName`);
       return false;
     }
     if (want.uri === undefined) {
-      console.error(TAG, 'need uri in want');
+      HiLog.error(TAG, `need uri in want`);
       return false;
     }
     this.callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
     let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
     if (this.callerToken === undefined || callerBundleName === undefined) {
-      console.error(TAG, 'need caller info in want.parameters');
+      HiLog.error(TAG, `need caller info in want.parameters`);
       return false;
     }
     GlobalContext.store('hiPkgName', callerBundleName);
     let uri = String(want.uri);
     if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
-      console.error(TAG, 'invalid uri for opened link uri');
+      HiLog.error(TAG, `invalid uri for opened link uri`);
       return false;
     }
 
     if (uri.indexOf(Constants.FUSE_PATH) !== -1 || !isValidPath(uri)) {
-      console.error(TAG, 'invalid uri in want.uri');
+      HiLog.error(TAG, `invalid uri in want.uri`);
       return false;
     }
     return true;
@@ -214,7 +215,7 @@ export default class MainAbility extends UIAbility {
         GlobalContext.store('accountDomain', accountInfo.domainInfo.domain);
         resolve();
       } catch (err) {
-        console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
         await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         reject();
@@ -231,7 +232,7 @@ export default class MainAbility extends UIAbility {
   }
 
   async getNewWantPage(want: Want): Promise<void> {
-    console.log(TAG, 'getNewWantPage start');
+    HiLog.info(TAG, `getNewWantPage start`);
     let windowStage: window.WindowStage = GlobalContext.load('windowStage') as window.WindowStage;
     try {
       await this.checkValidWantAndAccount(want)
@@ -243,7 +244,7 @@ export default class MainAbility extends UIAbility {
     sendDlpManagerAccountLogin(0);
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
-    console.info(TAG, 'request is from sandbox', requestIsFromSandBox);
+    HiLog.info(TAG, `request is from sandbox: ${requestIsFromSandBox}`);
     if (requestIsFromSandBox) {
       this.requestIsFromSandBox(windowStage);
     } else {
@@ -277,12 +278,12 @@ export default class MainAbility extends UIAbility {
       ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
     let isDlpSuffix: boolean = fileName.endsWith('.dlp');
     if (!isDlpSuffix) {
-      console.info(TAG, fileName, 'is not a dlp file');
+      HiLog.info(TAG, `${fileName} is not a dlp file`);
       GlobalContext.store('originFileName', fileName);
       GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
       windowStage.loadContent('pages/encryptionProtection', (err: BusinessError) =>{
         if (err.code !== 0) {
-          console.error(TAG, 'loadContent failed', err.code, err.message);
+          HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
         }
       });
       windowStage.getMainWindow().then((win: window.Window) => {
@@ -308,9 +309,9 @@ export default class MainAbility extends UIAbility {
     try {
       let callerBundleName = Constants.DLP_MANAGER_BUNDLE_NAME;
       callerAppId = await getAppId(callerBundleName);
-      console.info(TAG, 'get AppId', callerAppId);
+      HiLog.info(TAG, `get AppId: ${callerAppId}`);
     } catch {
-      console.log(TAG, 'get AppId failed');
+      HiLog.info(TAG, `get AppId failed`);
       return;
     }
     this.homeFeature.openDlpFileHome(uri, callerAppId,
@@ -333,7 +334,7 @@ export default class MainAbility extends UIAbility {
         let fileOpenHistoryFromMain: Map<string, string> =
          GlobalContext.load('fileOpenHistoryFromMain') as Map<string, string>;
         fileOpenHistoryFromMain.set(uri, uri);
-        console.log(TAG, 'fileOpenHistoryFromMain add', JSON.stringify(fileOpenHistoryFromMain));
+        HiLog.info(TAG, `fileOpenHistoryFromMain add: ${JSON.stringify(fileOpenHistoryFromMain)}`);
         this.gotoPage(windowStage);
       }
     })
@@ -352,7 +353,7 @@ export default class MainAbility extends UIAbility {
   }
 
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
-    console.info(TAG, 'onWindowStageCreate');
+    HiLog.info(TAG, `onWindowStageCreate`);
     GlobalContext.store('windowStage', windowStage);
     let dlpInfo:DLPInfo = await getDLPInfo();
     GlobalContext.store('hiPNameId', dlpInfo.name);
@@ -362,26 +363,25 @@ export default class MainAbility extends UIAbility {
       await atManager.requestPermissionsFromUser(GlobalContext.load('context') as common.UIAbilityContext,
         permissionList);
     } catch (err) {
-      console.error(TAG, 'requestPermissionsFromUser failed',
-        (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.error(TAG, `requestPermissionsFromUser failed: ${JSON.stringify(err)}`);
       return;
     }
     this.homeFeature.connectServiceExtAbility(()=>{
-      console.info(TAG, 'onWindowStageCreate callback');
+      HiLog.info(TAG, `onWindowStageCreate callback`);
       this.getNewWantPage(GlobalContext.load('abilityWant') as Want);
     });
-    console.info(TAG, 'onWindowStageCreate end');
+    HiLog.info(TAG, `onWindowStageCreate end`);
   }
 
   onWindowStageDestroy(): void {
-    console.info(TAG, 'onWindowStageDestroy');
+    HiLog.info(TAG, `onWindowStageDestroy`);
   }
 
   onForeground(): void {
-    console.info(TAG, 'onForeground');
+    HiLog.info(TAG, `onForeground`);
   }
 
   onBackground() {
-    console.info(TAG, 'onBackground');
+    HiLog.info(TAG, `onBackground`);
   }
 };

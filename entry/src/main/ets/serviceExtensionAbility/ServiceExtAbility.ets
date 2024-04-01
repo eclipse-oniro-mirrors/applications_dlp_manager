@@ -36,8 +36,9 @@ import IDLDLPProperty from './sequenceable/dlpClass';
 import { IAuthUser } from './sequenceable/dlpClass';
 import GlobalContext from '../common/GlobalContext';
 import Constants from '../common/constant';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_service_extability]';
+const TAG = 'service_extability';
 
 class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   private dlpFileMap: Map<string, dlpPermission.DLPFile | null> = new Map<string, dlpPermission.DLPFile | null>();
@@ -71,7 +72,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   async genDlpFile(
     inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback
   ): Promise<void> {
-    console.log(TAG, 'genDlpFile in service');
+    HiLog.info(TAG, `genDlpFile in service`);
     let result: Record<string, number>;
     try {
       result = await this.genDlpFileFd(inputUri, outputUri);
@@ -95,14 +96,14 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.dlpFileMap.set(outputUri, dlpFile);
         GlobalContext.store('dlpFileMap', this.dlpFileMap);
       } else {
-        console.log(TAG, 'map is overwrite', outputUri);
+        HiLog.info(TAG, `map is overwrite: ${outputUri}`);
         let rawDlpFile = this.dlpFileMap.get(outputUri) ?? null;
         if (rawDlpFile !== null) {
           try {
-            console.log(TAG, 'closeDLPFile start');
+            HiLog.info(TAG, `closeDLPFile start`);
             await rawDlpFile.closeDLPFile();
           } catch (err) {
-            console.error(TAG, 'closeDlpFile file', (err as BusinessError).code, (err as BusinessError).message);
+            HiLog.error(TAG, `closeDlpFile file: ${JSON.stringify(err)}`);
           }
         }
         this.dlpFileMap.delete(outputUri);
@@ -111,11 +112,11 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       }
       callback(0);
     } catch (err) {
-      console.log(TAG, 'genDlpFile file', JSON.stringify(err));
+      HiLog.info(TAG, `genDlpFile file: ${JSON.stringify(err)}`);
       try {
         await fs.close(this.outFile);
       } catch (err) {
-        console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
       }
       callback((err as BusinessError).code);
     }
@@ -129,7 +130,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.inFile = await fs.open(inputUri, fs.OpenMode.READ_WRITE);
         inFileFd = this.inFile.fd;
       } catch (error) {
-        console.error(TAG, 'open', inputUri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
+        HiLog.error(TAG, `open: ${inputUri}, failed: ${JSON.stringify(error)}`);
         reject((error as BusinessError).code);
         return;
       }
@@ -137,7 +138,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       try {
         uriInfo = new fileUri.FileUri(outputUri);
       } catch (err) {
-        console.error(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
       }
       try {
         this.outFile = await fs.open(outputUri, fs.OpenMode.READ_WRITE);
@@ -146,7 +147,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         try {
           await fs.unlink(uriInfo.path);
         } catch (err) {
-          console.error(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+          HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
         }
         reject((error as BusinessError).code);
         return;
@@ -160,7 +161,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
-    console.log(TAG, 'openDlpFile start', srcUri);
+    HiLog.info(TAG, `openDlpFile start: ${srcUri}`);
     let inFile = await fs.open(srcUri, fs.OpenMode.READ_WRITE);
     let dlpFile: dlpPermission.DLPFile;
     let authUserListNew: IAuthUser[] = [];
@@ -190,7 +191,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.dlpFileMap.set(srcUri, dlpFile);
         GlobalContext.store('dlpFileMap', this.dlpFileMap);
       } else {
-        console.log(TAG, 'map is overwrite');
+        HiLog.info(TAG, `map is overwrite`);
         this.dlpFileMap.delete(srcUri);
         this.dlpFileMap.set(srcUri, dlpFile);
         GlobalContext.store('dlpFileMap', this.dlpFileMap);
@@ -202,23 +203,23 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async stopFuseLink(uri: string, callback: stopFuseLinkCallback): Promise<void> {
-    console.log(TAG, 'stopFuseLink start', uri);
+    HiLog.info(TAG, `stopFuseLink start: ${uri}`);
     let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(uri);
     if (dlpFile !== null) {
       await dlpFile.stopFuseLink();
     } else {
-      console.log(TAG, 'stopFuseLink not find', uri);
+      HiLog.info(TAG, `stopFuseLink not find: ${uri}`);
       callback(-1);
     }
   }
 
   async resumeFuseLink(uri: string, callback: resumeFuseLinkCallback): Promise<void> {
-    console.log(TAG, 'resumeFuseLink start');
+    HiLog.info(TAG, `resumeFuseLink start`);
     let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(uri);
     if (dlpFile !== null) {
       await dlpFile.resumeFuseLink();
     } else {
-      console.log(TAG, 'resumeFuseLink not find', uri);
+      HiLog.info(TAG, `resumeFuseLink not find: ${uri}`);
       callback(-1);
     }
   }
@@ -237,7 +238,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       }
       await dlpFile.replaceDLPLinkFile(linkFileName);
     } else {
-      console.log(TAG, 'replaceDLPLinkFile not find', srcUri);
+      HiLog.info(TAG, `replaceDLPLinkFile not find: ${srcUri}`);
       callback(-1);
     }
   }
@@ -249,17 +250,17 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       try {
         await dlpFile.recoverDLPFile(inFile.fd);
       } catch (err) {
-        console.error(TAG, 'recoverDlpFileInner4', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.error(TAG, `recoverDlpFileInner4: ${JSON.stringify(err)}`);
         callback((err as BusinessError).code);
       }
     } else {
-      console.log(TAG, 'recoverDlpFile not find', srcUri);
+      HiLog.info(TAG, `recoverDlpFile not find: ${srcUri}`);
       callback(-1);
     }
   }
 
   async closeDlpFile(srcUri: string, callback: closeDlpFileCallback): Promise<void> {
-    console.log(TAG, 'closeDlpFile start');
+    HiLog.info(TAG, `closeDlpFile start`);
     let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(srcUri);
     if (dlpFile !== null) {
       try {
@@ -270,7 +271,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         }
         callback(0);
       } catch (err) {
-        console.error(TAG, 'closeDlpFile file', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.error(TAG, `closeDlpFile file: ${JSON.stringify(err)}`);
         callback((err as BusinessError).code);
       }
     }
@@ -284,7 +285,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         if (linkFile[Constants.FILE_OPEN_HISTORY_ONE] === linkFileName) {
           let authUserListNew: IAuthUser[] = [];
           if (callerToken !== linkFile[Constants.FILE_OPEN_HISTORY_THREE]) {
-            console.error(TAG, 'found file, but token invalid', linkFileName);
+            HiLog.error(TAG, `found file, but token invalid: ${linkFileName}`);
             callback(-1, _dlp, '');
           } else {
             let linkFileInfo: Record<number, number | string | dlpPermission.DLPFile> =
@@ -312,7 +313,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
             callback(0, _dlp, fileUri.toString());
           }
         } else {
-          console.error(TAG, 'request from sandbox, but can not find dlp file by linkFileName', linkFileName);
+          HiLog.error(TAG, `request from sandbox, but can not find dlp file by linkFileName: ${linkFileName}`);
           callback(-1, _dlp, '');
         }
       }
@@ -320,7 +321,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): Promise<void> {
-    console.log(TAG, 'fileOpenHistory start');
+    HiLog.info(TAG, `fileOpenHistory start`);
     if ((GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>)?.has(uri)) {
       callback(0);
     } else {
@@ -329,7 +330,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async linkSet(uri: string, callback: linkSetCallback): Promise<void> {
-    console.log(TAG, 'linkSet start');
+    HiLog.info(TAG, `linkSet start`);
     if ((GlobalContext.load('linkSet') as Map<string, (number | string)[]>)?.has(uri)) {
       callback(0);
     } else {
@@ -340,23 +341,23 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
 export default class ServiceExtAbility extends ServiceExtension {
   onCreate(want: Want) {
-    console.info(TAG, 'onCreate, want: ${want.abilityName}', want.abilityName);
+    HiLog.info(TAG, `onCreate, want: ${want.abilityName}`);
   }
 
   onRequest(want: Want, startId: number) {
-    console.info(TAG, 'onRequest, want: ${want.abilityName}', want.abilityName);
+    HiLog.info(TAG, `onRequest, want: ${want.abilityName}`);
   }
 
   onConnect(want: Want) {
-    console.info(TAG, 'service onConnect, want: ${want.abilityName}', want.abilityName);
+    HiLog.info(TAG, `service onConnect, want: ${want.abilityName}`);
     return new DlpRpcServiceStub('dlpRpc service stub');
   }
 
   onDisconnect(want: Want): void {
-    console.info(TAG, 'onDisconnect, want: ${want.abilityName}', want.abilityName);
+    HiLog.info(TAG, `onDisconnect, want: ${want.abilityName}`);
   }
 
   onDestroy(): void {
-    console.info('onDestroy');
+    HiLog.info(TAG, `onDestroy`);
   }
 }

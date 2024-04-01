@@ -31,11 +31,12 @@ import {
 } from '../MainAbility/data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
 import IdDlpRpcServiceProxy from '../MainAbility/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import Constants from '../common/constant';
+import { HiLog } from '../common/HiLog';
 
 const SERVICE_EXTENSION_ABILITY_NAME = 'ServiceExtAbility';
 const ERROR_CODE = -1;
 const SUCCESS_CODE = 0;
-const TAG = '[DLPManager_HomeFeature]';
+const TAG = 'HomeFeature';
 
 export default class HomeFeature {
   private connection = -1;
@@ -48,23 +49,23 @@ export default class HomeFeature {
     this.context = context;
     this.options = {
       onConnect: (elementName, proxy) => {
-        console.info(TAG, 'onConnect success');
+        HiLog.info(TAG, `onConnect success`);
         this.dlpRpcProxy = new IdDlpRpcServiceProxy(proxy);
         GlobalContext.store('dlpRpcProxy', this.dlpRpcProxy);
-        console.info(TAG, 'DLPManager IDL' + 'onConnect success', JSON.stringify(this.dlpRpcProxy));
+        HiLog.info(TAG, `DLPManager IDL onConnect success: ${JSON.stringify(this.dlpRpcProxy)}`);
         this.remoteCallback();
       },
       onDisconnect: () => {
-        console.info('onDisconnect');
+        HiLog.info(TAG, `onDisconnect`);
       },
       onFailed: () => {
-        console.info('onFailed');
+        HiLog.info(TAG, `onFailed`);
       }
     }
   }
 
   connectServiceExtAbility(callback: () => void) {
-    console.info(TAG, 'connectServiceExtAbility');
+    HiLog.info(TAG, `connectServiceExtAbility`);
     if (this.dlpRpcProxy !== undefined) {
       return;
     }
@@ -74,75 +75,73 @@ export default class HomeFeature {
       'abilityName': SERVICE_EXTENSION_ABILITY_NAME
     } as Record<string, string>;
     if (this.dlpRpcProxy === undefined) {
-      console.info(TAG, 'try connect');
+      HiLog.info(TAG, `try connect`);
       try {
         this.connection = this.context.connectServiceExtensionAbility(want, this.options);
       } catch (err) {
-        let code = (err as BusinessError).code;
-        let message = (err as BusinessError).message;
-        console.error(TAG, `connectServiceExtensionAbility failed, code is ${code}, message is ${message}`);
+        HiLog.error(TAG, `connectServiceExtensionAbility failed: ${JSON.stringify(err)}`);
       }
     }
-    console.info(TAG, 'connectServiceExtAbility result:${this.connection}', this.connection);
+    HiLog.info(TAG, `connectServiceExtAbility result: ${this.connection}`);
   }
 
   async genDlpFileHome(src:string, des:string, pop:IDLDLPProperty, callback: genDlpFileCallback) {
-    console.log(TAG, 'genDlpFileHome start');
+    HiLog.info(TAG, `genDlpFileHome start`);
     await GlobalContext.load('dlpRpcProxy').genDlpFile(src, des, pop, callback);
   }
 
   async openDlpFileHome(src:string, callerAppId: string, callback: openDlpFileCallback) {
-    console.log(TAG, 'openDlpFileHome start');
+    HiLog.info(TAG, `openDlpFileHome start`);
     await GlobalContext.load('dlpRpcProxy').openDlpFile(src, callerAppId, callback);
   }
 
   replaceDLPLinkFileHome(src:string, linkFileName:string, callback: replaceDlpLinkFileCallback) {
-    console.log(TAG, 'replaceDLPLinkFileHome start');
+    HiLog.info(TAG, `replaceDLPLinkFileHome start`);
     GlobalContext.load('dlpRpcProxy').replaceDlpLinkFile(src, linkFileName, callback);
   }
 
   async closeDLPFileHome(src:string, callback: closeDlpFileCallback) {
-    console.log(TAG, 'closeDLPFileHome start');
+    HiLog.info(TAG, `closeDLPFileHome start`);
     await GlobalContext.load('dlpRpcProxy').closeDlpFile(src, callback);
   }
 
   resumeFuseLinkHome(src:string, callback: resumeFuseLinkCallback) {
-    console.log(TAG, 'resumeFuseLinkHome start');
+    HiLog.info(TAG, `resumeFuseLinkHome start`);
     GlobalContext.load('dlpRpcProxy').resumeFuseLink(src, callback);
   }
 
   stopFuseLinkHome(src:string, callback: stopFuseLinkCallback) {
-    console.log(TAG, 'stopFuseLinkHome start');
+    HiLog.info(TAG, `stopFuseLinkHome start`);
     GlobalContext.load('dlpRpcProxy').stopFuseLink(src, callback);
   }
 
   async recoverDLPFileHome(src:string, pathUri: string, callback: recoverDlpFileCallback) {
-    console.log(TAG, 'recoverDLPFileHome start');
+    HiLog.info(TAG, `recoverDLPFileHome start`);
     await GlobalContext.load('dlpRpcProxy').recoverDlpFile(src, pathUri, callback);
   }
 
   async sandBoxLinkFileHome(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback) {
-    console.log(TAG, 'sandBoxLinkFileHome start', callerToken);
+    HiLog.info(TAG, `sandBoxLinkFileHome start: ${callerToken}`);
     await GlobalContext.load('dlpRpcProxy').sandBoxLinkFile(linkFileName, callerToken, callback);
   }
 
   async fileOpenHistoryHome(src:string, callback: fileOpenHistoryCallback) {
-    console.log(TAG, 'fileOpenHistoryHome start', src);
+    HiLog.info(TAG, `fileOpenHistoryHome start: ${src}`);
     await GlobalContext.load('dlpRpcProxy').fileOpenHistory(src, callback);
   }
 
   async linkSetHome(src:string, callback: linkSetCallback) {
-    console.log(TAG, 'linkSetHome start', src);
+    HiLog.info(TAG, `linkSetHome start: ${src}`);
     await GlobalContext.load('dlpRpcProxy').linkSet(src, callback);
   }
 
   disconnectServiceExtAbility(callback: (ans:number) => void) {
-    console.info(TAG, 'disconnectServiceExtAbility');
+    HiLog.info(TAG, `disconnectServiceExtAbility`);
     if (this.context) {
       this.context.disconnectServiceExtensionAbility(this.connection).then(() => {
         callback(SUCCESS_CODE);
       }).catch((error: BusinessError) => {
-        console.error('disconnectAbility failed:${JSON.stringify(error)}');
+        HiLog.error(TAG, `disconnectAbility failed: ${JSON.stringify(error)}`);
         callback(ERROR_CODE);
       })
     }

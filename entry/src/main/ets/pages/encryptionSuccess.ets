@@ -33,8 +33,9 @@ import GlobalContext from '../common/GlobalContext';
 import { BusinessError } from '@ohos.base';
 import HomeFeature from '../feature/HomeFeature';
 import emitter from '@ohos.events.emitter';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_EncSucc]';
+const TAG = 'EncSucc';
 let abilityResult: ability.AbilityResult = {
   'resultCode': 0,
   'want': {}
@@ -110,7 +111,7 @@ struct encryptionSuccess {
   }
 
   aboutToAppear() {
-    console.info(TAG, 'aboutToAppear, encrypt success');
+    HiLog.info(TAG, `aboutToAppear, encrypt success`);
     this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
@@ -592,7 +593,7 @@ struct encryptionSuccess {
                     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                       let dlpFileName: string = GlobalContext.load('dlpFileName') as string;
                       try {
-                        console.info(TAG, 'closeDLPFile', dlpFileName);
+                        HiLog.info(TAG, `closeDLPFile: ${dlpFileName}`);
                         let hF = GlobalContext.load('homeFeature') as HomeFeature;
                         await new Promise<void>((resolve, reject) => {
                           hF.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
@@ -603,7 +604,7 @@ struct encryptionSuccess {
                           });
                         })
                       } catch (err) {
-                        console.error(TAG, 'closeDLPFile', dlpFileName, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+                        HiLog.error(TAG, `closeDLPFile: ${dlpFileName}, failed: ${JSON.stringify(err)}`);
                       }
                     }
                     if (this.session !== undefined) {

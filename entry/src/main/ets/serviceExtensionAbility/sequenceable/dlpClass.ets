@@ -15,7 +15,7 @@
 
 import rpc from '@ohos.rpc';
 
-const TAG = '[DLPManager_dlpClass]';
+const TAG = 'dlpClass';
 const ARRAY_LENGTH_MAX = 100;
 const ARRAY_LENGTH_MIN = 0;
 

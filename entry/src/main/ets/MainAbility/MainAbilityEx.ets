@@ -40,19 +40,20 @@ import HomeFeature from '../feature/HomeFeature';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import common from '@ohos.app.ability.common';
 import { GetAlertMessage } from '../common/GetAlertMessage';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_MainEx]';
+const TAG = 'MainEx';
 
 let direction: number = -1;
 let colorMode: number = -1;
 
 export default class MainAbility extends UIExtensionAbility {
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
-  private callerToken:number = 0;
+  private callerToken: number = 0;
   private homeFeature!: HomeFeature;
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
-    console.log(TAG, 'want', JSON.stringify(want));
+    HiLog.info(TAG, `want: ${JSON.stringify(want)}`);
     if (GlobalContext.load('session')) {
       await GetAlertMessage.startAlertAbility(this.context as common.UIExtensionContext,
         { code: Constants.ERR_JS_APP_ENCRYPTING,
@@ -107,7 +108,7 @@ export default class MainAbility extends UIExtensionAbility {
   }
 
   onSessionDestroy(session: UIExtensionContentSession): void {
-    console.info(TAG, 'onSessionDestroy');
+    HiLog.info(TAG, `onSessionDestroy`);
     if (session !== GlobalContext.load('session')) {
       return;
     }
@@ -115,7 +116,7 @@ export default class MainAbility extends UIExtensionAbility {
     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
       this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
-          console.error(TAG, 'closeDLPFile failed', err);
+          HiLog.error(TAG, `closeDLPFile failed: ${err}`);
         }
       });
     }
@@ -152,7 +153,7 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
       } catch (exception) {
-        console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
       }
     } else {
       let storage: LocalStorage = new LocalStorage({
@@ -162,7 +163,7 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
       } catch (exception) {
-        console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
       }
     }
   }
@@ -170,38 +171,38 @@ export default class MainAbility extends UIExtensionAbility {
   async checkValidWant(): Promise<boolean> {
     let parameters = (GlobalContext.load('abilityWant') as Want).parameters;
     if (parameters === undefined) {
-      console.error(TAG, 'need parameters in want');
+      HiLog.error(TAG, `need parameters in want`);
       return false;
     }
     if (parameters.fileName === undefined) {
-      console.error(TAG, 'need fileName in want.parameters');
+      HiLog.error(TAG, `need fileName in want.parameters`);
       return false;
     }
     if ((parameters.fileName as Record<string, string>).name === undefined) {
-      console.error(TAG, 'need name in want.parameters.fileName');
+      HiLog.error(TAG, `need name in want.parameters.fileName`);
       return false;
     }
     if ((GlobalContext.load('abilityWant') as Want).uri === undefined) {
-      console.error(TAG, 'need uri in want');
+      HiLog.error(TAG, `need uri in want`);
       return false;
     }
     this.callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
     let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
     if (this.callerToken === undefined || callerBundleName === undefined) {
-      console.error(TAG, 'need caller info in want.parameters');
+      HiLog.error(TAG, `need caller info in want.parameters`);
       return false;
     }
     GlobalContext.store('hiPkgName', callerBundleName);
     let uri = String((GlobalContext.load('abilityWant') as Want).uri);
     if (!isValidPath(uri)) {
-      console.error(TAG, 'invalid uri in want.uri');
+      HiLog.error(TAG, `invalid uri in want.uri`);
       return false;
     }
     try {
       await new Promise<void>((resolve, reject) => {
         this.homeFeature.linkSetHome(uri, (err: number) => {
           if (err === 0) {
-            console.error(TAG, 'invalid uri for opened link uri');
+            HiLog.error(TAG, `invalid uri for opened link uri`);
             reject();
           }
           resolve();
@@ -212,7 +213,7 @@ export default class MainAbility extends UIExtensionAbility {
     }
 
     if (uri.indexOf(Constants.FUSE_PATH) !== -1) {
-      console.error(TAG, 'invalid uri in want.uri');
+      HiLog.error(TAG, `invalid uri in want.uri`);
       return false;
     }
     return true;
@@ -249,7 +250,7 @@ export default class MainAbility extends UIExtensionAbility {
         GlobalContext.store('accountDomain', accountInfo.domainInfo.domain);
         resolve();
       } catch (err) {
-        console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
         await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError, session);
         reject();
@@ -259,7 +260,7 @@ export default class MainAbility extends UIExtensionAbility {
   }
 
   async getNewWantPage(session: UIExtensionContentSession): Promise<void> {
-    console.log(TAG, 'getNewWantPage start');
+    HiLog.info(TAG, `getNewWantPage start`);
     try {
       await this.checkValidWantAndAccount(session)
     } catch {
@@ -274,7 +275,7 @@ export default class MainAbility extends UIExtensionAbility {
     }
     let requestIsFromSandBox: boolean = await judgeIsSandBox();
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
-    console.info(TAG, 'request is from sandbox', requestIsFromSandBox);
+    HiLog.info(TAG, `request is from sandbox: ${requestIsFromSandBox}`);
     if (requestIsFromSandBox) {
       this.requestIsFromSandBox(session);
     } else {
@@ -308,7 +309,7 @@ export default class MainAbility extends UIExtensionAbility {
       ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
     let isDlpSuffix: boolean = fileName.endsWith('.dlp');
     if (!isDlpSuffix) {
-      console.info(TAG, fileName, 'is not a dlp file');
+      HiLog.info(TAG, `${fileName} is not a dlp file`);
       GlobalContext.store('originFileName', fileName);
       GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
       let storage: LocalStorage = new LocalStorage({
@@ -318,7 +319,7 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
       } catch (exception) {
-        console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
       }
       return;
     } else {
@@ -340,9 +341,9 @@ export default class MainAbility extends UIExtensionAbility {
     try {
       let callerBundleName = Constants.DLP_MANAGER_BUNDLE_NAME;
       callerAppId = await getAppId(callerBundleName);
-      console.info(TAG, 'get AppId', callerAppId);
+      HiLog.info(TAG, `get AppId: ${callerAppId}`);
     } catch {
-      console.log(TAG, 'get AppId failed');
+      HiLog.info(TAG, `get AppId failed`);
       return;
     }
     this.homeFeature.openDlpFileHome(uri, callerAppId,
@@ -381,14 +382,14 @@ export default class MainAbility extends UIExtensionAbility {
   }
 
   onWindowStageDestroy(): void {
-    console.info(TAG, 'onWindowStageDestroy');
+    HiLog.info(TAG, `onWindowStageDestroy`);
   }
 
   onForeground(): void {
-    console.info(TAG, 'onForeground');
+    HiLog.info(TAG, `onForeground`);
   }
 
   onBackground() {
-    console.info(TAG, 'onBackground');
+    HiLog.info(TAG, `onBackground`);
   }
 };

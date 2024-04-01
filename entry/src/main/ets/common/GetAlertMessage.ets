@@ -21,6 +21,7 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
 import { measureTextSizeWidth } from './utils';
+import { HiLog } from '../common/HiLog';
 
 const TAG = 'AlertMessage';
 
@@ -42,7 +43,7 @@ export class GetAlertMessage {
       windowWidth: Constants.START_ABILITY_WINDOW_WIDTH,
       windowHeight: windowHeight
     };
-    console.log(TAG, 'set options', JSON.stringify(options));
+    HiLog.info(TAG, `set options: ${JSON.stringify(options)}`);
     context.startAbility({
       bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
       abilityName: 'AlertAbility',
@@ -52,7 +53,7 @@ export class GetAlertMessage {
       }
     }, options, async (err: BusinessError) => {
       if (err.code !== 0) {
-        console.error(TAG, 'start AlertAbility failed', err.code, err.message);
+        HiLog.error(TAG, `start AlertAbility failed: ${JSON.stringify(err)}`);
       }
       if (session) {
         session.terminateSelfWithResult({
@@ -81,7 +82,7 @@ export class GetAlertMessage {
       if (Math.floor(rowsNumYu * 10) % 10 >= 5) {
         rowsNum += 1;
       }
-      console.log(TAG, 'rowsNum', rowsNum, 'rowsNumYu', rowsNumYu);
+      HiLog.info(TAG, `rowsNum: ${rowsNum}, rowsNumYu: ${rowsNumYu}`);
       windowHeight = Constants.START_ABILITY_HEIGHT_DEFAULT1 + Constants.START_ABILITY_MSG_HEIGHT_ROWS * rowsNum;
     }
     if ([

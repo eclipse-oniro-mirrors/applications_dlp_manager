@@ -20,8 +20,9 @@ import GlobalContext from '../common/GlobalContext';
 import { directionStatus, isPC } from '../common/utils';
 import common from '@ohos.app.ability.common';
 import emitter from '@ohos.events.emitter';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_PermStat]';
+const TAG = 'PermStat';
 
 let abilityResult: ability.AbilityResult = {
   'resultCode': 0,
@@ -145,7 +146,7 @@ struct PermissionStatus {
   ];
 
   aboutToAppear() {
-    console.info(TAG, 'aboutToAppear');
+    HiLog.info(TAG, `aboutToAppear`);
     this.authPerm = AppStorage.get('authPerm') ?? 1;
     this.accountId = AppStorage.get('contactAccount') ?? '';
     this.validity = AppStorage.get('validity') ?? 0;
