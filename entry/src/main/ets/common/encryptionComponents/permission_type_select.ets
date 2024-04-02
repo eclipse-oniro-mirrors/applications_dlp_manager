@@ -18,8 +18,9 @@ import { BusinessError } from '@ohos.base';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import { measureTextSizeWidth } from '../utils';
+import { HiLog } from '../HiLog';
 
-const TAG = '[DLPManager_Select]';
+const TAG = 'Select';
 
 class ChangeTypes {
   public value: Resource = {
@@ -59,33 +60,33 @@ struct permissionTypeSelect {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT];
         this.index = Constants.ENCRYPTION_TYPE_SELECT;
         try {
-          (GlobalContext
-            .load('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
+          (GlobalContext.load('context') as 
+            common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
             .id, (error: BusinessError, value: string) => {
             if (error != null) {
-              console.log('error is ' + error);
+              HiLog.info(TAG, `error is: ${error}`);
             } else {
               this.text = value;
             }
           });
         } catch (error) {
-          console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
+          HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
         }
       } else {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT_INDEX];
         this.index = Constants.ENCRYPTION_TYPE_SELECT_INDEX;
         try {
-          (GlobalContext
-            .load('context') as common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
+          (GlobalContext.load('context') as
+            common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
             .id, (error: BusinessError, value: string) => {
             if (error != null) {
-              console.log('error is ' + error);
+              HiLog.info(TAG, `error is: ${error}`);
             } else {
               this.text = value;
             }
           });
         } catch (error) {
-          console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
+          HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
         }
       }
     }
@@ -94,16 +95,17 @@ struct permissionTypeSelect {
   selectedItemUpdated(selectedItem: object): void {
     this.index = this.selectedItem.index;
     try {
-      (GlobalContext
-        .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.selectedItem.value?.id!, (error: BusinessError, value: string) => {
+      (GlobalContext.load('context') as 
+        common.UIAbilityContext).resourceManager.getStringValue(this.selectedItem.value?.id!,
+        (error: BusinessError, value: string) => {
         if (error != null) {
-          console.log('error is ' + error);
+          HiLog.info(TAG, `error is: ${error}`);
         } else {
           this.text = value;
         }
       });
     } catch (error) {
-      console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
+      HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
     }
   }
 
@@ -114,16 +116,17 @@ struct permissionTypeSelect {
       })
     }
     try {
-      (GlobalContext
-        .load('context') as common.UIAbilityContext).resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
+      (GlobalContext.load('context') as common.UIAbilityContext)
+        .resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!,
+        (error: BusinessError, value: string) => {
         if (error != null) {
-          console.log('error is ' + error);
+          HiLog.info(TAG, `error is: ${error}`);
         } else {
           this.text = value;
         }
       });
     } catch (error) {
-      console.error(`callback getStringValue failed, error code: ${(error as BusinessError).code}, message: ${(error as BusinessError).message}.`);
+      HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
     }
     setTimeout(() => {
       let selectIndex = this.selectedItem.index === -1 ? 0 : this.selectedItem.index;

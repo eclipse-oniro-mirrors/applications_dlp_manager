@@ -21,8 +21,9 @@ import GlobalContext from '../GlobalContext';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 import { GetAlertMessage } from '../GetAlertMessage';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
+import { HiLog } from '../HiLog';
 
-const TAG = '[DLPManager_staff]';
+const TAG = 'staff';
 
 @Extend(Text)
 function tipsTextStyle() {
@@ -158,7 +159,7 @@ struct staffItem {
         })
         .maxLines(Constants.PP_TEXT_MAX_LINE)
         .fontSize($r('sys.float.ohos_id_text_size_button2'))
-        .height(Constants.HEADER_ROW_FONT_SIZE)
+        .height(Constants.HEADER_ROW_FONT_SIZE);
     }
     .onClick(() => {
       if (GlobalContext.load('domainAccount')) {
@@ -173,12 +174,12 @@ struct staffItem {
               })
             })
             .catch((err: BusinessError) => {
-              console.error(`${TAG} getAccountInfo error: ${JSON.stringify(err)}`);
+              HiLog.error(TAG, `getAccountInfo error: ${JSON.stringify(err)}`);
               let errInfo = GetAlertMessage.getAlertMessage(err);
               this.showErrorDialog(errInfo.title, errInfo.msg);
             })
         } catch (err) {
-          console.error(TAG, 'getAccountInfo exception = ' + JSON.stringify(err));
+          HiLog.error(TAG, `getAccountInfo exception: ${JSON.stringify(err)}`);
         }
       } else {
         this.handlePopupTips = !this.handlePopupTips;

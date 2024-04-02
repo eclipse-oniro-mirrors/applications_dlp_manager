@@ -20,13 +20,14 @@ import { staffItem } from './staff';
 import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import { AccountTipsConfig } from '../AccountTipsConfig';
+import { HiLog } from '../HiLog';
 
 interface Staff {
   authAccount: string;
   textContent: string;
 }
 
-const TAG: string = '[DLPManager_AddStaff]';
+const TAG = 'AddStaff';
 
 @Extend(Text)
 function inputMessageText() {
@@ -65,9 +66,9 @@ struct AddStaff {
         textContent: textContent,
         isActive: true,
         changeIndex: Number(index)
-      })
+      });
     }
-    .alignItems(HorizontalAlign.Start)
+    .alignItems(HorizontalAlign.Start);
   }
 
   removeItem(i: number) {
@@ -76,15 +77,15 @@ struct AddStaff {
   }
 
   private async onSubmitMock(inputId: string, startOffset: number, endOffset: number) {
+    if (!inputId) {
+      return;
+    }
     if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
       this.staffArrayLength = true;
       this.controller.deleteSpans({ start: startOffset, end: endOffset });
       return;
     }
     if (!this.isAccountCheckSuccess) {
-      return;
-    }
-    if (!inputId) {
       return;
     }
     let regex: RegExp = new RegExp('(\r|\n)*', 'g');
@@ -107,7 +108,7 @@ struct AddStaff {
         let o2: Staff = {
           authAccount: this.inputArray[i],
           textContent: this.inputArray[i]
-        }
+        };
         this.staffArray.push(o2);
         this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
         GlobalContext.store('hiAccountVerifySucc', this.succ);
@@ -136,12 +137,12 @@ struct AddStaff {
         if (isExist) {
           await this.createStaffItem(i);
         } else {
-          console.log(TAG, 'hasAccount fail', JSON.stringify(error));
+          HiLog.info(TAG, `hasAccount fail: ${JSON.stringify(error)}`);
           this.showErrInput(i, error);
         }
         resolve();
       })
-    })
+    });
   }
 
   private createStaffItem(i: number) {
@@ -151,17 +152,17 @@ struct AddStaff {
         let o1: Staff = {
           authAccount: result.accountName,
           textContent: result[this.textContent] as string
-        }
+        };
         this.staffArray.push(o1);
         this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
         GlobalContext.store('hiAccountVerifySucc', this.succ);
         this.addBuildSpan(i, result[this.textContent]);
       } catch (error) {
-        console.log(TAG, 'getAccountInfo fail', JSON.stringify(error));
+        HiLog.info(TAG, `getAccountInfo fail: ${JSON.stringify(error)}`);
         this.showErrInput(i, error);
       }
       resolve();
-    })
+    });
   }
 
   private addBuildSpan(i: number, textContent: string) {
@@ -193,7 +194,7 @@ struct AddStaff {
         this.StaffItemBuilder(item.authAccount, item.textContent, index);
       };
       this.controller.addBuilderSpan(staffItemBuilder);
-    })
+    });
   }
 
   private onErrorStyleChange() {
@@ -214,7 +215,7 @@ struct AddStaff {
     if (this.staffArray.length) {
       setTimeout(() => {
         this.onDataChange();
-      }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
+      }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
     }
   }
 
@@ -300,7 +301,7 @@ struct AddStaff {
         .color((this.isInputInvalid || this.staffArrayLength || this.isNetworkInvalid)
           ? $r('sys.color.ohos_id_color_handup') :
           this.focusFlag ? $r('sys.color.ohos_id_color_primary') : $r('sys.color.ohos_id_color_list_separator'))
-        .opacity(this.focusFlag ? Constants.FOOTER_OPACITY_SEPC : Constants.FOOTER_OPACITY_ONE)
+        .opacity(this.focusFlag ? Constants.FOOTER_OPACITY_SEPC : Constants.FOOTER_OPACITY_ONE);
 
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid) {

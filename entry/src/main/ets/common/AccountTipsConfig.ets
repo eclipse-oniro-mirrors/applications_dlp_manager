@@ -21,8 +21,9 @@ import osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
 import GlobalContext from './GlobalContext';
 import I18n from '@ohos.i18n';
+import { HiLog } from '../common/HiLog';
 
-const TAG: string = 'DLPManager_ATC';
+const TAG = 'ATC';
 const SYS_LANGUAGE: string = 'zh-Hans';
 
 export interface AccountTips {
@@ -48,7 +49,7 @@ export class AccountTipsConfig {
             AccountTipsConfig.configTipsArray = accountTipsArray;
             resolve(AccountTipsConfig.configTipsArray);
           }).catch((err: BusinessError) => {
-            console.error(`${TAG} getConfigTips failed, error: ${JSON.stringify(err)}`);
+            HiLog.error(TAG, `getConfigTips failed, error: ${JSON.stringify(err)}`);
             reject(err);
           });
         } else {
@@ -56,7 +57,7 @@ export class AccountTipsConfig {
           resolve(accountTipsArray);
         }
       } catch (error) {
-        console.error(`${TAG} getConfigTips error: ${JSON.stringify(error)}`);
+        HiLog.error(TAG, `getConfigTips error: ${JSON.stringify(error)}`);
         reject(error);
       }
     })
@@ -71,7 +72,7 @@ export class AccountTipsConfig {
     return new Promise(async (resolve, reject) => {
       try {
         if (!authAccount) {
-          console.error(`${TAG} getAccount failed, authAccount is null.`);
+          HiLog.error(TAG, `getAccount failed, authAccount is null.`);
           reject();
           return;
         }
@@ -83,7 +84,7 @@ export class AccountTipsConfig {
         let result = await osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo);
         resolve(result);
       } catch (error) {
-        console.error(`${TAG} getAccountInfo error: ${JSON.stringify(error)}`);
+        HiLog.error(TAG, `getAccountInfo error: ${JSON.stringify(error)}`);
         reject(error);
       }
     });
@@ -101,7 +102,7 @@ export class AccountTipsConfig {
           let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
           let resourceManager: resourceManager.ResourceManager = context?.resourceManager;
           if (resourceManager === null) {
-            console.error(`${TAG} loadCcmConfigs failed. resourceManager is null.`);
+            HiLog.error(TAG, `loadCcmConfigs failed. resourceManager is null.`);
             reject();
             return;
           }
@@ -123,7 +124,7 @@ export class AccountTipsConfig {
         }
         resolve(accountTipsArray);
       } catch (error) {
-        console.error(`${TAG} loadCcmConfigs error: ${JSON.stringify(error)}`);
+        HiLog.error(TAG, `loadCcmConfigs error: ${JSON.stringify(error)}`);
         reject(error);
       }
     });

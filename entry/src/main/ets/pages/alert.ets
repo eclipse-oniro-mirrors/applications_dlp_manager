@@ -24,8 +24,9 @@ import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import { sendDlpManagerAccountLogin } from '../common/utils';
 import { isPC } from '../common/utils';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_Alert]';
+const TAG = 'Alert';
 let abilityResult: ability.AbilityResult = {
   'resultCode': 0,
   'want': {}
@@ -44,7 +45,7 @@ struct Index {
   @State windowHeight: number = 0;
 
   authWithPop(): void {
-    console.log(TAG, 'authwithpop start');
+    HiLog.info(TAG, `authwithpop start`);
     try {
       account_osAccount.DomainAccountManager.authWithPopup({
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
@@ -61,13 +62,13 @@ struct Index {
                 Constants.START_ABILITY_WINDOW_WIDTH, Constants.START_ABILITY_HEIGHT_DEFAULT, (err: BusinessError) => {
                 const errCode: number = err.code;
                 if (errCode) {
-                  console.error('Failed to change the window size. Cause:' + JSON.stringify(err));
+                  HiLog.error(TAG, `Failed to change the window size. Cause: ${JSON.stringify(err)}`);
                   return;
                 }
-                console.info('Succeeded in changing the window size.');
+                HiLog.info(TAG, `Succeeded in changing the window size.`);
               });
             } catch (exception) {
-              console.error('Failed to change the window size. Cause:' + JSON.stringify(exception))
+              HiLog.error(TAG, `Failed to change the window size. Cause: ${JSON.stringify(exception)}`);
             }
             return;
           }
@@ -79,12 +80,12 @@ struct Index {
               },
             });
           }
-          console.log(TAG, 'auth resultCode = ' + resultCode);
-          console.log(TAG, 'auth authResult = ' + JSON.stringify(authResult));
+          HiLog.info(TAG, `auth resultCode: ${resultCode}`);
+          HiLog.info(TAG, `auth authResult: ${JSON.stringify(authResult)}`);
         }
       })
     } catch (err) {
-      console.log(TAG, 'auth exception = ' + JSON.stringify(err));
+      HiLog.info(TAG, `auth exception: ${JSON.stringify(err)}`);
     }
   }
 
@@ -124,7 +125,7 @@ struct Index {
   }
 
   async aboutToAppear() {
-    console.log(TAG, 'alert aboutToAppear start')
+    HiLog.info(TAG, `alert aboutToAppear start`);
     try {
       let messageCode = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError).code;
       let errorMsg = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
@@ -152,7 +153,7 @@ struct Index {
       this.ok = errInfo.ok;
       this.setMessageHeight(messageCode);
     } catch (err) {
-      console.error(TAG, 'showErrorDialog failed ' + JSON.stringify(err as BusinessError));
+      HiLog.error(TAG, `showErrorDialog failed: ${JSON.stringify(err)}`);
     }
   }
 

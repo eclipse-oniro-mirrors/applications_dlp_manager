@@ -20,25 +20,26 @@ import window from '@ohos.window';
 import { BusinessError } from '@ohos.base';
 import GlobalContext from '../common/GlobalContext';
 import Constants from '../common/constant';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_Alert]';
+const TAG = 'Alert';
 export default class AlertAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
-    console.info(TAG, 'onCreate');
+    HiLog.info(TAG, `onCreate`);
     GlobalContext.store('abilityWant', want);
     GlobalContext.store('alertContext', this.context)
   }
 
   onDestroy(): void {
-    console.info(TAG, 'onDestroy');
+    HiLog.info(TAG, `onDestroy`);
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
     // Main window is created, set main page for this ability
-    console.info(TAG, 'onWindowStageCreate');
+    HiLog.info(TAG, `onWindowStageCreate`);
     windowStage.loadContent('pages/alert', (err: BusinessError) => {
       if (err.code !== 0) {
-        console.error(TAG, 'setUIContent failed', err.code, err.message);
+        HiLog.error(TAG, `setUIContent failed: ${JSON.stringify(err)}`);
       }
     });
     windowStage.disableWindowDecor();
@@ -46,7 +47,7 @@ export default class AlertAbility extends UIAbility {
 
     windowStage.getMainWindow((err, data) => {
       if (err.code) {
-        console.error(TAG, 'Failed to obtain the main window. Cause: ' + JSON.stringify(err));
+        HiLog.error(TAG, `Failed to obtain the main window. Cause: ${JSON.stringify(err)}`);
         return;
       }
       mainWindow = data;
@@ -54,32 +55,32 @@ export default class AlertAbility extends UIAbility {
       try {
         mainWindow.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
       } catch (exception) {
-        console.error(TAG, 'Failed to set the background color. Cause: ' + JSON.stringify(exception));
+        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
       }
 
       let enabled = false;
       mainWindow.setResizeByDragEnabled(enabled, (err: BusinessError) => {
         if (err.code) {
-          console.error(TAG, 'Failed to set the function of disabling the resize by dragg window. Cause: ' + JSON.stringify(err));
+          HiLog.error(TAG, `Failed to set the function of disabling the resize by dragg window. Cause: ${JSON.stringify(err)}`);
           return;
         }
-        console.info(TAG, 'Succeeded in setting the function of disabling the resize by dragg window.');
+        HiLog.info(TAG, `Succeeded in setting the function of disabling the resize by dragg window.`);
       });
     })
   }
 
   onWindowStageDestroy(): void {
     // Main window is destroyed, release UI related resources
-    console.info(TAG, 'onWindowStageDestroy');
+    HiLog.info(TAG, `onWindowStageDestroy`);
   }
 
   onForeground(): void {
     // Ability has brought to foreground
-    console.info(TAG, 'onForeground');
+    HiLog.info(TAG, `onForeground`);
   }
 
   onBackground(): void {
     // Ability has back to background
-    console.info(TAG, 'onBackground');
+    HiLog.info(TAG, `onBackground`);
   }
 };

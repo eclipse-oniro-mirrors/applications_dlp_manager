@@ -46,8 +46,9 @@ import emitter from '@ohos.events.emitter';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/GetAlertMessage';
+import { HiLog } from '../common/HiLog';
 
-const TAG = '[DLPManager_ModEnc]';
+const TAG = 'ModEnc';
 
 class PermissionValue {
   public value: Resource | undefined
@@ -165,10 +166,10 @@ struct changeEncryption {
 
   async catchProcess() {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-      console.info(TAG, 'resumeFuseLink', this.srcFileName);
+      HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
       this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
-          console.error(TAG, 'resumeFuseLink failed', err);
+          HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
         }
       });
     }
@@ -178,7 +179,7 @@ struct changeEncryption {
     return new Promise<void>((resolve, reject) => {
       this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
-          console.error(TAG, 'stopFuseLink failed', err);
+          HiLog.error(TAG, `stopFuseLink failed: ${err}`);
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource,
             $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
           reject();
@@ -192,7 +193,7 @@ struct changeEncryption {
     return new Promise<void>((resolve, reject) => {
       this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), plainUri, async (err: number) => {
         if (err !== 0) {
-          console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed', (err as number));
+          HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
           let errorInfo =
             {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
           this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -213,7 +214,7 @@ struct changeEncryption {
         return;
       }
     }
-    console.info(TAG, 'Decrypt DLP file', this.srcFileName)
+    HiLog.info(TAG, `Decrypt DLP file: ${this.srcFileName}`);
     try {
       let srcFileUri: string = GlobalContext.load('uri');
       let srcFileMsg: FileMsg = getFileMsgByUri(srcFileUri);
@@ -226,21 +227,21 @@ struct changeEncryption {
       let documentPicker = new picker.DocumentViewPicker();
       documentPicker.save(documentSaveOptions).then(async (saveRes) => {
         if (saveRes === undefined || saveRes.length === 0) {
-          console.error(TAG, 'fail to get uri');
+          HiLog.error(TAG, `fail to get uri`);
           await this.catchProcess();
           return;
         }
-        console.info(TAG, 'get uri', saveRes)
+        HiLog.info(TAG, `get uri success`);
         try {
           await this.fileDecryption(saveRes);
         } catch {
-          console.log(TAG, 'file decryption fail');
+          HiLog.info(TAG, `file decryption fail`);
         }
       }).catch((err: number) => {
-        console.error(TAG, 'DocumentViewPicker save failed', JSON.stringify(err));
+        HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(err)}`);
       });
     } catch (err) {
-      console.error(TAG, 'Decrypt DLP file', this.srcFileName, 'failed', JSON.stringify(err as BusinessError));
+      HiLog.error(TAG, `Decrypt DLP file: ${this.srcFileName}, failed: ${JSON.stringify(err)}`);
     }
   }
 
@@ -251,16 +252,16 @@ struct changeEncryption {
     try {
       uriInfo = new fileUri.FileUri(plainUri);
     } catch (err) {
-      console.log(TAG, 'fileUri fail', (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.info(TAG, `fileUri fail: ${JSON.stringify(err)}`);
     }
     try {
       file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
     } catch (err) {
-      console.error(TAG, 'open', plainUri, 'failed', (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.error(TAG, `open: ${plainUri}, failed: ${JSON.stringify(err)}`);
       try {
         await fs.unlink(uriInfo!.path);
       } catch (err) {
-        console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.info(TAG, `unlink fail: ${JSON.stringify(err)}`);
       }
       this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
       await this.catchProcess();
@@ -269,17 +270,16 @@ struct changeEncryption {
     try {
       await this.recoverDLPFileHome(plainUri);
     } catch (err) {
-      console.error(TAG, 'recoverDLPFile', this.srcFileName, 'failed',
-        (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${JSON.stringify(err)}`);
       try {
         await fs.close(file);
       } catch (err) {
-        console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
       }
       try {
         await fs.unlink(uriInfo!.path);
       } catch (err) {
-        console.log(TAG, 'unlink fail', (err as BusinessError).code, (err as BusinessError).message);
+        HiLog.info(TAG, `unlink fail: ${JSON.stringify(err)}`);
       }
       let errorInfo =
         {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
@@ -290,24 +290,24 @@ struct changeEncryption {
     try {
       await fs.close(file);
     } catch (err) {
-      console.log(TAG, 'close fail', (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
     }
     await this.terminateSelfWithResult();
   }
 
   async terminateSelfWithResult() {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
-      console.info(TAG, 'resumeFuseLink', this.srcFileName);
+      HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
       this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
-          console.error(TAG, 'resumeFuseLink failed', err);
+          HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
         }
       });
     } else {
-      console.info(TAG, 'closeDLPFile', this.srcFileName);
+      HiLog.info(TAG, `closeDLPFile: ${this.srcFileName}`);
       this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
-          console.error(TAG, 'closeDLPFile failed', err);
+          HiLog.error(TAG, `closeDLPFile failed: ${err}`);
         }
       });
     }
@@ -373,7 +373,7 @@ struct changeEncryption {
     try {
       await this.getRouterParams();
     } catch (err) {
-      console.error(TAG, 'fail to get routerParams');
+      HiLog.error(TAG, `fail to get routerParams`);
     }
   }
 
@@ -425,7 +425,7 @@ struct changeEncryption {
     try {
       GlobalContext.store('accountInfo', await getOsAccountInfo());
     } catch (err) {
-      console.error(TAG, 'getOsAccountInfo failed', (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -448,11 +448,11 @@ struct changeEncryption {
       return;
     }
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-      console.info(TAG, 'request from sandbox');
+      HiLog.info(TAG, `request from sandbox`);
       this.linkFileName = GlobalContext.load('linkFileName') as string;
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
     } else {
-      console.info(TAG, 'request from normal');
+      HiLog.info(TAG, `request from normal`);
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
     }
     await this.showData(GlobalContext.load('dlpProperty'));

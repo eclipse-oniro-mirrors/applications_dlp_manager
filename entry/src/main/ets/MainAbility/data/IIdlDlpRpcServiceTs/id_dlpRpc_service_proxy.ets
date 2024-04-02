@@ -30,8 +30,9 @@ import {
 import IIdDlpRpcService from './i_id_dlpRpc_service';
 import IDLDLPProperty from '../../../serviceExtensionAbility/sequenceable/dlpClass';
 import Constants from '../../../common/constant';
+import { HiLog } from '../../../common/HiLog';
 
-const TAG = '[DLPManager_service_proxy]';
+const TAG = 'service_proxy';
 
 export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   private proxy: rpc.IRemoteObject;
@@ -43,7 +44,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
   async genDlpFile(
     inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback
   ): Promise<void> {
-    console.log(TAG, 'genDlpFile called');
+    HiLog.info(TAG, `genDlpFile called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -56,14 +57,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
-    console.log(TAG, 'openDlpFile called');
+    HiLog.info(TAG, `openDlpFile called`);
     let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
@@ -78,14 +79,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
         let _msg = result.reply.readString();
         callback(_errCode, _dlp, _msg);
       } else {
-        console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+        HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
         callback(result.errCode, _dlp, result.data.readString());
       }
     })
   }
 
   async stopFuseLink(uri: string, callback: stopFuseLinkCallback): Promise<void> {
-    console.log(TAG, 'stopFuseLink called');
+    HiLog.info(TAG, `stopFuseLink called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -96,14 +97,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
   }
 
   async resumeFuseLink(uri: string, callback: resumeFuseLinkCallback): Promise<void> {
-    console.log(TAG, 'resumeFuseLink called');
+    HiLog.info(TAG, `resumeFuseLink called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -114,14 +115,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
   }
 
   async replaceDlpLinkFile(uri: string, linkFileName: string, callback: replaceDlpLinkFileCallback): Promise<void> {
-    console.log(TAG, 'replaceDlpLinkFile called');
+    HiLog.info(TAG, `replaceDlpLinkFile called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -133,14 +134,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
   }
 
   async recoverDlpFile(srcUri: string, pathUri: string, callback: recoverDlpFileCallback): Promise<void> {
-    console.log(TAG, 'recoverDlpFile called');
+    HiLog.info(TAG, `recoverDlpFile called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -152,14 +153,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
   }
   
   async closeDlpFile(srcUri: string, callback: closeDlpFileCallback): Promise<void> {
-    console.log(TAG, 'closeDlpFile called');
+    HiLog.info(TAG, `closeDlpFile called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -171,14 +172,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
   }
 
   async sandBoxLinkFile(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback): Promise<void> {
-    console.log(TAG, 'sandBoxLinkFile called');
+    HiLog.info(TAG, `sandBoxLinkFile called`);
     let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
@@ -193,14 +194,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _fileUri = result.reply.readString();
           callback(_errCode, _dlp, _fileUri);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode, _dlp, '');
         }
     })
   }
 
   async fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): Promise<void> {
-    console.log(TAG, 'fileOpenHistory called');
+    HiLog.info(TAG, `fileOpenHistory called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -211,14 +212,14 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
   }
 
   async linkSet(uri: string, callback: linkSetCallback): Promise<void> {
-    console.log(TAG, 'linkSet called');
+    HiLog.info(TAG, `linkSet called`);
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
@@ -229,7 +230,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          console.log('sendMessageRequest failed, errCode: ' + result.errCode);
+          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })

@@ -19,8 +19,9 @@ import dlpPermission from '@ohos.dlpPermission';
 import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import GlobalContext from '../common/GlobalContext';
+import { HiLog } from '../common/HiLog';
 
-let TAG = '[DLPManager_DataAbility]';
+const TAG = 'DataAbility';
 const INDEX_TWO = 2;
 const INDEX_ONE = 1;
 const INDEX_ZERO = 0;
@@ -42,18 +43,18 @@ export default class DataAbility extends ServiceExtensionAbility {
         try {
           await dlpFile.deleteDLPLinkFile(linkFile[INDEX_ONE] as string);
         } catch (err) {
-          console.error(TAG, 'deleteDLPLinkFile failed', (err as BusinessError).code, (err as BusinessError).message);
+          HiLog.error(TAG, `deleteDLPLinkFile failed: ${JSON.stringify(err)}`);
         }
         try {
           await dlpFile.closeDLPFile();
         } catch (err) {
-          console.error(TAG, 'closeDLPFile failed', (err as BusinessError).code, (err as BusinessError).message);
+          HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
         }
         try {
           let dlpFd: number = linkFile[INDEX_TWO] as number;
           fileio.closeSync(dlpFd);
         } catch (err) {
-          console.error(TAG, 'closeDLPFile failed', (err as BusinessError).code, (err as BusinessError).message);
+          HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
         }
       }
       sandbox2linkFile.delete(key);
@@ -70,14 +71,14 @@ export default class DataAbility extends ServiceExtensionAbility {
         }
       }
       if (sandbox2linkFile.size === 0) {
-        console.info(TAG, 'sandbox2linkFile empty');
+        HiLog.info(TAG, `sandbox2linkFile empty`);
         (GlobalContext.load('dataContext') as common.ServiceExtensionContext).terminateSelf();
       }
     }
   }
 
   createSubscriber(): void {
-    console.info(TAG, 'createSubscriber');
+    HiLog.info(TAG, `createSubscriber`);
     try {
       dlpPermission.on('uninstallDLPSandbox', (data: dlpPermission.DLPSandboxState) => {
         let bundleName: string = data.bundleName;
@@ -108,13 +109,12 @@ export default class DataAbility extends ServiceExtensionAbility {
         try {
           this.sandbox2linkFile(key);
         } catch (err) {
-          console.error(TAG, 'release resource error', JSON.stringify(err));
+          HiLog.error(TAG, `release resource error: ${JSON.stringify(err)}`);
         }
       });
       this.isSubscriber = true;
     } catch (err) {
-      console.info(TAG, 'createSubscriber uninstallDLPSandbox failed',
-        (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.info(TAG, `createSubscriber uninstallDLPSandbox failed: ${JSON.stringify(err)}`);
     }
   }
 
@@ -130,14 +130,14 @@ export default class DataAbility extends ServiceExtensionAbility {
   }
 
   onDestroy(): void {
-    console.info(TAG, 'onDestroy');
+    HiLog.info(TAG, `onDestroy`);
     if (this.isSubscriber) {
-      console.info(TAG, 'cancelSubscriber uninstallDLPSandbox');
+      HiLog.info(TAG, `cancelSubscriber uninstallDLPSandbox`);
       try {
         dlpPermission.off('uninstallDLPSandbox');
         this.isSubscriber = false;
       } catch (err) {
-        console.error(TAG, 'cancelSubscriber uninstallDLPSandbox error', JSON.stringify(err));
+        HiLog.error(TAG, `cancelSubscriber uninstallDLPSandbox error: ${JSON.stringify(err)}`);
       }
     }
   }

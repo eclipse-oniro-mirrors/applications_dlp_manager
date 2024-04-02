@@ -32,8 +32,9 @@ import GlobalContext from './GlobalContext';
 import hiSysEvent from '@ohos.hiSysEvent';
 import display from '@ohos.display';
 import StartOptions from '@ohos.app.ability.StartOptions';
+import { HiLog } from '../common/HiLog';
 
-let TAG = '[DLPManager_Utils]';
+const TAG = 'Utils';
 
 interface AuthAccount {
   authAccount: string;
@@ -62,7 +63,7 @@ function getFileUriByPath(filePath: string): string {
     let uri = fileUri.getUriFromPath(filePath);
     return uri;
   } catch (err) {
-    console.info(TAG, 'getUriFromPath error:', JSON.stringify(err));
+    HiLog.info(TAG, `getUriFromPath error: ${JSON.stringify(err)}`);
     return '';
   }
 }
@@ -70,10 +71,10 @@ function getFileUriByPath(filePath: string): string {
 function getFileFd(uri: string): number {
   try {
     let file = fs.openSync(uri, fs.OpenMode.READ_WRITE);
-    console.info(TAG, 'open', uri, 'as', file.fd);
+    HiLog.info(TAG, `open: ${uri}, as: ${file.fd}`);
     return file.fd;
   } catch (err) {
-    console.info(TAG, 'openSync error:', JSON.stringify(err));
+    HiLog.info(TAG, `openSync error: ${JSON.stringify(err)}`);
     return -1;
   }
 }
@@ -240,7 +241,7 @@ async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
   GlobalContext.store('alertContext', context);
   (GlobalContext.load('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
     if (err.code !== 0) {
-      console.error(TAG, 'loadContent failed', err.code, err.message);
+      HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
     }
   });
 }
@@ -265,7 +266,7 @@ async function goToAlertMessagePage(
   try {
     session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
   } catch (exception) {
-    console.error('Failed to set the background color. Cause: ' + JSON.stringify(exception));
+    HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
   }
 }
 
@@ -276,14 +277,14 @@ function getAppId(bundleName: string) {
     try {
       bundleManager.getBundleInfo(bundleName, bundleFlags, userId, (err, data) => {
         if (err) {
-          console.error(TAG, 'get appId failed', (err as BusinessError).code, (err as BusinessError).message);
+          HiLog.error(TAG, `get appId failed: ${JSON.stringify(err)}`);
           resolve('');
         } else {
           resolve(data.signatureInfo.appId);
         }
       })
     } catch (err) {
-      console.error(TAG, 'get appId failed', (err as BusinessError).code, (err as BusinessError).message);
+      HiLog.error(TAG, `get appId failed: ${JSON.stringify(err)}`);
       resolve('');
     }
   })
@@ -330,16 +331,16 @@ async function getFileSizeByUri(uri: string): Promise<number> {
   try {
     inFile = await fs.open(uri, fs.OpenMode.READ_ONLY);
   } catch (error) {
-    console.error(TAG, 'open', uri, 'failed', (error as BusinessError).code, (error as BusinessError).message);
+    HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(error)}`);
     return -1;
   }
 
   try {
     let stat = await fs.stat(inFile.fd);
-    console.info(TAG, 'get file info succeed, the size of file is ' + stat.size);
+    HiLog.info(TAG, `get file info succeed, the size of file is: ${stat.size}`);
     return stat.size;
   } catch (err) {
-    console.info(TAG, 'get file info failed with error message: ' + err.message + ', error code: ' + err.code);
+    HiLog.info(TAG, `get file info failed with error message: ${JSON.stringify(err)}`);
     return -1;
   }
 }
@@ -350,14 +351,14 @@ function getDLPInfo() {
     try {
       bundleManager.getBundleInfoForSelf(bundleFlags, (err, data) => {
         if (err) {
-          console.error(TAG, 'getBundleInfoForSelf failed. Cause: %{public}s', (err as BusinessError).message);
+          HiLog.error(TAG, `getBundleInfoForSelf failed. Cause: ${JSON.stringify(err)}`);
           reject({name: '', versionCode: ''});
         } else {
           resolve({name: data.name, versionCode: data.versionCode.toString()});
         }
       });
     } catch (err) {
-      console.error(TAG, 'getBundleInfoForSelf failed. Cause: %{public}s', (err as BusinessError).message);
+      HiLog.error(TAG, `getBundleInfoForSelf failed. Cause: ${JSON.stringify(err)}`);
       reject({name: '', versionCode: ''});
     }
   })
@@ -381,7 +382,7 @@ function sendDlpManagerAccountLogin(errorCode: number) {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    console.error(TAG, 'sendDlpManagerAccountLogin failed');
+    HiLog.error(TAG, `sendDlpManagerAccountLogin failed`);
   }
 }
 
@@ -407,7 +408,7 @@ function sendDlpManagerFileConfiguration() {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    console.error(TAG, 'sendDlpManagerFileConfiguration failed');
+    HiLog.error(TAG, `sendDlpManagerFileConfiguration failed`);
   }
 }
 
@@ -430,7 +431,7 @@ function sendDlpFileCreateEvent() {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    console.error(TAG, 'sendDlpFileCreateEvent failed');
+    HiLog.error(TAG, `sendDlpFileCreateEvent failed`);
   }
 }
 
@@ -454,7 +455,7 @@ function sendDlpFileOpenEvent() {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    console.error(TAG, 'sendDlpFileOpenEvent failed');
+    HiLog.error(TAG, `sendDlpFileOpenEvent failed`);
   }
 }
 

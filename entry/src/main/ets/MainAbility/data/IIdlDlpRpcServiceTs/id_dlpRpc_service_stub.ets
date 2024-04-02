@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import { BusinessError } from '@ohos.base';
 import rpc from '@ohos.rpc';
 import {
   IDlpServiceCmdCode,
@@ -30,8 +29,9 @@ import {
 } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
 import IDLDLPProperty from '../../../serviceExtensionAbility/sequenceable/dlpClass';
+import { HiLog } from '../../../common/HiLog';
 
-const TAG = '[DLPManager_service_stub]'
+const TAG = 'service_stub'
 
 export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IIdDlpRpcService {
   constructor(des: string) {
@@ -39,7 +39,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<boolean> {
-    console.log(TAG, 'onRemoteMessageRequest called, code = ' + code);
+    HiLog.info(TAG, `onRemoteMessageRequest called, code: ${code}`);
     switch (code) {
       case IDlpServiceCmdCode.COMMAND_GEN_DLP_FILE: {
         await this.genDlpFileInner(data, reply);
@@ -82,7 +82,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         return true;
       }
       default: {
-        console.log(TAG + 'invalid request code' + code);
+        HiLog.info(TAG, `invalid request code: ${code}`);
         break;
       }
     }
@@ -90,7 +90,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   async genDlpFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, 'genDlpFileInner');
+    HiLog.info(TAG, `genDlpFileInner`);
     try {
       let _inputUri = data.readString();
       let _outputUri = data.readString();
@@ -100,7 +100,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message));
+      HiLog.info(TAG, `genDlpFileInner failed: ${JSON.stringify(err)}`);
     }
   }
 
@@ -115,7 +115,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeString(_msg);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `openDlpFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -126,7 +126,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `stopFuseLinkInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -137,7 +137,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `resumeFuseLinkInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -149,12 +149,12 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `replaceDlpLinkFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
   async recoverDlpFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, 'recoverDlpFileInner start');
+    HiLog.info(TAG, `recoverDlpFileInner start`);
     try {
       let _srcUri = data.readString();
       let _pathUri = data.readString();
@@ -162,24 +162,24 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `recoverDlpFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
   async closeDlpFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, 'closeDlpFileInner start');
+    HiLog.info(TAG, `closeDlpFileInner start`);
     try {
       let _srcUri = data.readString();
       await this.closeDlpFile(_srcUri, (errCode) => {
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `closeDlpFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
   async sandBoxLinkFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, 'sandBoxLinkFileInner start');
+    HiLog.info(TAG, `sandBoxLinkFileInner start`);
     try {
       let _linkFileName = data.readString();
       let _callerToken = data.readLong();
@@ -190,31 +190,31 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeString(_fileUri);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `sandBoxLinkFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
   async fileOpenHistoryInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, 'fileOpenHistoryInner start');
+    HiLog.info(TAG, `fileOpenHistoryInner start`);
     try {
       let _uri = data.readString();
       await this.fileOpenHistory(_uri, (errCode) => {
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `fileOpenHistoryInner failed: ${JSON.stringify(err)}`)
     }
   }
 
   async linkSetInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {
-    console.log(TAG, 'linkSetInner start');
+    HiLog.info(TAG, `linkSetInner start`);
     try {
       let _uri = data.readString();
       await this.linkSet(_uri, (errCode) => {
         reply.writeInt(errCode);
       });
     } catch (err) {
-      console.log(TAG, JSON.stringify(err), JSON.stringify(err.message))
+      HiLog.info(TAG, `linkSetInner failed: ${JSON.stringify(err)}`)
     }
   }
 
