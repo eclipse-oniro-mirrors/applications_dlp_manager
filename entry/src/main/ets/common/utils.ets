@@ -52,12 +52,6 @@ interface DLPInfo {
   versionCode: string;
 }
 
-export interface FileMsg {
-  fileName: string;
-  filePath: string;
-  fileType: string;
-}
-
 function getFileUriByPath(filePath: string): string {
   try {
     let uri = fileUri.getUriFromPath(filePath);
@@ -304,27 +298,6 @@ function getTime() {
   return `${year}/${month}/${day} ${hour}:${minute}`;
 }
 
-function getFileMsgByUri(uri: string): FileMsg {
-  let strArray: string[] = uri.split('/');
-  let len: number = strArray.length;
-  if (len < 1) {
-    throw new Error('getFileMsgByUri,srcfile name len is 0');
-  }
-  let fileName: string = strArray[len - 1];
-  let filePath: string = strArray.slice(0, len - 1).join();
-  let pointIndex: number = fileName.indexOf('.');
-  if (pointIndex < 0) {
-    throw new Error('getFileMsgByUri,srcfile name invalid');
-  }
-  let fileType: string = fileName.slice(pointIndex, fileName.length);
-  let result: FileMsg = {
-    fileName: fileName.split('.')[0],
-    filePath: filePath,
-    fileType: fileType
-  };
-  return result;
-}
-
 async function getFileSizeByUri(uri: string): Promise<number> {
   let inFile: fs.File;
 
@@ -494,7 +467,6 @@ export {
   goToAlertMessagePage,
   getAppId,
   getTime,
-  getFileMsgByUri,
   getFileSizeByUri,
   getDLPInfo,
   sendDlpManagerAccountLogin,

@@ -43,7 +43,7 @@ function inputMessageText() {
 struct AddStaff {
   @State succ: number = 0;
   @State fail: number = 0;
-  @State isAccountCheckSuccess: boolean = true;
+  @Link isAccountCheckSuccess: boolean;
   @State staffArrayLength: boolean = false;
   @State @Watch('onErrorStyleChange') isInputInvalid: boolean = false;
   @State isNetworkInvalid: boolean = false;
@@ -85,9 +85,7 @@ struct AddStaff {
       this.controller.deleteSpans({ start: startOffset, end: endOffset });
       return;
     }
-    if (!this.isAccountCheckSuccess) {
-      return;
-    }
+    this.isAccountCheckSuccess = false;
     let regex: RegExp = new RegExp('(\r|\n)*', 'g');
     let inputString = inputId.replace(regex, '');
     this.inputArray = inputString.split(';');
@@ -104,7 +102,6 @@ struct AddStaff {
       if (GlobalContext.load('domainAccount')) {
         await this.createStaffByDomain(i);
       } else {
-        this.isAccountCheckSuccess = true;
         let o2: Staff = {
           authAccount: this.inputArray[i],
           textContent: this.inputArray[i]
@@ -115,6 +112,7 @@ struct AddStaff {
         this.addBuildSpan(i, inputId);
       }
     }
+    this.isAccountCheckSuccess = true;
     if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
       this.controller.addTextSpan(this.errInput.join(';'));
       if (this.errInput.length && this.isInputInvalidFlag) {
@@ -125,7 +123,6 @@ struct AddStaff {
 
   private createStaffByDomain(i: number) {
     return new Promise<void>((resolve, reject) => {
-      this.isAccountCheckSuccess = false;
       let accountDomain: string = GlobalContext.load('accountDomain');
       let domainAccountInfo: osAccount.DomainAccountInfo = {
         domain: accountDomain,
@@ -133,7 +130,6 @@ struct AddStaff {
       };
       account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo,
         async (error: BusinessError, isExist: boolean) => {
-        this.isAccountCheckSuccess = true;
         if (isExist) {
           await this.createStaffItem(i);
         } else {
@@ -175,7 +171,6 @@ struct AddStaff {
 
   private showErrInput(i: number, error: BusinessError) {
     this.errInput.push(this.inputArray[i]);
-    this.isAccountCheckSuccess = true;
     this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
     GlobalContext.store('hiAccountVerifyFail', this.fail);
     if ([
@@ -265,7 +260,9 @@ struct AddStaff {
                   endOffset.push(buildSpan.spanPosition.spanRange[1]);
                 }
               }
-              this.onSubmitMock(inputId, startOffset[0], endOffset.slice(-1)[0]);
+              if (this.isAccountCheckSuccess) {
+                this.onSubmitMock(inputId, startOffset[0], endOffset.slice(-1)[0]);
+              };
               return false;
             }
             return true;
@@ -304,7 +301,7 @@ struct AddStaff {
         .opacity(this.focusFlag ? Constants.FOOTER_OPACITY_SEPC : Constants.FOOTER_OPACITY_ONE);
 
       Flex({ direction: FlexDirection.Row }) {
-        if (this.isInputInvalid) {
+        if (this.isInputInvalid && !this.isNetworkInvalid) {
           Text((GlobalContext
           .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
             .inputMessageText()
