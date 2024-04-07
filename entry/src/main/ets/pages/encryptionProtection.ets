@@ -19,7 +19,6 @@ import dlpPermission from '@ohos.dlpPermission';
 import hiSysEvent from '@ohos.hiSysEvent';
 import router from '@ohos.router';
 import picker from '@ohos.file.picker';
-import fileio from '@ohos.fileio';
 import fileUri from '@ohos.file.fileuri';
 import fs from '@ohos.file.fs';
 import osAccount from '@ohos.account.osAccount';
@@ -36,8 +35,6 @@ import {
   directionStatus,
   AuthAccount,
   getFileUriByPath,
-  getFileMsgByUri,
-  FileMsg,
   isPC,
   sendDlpFileCreateEvent,
   sendDlpManagerFileConfiguration,
@@ -55,6 +52,7 @@ import HomeFeature from '../feature/HomeFeature';
 import emitter from '@ohos.events.emitter';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
+import FileUtils, { FileMsg } from '../common/FileUtils';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {
@@ -135,7 +133,7 @@ struct DlpDialog {
       value: $r('app.string.PERMISSION_TYPE_SELECT_SELF'), data: 'self', index: 2
     } as PermissionType
   ];
-
+  @State isAccountCheckSuccess: boolean = true;
   @State staffDataArrayReadOnly: AuthAccount[] = [];
   @State staffDataArrayEdit: AuthAccount[] = [];
   @State selectedPermissionTypeReadOnly: PermissionType =
@@ -406,7 +404,7 @@ struct DlpDialog {
     await this.setUserStat();
     try {
       let srcFileUri: string = GlobalContext.load('uri');
-      let srcFileMsg: FileMsg = getFileMsgByUri(srcFileUri);
+      let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(srcFileUri);
       let srcFileSize: number = await getFileSizeByUri(srcFileUri);
       GlobalContext.store('hiFileSize', srcFileSize);
       GlobalContext.store('hiFileType', srcFileMsg.fileType);
@@ -790,6 +788,7 @@ struct DlpDialog {
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeReadOnly?.data ?? '')) {
                   AddStaff({
+                    isAccountCheckSuccess: $isAccountCheckSuccess,
                     staffArray: $staffDataArrayReadOnly,
                     isDisable: this.selectedPermissionTypeEdit?.data === 'all',
                   })
@@ -837,6 +836,7 @@ struct DlpDialog {
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeEdit?.data ?? '')) {
                   AddStaff({
+                    isAccountCheckSuccess: $isAccountCheckSuccess,
                     staffArray: $staffDataArrayEdit,
                     isDisable: false
                   })
@@ -940,7 +940,13 @@ struct DlpDialog {
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(false)
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-              .enabled((this.staffDataArrayReadOnly.length > 0 || this.staffDataArrayEdit.length > 0 || ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') || ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? '')))
+              .enabled(
+                this.isAccountCheckSuccess &&
+                (this.staffDataArrayReadOnly.length > 0 ||
+                this.staffDataArrayEdit.length > 0 ||
+                ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') ||
+                ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? ''))
+              )
               .height(Constants.FOOTER_BUTTON_HEIGHT)
               .onClick(async (event) => {
                 GlobalContext.store('hiValidDate', false);

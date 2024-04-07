@@ -33,8 +33,6 @@ import {
   toggleShow,
   directionStatus,
   getTime,
-  getFileMsgByUri,
-  FileMsg,
   isPC,
   sendDlpManagerFileConfiguration,
   colorStatus
@@ -47,6 +45,7 @@ import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
+import FileUtils, { FileMsg } from '../common/FileUtils';
 
 const TAG = 'ModEnc';
 
@@ -217,7 +216,7 @@ struct changeEncryption {
     HiLog.info(TAG, `Decrypt DLP file: ${this.srcFileName}`);
     try {
       let srcFileUri: string = GlobalContext.load('uri');
-      let srcFileMsg: FileMsg = getFileMsgByUri(srcFileUri);
+      let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(srcFileUri);
       let documentSaveOptions = new picker.DocumentSaveOptions();
       documentSaveOptions.newFileNames = [plaintextFile];
       let fileSuffixChoicesName = this.srcFileName.split('.')[1];
