@@ -57,10 +57,6 @@
       "value": "Export"
     },
     {
-      "name": "modifying_the_permissions_of_a_document",
-      "value": "Modify permissions"
-    },
-    {
       "name": "sure",
       "value": "Ok"
     },
@@ -71,10 +67,6 @@
     {
       "name": "perm_list_title_read_only",
       "value": "Read-only"
-    },
-    {
-      "name": "perm_list_title_full_control",
-      "value": "Full control"
     },
     {
       "name": "da_button",
@@ -235,6 +227,10 @@
     {
       "name": "apply_for_the_permission",
       "value": "To request permissions, contact %s."
+    },
+    {
+      "name": "apply_for_the_subject",
+      "value": "The specific permissions are subject to the actual functions of the app."
     },
     {
       "name": "delete_account",

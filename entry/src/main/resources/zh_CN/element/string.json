@@ -57,10 +57,6 @@
       "value": "导出"
     },
     {
-      "name": "modifying_the_permissions_of_a_document",
-      "value": "修改文档的权限"
-    },
-    {
       "name": "sure",
       "value": "确定"
     },
@@ -71,10 +67,6 @@
     {
       "name": "perm_list_title_read_only",
       "value": "只读"
-    },
-    {
-      "name": "perm_list_title_full_control",
-      "value": "完全控制"
     },
     {
       "name": "da_button",
@@ -234,7 +226,11 @@
     },
     {
       "name": "apply_for_the_permission",
-      "value": "申请权限请联系：%s"
+      "value": "如需申请权限，请联系 %s"
+    },
+    {
+      "name": "apply_for_the_subject",
+      "value": "具体权限以应用实际功能为准。"
     },
     {
       "name": "delete_account",

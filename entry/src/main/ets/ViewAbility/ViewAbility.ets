@@ -38,7 +38,8 @@ import {
   DLPInfo,
   getDLPInfo,
   sendDlpFileOpenEvent,
-  isValidPath
+  isValidPath,
+  defaultDlpFile
 } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
@@ -48,28 +49,6 @@ import { HiLog } from '../common/HiLog';
 
 const TAG = 'View';
 const SUFFIX_INDEX = 2;
-
-let defaultDlpProperty: dlpPermission.DLPProperty = {
-  ownerAccount: '',
-  ownerAccountType: GlobalContext.load('domainAccount') as boolean ?
-    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
-  authUserList: [],
-  contactAccount: '',
-  offlineAccess: true,
-  ownerAccountID: '',
-  everyoneAccessList: []
-}
-
-let defaultDlpFile: dlpPermission.DLPFile = {
-  dlpProperty: defaultDlpProperty,
-  recoverDLPFile: async () => {},
-  closeDLPFile: async () => {},
-  addDLPLinkFile: async () => {},
-  stopFuseLink: async () => {},
-  resumeFuseLink: async () => {},
-  replaceDLPLinkFile: async () => {},
-  deleteDLPLinkFile: async () => {}
-};
 
 let opening: boolean = false;
 export default class ViewAbility extends ServiceExtensionAbility {

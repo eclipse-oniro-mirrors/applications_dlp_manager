@@ -28,7 +28,7 @@ import ability from '@ohos.ability.ability';
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import abilityManager from '@ohos.app.ability.abilityManager';
-import { getFileUriByPath, getFileFd, getAppId, isValidPath } from '../common/utils';
+import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
@@ -46,28 +46,6 @@ class ChangeOption {
   public offset: number = 0
   public length: number = 0
 }
-
-let defaultDlpProperty: dlpPermission.DLPProperty = {
-  ownerAccount: '',
-  ownerAccountType: GlobalContext.load('domainAccount') as boolean ?
-    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
-  authUserList: [],
-  contactAccount: '',
-  offlineAccess: true,
-  ownerAccountID: '',
-  everyoneAccessList: []
-}
-
-let defaultDlpFile: dlpPermission.DLPFile = {
-  dlpProperty: defaultDlpProperty,
-  recoverDLPFile: async () => {},
-  closeDLPFile: async () => {},
-  addDLPLinkFile: async () => {},
-  stopFuseLink: async () => {},
-  resumeFuseLink: async () => {},
-  replaceDLPLinkFile: async () => {},
-  deleteDLPLinkFile: async () => {}
-};
 
 const SUFFIX_INDEX = 2;
 const HEAD_LENGTH_IN_BYTE = 20;
