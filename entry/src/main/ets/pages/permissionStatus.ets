@@ -285,11 +285,16 @@ struct PermissionStatus {
                   }
 
                   Row() {
-                    Text($r('app.string.apply_for_the_permission', this.accountId))
-                      .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                      .align(Alignment.Start)
-                      .fontWeight(FontWeight.Regular)
+                    Text() {
+                      Span($r('app.string.apply_for_the_subject'))
+                      if (this.authPerm === Constants.FOOTER_OPACITY_ONE) {
+                        Span($r('app.string.apply_for_the_permission', this.accountId))
+                      }
+                    }
+                    .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                    .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                    .align(Alignment.Start)
+                    .fontWeight(FontWeight.Regular)
                   }
                   .width(Constants.HEADER_COLUMN_WIDTH)
                   .margin({ top: Constants.DA_MARGIN_TOP });
@@ -298,25 +303,6 @@ struct PermissionStatus {
                 maxHeight: this.directionStatus ===
                   0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
               })
-              .padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
-
-              Row() {
-                Text() {
-                  Span($r('app.string.apply_for_the_subject'))
-                  if (this.authPerm === Constants.FOOTER_OPACITY_ONE) {
-                    Span($r('app.string.apply_for_the_permission', this.accountId))
-                  }
-                }
-                .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                .align(Alignment.Start)
-                .fontWeight(FontWeight.Regular)
-              }
-              .width(Constants.HEADER_COLUMN_WIDTH)
-              .margin({ top: Constants.DA_MARGIN_TOP, bottom: Constants.DU_LINE_MARGIN_TOP2 })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
