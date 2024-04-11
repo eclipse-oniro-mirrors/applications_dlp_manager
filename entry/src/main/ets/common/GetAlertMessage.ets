@@ -92,11 +92,6 @@ export class GetAlertMessage {
       windowHeight = Constants.START_ABILITY_HEIGHT_ONE_ROWS;
     }
     if ([
-      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
-    ].includes(error.code)) {
-      windowHeight = Constants.START_ABILITY_HEIGHT_TWO_ROWS;
-    }
-    if ([
       Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED,
       Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
       Constants.ERR_JS_DLP_FILE_READ_ONLY,
@@ -110,6 +105,7 @@ export class GetAlertMessage {
     if ([
       Constants.ERR_JS_DLP_FILE_READ_ONLY,
       Constants.ERR_JS_OFFLINE,
+      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
     ].includes(error.code)) {
       windowHeight = Constants.START_ABILITY_HEIGHT_FOUR_ROWS;
     };
@@ -131,8 +127,6 @@ export class GetAlertMessage {
       case Constants.ERR_JS_NETWORK_INVALID:
       case Constants.ERR_JS_APP_NETWORK_INVALID:
         return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
-      case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
-        return { 'msg': $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED')} as Record<string, Resource>;
       case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
       case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
       case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
@@ -185,6 +179,11 @@ export class GetAlertMessage {
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
           'msg': $r('app.string.MESSAGE_DLP_READ_ONLY', AppStorage.get('ownerAccount'))
+        } as Record<string, Resource>;
+      case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
+        return {
+          'title': $r('app.string.TITLE_APP_VERSION_LOWER'),
+          'msg': $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED')
         } as Record<string, Resource>;
       default:
         return {

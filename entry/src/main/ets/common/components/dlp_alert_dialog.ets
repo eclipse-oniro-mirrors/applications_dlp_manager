@@ -39,7 +39,7 @@ struct DlpAlertDialog {
             .width(Constants.DU_WIDTH_FULL)
             .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
             .fontColor($r('sys.color.ohos_id_color_text_primary'))
-            .fontWeight(FontWeight.Medium)
+            .fontWeight(FontWeight.Bold)
             .align(Alignment.Start)
         }
         .width(Constants.HEADER_COLUMN_WIDTH)
@@ -67,7 +67,7 @@ struct DlpAlertDialog {
       Flex({ direction: FlexDirection.Row }) {
         Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
           .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
-          .width(Constants.HEADER_TEXT_WIDTH)
+          .width(this.ok ? Constants.HEADER_TEXT_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_BUTTON)
           .focusable(false)
           .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
           .height(Constants.FOOTER_HEIGHT)
@@ -79,7 +79,9 @@ struct DlpAlertDialog {
               (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
             }
           })
-          .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+          .margin({
+            right: this.ok ? Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ENCRYPTION_ADD_STAFF_NO_MARGIN
+          });
         if (this.ok) {
           Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
             .width(Constants.HEADER_TEXT_WIDTH)
@@ -103,7 +105,8 @@ struct DlpAlertDialog {
     .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
-    .shadow(ShadowStyle.OUTER_DEFAULT_SM)
+    .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+    .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
   }
 }
 

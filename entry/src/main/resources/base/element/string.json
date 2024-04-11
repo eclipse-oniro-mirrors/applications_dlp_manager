@@ -307,6 +307,10 @@
     {
       "name": "loading_title",
       "value": "Loading…"
+    },
+    {
+      "name": "TITLE_APP_VERSION_LOWER",
+      "value": "OutDate version"
     }
   ]
 }

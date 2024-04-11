@@ -98,7 +98,7 @@
     },
     {
       "name": "header_title_readonly_tips",
-      "value": "拥有只读权限的用户可查看此文件，但不能编辑、复制或打印。"
+      "value": "拥有只读权限的用户可查看，不可编辑、复制和打印文件。"
     },
     {
       "name": "header_title_edit_tips",
@@ -250,7 +250,7 @@
     },
     {
       "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
-      "value": "系统版本过低，无法打开在高版本系统上加密的文件，请升级系统后再试。"
+      "value": "无法打开使用高版本系统加密的文件，请升级系统后再试。"
     },
     {
       "name": "encrypt_employee_id",
@@ -302,11 +302,15 @@
     },
     {
       "name": "Timeout_is_not_supported",
-      "value": "不支持将有效期设置为已经过去的日期，请重新设置。"
+      "value": "不支持设置为已经过去的日期，请重新设置。"
     },
     {
       "name": "loading_title",
       "value": "正在加载…"
+    },
+    {
+      "name": "TITLE_APP_VERSION_LOWER",
+      "value": "系统版本过低"
     }
   ]
 }

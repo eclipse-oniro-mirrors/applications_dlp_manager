@@ -170,12 +170,14 @@ struct PermissionStatus {
     return `${year}/${month}/${day} ${hour}:${minute}`;
   }
 
-  @Builder itemHead(text?: string | Resource) {
+  @Builder
+  itemHead(text?: string | Resource) {
     Text(text)
-      .fontSize($r('sys.float.ohos_id_text_size_body2'))
-      .width(Constants.HEADER_COLUMN_WIDTH)
-      .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+      .fontSize($r('sys.float.ohos_id_text_size_sub_title3'))
+      .fontWeight(FontWeight.Medium)
       .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+      .width(Constants.HEADER_COLUMN_WIDTH)
+      .constraintSize({ minHeight: Constants.SUB_HEADER_HEIGHT })
   }
 
   aboutToDisappear() {
@@ -212,7 +214,7 @@ struct PermissionStatus {
             Column() {
               Row() {
                 Text($r('app.string.header_title'))
-                  .fontWeight(FontWeight.Medium)
+                  .fontWeight(FontWeight.Bold)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
                   .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
@@ -225,6 +227,7 @@ struct PermissionStatus {
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
               })
+              .margin({ bottom: Constants.HEADER_COLUMN_MARGIN_BOTTOM });
 
               Scroll() {
                 Column() {
@@ -245,57 +248,55 @@ struct PermissionStatus {
                       ListItemGroup({ header: this.itemHead(item.title) }) {
                         ForEach(item.content, (item: StatusContent) => {
                           ListItem() {
-                            Row() {
-                              Text(item.label)
-                                .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-                                .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                                .textAlign(TextAlign.Start)
-                                .fontWeight(FontWeight.Medium)
-                              Blank()
-                              if (item.date) {
-                                Text(this.getTime(this.validity))
-                                  .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-                                  .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                            Column() {
+                              Row() {
+                                Text(item.label)
+                                  .height(Constants.SUB_HEADER_HEIGHT)
+                                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
                                   .textAlign(TextAlign.Start)
-                                  .fontWeight(FontWeight.Regular)
-                                  .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
-                              } else {
-                                Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
-                                  .width(Constants.PP_IMAGE_WIDTH)
-                                  .height(Constants.PP_IMAGE_HEIGHT)
-                                  .fillColor($r('sys.color.ohos_id_color_text_primary'))
-                                  .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
+                                  .fontWeight(FontWeight.Medium)
+                                Blank()
+                                if (item.date) {
+                                  Text(this.getTime(this.validity))
+                                    .height(Constants.SUB_HEADER_HEIGHT)
+                                    .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                                    .textAlign(TextAlign.Start)
+                                    .fontWeight(FontWeight.Regular)
+                                    .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
+                                } else {
+                                  Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
+                                    .width(Constants.PP_IMAGE_WIDTH)
+                                    .height(Constants.PP_IMAGE_HEIGHT)
+                                    .fillColor($r('sys.color.ohos_id_color_text_primary'))
+                                    .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
+                                }
                               }
+                              .width(Constants.HEADER_TEXT_WIDTH);
+                              Divider()
+                                .width(Constants.HEADER_TEXT_WIDTH)
+                                .height(Constants.FOOTER_OPACITY_ONE)
+                                .color($r('app.color.encryption_divider_color'));
                             }
-                            .width(Constants.HEADER_TEXT_WIDTH)
                           }
                         }, (item: StatusContent) => JSON.stringify(item))
                       }
-                      .divider({
-                        strokeWidth: Constants.FOOTER_OPACITY_ONE,
-                        color: $r('app.color.encryption_divider_color')
-                      })
                     })
                   }
+
+                  Row() {
+                    Text($r('app.string.apply_for_the_permission', this.accountId))
+                      .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                      .align(Alignment.Start)
+                      .fontWeight(FontWeight.Regular)
+                  }
+                  .width(Constants.HEADER_COLUMN_WIDTH)
+                  .margin({ top: Constants.DA_MARGIN_TOP });
                 }
               }.constraintSize({
                 maxHeight: this.directionStatus ===
                   0 ? Constants.CHANGE_MAX_HEIGHT : Constants.ENCRYPTION_SUCCESS_MAX_HEIGHT
               })
-              .padding({
-                left: Constants.HEADER_COLUMN_PADDING_LEFT,
-                right: Constants.HEADER_COLUMN_PADDING_RIGHT
-              })
-
-              Row() {
-                Text($r('app.string.apply_for_the_permission', this.accountId))
-                  .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                  .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                  .align(Alignment.Start)
-                  .fontWeight(FontWeight.Regular)
-              }
-              .width(Constants.HEADER_COLUMN_WIDTH)
-              .margin({ top: Constants.DA_MARGIN_TOP, bottom: Constants.DU_LINE_MARGIN_TOP2 })
               .padding({
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
@@ -335,9 +336,10 @@ struct PermissionStatus {
             .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-            .shadow(ShadowStyle.OUTER_DEFAULT_SM)
+            .shadow(ShadowStyle.OUTER_DEFAULT_MD)
             .constraintSize({ minWidth: isPC() ?
               Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+            .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
           }
         }
       }
