@@ -75,7 +75,7 @@ struct encryptionSuccess {
       Text($r('app.string.header_title_readonly_tips'))
         .fontFamily('HarmonyHeiTi')
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
-        .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        .fontColor($r('sys.color.ohos_id_color_text_primary'))
     }
     .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
     .padding({
@@ -90,7 +90,7 @@ struct encryptionSuccess {
     Row() {
       Text($r('app.string.header_title_edit_tips'))
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
-        .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        .fontColor($r('sys.color.ohos_id_color_text_primary'))
     }
     .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
     .padding({
@@ -151,7 +151,7 @@ struct encryptionSuccess {
             Column() {
               Row() {
                 Text($r('app.string.header_title'))
-                  .fontWeight(FontWeight.Medium)
+                  .fontWeight(FontWeight.Bold)
                   .fontFamily($r('app.string.typeface'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
@@ -165,6 +165,7 @@ struct encryptionSuccess {
                 left: Constants.HEADER_COLUMN_PADDING_LEFT,
                 right: Constants.HEADER_COLUMN_PADDING_RIGHT
               })
+              .margin({ bottom: Constants.HEADER_COLUMN_MARGIN_BOTTOM });
 
               Scroll() {
                 Column() {
@@ -252,8 +253,8 @@ struct encryptionSuccess {
                             .draggable(false)
                             .bindPopup(this.handlePopupReadOnly, {
                               builder: this.popupBuilderReadOnly,
-                              placement: Placement.Bottom,
-                              popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                              placement: Placement.BottomLeft,
+                              offset: { x: Constants.POPUP_OFFSET_X },
                               enableArrow: true,
                               showInSubWindow: false,
                               onStateChange: (e) => {
@@ -292,8 +293,8 @@ struct encryptionSuccess {
                               .draggable(false)
                               .bindPopup(this.handlePopupReadOnly, {
                                 builder: this.popupBuilderReadOnly,
-                                placement: Placement.Bottom,
-                                popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                                placement: Placement.BottomLeft,
+                                offset: { x: Constants.POPUP_OFFSET_X },
                                 enableArrow: true,
                                 showInSubWindow: false,
                                 onStateChange: (e) => {
@@ -403,8 +404,8 @@ struct encryptionSuccess {
                             .draggable(false)
                             .bindPopup(this.handlePopupEdit, {
                               builder: this.popupBuilderEdit,
-                              placement: Placement.Bottom,
-                              popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                              placement: Placement.BottomLeft,
+                              offset: { x: Constants.POPUP_OFFSET_X },
                               enableArrow: true,
                               showInSubWindow: false,
                               onStateChange: (e) => {
@@ -444,8 +445,8 @@ struct encryptionSuccess {
                               .draggable(false)
                               .bindPopup(this.handlePopupEdit, {
                                 builder: this.popupBuilderEdit,
-                                placement: Placement.Bottom,
-                                popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                                placement: Placement.BottomLeft,
+                                offset: { x: Constants.POPUP_OFFSET_X },
                                 enableArrow: true,
                                 showInSubWindow: false,
                                 onStateChange: (e) => {
@@ -625,7 +626,7 @@ struct encryptionSuccess {
               }
               .justifyContent(FlexAlign.Center)
               .margin({
-                top: this.flag ? Constants.ENCRYPTION_BUTTON_PADDING_TOP : Constants.ENCRYPTION_SUCCESS_CHANGE_TOP,
+                top: Constants.ENCRYPTION_BUTTON_PADDING_TOP,
                 bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM
               })
               .padding({
@@ -636,8 +637,11 @@ struct encryptionSuccess {
             .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-            .constraintSize({ minWidth: isPC() ?
-              Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+            .constraintSize({
+              minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH,
+              minHeight: isPC() ? Constants.ENCRYPTION_LOADING_HEIGHT : Constants.ENCRYPTION_PC_FIXING_MINWIDTH
+            })
+            .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
           }
         }
       }

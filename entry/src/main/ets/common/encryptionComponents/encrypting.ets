@@ -37,7 +37,7 @@ struct EncryptingPanel {
           Column() {
             Row() {
               Text($r('app.string.header_title'))
-                .fontWeight(FontWeight.Medium)
+                .fontWeight(FontWeight.Bold)
                 .fontFamily($r('app.string.typeface'))
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
                 .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))

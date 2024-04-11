@@ -16,28 +16,25 @@
 import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import Constants from '../constant';
-import GlobalContext from '../GlobalContext';
-import { measureTextSizeWidth } from '../utils';
+import { AuthAccount, PermissionType } from '../utils';
 import { HiLog } from '../HiLog';
 
 const TAG = 'Select';
 
-class ChangeTypes {
-  public value: Resource = {
-    id: 0,
-    type: 0,
-    params: [],
-    bundleName: '',
-    moduleName: ''
-  }
-  public data: string = ''
-  public index: number = 0
-}
-
-interface Staff {
-  authAccount: string,
-  avatar: string,
-  id: number
+@Extend(MenuItem)
+function timeTextStyle() {
+  .labelFont({ size: $r('sys.float.ohos_id_text_size_body1'), weight: FontWeight.Regular })
+  .height(Constants.ENCRYPTION_PROTECTION_TIME_MENU_HEIGHT)
+  .width(Constants.HEADER_TEXT_WIDTH)
+  .margin({
+    left: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_LEFT,
+    right: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_RIGHT
+  })
+  .padding({
+    left: Constants.ENCRYPTION_PROTECTION_TIME_MENU_PADDING_LEFT,
+    right: Constants.ENCRYPTION_PROTECTION_TIME_MENU_PADDING_RIGHT,
+  })
+  .borderRadius($r('sys.float.ohos_id_corner_radius_default_m'))
 }
 
 @Component
@@ -45,13 +42,13 @@ struct permissionTypeSelect {
   @State text: string = '';
   @State index: number = 0
   @Prop isReadType: boolean = false;
-  @State permissionTypes: ChangeTypes[] = [
+  @State permissionTypes: PermissionType[] = [
     { value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_ALL'), data: 'all', index: 1 },
     { value: $r('app.string.PERMISSION_TYPE_SELECT_SELF'), data: 'self', index: 2 }
   ];
-  @Link @Watch('selectedItemUpdated') selectedItem: ChangeTypes;
-  @Link staffArray: Staff[];
+  @Link @Watch('selectedItemUpdated') selectedItem: PermissionType;
+  @Link staffArray: AuthAccount[];
   @Prop @Watch('onCountUpdated') isDisable: boolean = false;
 
   onCountUpdated(isDisable: boolean): void {
@@ -60,9 +57,8 @@ struct permissionTypeSelect {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT];
         this.index = Constants.ENCRYPTION_TYPE_SELECT;
         try {
-          (GlobalContext.load('context') as 
-            common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_ALL')
-            .id, (error: BusinessError, value: string) => {
+          (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
+            $r('app.string.PERMISSION_TYPE_SELECT_ALL').id, (error: BusinessError, value: string) => {
             if (error != null) {
               HiLog.info(TAG, `error is: ${error}`);
             } else {
@@ -76,9 +72,8 @@ struct permissionTypeSelect {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT_INDEX];
         this.index = Constants.ENCRYPTION_TYPE_SELECT_INDEX;
         try {
-          (GlobalContext.load('context') as
-            common.UIAbilityContext).resourceManager.getStringValue($r('app.string.PERMISSION_TYPE_SELECT_TARGET')
-            .id, (error: BusinessError, value: string) => {
+          (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
+            $r('app.string.PERMISSION_TYPE_SELECT_TARGET').id, (error: BusinessError, value: string) => {
             if (error != null) {
               HiLog.info(TAG, `error is: ${error}`);
             } else {
@@ -95,9 +90,8 @@ struct permissionTypeSelect {
   selectedItemUpdated(selectedItem: object): void {
     this.index = this.selectedItem.index;
     try {
-      (GlobalContext.load('context') as 
-        common.UIAbilityContext).resourceManager.getStringValue(this.selectedItem.value?.id!,
-        (error: BusinessError, value: string) => {
+      (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
+        this.selectedItem.value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
           HiLog.info(TAG, `error is: ${error}`);
         } else {
@@ -116,9 +110,8 @@ struct permissionTypeSelect {
       })
     }
     try {
-      (GlobalContext.load('context') as common.UIAbilityContext)
-        .resourceManager.getStringValue(this.permissionTypes[this.index].value?.id!,
-        (error: BusinessError, value: string) => {
+      (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
+        this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
         if (error != null) {
           HiLog.info(TAG, `error is: ${error}`);
         } else {
@@ -134,45 +127,120 @@ struct permissionTypeSelect {
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
   }
 
-  private getSelectOptionArr(): Array<SelectOption> {
-    let ret: SelectOption[] = [];
-    this.permissionTypes.forEach(
-      (item) => {
-        ret.push({ value: item.value })
-      }
-    );
-    return ret;
+  @Builder
+  PermissionTypeMenu() {
+    Menu() {
+      ForEach(this.permissionTypes, (item: PermissionType) => {
+        MenuItem({ content: item.value })
+          .selected(this.index === item.index)
+          .selectIcon(true)
+          .onChange(() => {
+            this.index = item.index;
+            this.selectedItem = this.permissionTypes[item.index];
+          });
+      })
+    }
+    .width(Constants.VALID_DATE_MENU_WIDTH);
   }
 
   build() {
-    Select(this.getSelectOptionArr())
-      .font({
-        size: $r('sys.float.ohos_id_text_size_body1'),
-        weight: FontWeight.Medium,
-      })
-      .optionFont({
-        weight: FontWeight.Regular
-      })
-      .selectedOptionFont({
-        weight: FontWeight.Regular
-      })
-      .selectedOptionBgColor(Color.Transparent)
-      .menuAlign(MenuAlignType.END, {dx:0, dy:0})
-      .optionWidth(measureTextSizeWidth($r('app.string.PERMISSION_TYPE_SELECT_TARGET')))
-      .selected(this.index)
-      .value(`${this.text}${
+    Row() {
+      Text(`${this.text}${
       this.selectedItem?.data === 'target' && this.staffArray.length > 0 ?
         ` (${this.staffArray.length})` :
         ''
       }`)
-      .onSelect((index: number, text?: string) => {
-        this.selectedItem = this.permissionTypes[index]
-        this.index = index;
-        this.text = text as string;
-      })
-      .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
-      .enabled(this.isDisable ? false : true)
+        .fontSize($r('sys.float.ohos_id_text_size_body2'))
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('sys.color.ohos_id_color_text_secondary'));
+
+      Image($r('app.media.rectangle'))
+        .width(Constants.VALIDITY_IMAGE_WIDTH)
+        .fillColor($r('sys.color.ohos_id_color_tertiary'))
+        .margin({
+          left: Constants.VALIDITY_IMAGE_PADDING_LEFT,
+          right: Constants.VALIDITY_IMAGE_PADDING_RIGHT
+        });
+    }
+    .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
+    .enabled(this.isDisable ? false : true)
+    .bindMenu(this.PermissionTypeMenu, { placement: Placement.BottomRight, showInSubWindow: false });
   }
 }
 
-export { permissionTypeSelect };
+@Component
+struct validDateTypeMenuItem {
+  @Link selectedIndex: number;
+  @State perMissionTypes: PermissionType[] = [
+    { value: $r('app.string.permanently'), data: 'permanently', index: 0 },
+    { value: $r('app.string.Appointed_day'), data: 'Appointed_day', index: 1 }
+  ];
+
+  build() {
+    Menu() {
+      ForEach(this.perMissionTypes, (item: PermissionType) => {
+        MenuItem({ content: item.value })
+          .selected(this.selectedIndex === item.index)
+          .selectIcon(true)
+          .timeTextStyle()
+          .onChange(() => {
+            this.selectedIndex = item.index;
+          });
+      })
+    }
+    .width(Constants.VALID_DATE_MENU_WIDTH);
+  }
+}
+
+@Component
+struct validDateTypeMenu {
+  @State text: string = '';
+  @Link selectedIndex: number;
+  @Prop isDisable: boolean = false;
+  @State validDateTypes: PermissionType[] = [
+    { value: $r('app.string.permanently'), data: 'permanently', index: 0 },
+    { value: $r('app.string.Appointed_day'), data: 'Appointed_day', index: 1 }
+  ];
+
+  aboutToAppear() {
+    try {
+      (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
+        this.validDateTypes[this.selectedIndex].value?.id!, (error: BusinessError, value: string) => {
+        if (error != null) {
+          HiLog.info(TAG, `error is: ${error}`);
+        } else {
+          this.text = value;
+        }
+      });
+    } catch (error) {
+      HiLog.error(TAG, `validDateTypeMenu callback getStringValue failed: ${JSON.stringify(error)}.`);
+    }
+  }
+
+  @Builder
+  ValidDateMenuItem() {
+    validDateTypeMenuItem({ selectedIndex: $selectedIndex });
+  }
+
+  build() {
+    Row() {
+      Text(this.text)
+        .fontSize($r('sys.float.ohos_id_text_size_body2'))
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('sys.color.ohos_id_color_text_secondary'));
+
+      Image($r('app.media.rectangle'))
+        .width(Constants.VALIDITY_IMAGE_WIDTH)
+        .fillColor($r('sys.color.ohos_id_color_tertiary'))
+        .margin({
+          left: Constants.VALIDITY_IMAGE_PADDING_LEFT,
+          right: Constants.VALIDITY_IMAGE_PADDING_RIGHT
+        });
+    }
+    .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
+    .enabled(this.isDisable ? false : true)
+    .bindMenu(this.ValidDateMenuItem(), { placement: Placement.BottomRight, showInSubWindow: false });
+  }
+}
+
+export { permissionTypeSelect, validDateTypeMenuItem, validDateTypeMenu };

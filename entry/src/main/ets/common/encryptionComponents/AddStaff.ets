@@ -90,7 +90,9 @@ struct AddStaff {
     let inputString = inputId.replace(regex, '');
     this.inputArray = inputString.split(';');
     this.errInput = [];
-    this.controller.deleteSpans({ start: startOffset, end: endOffset });
+    if (this.inputArray.length > Constants.RICH_EDITOR_FIRST) {
+      this.controller.deleteSpans({ start: startOffset, end: endOffset });
+    }
     for (let i = 0; i < this.inputArray.length; i++) {
       if (!this.inputArray[i]) {
         continue;
@@ -100,16 +102,9 @@ struct AddStaff {
         break;
       }
       if (GlobalContext.load('domainAccount')) {
-        await this.createStaffByDomain(i);
+        await this.createStaffByDomain(i, startOffset, endOffset);
       } else {
-        let o2: Staff = {
-          authAccount: this.inputArray[i],
-          textContent: this.inputArray[i]
-        };
-        this.staffArray.push(o2);
-        this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
-        GlobalContext.store('hiAccountVerifySucc', this.succ);
-        this.addBuildSpan(i, inputId);
+        this.createStaffByCloud(i, startOffset, endOffset);
       }
     }
     this.isAccountCheckSuccess = true;
@@ -121,7 +116,21 @@ struct AddStaff {
     }
   }
 
-  private createStaffByDomain(i: number) {
+  private createStaffByCloud(i: number, startOffset: number, endOffset: number) {
+    let o2: Staff = {
+      authAccount: this.inputArray[i],
+      textContent: this.inputArray[i]
+    };
+    this.staffArray.push(o2);
+    if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
+      this.controller.deleteSpans({ start: startOffset, end: endOffset });
+    }
+    this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
+    GlobalContext.store('hiAccountVerifySucc', this.succ);
+    this.addBuildSpan(i, this.inputArray[i]);
+  }
+
+  private createStaffByDomain(i: number, startOffset: number, endOffset: number) {
     return new Promise<void>((resolve, reject) => {
       let accountDomain: string = GlobalContext.load('accountDomain');
       let domainAccountInfo: osAccount.DomainAccountInfo = {
@@ -131,17 +140,17 @@ struct AddStaff {
       account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo,
         async (error: BusinessError, isExist: boolean) => {
         if (isExist) {
-          await this.createStaffItem(i);
+          await this.createStaffItem(i, startOffset, endOffset);
         } else {
           HiLog.info(TAG, `hasAccount fail: ${JSON.stringify(error)}`);
-          this.showErrInput(i, error);
+          this.showErrInput(i, error, startOffset, endOffset);
         }
         resolve();
       })
     });
   }
 
-  private createStaffItem(i: number) {
+  private createStaffItem(i: number, startOffset: number, endOffset: number) {
     return new Promise<void>(async (resolve, reject) => {
       try {
         let result = await AccountTipsConfig.getAccountInfo(this.inputArray[i]);
@@ -150,12 +159,15 @@ struct AddStaff {
           textContent: result[this.textContent] as string
         };
         this.staffArray.push(o1);
+        if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
+          this.controller.deleteSpans({ start: startOffset, end: endOffset });
+        }
         this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
         GlobalContext.store('hiAccountVerifySucc', this.succ);
         this.addBuildSpan(i, result[this.textContent]);
       } catch (error) {
         HiLog.info(TAG, `getAccountInfo fail: ${JSON.stringify(error)}`);
-        this.showErrInput(i, error);
+        this.showErrInput(i, error, startOffset, endOffset);
       }
       resolve();
     });
@@ -169,7 +181,10 @@ struct AddStaff {
     this.controller.addBuilderSpan(staffBuilder, { offset: index });
   }
 
-  private showErrInput(i: number, error: BusinessError) {
+  private showErrInput(i: number, error: BusinessError, startOffset: number, endOffset: number) {
+    if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
+      this.controller.deleteSpans({ start: startOffset, end: endOffset });
+    }
     this.errInput.push(this.inputArray[i]);
     this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
     GlobalContext.store('hiAccountVerifyFail', this.fail);
@@ -222,14 +237,18 @@ struct AddStaff {
       }) {
         RichEditor(this.options)
           .placeholder(!this.staffArray.length ? ((GlobalContext.load('domainAccount') as boolean)
-            ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')) : '')
+            ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')) : '',
+            {
+              font: { size: $r('sys.float.ohos_id_text_size_body1') },
+              fontColor: $r('sys.color.ohos_id_color_text_hint')
+            })
           .flexGrow(Constants.ENCRYPTION_ADD_STAFF_FLEX_GROW)
           .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
           .borderRadius(Constants.PP_ROW_RADIUS)
           .padding({
             top: Constants.PP_BUTTON_PAD,
             bottom: Constants.PP_BUTTON_PAD,
-            left: Constants.PP_TEXT_PAD_RIGHT,
+            left: Constants.PP_BUTTON_PAD,
             right: Constants.PP_BUTTON_PAD
           })
           .margin({
