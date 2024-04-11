@@ -43,7 +43,11 @@ import {
   colorStatus
 } from '../common/utils';
 import Constants from '../common/constant';
-import { permissionTypeSelect } from '../common/encryptionComponents/permission_type_select';
+import {
+  permissionTypeSelect,
+  validDateTypeMenu,
+  validDateTypeMenuItem
+} from '../common/encryptionComponents/permission_type_select';
 import { AddStaff } from '../common/encryptionComponents/AddStaff';
 import GlobalContext from '../common/GlobalContext';
 import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
@@ -59,24 +63,6 @@ let abilityResult: ability.AbilityResult = {
   'resultCode': 0,
   'want': {}
 };
-
-@Extend(Text)
-function timeTextStyle() {
-  .fontSize($r('sys.float.ohos_id_text_size_body1'))
-  .fontWeight(FontWeight.Regular)
-  .height(Constants.ENCRYPTION_PROTECTION_TIME_MENU_HEIGHT)
-  .width(Constants.HEADER_TEXT_WIDTH)
-  .textAlign(TextAlign.Start)
-  .margin({
-    left: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_LEFT,
-    right: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_RIGHT
-  })
-  .padding({
-    left: Constants.ENCRYPTION_PROTECTION_TIME_MENU_PADDING_LEFT,
-    right: Constants.ENCRYPTION_PROTECTION_TIME_MENU_PADDING_RIGHT,
-  })
-  .borderRadius($r('sys.float.ohos_id_corner_radius_default_m'))
-}
 
 interface dlpDataType {
   ownerAccount: string;
@@ -118,8 +104,6 @@ struct DlpDialog {
   @State prepareData: boolean = false;
   @State validity: Date = GlobalContext.load('validity') || new Date();
   @State selectedIndex: number = GlobalContext.load('permanent') === false ? 1 : 0;
-  @State colorTime1: Resource = $r('sys.color.ohos_id_color_dialog_bg');
-  @State colorTime: Resource = $r('sys.color.ohos_id_color_dialog_bg');
   @State domainOrCloudAccount: number = (GlobalContext.load('domainAccount') as boolean) ?
     dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
   @State permissionDict: PermissionType[] = [
@@ -146,7 +130,7 @@ struct DlpDialog {
       Text($r('app.string.header_title_readonly_tips'))
         .fontFamily('HarmonyHeiTi')
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
-        .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        .fontColor($r('sys.color.ohos_id_color_text_primary'))
     }
     .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
     .padding({
@@ -161,7 +145,7 @@ struct DlpDialog {
     Row() {
       Text($r('app.string.header_title_edit_tips'))
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
-        .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+        .fontColor($r('sys.color.ohos_id_color_text_primary'))
     }
     .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
     .padding({
@@ -172,38 +156,9 @@ struct DlpDialog {
     })
   }
 
-  @Builder MenuBuilder() {
-    Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center }) {
-      Text($r('app.string.permanently'))
-        .onClick(() => {
-          this.selectedIndex = 0;
-          this.colorTime1 = $r('sys.color.ohos_id_color_dialog_bg');
-        })
-        .timeTextStyle()
-        .backgroundColor(this.colorTime1)
-        .onHover((isHover?: boolean) => {
-          if (isHover) {
-            this.colorTime1 = $r('sys.color.ohos_id_color_button_normal');
-          } else {
-            this.colorTime1 = $r('sys.color.ohos_id_color_dialog_bg');
-          }
-        })
-      Divider().width(Constants.ENCRYPTION_PROTECTION_TIME_MENU_DIVIDER_LENGTH)
-      Text($r('app.string.Appointed_day'))
-        .timeTextStyle()
-        .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-        .backgroundColor(this.colorTime)
-        .onHover((isHover?: boolean) => {
-          if (isHover) {
-            this.colorTime = $r('sys.color.ohos_id_color_button_normal');
-          } else {
-            this.colorTime = $r('sys.color.ohos_id_color_dialog_bg');
-          }
-        })
-        .onClick(() => {
-          this.colorTime = $r('sys.color.ohos_id_color_dialog_bg');
-        })
-    }.width(measureTextSizeWidth($r('app.string.Appointed_day')))
+  @Builder
+  MenuBuilder() {
+    validDateTypeMenuItem({ selectedIndex: $selectedIndex });
   }
 
   showErrorDialog(title: string | Resource, message: string | Resource) {
@@ -720,7 +675,7 @@ struct DlpDialog {
         Column() {
           Row() {
             Text($r('app.string.header_title'))
-              .fontWeight(FontWeight.Medium)
+              .fontWeight(FontWeight.Bold)
               .fontFamily($r('app.string.typeface'))
               .fontColor($r('sys.color.ohos_id_color_text_primary'))
               .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
@@ -734,6 +689,7 @@ struct DlpDialog {
             left: Constants.HEADER_COLUMN_PADDING_LEFT,
             right: Constants.HEADER_COLUMN_PADDING_RIGHT
           })
+          .margin({ bottom: Constants.HEADER_COLUMN_MARGIN_BOTTOM });
 
           Scroll() {
             Column() {
@@ -763,8 +719,8 @@ struct DlpDialog {
                   .draggable(false)
                   .bindPopup(this.handlePopupReadOnly, {
                     builder: this.popupBuilderReadOnly,
-                    placement: Placement.Bottom,
-                    popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                    placement: Placement.BottomLeft,
+                    offset: { x: Constants.POPUP_OFFSET_X },
                     enableArrow: true,
                     showInSubWindow: false,
                     onStateChange: (e) => {
@@ -812,8 +768,8 @@ struct DlpDialog {
                   .draggable(false)
                   .bindPopup(this.handlePopupEdit, {
                     builder: this.popupBuilderEdit,
-                    placement: Placement.Bottom,
-                    popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
+                    placement: Placement.BottomLeft,
+                    offset: { x: Constants.POPUP_OFFSET_X },
                     enableArrow: true,
                     showInSubWindow: false,
                     onStateChange: (e) => {
@@ -858,35 +814,19 @@ struct DlpDialog {
                   Row() {
                     Image($r('app.media.rectangle'))
                       .width(Constants.VALIDITY_IMAGE_WIDTH)
-                      .fillColor($r('sys.color.ohos_id_color_spinner_icon'))
+                      .fillColor($r('sys.color.ohos_id_color_tertiary'))
                   }
                   .height(Constants.VALIDITY_IMAGE_HEIGHT)
                   .padding({
                     right: Constants.VALIDITY_IMAGE_PADDING_RIGHT,
                     left: Constants.VALIDITY_IMAGE_PADDING_LEFT
                   })
-                  .bindMenu(this.MenuBuilder, {placement: Placement.BottomRight})
+                  .bindMenu(this.MenuBuilder, { placement: Placement.BottomRight, showInSubWindow: false })
                 } else {
-                  Select([{ value: $r('app.string.permanently') }, { value: $r('app.string.Appointed_day') }])
-                    .font({
-                      size: $r('sys.float.ohos_id_text_size_body1'),
-                      weight: FontWeight.Medium,
-                    })
-                    .optionFont({
-                      weight: FontWeight.Regular
-                    })
-                    .selectedOptionFont({
-                      weight: FontWeight.Regular
-                    })
-                    .selectedOptionBgColor(Color.Transparent)
-                    .menuAlign(MenuAlignType.END, {dx:0, dy:0})
-                    .optionWidth(measureTextSizeWidth($r('app.string.Appointed_day')))
-                    .selected(0)
-                    .value($r('app.string.permanently'))
-                    .onSelect((index: number, text?: string) => {
-                      this.selectedIndex = index;
-                    })
-                    .opacity(Constants.FOOTER_OPACITY_ONE)
+                  validDateTypeMenu({
+                    selectedIndex: $selectedIndex,
+                    isDisable: false,
+                  })
                 }
               }
               .width(Constants.FOOTER_ROW_WIDTH)
@@ -986,6 +926,7 @@ struct DlpDialog {
         .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
         .constraintSize({ minWidth: isPC() ?
           Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+        .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
       }
     }
   }

@@ -28,7 +28,7 @@ const TAG = 'staff';
 @Extend(Text)
 function tipsTextStyle() {
   .fontSize($r('sys.float.ohos_id_text_size_body2'))
-  .fontColor($r('sys.color.ohos_id_color_primary_dark'))
+  .fontColor($r('sys.color.ohos_id_color_text_primary'))
   .textOverflow({
     overflow: TextOverflow.Ellipsis
   })
@@ -59,6 +59,7 @@ struct staffItem {
 
   @Prop textContent: string = '';
   @State accountTipsArray: AccountTips[] = [];
+  @State isHover: boolean = false;
   dlpAlertDialog?: CustomDialogController;
 
   @Builder popupBuilderTips() {
@@ -81,7 +82,7 @@ struct staffItem {
             .wordBreak(WordBreak.BREAK_ALL)
             .tipsTextStyle()
         }
-        .width(Constants.HEADER_COLUMN_MESSAGE_TIPS)
+        .width(Constants.HEADER_COLUMN_MESSAGE_TIPS_CLOUD)
       }
     }
     .alignItems(HorizontalAlign.Start)
@@ -158,7 +159,7 @@ struct staffItem {
           overflow: TextOverflow.Ellipsis
         })
         .maxLines(Constants.PP_TEXT_MAX_LINE)
-        .fontSize($r('sys.float.ohos_id_text_size_button2'))
+        .fontSize($r('sys.float.ohos_id_text_size_button3'))
         .height(Constants.HEADER_ROW_FONT_SIZE);
     }
     .onClick(() => {
@@ -186,13 +187,12 @@ struct staffItem {
         this.accountNameTips = this.authAccount;
       }
     })
+    .hitTestBehavior(HitTestMode.Block)
     .bindPopup(this.handlePopupTips, {
       builder: this.popupBuilderTips,
       placement: Placement.BottomLeft,
-      popupColor: ($r('sys.color.ohos_id_color_tooltip_background_dark')),
       enableArrow: true,
       showInSubWindow: false,
-      arrowOffset: Constants.TIPS_ARROW_OFFSET,
       onStateChange: (e) => {
         if (!e.isVisible) {
           this.handlePopupTips = false;

@@ -108,6 +108,7 @@ struct Index {
     }
     if ([
       Constants.ERR_JS_DLP_FILE_READ_ONLY,
+      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
     ].includes(messageCode)) {
       this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_TWO;
     }
@@ -116,11 +117,6 @@ struct Index {
       Constants.ERR_JS_NOT_DLP_FILE,
     ].includes(messageCode)) {
       this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_THREE;
-    }
-    if ([
-      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED
-    ].includes(messageCode)) {
-      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT_FOUR;
     }
   }
 
@@ -138,6 +134,7 @@ struct Index {
         Constants.ERR_JS_APP_ENCRYPTING,
         Constants.ERR_JS_FILE_EXPIRATION,
         Constants.ERR_JS_DLP_FILE_READ_ONLY,
+        Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
       ].includes(messageCode)) {
         errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
       } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED, Constants.ERR_JS_OFFLINE].includes(messageCode)) {
@@ -166,7 +163,7 @@ struct Index {
             .width(Constants.DU_WIDTH_FULL)
             .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
             .fontColor($r('sys.color.ohos_id_color_text_primary'))
-            .fontWeight(FontWeight.Medium)
+            .fontWeight(FontWeight.Bold)
             .align(Alignment.Start)
         }
         .width(Constants.HEADER_COLUMN_WIDTH)
@@ -251,5 +248,8 @@ struct Index {
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
     .height( isPC() ? Constants.HEADER_COLUMN_WIDTH : this.windowHeight)
+    .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+    .border({ width: Constants.DIALOG_MD_OFFSET, color: $r('app.color.encryption_divider_color') })
+    .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THIN);
   }
 }
