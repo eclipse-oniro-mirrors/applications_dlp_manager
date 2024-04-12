@@ -232,7 +232,8 @@ struct PermissionStatus {
               Scroll() {
                 Column() {
                   Row() {
-                    Text(this.authPerm === Constants.FOOTER_OPACITY_ONE ? $r('app.string.permission_status_readOnly') : $r('app.string.permission_status_title'))
+                    Text(this.authPerm === Constants.FOOTER_OPACITY_ONE ?
+                      $r('app.string.permission_status_readOnly') : $r('app.string.permission_status_title'))
                       .fontWeight(FontWeight.Regular)
                       .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                       .fontSize($r('sys.float.ohos_id_text_size_body1'))
@@ -284,11 +285,16 @@ struct PermissionStatus {
                   }
 
                   Row() {
-                    Text($r('app.string.apply_for_the_permission', this.accountId))
-                      .fontColor($r('sys.color.ohos_id_color_text_secondary'))
-                      .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                      .align(Alignment.Start)
-                      .fontWeight(FontWeight.Regular)
+                    Text() {
+                      Span($r('app.string.apply_for_the_subject'))
+                      if (this.authPerm === Constants.FOOTER_OPACITY_ONE) {
+                        Span($r('app.string.apply_for_the_permission', this.accountId))
+                      }
+                    }
+                    .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                    .fontSize($r('sys.float.ohos_id_text_size_body1'))
+                    .align(Alignment.Start)
+                    .fontWeight(FontWeight.Regular)
                   }
                   .width(Constants.HEADER_COLUMN_WIDTH)
                   .margin({ top: Constants.DA_MARGIN_TOP });

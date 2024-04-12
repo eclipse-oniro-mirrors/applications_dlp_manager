@@ -47,9 +47,9 @@ export class HiLog {
    * @param tag 日志Tag
    * @param message 打印信息
    */
-  public static debug(tag: string, message: string, ...args: any[]): void {
+  public static debug(tag: string, message: string): void {
     if (LogVersion.Debug >= HiLog.LOG_LEVEL) {
-      hilog.debug(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message, args);
+      hilog.debug(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message);
     }
   }
 
@@ -58,9 +58,9 @@ export class HiLog {
    * @param tag 日志Tag
    * @param message 打印信息
    */
-  public static info(tag: string, message: string, ...args: any[]): void {
+  public static info(tag: string, message: string): void {
     if (LogVersion.Info >= HiLog.LOG_LEVEL) {
-      hilog.info(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message, args);
+      hilog.info(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message);
     }
   }
 
@@ -69,9 +69,9 @@ export class HiLog {
    * @param tag 日志Tag
    * @param message 打印信息
    */
-  public static warn(tag: string, message: string, ...args: any[]): void {
+  public static warn(tag: string, message: string): void {
     if (LogVersion.Warn >= HiLog.LOG_LEVEL) {
-      hilog.warn(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message, args);
+      hilog.warn(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message);
     }
   }
 
@@ -80,9 +80,9 @@ export class HiLog {
    * @param tag 日志Tag
    * @param message 打印信息
    */
-  public static error(tag: string, message: string, ...args: any[]): void {
+  public static error(tag: string, message: string): void {
     if (LogVersion.Error >= HiLog.LOG_LEVEL) {
-      hilog.error(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message, args);
+      hilog.error(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message);
     }
   }
 
@@ -91,9 +91,9 @@ export class HiLog {
    * @param tag 日志Tag
    * @param message 打印信息
    */
-  public static fatal(tag: string, message: string, ...args: any[]): void {
+  public static fatal(tag: string, message: string): void {
     if (LogVersion.Fatal >= HiLog.LOG_LEVEL) {
-      hilog.fatal(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message, args);
+      hilog.fatal(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message);
     }
   }
 }

@@ -30,11 +30,31 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import Constants from '../common/constant';
 import GlobalContext from './GlobalContext';
 import hiSysEvent from '@ohos.hiSysEvent';
-import display from '@ohos.display';
-import StartOptions from '@ohos.app.ability.StartOptions';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'Utils';
+
+let defaultDlpProperty: dlpPermission.DLPProperty = {
+  ownerAccount: '',
+  ownerAccountType: GlobalContext.load('domainAccount') as boolean ?
+    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  authUserList: [],
+  contactAccount: '',
+  offlineAccess: true,
+  ownerAccountID: '',
+  everyoneAccessList: []
+}
+
+let defaultDlpFile: dlpPermission.DLPFile = {
+  dlpProperty: defaultDlpProperty,
+  recoverDLPFile: async () => {},
+  closeDLPFile: async () => {},
+  addDLPLinkFile: async () => {},
+  stopFuseLink: async () => {},
+  resumeFuseLink: async () => {},
+  replaceDLPLinkFile: async () => {},
+  deleteDLPLinkFile: async () => {}
+};
 
 interface AuthAccount {
   authAccount: string;
@@ -476,5 +496,6 @@ export {
   DLPInfo,
   isValidPath,
   measureTextSizeWidth,
-  colorStatus
+  colorStatus,
+  defaultDlpFile
 };
