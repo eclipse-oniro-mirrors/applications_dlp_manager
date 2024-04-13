@@ -98,7 +98,7 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   return await accountMgr.getCurrentOsAccount();
 }
 
-function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number | boolean {
+function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number {
   if (GlobalContext.load('domainAccount') as boolean) {
     GlobalContext.store('hiAccountType', 'Domain_Account');
     if (accountInfo.domainInfo.accountName === '' &&
@@ -119,7 +119,7 @@ function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): n
     }
   }
   GlobalContext.store('hiAccountStatus', 1);
-  return false;
+  return Constants.ERR_JS_APP_ACCOUNT_INFO;
 }
 
 async function getUserId(): Promise<number> {
@@ -276,8 +276,8 @@ async function goToAlertMessagePage(
     'cancel': cancel,
     'ok': ok
   } as Record<string, UIExtensionContentSession | Object | Resource>);
-  session.loadContent('pages/alertMessage', storage);
   try {
+    session.loadContent('pages/alertMessage', storage);
     session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
   } catch (exception) {
     HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);

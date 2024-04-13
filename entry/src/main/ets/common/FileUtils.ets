@@ -13,6 +13,12 @@
  * limitations under the License.
  */
 
+import dlpPermission from '@ohos.dlpPermission';
+import fs from '@ohos.file.fs';
+import { BusinessError } from '@ohos.base';
+import { HiLog } from '../common/HiLog';
+
+const TAG = 'FileUtils';
 export interface FileMsg {
   fileName: string;
   filePath: string;
@@ -20,7 +26,6 @@ export interface FileMsg {
 }
 
 export default class FileUtils {
-
   static getSuffixFileMsgByUri(uri: string): FileMsg {
     let strArray: string[] = uri.split('/');
     let len: number = strArray.length;
@@ -37,5 +42,49 @@ export default class FileUtils {
       fileType: fileType,
     };
     return result;
+  }
+
+  static getAllSuffixByUri(uri: string): FileMsg {
+    let strArray: string[] = uri.split('/');
+    let len: number = strArray.length;
+    let fileName: string = strArray[len - 1];
+    let filePath: string = strArray.slice(0, len - 1).join('/');
+    let lastIndex: number = fileName.lastIndexOf('.');
+    let secondIndex: number = fileName.lastIndexOf('.', lastIndex - 1);
+    let fileType: string = fileName.substring(secondIndex + 1, lastIndex);
+    let result: FileMsg = {
+      fileName: fileName.substring(0, secondIndex),
+      filePath: filePath,
+      fileType: fileType,
+    };
+    return result;
+  }
+
+  static getFileMsgByFileName(fileName: string): string {
+    let lastIndex: number = fileName.lastIndexOf('.');
+    let secondIndex: number = fileName.lastIndexOf('.', lastIndex - 1);
+    fileName = fileName.substring(0, secondIndex);
+    return fileName;
+  }
+
+  static isDLPFile(uri: string) {
+    return new Promise<boolean>(async (resolve, reject) => {
+      let file: fs.File;
+      try {
+        file = fs.openSync(uri);
+        try {
+          let res = await dlpPermission.isDLPFile(file.fd);
+          fs.closeSync(file);
+          resolve(res);
+        } catch (err) {
+          HiLog.error(TAG, `isDLPFile error: ${JSON.stringify(err)}`);
+          fs.closeSync(file);
+          reject(err);
+        }
+      } catch (err) {
+        HiLog.error(TAG, `openSync error: ${JSON.stringify(err)}`);
+        reject(err);
+      }
+    })
   }
 }
