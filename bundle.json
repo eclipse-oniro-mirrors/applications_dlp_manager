@@ -12,9 +12,7 @@
     "component": {
         "name": "dlp_manager",
         "subsystem": "applications",
-        "syscap": [
-            "SystemCapability.Security.DataLossPrevention"
-        ],
+        "syscap": [],
         "features": [],
         "adapted_system_type": [
             "standard"
