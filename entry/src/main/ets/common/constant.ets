@@ -164,6 +164,7 @@ export default class Constants {
 
   public static FOOTER_OPACITY_ONE = 1;
   public static FOOTER_OPACITY_SEPC = 0.6;
+  public static readonly ERR_JS_APP_ACCOUNT_INFO = 0;
   public static readonly ERR_JS_APP_INSIDE_ERROR = 1;
   public static readonly ERR_JS_GET_ACCOUNT_ERROR = 2;
   public static readonly ERR_JS_APP_NO_ACCOUNT_ERROR = 3;

@@ -45,6 +45,7 @@ import common from '@ohos.app.ability.common';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
+import FileUtils from '../common/FileUtils';
 
 const TAG = 'Main';
 let permissionList: Permissions[] = [
@@ -276,7 +277,13 @@ export default class MainAbility extends UIAbility {
   async requestIsNotFromSandBox(windowStage: window.WindowStage): Promise<void> {
     let fileName: string =
       ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
-    let isDlpSuffix: boolean = fileName.endsWith('.dlp');
+    let isDlpSuffix: boolean = false;
+    try {
+      isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'));
+    } catch {
+      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      return;
+    }
     if (!isDlpSuffix) {
       HiLog.info(TAG, `${fileName} is not a dlp file`);
       GlobalContext.store('originFileName', fileName);
@@ -291,11 +298,11 @@ export default class MainAbility extends UIAbility {
       });
       return;
     } else {
-      this.isDlpSuffix(windowStage);
+      this.dlpFilesToEncrypt(windowStage);
     }
   }
 
-  async isDlpSuffix(windowStage: window.WindowStage): Promise<void> {
+  async dlpFilesToEncrypt(windowStage: window.WindowStage): Promise<void> {
     let uri: string = GlobalContext.load('uri') as string;
     try {
       await this.findFileOpenHistoryHome(uri);

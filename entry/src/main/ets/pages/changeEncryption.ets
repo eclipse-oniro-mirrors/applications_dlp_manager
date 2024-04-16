@@ -205,7 +205,7 @@ struct changeEncryption {
   }
 
   async unEncrypt() {
-    let plaintextFile = this.srcFileName.split('.')[0];
+    let plaintextFile = FileUtils.getFileMsgByFileName(this.srcFileName);
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       try {
         await this.stopFuseLinkHome();
@@ -216,13 +216,12 @@ struct changeEncryption {
     HiLog.info(TAG, `Decrypt DLP file: ${this.srcFileName}`);
     try {
       let srcFileUri: string = GlobalContext.load('uri');
-      let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(srcFileUri);
+      let srcFileMsg: FileMsg = FileUtils.getAllSuffixByUri(srcFileUri);
       let documentSaveOptions = new picker.DocumentSaveOptions();
       documentSaveOptions.newFileNames = [plaintextFile];
-      let fileSuffixChoicesName = this.srcFileName.split('.')[1];
-      documentSaveOptions.fileSuffixChoices = [`.${fileSuffixChoicesName}`];
+      documentSaveOptions.fileSuffixChoices = [`.${srcFileMsg.fileType}`];
       documentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
-        srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length);
+        srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length - 5);
       let documentPicker = new picker.DocumentViewPicker();
       documentPicker.save(documentSaveOptions).then(async (saveRes) => {
         if (saveRes === undefined || saveRes.length === 0) {

@@ -287,18 +287,36 @@ struct AddStaff {
             return true;
           })
           .aboutToDelete((value: RichEditorDeleteValue) => {
+            if (!value.richEditorDeleteSpans.length) {
+              return false;
+            };
             this.isInitDataStatus = true;
             if (this.isInputInvalid || this.isNetworkInvalid) {
               this.isInputInvalid = false;
               this.isNetworkInvalid = false;
             }
+
+            let richEditorSpansAll: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
+              this.controller.getSpans();
+
             let richEditorDeleteSpans: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
             value.richEditorDeleteSpans;
+            let len = richEditorDeleteSpans[richEditorDeleteSpans.length - 1].spanPosition.spanIndex;
+            let textNum: number = 0;
+            for (let i = 0; i <= len; i++) {
+              let buildSpan: RichEditorTextSpanResult = richEditorSpansAll[i] as RichEditorTextSpanResult;
+              if (buildSpan.textStyle) {
+                textNum++;
+              }
+            }
             for (let index: number = richEditorDeleteSpans.length - 1; index >= 0; index--) {
               let buildSpan: RichEditorImageSpanResult = richEditorDeleteSpans[index] as RichEditorImageSpanResult;
               if (buildSpan.imageStyle) {
                 let spanIndex: number = buildSpan.spanPosition.spanIndex;
+                spanIndex -= textNum;
                 this.removeItem(spanIndex);
+              } else {
+                textNum--;
               }
             }
             return true;

@@ -41,6 +41,7 @@ import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import common from '@ohos.app.ability.common';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
+import FileUtils from '../common/FileUtils';
 
 const TAG = 'MainEx';
 
@@ -149,8 +150,8 @@ export default class MainAbility extends UIExtensionAbility {
       let storage: LocalStorage = new LocalStorage({
         'session': session,
       } as Record<string, UIExtensionContentSession | string>);
-      session.loadContent('pages/changeEncryption', storage);
       try {
+        session.loadContent('pages/changeEncryption', storage);
         session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
       } catch (exception) {
         HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
@@ -159,8 +160,8 @@ export default class MainAbility extends UIExtensionAbility {
       let storage: LocalStorage = new LocalStorage({
         'session': session,
       } as Record<string, UIExtensionContentSession | string>);
-      session.loadContent('pages/permissionStatus', storage);
       try {
+        session.loadContent('pages/permissionStatus', storage);
         session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
       } catch (exception) {
         HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
@@ -307,7 +308,15 @@ export default class MainAbility extends UIExtensionAbility {
   async requestIsNotFromSandBox(session: UIExtensionContentSession): Promise<void> {
     let fileName: string =
       ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
-    let isDlpSuffix: boolean = fileName.endsWith('.dlp');
+    let isDlpSuffix: boolean = false;
+    try {
+      isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'));
+    } catch {
+      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError, session);
+      return;
+    }
+    HiLog.info(TAG, `isDlpSuffix: ${isDlpSuffix}`);
     if (!isDlpSuffix) {
       HiLog.info(TAG, `${fileName} is not a dlp file`);
       GlobalContext.store('originFileName', fileName);
@@ -315,19 +324,19 @@ export default class MainAbility extends UIExtensionAbility {
       let storage: LocalStorage = new LocalStorage({
         'session': session,
       } as Record<string, UIExtensionContentSession | string>);
-      session.loadContent('pages/encryptionProtection', storage);
       try {
+        session.loadContent('pages/encryptionProtection', storage);
         session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
       } catch (exception) {
         HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
       }
       return;
     } else {
-      this.isDlpSuffix(session);
+      this.dlpFilesToEncrypt(session);
     }
   }
 
-  async isDlpSuffix(session: UIExtensionContentSession): Promise<void> {
+  async dlpFilesToEncrypt(session: UIExtensionContentSession): Promise<void> {
     let uri: string = GlobalContext.load('uri') as string;
     try {
       await this.findFileOpenHistoryHome(uri, session);
