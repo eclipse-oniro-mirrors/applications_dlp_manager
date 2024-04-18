@@ -76,13 +76,13 @@ struct AddStaff {
     this.staffArrayLength = false;
   }
 
-  private async onSubmitMock(inputId: string, startOffset: number, endOffset: number) {
+  private async onSubmitMock(inputId: string, startOffset: number[], endOffset: number[]) {
     if (!inputId) {
       return;
     }
     if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
       this.staffArrayLength = true;
-      this.controller.deleteSpans({ start: startOffset, end: endOffset });
+      this.deleteBuildSpan(startOffset, endOffset);
       return;
     }
     this.isAccountCheckSuccess = false;
@@ -91,7 +91,7 @@ struct AddStaff {
     this.inputArray = inputString.split(';');
     this.errInput = [];
     if (this.inputArray.length > Constants.RICH_EDITOR_FIRST) {
-      this.controller.deleteSpans({ start: startOffset, end: endOffset });
+      this.deleteBuildSpan(startOffset, endOffset);
     }
     for (let i = 0; i < this.inputArray.length; i++) {
       if (!this.inputArray[i]) {
@@ -116,21 +116,21 @@ struct AddStaff {
     }
   }
 
-  private createStaffByCloud(i: number, startOffset: number, endOffset: number) {
+  private createStaffByCloud(i: number, startOffset: number[], endOffset: number[]) {
     let o2: Staff = {
       authAccount: this.inputArray[i],
       textContent: this.inputArray[i]
     };
     this.staffArray.push(o2);
     if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
-      this.controller.deleteSpans({ start: startOffset, end: endOffset });
+      this.deleteBuildSpan(startOffset, endOffset);
     }
     this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
     GlobalContext.store('hiAccountVerifySucc', this.succ);
     this.addBuildSpan(i, this.inputArray[i]);
   }
 
-  private createStaffByDomain(i: number, startOffset: number, endOffset: number) {
+  private createStaffByDomain(i: number, startOffset: number[], endOffset: number[]) {
     return new Promise<void>((resolve, reject) => {
       let accountDomain: string = GlobalContext.load('accountDomain');
       let domainAccountInfo: osAccount.DomainAccountInfo = {
@@ -150,7 +150,7 @@ struct AddStaff {
     });
   }
 
-  private createStaffItem(i: number, startOffset: number, endOffset: number) {
+  private createStaffItem(i: number, startOffset: number[], endOffset: number[]) {
     return new Promise<void>(async (resolve, reject) => {
       try {
         let result = await AccountTipsConfig.getAccountInfo(this.inputArray[i]);
@@ -160,7 +160,7 @@ struct AddStaff {
         };
         this.staffArray.push(o1);
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
-          this.controller.deleteSpans({ start: startOffset, end: endOffset });
+          this.deleteBuildSpan(startOffset, endOffset);
         }
         this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
         GlobalContext.store('hiAccountVerifySucc', this.succ);
@@ -173,17 +173,23 @@ struct AddStaff {
     });
   }
 
+  private deleteBuildSpan(startOffset: number[], endOffset: number[]) {
+    for (let i: number = startOffset.length - 1; i >= 0; i--) {
+      this.controller.deleteSpans({ start: startOffset[i], end: endOffset[i] });
+    }
+  }
+
   private addBuildSpan(i: number, textContent: string) {
     let index: number = this.controller.getCaretOffset();
     let staffBuilder: CustomBuilder = () => {
       this.StaffItemBuilder(this.inputArray[i], textContent, index);
     };
-    this.controller.addBuilderSpan(staffBuilder, { offset: index });
+    this.controller.addBuilderSpan(staffBuilder);
   }
 
-  private showErrInput(i: number, error: BusinessError, startOffset: number, endOffset: number) {
+  private showErrInput(i: number, error: BusinessError, startOffset: number[], endOffset: number[]) {
     if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
-      this.controller.deleteSpans({ start: startOffset, end: endOffset });
+      this.deleteBuildSpan(startOffset, endOffset);
     }
     this.errInput.push(this.inputArray[i]);
     this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
@@ -280,7 +286,7 @@ struct AddStaff {
                 }
               }
               if (this.isAccountCheckSuccess) {
-                this.onSubmitMock(inputId, startOffset[0], endOffset.slice(-1)[0]);
+                this.onSubmitMock(inputId, startOffset, endOffset);
               };
               return false;
             }
