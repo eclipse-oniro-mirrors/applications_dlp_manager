@@ -1,0 +1,280 @@
+{
+    "string":[
+        {
+            "name":"save",
+            "value":"ཉར་ཚགས།"
+        },
+        {
+            "name":"export",
+            "value":"ཕྱིར་འདྲེན།"
+        },
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"ཉེར་སྤྱོད་དེས་ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ།"
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"DLP འཐེན་པ་ཉེར་སྤྱོད་བྱེད་མ་ཐུབ། ཞུགས་གྲངས་ལ་བརྟག་དཔྱད་བྱས་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"ཡིག་ཆར་གསང་སྡོམ་བྱེད་བཞིན་པ།"
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"ནུས་ལྡན་དུས་ཡུན་འདས་ཟིན་པའི་དུས་ཚོད་ལ་སྒྲིག་མི་རུང་། ཡང་བསྐྱར་སྒྲིག་འགོད་གནང་རོགས།"
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"རང་ཉིད་ཁོ་ན།"
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"དམིགས་བཙུགས་སྤྱོད་མཁན།"
+        },
+        {
+            "name":"Network_not_connected_description",
+            "value":"ཡིག་ཆ་དེར་ནུས་ལྡན་དུས་ཡུན་སྒྲིག་འགོད་བྱས་ཟིན། དྲ་རྒྱར་སྦྲེལ་ནས་ཡིག་ཆའི་དབང་ཚད་གཏན་འཁེལ་གནང་རོགས།"
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"ཡིག་ཆ་ཁ་ཕྱེ་ཟིན། སྔོན་ལ་ཁ་བརྒྱབ་རྗེས་དེ་ནས་གསང་སྡོམ་གནང་རོགས།"
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"ཁྱེད་ལ་ཡིག་ཆ་འདི་ལ་ལྟ་བའི་དབང་ཚད་མེད། དབང་ཚད་རེ་ཞུ་བྱ་དགོས་ན། %s ལ་འབྲེལ་གཏུག་གནང་རོགས།"
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"ལས་མིའི་ཨང་རྟགས་ནོར། ལས་མིའི་ཨང་རྟགས་ཡང་དག་ནང་འཇུག་གནང་རོགས།"
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"དབང་ཚད་ལ་ཚོད་འཛིན་ཐེབས་ཟིན། ཁྱེད་ལ་༼ཀློག་པ་ཁོ་ན་༽ཡི་དབང་ཚད་ལས་མེད།"
+        },
+        {
+            "name":"screenshot",
+            "value":"ཡོལ་པར་ལེན་པ།"
+        },
+        {
+            "name":"duplicate",
+            "value":"འདྲ་བཤུས།"
+        },
+        {
+            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
+            "value":"ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ། བརྟག་དཔྱད་བྱས་རྗེས་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"ཁྱེད་ཀྱི་ཐོ་འཇུག་ཆ་འཕྲིན་ངོས་འཛིན་མ་ཐུབ། རྩོལ་ནུས་འདི་ཁེ་ལས་ཀྱི་སྤྱོད་མཁན་ཁོ་ནས་བཀོལ་ཆོག སྔོན་ལ་ཁེ་ལས་ཀྱི་ཐོ་ཨང་ཐོ་འཇུག་གནང་རོགས།"
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"ཐོ་ཨང་གི་ཆ་འཕྲིན་མ་ཐུབ་པས། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"༼%s༽ལ་གསང་སྡོམ་བྱེད་བཞིན་ཡོད། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"loading_title",
+            "value":"སྣོན་འཇུག་བྱེད་བཞིན་པ།"
+        },
+        {
+            "name":"header_title_list",
+            "value":"དམིགས་འཛུགས་སྤྱོད་མཁན་གྱི་ལྟ་སྤྱོད་ཀྱི་དབང་ཚད་སྤྲད་ཚེ། དུས་མཚུངས་དེའི་རྩོམ་སྒྲིག་དང་འདྲ་བཤུས་སོགས་ཀྱི་སྒྲིག་བཀོལ་ལ་ཚད་བཀག་ཐེབས་སྲིད།"
+        },
+        {
+            "name":"Document_valid",
+            "value":"ཡིག་ཆའི་ནུས་ལྡན་དུས་ཡུན།"
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"ཀློག་པ་ཁོ་ནའི་དབང་ཚད་ལྡན་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆར་ལྟ་ཞིབ་བྱེད་ཐུབ་པ་ལས། རྩོམ་སྒྲིག་དང་འདྲ་བཤུས། པར་འདེབས་སོགས་བྱེད་མི་ཐུབ།"
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"མི་ཚང་མ།"
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"ཁྱེད་ལ་༼ལོགས་སུ་ཉར་ཚགས་༽ཀྱི་དབང་ཚད་མེད་པས། རྩོལ་ནུས་འདི་བཀོལ་ཐབས་བྲལ། དབང་ཚད་རེ་ཞུ་བྱ་དགོས་ན། %s ལ་འབྲེལ་གཏུག་གནང་རོགས།"
+        },
+        {
+            "name":"encrypt_employee_id",
+            "value":"ལས་མིའི་ཨང་རྟགས། : %s"
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"དབང་ཚད་རེ་ཞུ་བྱ་དགོས་ན། %s ལ་འབྲེལ་གཏུག་གནང་རོགས།"
+        },
+        {
+            "name":"Appointed_day",
+            "value":"དམིགས་བཙུགས་ཟླ་ཚེས།"
+        },
+        {
+            "name":"change_encryption",
+            "value":"གསང་སྡོམ་བཟོ་བཅོས།"
+        },
+        {
+            "name":"print",
+            "value":"པར་འདེབས།"
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"ལས་མིའི་ཨང་རྟགས་ཆ་ཚང་ནང་འཇུག་བྱས་རྗེས་སྟར་བརྗེའི་མཐེབ་གནོན་རོགས། དཔེར་ན། a00123456"
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"ཀློག་པ་ཁོ་ན།"
+        },
+        {
+            "name":"permanently",
+            "value":"དུས་ནམ་ཡང་།"
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"ཉེར་སྤྱོད་རྒྱུན་ལྡན་མིན།"
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"ཡིག་ཆར་གསང་སྡོམ་བྱེད་བཞིན་ཡོད། གསང་སྡོམ་བྱས་ཚར་རྗེས་ཡང་བསྐྱར་ཁ་འབྱེད་རོགས།"
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"ཐོ་འཇུག"
+        },
+        {
+            "name":"network_invalid",
+            "value":"དྲ་རྒྱ་རྒྱུན་ལྡན་མིན། ཏོག་ཙམ་ནས་བསྐྱར་དུ་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"header_title_edit",
+            "value":"རྩོམ་སྒྲིག"
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"དབང་ཚད་ལ་བཀག་སྡོམ་བཟོས་ཟིན། དམིགས་འཛུགས་སྤྱོད་མཁན་ཁོ་ནས་ཡིག་ཆར་ལྟ་ཞིབ་བྱེད་ཐུབ།"
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"རྩོམ་སྒྲིག"
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"ཡིག་ཆའི་དབང་ཚད་ཀྱི་དུས་ཚོད་ཡོལ་ཟིན། མུ་མཐུད་ལྟ་ཞིབ་བྱ་དགོས་ན། %s ལ་འབྲེལ་གཏུག་གནང་རོགས།"
+        },
+        {
+            "name":"file_encrypted",
+            "value":"ཡིག་ཆར་གསང་སྡོམ་བརྒྱབ་ཟིན།"
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"གསང་སྡོམ་བསྒྱུར་བཅོས་བྱེད་མ་ཐུབ། ཏོག་ཙམ་ནས་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"header_title",
+            "value":"གསང་སྡོམ་གྱིས་སྲུང་སྐྱོབ།"
+        },
+        {
+            "name":"enter_a_complete_account",
+            "value":"སྤྱོད་མཁན་གྱི་ཐོ་ཨང་ནང་འཇུག་གནང་རོགས།"
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"ཀློག་པ་ཁོ་ན།"
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"མིག་སྔར་བཀོལ་སྤྱོད་བྱེད་ཐབས་བྲལ། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"save_as",
+            "value":"ལོགས་སུ་ཉར་ཚགས།"
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"དབང་ཚད་མེད།"
+        },
+        {
+            "name":"Network_not_connected",
+            "value":"དྲ་རྒྱར་སྦྲེལ་མཐུད་བྱས་མེད།"
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"ཐོ་ཨང་ཐོ་འཇུག་བྱས་མེད། ཐོ་ཨང་ཐོ་འཇུག་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"Go_setting",
+            "value":"སྒྲིག་འགོད་ལ་སྐྱོད།"
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"དབང་ཚད་ཀྱི་དུས་ཚོད་ཡོལ་ཟིན།"
+        },
+        {
+            "name":"screen_recording",
+            "value":"ཡོལ་ཕབ།"
+        },
+        {
+            "name":"finished",
+            "value":"ཚར་སོང་།"
+        },
+        {
+            "name":"incorrect_account",
+            "value":"ཐོ་ཨང་ནོར། ཐོ་ཨང་ཡང་དག་ནང་འཇུག་གནང་རོགས།"
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"རྒྱུད་ཁོངས་ཀྱི་པར་གཞི་དམའ་དྲགས། པར་གཞི་མཐོ་པོའི་རྒྱུད་ཁོངས་སུ་གསང་སྡོམ་བྱས་པའི་ཡིག་ཆ་ཁ་འབྱེད་ཐབས་བྲལ། རྒྱུད་ཁོངས་རིམ་སྤོར་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"stow_away",
+            "value":"སྡུད།"
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"གསང་སྡོམ་གྱི་ཞིབ་ཕྲའི་གནས་ཚུལ་ལ་ལྟ་ཞིབ།"
+        },
+        {
+            "name":"sure",
+            "value":"གཏན་འཁེལ།"
+        },
+        {
+            "name":"permission_status_title",
+            "value":"དབང་ཚད་ལ་ཚོད་འཛིན་ཐེབས་ཟིན། ཁྱེད་ལ་༼ཀློག་པ་ཁོ་ན་༽དང་༼རྩོམ་སྒྲིག་༽གི་དབང་ཚད་ལས་མེད།"
+        },
+        {
+            "name":"da_button",
+            "value":"ཤེས་སོང་།"
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"ཡིག་ཚགས་ཀྱི་དབང་ཚད་ལེན་མ་ཐུབ་པས། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།"
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"ཡིག་ཆའི་ནུས་ལྡན་དུས་ཡུན་འདི་བར་ཡིན།"
+        },
+        {
+            "name":"share_the_screen",
+            "value":"བརྙན་ཡོལ་མཉམ་སྤྱོད།"
+        },
+        {
+            "name":"unencrypted",
+            "value":"གསང་སྡོམ་བཤིག་པ།"
+        },
+        {
+            "name":"ban",
+            "value":"འདོར་བ།"
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"རྩོམ་སྒྲིག་གི་དབང་ཚད་ཡོད་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆར་ལྟ་ཞིབ་དང་། རྩོམ་སྒྲིག འདྲ་བཤུས། ཡོལ་ཕབ། ཉར་ཚགས་དང་པར་འདེབས་བཅས་བྱེད་ཐུབ།"
+        },
+        {
+            "name":"delete_account",
+            "value":"སུབ་པ།"
+        }
+    ]
+}

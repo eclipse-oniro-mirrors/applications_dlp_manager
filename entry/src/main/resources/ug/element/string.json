@@ -1,0 +1,280 @@
+{
+    "string":[
+        {
+            "name":"save",
+            "value":"ساقلاش"
+        },
+        {
+            "name":"export",
+            "value":"چىقىرىش"
+        },
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"بۇ ئەپ بۇ ھۆججەتنى ئاچالمايدۇ."
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"كەچۈرۈڭ، DLP ئەپ قوزغالمىدى، ئۆلچەملەرنى تەكشۈرۈپ قايتا سىناڭ."
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلۈۋاتىدۇ..."
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"قەرەل ئۆتكەن ۋاقىتقا بېكىتىلمەيدۇ، قايتا بېكىتىڭ."
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"ئۆزۈم"
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"بەلگىلەنگەن ئىشلەتكۈچى"
+        },
+        {
+            "name":"Network_not_connected_description",
+            "value":"بۇ ھۆججەت ئۈچۈن قەرەل بېكىتىلگەن، تورغا ئۇلاپ ھۆججەت ئىجازىتىنى جەزملەڭ."
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"ھۆججەت ئوچۇق، ئېتىپ ئاندىن مەخپىيلەشتۈرۈڭ."
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"بۇ ھۆججەتنى كۆرۈش ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ."
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"خىزمەتچى نومۇرى خاتا، قايتا كىرگۈزۈڭ."
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ئىجازىتى بار."
+        },
+        {
+            "name":"screenshot",
+            "value":"ئېكران تۇتۇش"
+        },
+        {
+            "name":"duplicate",
+            "value":"كۆچۈرۈش"
+        },
+        {
+            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
+            "value":"ھۆججەت ئېچىلمىدى، تەكشۈرۈپ قايتا سىناڭ."
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"تىزىملاپ كىرىش ئۇچۇرى ئېنىقلانمىدى، بۇ ئىقتىدارنى ئىشلىتىش ئۈچۈن كارخانا ھېسابى ئارقىلىق تىزىملاپ كىرىڭ."
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"ھېسابات ئۇچۇرى ئوقۇلمىدى، كېيىنرەك قايتا سىناڭ."
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"نۆۋەتتە «%s» مەخپىيلەشتۈرۈلۈۋاتىدۇ. كېيىنرەك قايتا سىناڭ."
+        },
+        {
+            "name":"loading_title",
+            "value":"يۈكلەۋاتىدۇ..."
+        },
+        {
+            "name":"header_title_list",
+            "value":"ئىشلەتكۈچى ئىجازەتلەش ھەمدە تەھرىرلەش ۋە كۆچۈرۈش قاتارلىق مەشغۇلاتلارنى چەكلەشكە بولىدۇ."
+        },
+        {
+            "name":"Document_valid",
+            "value":"ھۆججەت قەرەلى"
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"ئوقۇش ئىجازىتى بار كىشىلەر ھۆججەتنى كۆرەلەيدۇ، ئەمما تەھرىرلىيەلمەيدۇ، كۆچۈرەلمەيدۇ ۋە باسالمايدۇ."
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"ھەممەيلەن"
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"«باشقا ساقلاش» ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ."
+        },
+        {
+            "name":"encrypt_employee_id",
+            "value":"خىزمەتچى نومۇرى: %s"
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ."
+        },
+        {
+            "name":"Appointed_day",
+            "value":"بېكىتكەن كۈن"
+        },
+        {
+            "name":"change_encryption",
+            "value":"ئۆزگەرتىش"
+        },
+        {
+            "name":"print",
+            "value":"بېسىش"
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"خىزمەتچى نومۇرىنى كىرگۈزۈپ Enter نى بېسىڭ، مىسال: a00123456"
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"پەقەت ئوقۇش"
+        },
+        {
+            "name":"permanently",
+            "value":"مەڭگۈ"
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"ئەپ خاتالىقى"
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلۈۋاتىدۇ. مەخپىيلەشتۈرۈپ بولغاندا ئېچىڭ."
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"تىزىملاپ كىرىش"
+        },
+        {
+            "name":"network_invalid",
+            "value":"توردا خاتالىق كۆرۈلدى، كېيىنرەك قايتا سىناڭ."
+        },
+        {
+            "name":"header_title_edit",
+            "value":"تەھرىرلەش"
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"بۇ ھۆججەت قوغدالغان، بەلگىلەنگەن ئىشلەتكۈچىلا زىيارەت قىلالايدۇ."
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"تەھرىرلەش"
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"ئىجازەت قەرەلى ئۆتكەن، بۇ ھۆججەتنى يەنە كۆرمەكچى بولسىڭىز، %s بىلەن ئالاقىلىشىڭ."
+        },
+        {
+            "name":"file_encrypted",
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلگەن"
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"مەخپىيلەشتۈرۈش ئۆزگەرمىدى. كېيىنرەك قايتا سىناڭ."
+        },
+        {
+            "name":"header_title",
+            "value":"مەخپىيلەشتۈرۈپ قوغداش"
+        },
+        {
+            "name":"enter_a_complete_account",
+            "value":"ھېسابات كىرگۈزۈڭ"
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"پەقەت ئوقۇش"
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"مەشغۇلات يۈرمىدى، كېيىنرەك قايتا سىناڭ."
+        },
+        {
+            "name":"save_as",
+            "value":"باشقا ساقلاش"
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"ئىجازەت يوق"
+        },
+        {
+            "name":"Network_not_connected",
+            "value":"تور يوق"
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"ھېساباتقا تىزىملاپ كىرىپ قايتا سىناڭ."
+        },
+        {
+            "name":"Go_setting",
+            "value":"تەڭشەك"
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"ئىجازەت ۋاقتى ئۆتكەن"
+        },
+        {
+            "name":"screen_recording",
+            "value":"ئېكران خاتىرىلەش"
+        },
+        {
+            "name":"finished",
+            "value":"پۈتتى"
+        },
+        {
+            "name":"incorrect_account",
+            "value":"ھېسابات خاتا، قايتا كىرگۈزۈڭ."
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"سىستېما نەشرى تۆۋەن، نەشرى يۇقىرى سىستېمىدا مەخپىيلەشتۈرۈلگەن ھۆججەت ئېچىلمايدۇ، سىستېما نەشرىنى يېڭىلاپ قايتا سىناڭ."
+        },
+        {
+            "name":"stow_away",
+            "value":"يىغىش"
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"تەپسىلات"
+        },
+        {
+            "name":"sure",
+            "value":"جەزملەش"
+        },
+        {
+            "name":"permission_status_title",
+            "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ۋە «تەھرىرلەش» ئىجازىتى بار."
+        },
+        {
+            "name":"da_button",
+            "value":"بىلدىم"
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"ھۆججەت ئىجازىتى ئالغىلى بولمىدى، كېيىنرەك قايتا سىناڭ."
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"ھۆججەت قەرەلى"
+        },
+        {
+            "name":"share_the_screen",
+            "value":"ئېكران ئورتاقلىشىش"
+        },
+        {
+            "name":"unencrypted",
+            "value":"يېشىش"
+        },
+        {
+            "name":"ban",
+            "value":"بىكار قىلىش"
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"تەھرىرلەش ئىجازىتى بار ئىشلەتكۈچى ھۆججەتنى كۆرەلەيدۇ، تەھرىرلىيەلەيدۇ، كۆچۈرەلەيدۇ، ئېكران تۇتالايدۇ، ساقلىيالايدۇ ۋە بېسىپ چىقىرالايدۇ."
+        },
+        {
+            "name":"delete_account",
+            "value":"ئۆچۈرۈش"
+        }
+    ]
+}
