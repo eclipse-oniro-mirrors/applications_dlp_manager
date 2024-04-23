@@ -21,6 +21,7 @@ import Constants from '../constant';
 import GlobalContext from '../GlobalContext';
 import { AccountTipsConfig } from '../AccountTipsConfig';
 import { HiLog } from '../HiLog';
+import { isPC } from '../utils';
 
 interface Staff {
   authAccount: string;
@@ -57,6 +58,7 @@ struct AddStaff {
   @State isInputInvalidFlag: boolean = false;
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
+  @State domainAccount: boolean = !isPC() ? false : true;
 
   @Builder
   StaffItemBuilder(authAccount: string, textContent: string, index: number) {
@@ -101,7 +103,7 @@ struct AddStaff {
         this.errInput = [];
         break;
       }
-      if (GlobalContext.load('domainAccount')) {
+      if (this.domainAccount) {
         await this.createStaffByDomain(i, startOffset, endOffset);
       } else {
         this.createStaffByCloud(i, startOffset, endOffset);
@@ -125,14 +127,14 @@ struct AddStaff {
     if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
       this.deleteBuildSpan(startOffset, endOffset);
     }
-    this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
-    GlobalContext.store('hiAccountVerifySucc', this.succ);
+    this.succ = AppStorage.get('hiAccountVerifySucc') as number + 1;
+    AppStorage.setOrCreate('hiAccountVerifySucc', this.succ);
     this.addBuildSpan(i, this.inputArray[i]);
   }
 
   private createStaffByDomain(i: number, startOffset: number[], endOffset: number[]) {
     return new Promise<void>((resolve, reject) => {
-      let accountDomain: string = GlobalContext.load('accountDomain');
+      let accountDomain = AppStorage.get('accountDomain') as string;
       let domainAccountInfo: osAccount.DomainAccountInfo = {
         domain: accountDomain,
         accountName: this.inputArray[i].toLocaleLowerCase().trim()
@@ -162,8 +164,8 @@ struct AddStaff {
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
           this.deleteBuildSpan(startOffset, endOffset);
         }
-        this.succ = GlobalContext.load('hiAccountVerifySucc') + 1;
-        GlobalContext.store('hiAccountVerifySucc', this.succ);
+        this.succ = AppStorage.get('hiAccountVerifySucc') as number + 1;
+        AppStorage.setOrCreate('hiAccountVerifySucc', this.succ);
         this.addBuildSpan(i, result[this.textContent]);
       } catch (error) {
         HiLog.info(TAG, `getAccountInfo fail: ${JSON.stringify(error)}`);
@@ -192,8 +194,8 @@ struct AddStaff {
       this.deleteBuildSpan(startOffset, endOffset);
     }
     this.errInput.push(this.inputArray[i]);
-    this.fail = GlobalContext.load('hiAccountVerifyFail') + 1;
-    GlobalContext.store('hiAccountVerifyFail', this.fail);
+    this.fail = AppStorage.get('hiAccountVerifyFail') as number + 1;
+    AppStorage.setOrCreate('hiAccountVerifyFail', this.fail);
     if ([
       Constants.ERR_JS_INVALID_PARAMETER,
       Constants.ERR_JS_ACCOUNT_NOT_FOUND
@@ -224,7 +226,7 @@ struct AddStaff {
   }
 
   async aboutToAppear() {
-    if (GlobalContext.load('domainAccount')) {
+    if (this.domainAccount) {
       await AccountTipsConfig.getConfigTips();
       this.textContent = AccountTipsConfig.showContentKey;
     }
@@ -242,7 +244,7 @@ struct AddStaff {
         wrap: FlexWrap.Wrap,
       }) {
         RichEditor(this.options)
-          .placeholder(!this.staffArray.length ? ((GlobalContext.load('domainAccount') as boolean)
+          .placeholder(!this.staffArray.length ? (this.domainAccount
             ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')) : '',
             {
               font: { size: $r('sys.float.ohos_id_text_size_body1') },
@@ -345,13 +347,11 @@ struct AddStaff {
 
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid && !this.isNetworkInvalid) {
-          Text((GlobalContext
-          .load('domainAccount') as boolean) ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
+          Text(this.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         if (this.isNetworkInvalid) {
-          Text((GlobalContext
-          .load('domainAccount') as boolean) ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
+          Text(this.domainAccount ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
             .inputMessageText()
         }
         Blank()

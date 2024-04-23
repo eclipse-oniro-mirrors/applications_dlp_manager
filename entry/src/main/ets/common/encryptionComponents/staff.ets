@@ -22,6 +22,7 @@ import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 import { GetAlertMessage } from '../GetAlertMessage';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 import { HiLog } from '../HiLog';
+import { isPC } from '../utils';
 
 const TAG = 'staff';
 
@@ -60,11 +61,12 @@ struct staffItem {
   @Prop textContent: string = '';
   @State accountTipsArray: AccountTips[] = [];
   @State isHover: boolean = false;
+  @State domainAccount: boolean = !isPC() ? false : true;
   dlpAlertDialog?: CustomDialogController;
 
   @Builder popupBuilderTips() {
     Column() {
-      if (GlobalContext.load('domainAccount')) {
+      if (this.domainAccount) {
         ForEach(this.accountTipsArray, (item: AccountTips) => {
           if (item.isShow) {
             Row() {
@@ -116,7 +118,7 @@ struct staffItem {
   }
 
   private splitContent() {
-    if (GlobalContext.load('domainAccount')) {
+    if (this.domainAccount) {
       if (this.textContent) {
         if (this.textContent.length > Constants.TIPS_NAME_LENGTH) {
           return this.textContent.split('').join(Constants.TIPS_SPACE_ZERO)
@@ -131,7 +133,7 @@ struct staffItem {
   }
 
   async aboutToAppear() {
-    if (!GlobalContext.load('domainAccount')) {
+    if (!this.domainAccount) {
       this.textContent = this.authAccount;
     }
   }
@@ -163,7 +165,7 @@ struct staffItem {
         .height(Constants.HEADER_ROW_FONT_SIZE);
     }
     .onClick(() => {
-      if (GlobalContext.load('domainAccount')) {
+      if (this.domainAccount) {
         try {
           AccountTipsConfig.getAccountInfo(this.authAccount)
             .then(async (result: account_osAccount.DomainAccountInfo) => {

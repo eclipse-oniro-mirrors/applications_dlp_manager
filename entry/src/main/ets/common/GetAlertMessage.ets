@@ -18,6 +18,8 @@ import display from '@ohos.display';
 import StartOptions from '@ohos.app.ability.StartOptions';
 import common from '@ohos.app.ability.common';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import osAccount from '@ohos.account.osAccount';
+import account_osAccount from '@ohos.account.osAccount';
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
 import { measureTextSizeWidth } from './utils';
@@ -64,8 +66,8 @@ export class GetAlertMessage {
         });
       } else if (GlobalContext.load('context')) {
         (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
-      } else if (GlobalContext.load('viewContext')) {
-        (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+      } else {
+        context.terminateSelf();
       }
     })
   }
@@ -215,5 +217,22 @@ export class GetAlertMessage {
           'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR')
         } as Record<string, Resource>;
     }
+  }
+
+  public static checkAccountInfo(accountName: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      let accountDomain = AppStorage.get('accountDomain') as string;
+      let domainAccountInfo: osAccount.DomainAccountInfo = {
+        domain: accountDomain,
+        accountName: accountName
+      };
+      account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (error: BusinessError, isExist: boolean) => {
+        if (isExist) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      })
+    })
   }
 }

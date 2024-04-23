@@ -60,6 +60,7 @@ export default class MainAbility extends UIAbility {
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private callerToken:number = 0;
   private homeFeature!: HomeFeature;
+  private domainAccount: boolean = !isPC() ? false : true;
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     GlobalContext.store('abilityWant', want);
@@ -71,7 +72,6 @@ export default class MainAbility extends UIAbility {
       return;
     }
     GlobalContext.store('context', this.context);
-    GlobalContext.store('domainAccount', !isPC() ? false : true);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
     if (!GlobalContext.load('linkSet')) {
@@ -110,7 +110,7 @@ export default class MainAbility extends UIAbility {
 
   async gotoPage(windowStage: window.WindowStage): Promise<void> {
     let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
-    let accountName: string = (GlobalContext.load('domainAccount') as boolean) ?
+    let accountName: string = this.domainAccount ?
       accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
     this.authPerm = getAuthPerm(accountName, GlobalContext.load('dlpProperty'));
 
@@ -123,7 +123,7 @@ export default class MainAbility extends UIAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      if (GlobalContext.load('domainAccount') as boolean) {
+      if (this.domainAccount) {
         try {
           await this.checkValidEnterpriseAndAccount();
         } catch {
@@ -172,7 +172,7 @@ export default class MainAbility extends UIAbility {
       HiLog.error(TAG, `need caller info in want.parameters`);
       return false;
     }
-    GlobalContext.store('hiPkgName', callerBundleName);
+    AppStorage.setOrCreate('hiPkgName', callerBundleName);
     let uri = String(want.uri);
     if ((GlobalContext.load('linkSet') as Set<string>).has(uri)) {
       HiLog.error(TAG, `invalid uri for opened link uri`);
@@ -213,7 +213,7 @@ export default class MainAbility extends UIAbility {
       try {
         accountInfo = await getOsAccountInfo();
         GlobalContext.store('accountInfo', accountInfo);
-        GlobalContext.store('accountDomain', accountInfo.domainInfo.domain);
+        AppStorage.setOrCreate('accountDomain', accountInfo.domainInfo.domain);
         resolve();
       } catch (err) {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
@@ -363,8 +363,8 @@ export default class MainAbility extends UIAbility {
     HiLog.info(TAG, `onWindowStageCreate`);
     GlobalContext.store('windowStage', windowStage);
     let dlpInfo:DLPInfo = await getDLPInfo();
-    GlobalContext.store('hiPNameId', dlpInfo.name);
-    GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
+    AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
+    AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
     try {
       let atManager = abilityAccessCtrl.createAtManager();
       await atManager.requestPermissionsFromUser(GlobalContext.load('context') as common.UIAbilityContext,

@@ -37,7 +37,7 @@ import {
   isPC,
   DLPInfo,
   getDLPInfo,
-  sendDlpFileOpenEvent,
+  sendDlpFileOpenProperties,
   isValidPath,
   defaultDlpFile
 } from '../common/utils';
@@ -74,9 +74,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private userId: number = -1;
   private linkFileWriteable: boolean = false;
   private callerBundleName: string = '';
+  private domainAccount: boolean = !isPC() ? false : true;
 
   async onCreate(want: Want): Promise<void> {
-    GlobalContext.store('viewContext', this.context);
     if (!GlobalContext.load('sandbox2linkFile')) {
       GlobalContext.store('sandbox2linkFile', new Map<string, (number | string | dlpPermission.DLPFile)[][]>());
     }
@@ -86,7 +86,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (!GlobalContext.load('authPerm2Sandbox')) {
       GlobalContext.store('authPerm2Sandbox', new Map<dlpPermission.DLPFileAccess, (number | string)[]>());
     }
-    GlobalContext.store('domainAccount', !isPC() ? false : true);
     if (!GlobalContext.load('token2File')) {
       GlobalContext.store('token2File', new Map<number, (number | string | dlpPermission.DLPFile)[]>());
     }
@@ -94,8 +93,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       GlobalContext.store('linkSet', new Set<string>());
     }
     let dlpInfo: DLPInfo = await getDLPInfo();
-    GlobalContext.store('hiPNameId', dlpInfo.name);
-    GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
+    AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
+    AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
   }
 
   async startDataAbility(): Promise<void> {
@@ -103,12 +102,16 @@ export default class ViewAbility extends ServiceExtensionAbility {
       bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
       abilityName: 'DataAbility'
     };
-    await (GlobalContext.load('viewContext') as common.ServiceExtensionContext).startAbility(want);
+    try {
+      await this.context.startAbility(want);
+    } catch {
+      HiLog.info(TAG, `startDataAbility failed`);
+    }
   }
 
   startAbility(want: Want, startId: number): void {
     HiLog.info(TAG, `start sandbox begin`);
-    (GlobalContext.load('viewContext') as common.ServiceExtensionContext).startAbility(want, async (err) => {
+    this.context.startAbility(want, async (err) => {
       hiTraceMeter.finishTrace('DlpStartSandboxJs', startId);
       if (err && err.code !== 0) {
         HiLog.error(TAG, `startSandboxApp failed: ${JSON.stringify(err)}`);
@@ -123,7 +126,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           HiLog.error(TAG, `dlpFile closeDLPFile failed: ${JSON.stringify(err)}`);
         }
         opening = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext,
+        await GetAlertMessage.startAlertAbility(this.context,
           {code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.appIndex,
           undefined); // 105: DLP_START_SANDBOX_ERROR
@@ -152,7 +155,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = false;
         HiLog.debug(TAG, `startDataAbility success`);
       }
-      (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+      try {
+        HiLog.info(TAG, `terminateSelf start`);
+        this.context.terminateSelf();
+      } catch {
+        HiLog.info(TAG, `terminateSelf failed`);
+      }
     });
   }
 
@@ -210,7 +218,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     try {
       await hiSysEvent.write(event);
     } catch (err) {
-      HiLog.error(TAG, `sendDlpFileOpenEvent failed`);
+      HiLog.error(TAG, `sendDlpFileOpenFault failed`);
     }
   }
 
@@ -250,13 +258,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
     return new Promise(async (resolve, reject) => {
       try {
         this.accountInfo = await getOsAccountInfo();
+        AppStorage.setOrCreate('accountDomain', this.accountInfo.domainInfo.domain);
         this.userId = await getUserId();
       } catch (err) {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
         hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject(err);
@@ -267,7 +276,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (codeMessage) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject();
@@ -299,7 +308,17 @@ export default class ViewAbility extends ServiceExtensionAbility {
           await this.sendDlpFileOpenFault(
             Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
           ); // 103:DLP_FILE_PARSE_ERROR
-          await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, err);
+          let accountFlag: boolean = true;
+          if (err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
+            let accountName: string = err.message.split(', contact:')?.[1];
+            accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
+          }
+          if (!accountFlag) {
+            await GetAlertMessage.startAlertAbility(this.context, {
+              code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+            return;
+          }
+          await GetAlertMessage.startAlertAbility(this.context, err);
         } catch (err) {
           HiLog.error(TAG, `openDLPFile2: ${this.fileName}, failed: ${JSON.stringify(err)}`);
         }
@@ -320,7 +339,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async dlpGetAuthPerm(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      if (GlobalContext.load('domainAccount') as boolean) {
+      if (this.domainAccount) {
         this.authPerm = getAuthPerm(this.accountInfo?.domainInfo.accountName ?? '', this.dlpFile.dlpProperty);
       } else {
         this.authPerm = getAuthPerm(this.accountInfo?.distributedInfo.name ?? '', this.dlpFile.dlpProperty);
@@ -328,7 +347,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
         this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
         opening = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -347,7 +366,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         reject();
         return;
       }
-      GlobalContext.store('hiSandboxIndex', this.appIndex);
+      AppStorage.setOrCreate('hiSandboxIndex', this.appIndex);
       hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
       // 202: DLP_INSTALL_SANDBOX_SUCCESS
       await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex);
@@ -405,7 +424,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await this.sendDlpFileOpenFault(
           Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
         ); // 104:DLP_INSTALL_SANDBOX_ERROR
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -421,7 +440,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (splitNames.length <= SUFFIX_INDEX) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -451,13 +470,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (err) {
         HiLog.error(TAG, `file error: ${err}`);
         opening = false;
-        (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+        this.context.terminateSelf();
       }
       this.linkUri = getFileUriByPath(this.linkFilePath);
       if (this.linkUri === '') {
         HiLog.error(TAG, `get linkUri ByPath fail`);
         opening = false;
-        (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+        this.context.terminateSelf();
       }
       resolve();
     });
@@ -475,7 +494,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
         }
         opening = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, error);
+        await GetAlertMessage.startAlertAbility(this.context, error);
         hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         await this.closeFile();
@@ -493,7 +512,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (error) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR } as BusinessError);
         await this.closeFile();
         HiLog.error(TAG, `open: ${this.uri}, failed: ${JSON.stringify(error)}`);
@@ -502,8 +521,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       try {
         this.stat = await fs.stat(this.uriInfo.path);
-        GlobalContext.store('hiFileSize', this.stat.size);
-        GlobalContext.store('hiPolicySizeEnc', this.stat.size);
+        AppStorage.setOrCreate('hiFileSize', this.stat.size);
+        AppStorage.setOrCreate('hiPolicySizeEnc', this.stat.size);
       } catch (err) {
         HiLog.info(TAG, `stat fail: ${JSON.stringify(err)}`);
       }
@@ -522,9 +541,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
   dlpFileMapHistory(want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
-      GlobalContext.store('hiSandboxPkgName', this.callerBundleName);
+      AppStorage.setOrCreate('hiSandboxPkgName', this.callerBundleName);
       if ((GlobalContext.load('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('viewContext') as common.ServiceExtensionContext, {
+        await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
         reject();
         return;
@@ -537,20 +556,21 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = true;
         HiLog.debug(TAG, `file is opened: ${this.uri}`);
       }
-      let obj: Record<string, string> = (want.parameters?.fileName ?? { 'name': '' }) as Record<string, string>;
-      this.fileName = obj.name;
       this.uri = want.uri as string;
       if (!isValidPath(this.uri)) {
         opening = false;
         HiLog.error(TAG, `invalid uri in want.uri`);
-        (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+        this.context.terminateSelf();
       }
+      let strArray: string[] = this.uri.split('/');
+      let len: number = strArray.length;
+      this.fileName = strArray[len - 1];
       this.dlpFd = getFileFd(this.uri);
       GlobalContext.store('uri', this.uri);
       HiLog.debug(TAG, `dlpFd: ${this.dlpFd}`);
       if (this.dlpFd === -1) {
         opening = false;
-        (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+        this.context.terminateSelf();
       }
       resolve();
     })
@@ -573,7 +593,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
       opening = false;
       HiLog.error(TAG, `get parameters failed`);
-      (GlobalContext.load('viewContext') as common.ServiceExtensionContext).terminateSelf();
+      this.context.terminateSelf();
     }
     try {
       await this.getAccountAndOpenDLPFile(startId);
@@ -583,7 +603,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
     }
     // uri permission just for domainAccount
-    if (GlobalContext.load('domainAccount') as boolean) {
+    if (this.domainAccount) {
       let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
         wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
       let targetBundleName = this.sandboxBundleName;
@@ -592,8 +612,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       });
     }
     this.startSandboxApp(startId);
-    GlobalContext.store('hiCode', Constants.DLP_START_SANDBOX_SUCCESS);
-    sendDlpFileOpenEvent();
+    AppStorage.setOrCreate('hiCode', Constants.DLP_START_SANDBOX_SUCCESS);
+    sendDlpFileOpenProperties();
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
   }
 }

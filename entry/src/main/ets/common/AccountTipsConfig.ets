@@ -76,7 +76,7 @@ export class AccountTipsConfig {
           reject();
           return;
         }
-        let accountDomain: string = GlobalContext.load('accountDomain');
+        let accountDomain = AppStorage.get('accountDomain') as string;
         let domainAccountInfo: osAccount.GetDomainAccountInfoOptions = {
           domain: accountDomain,
           accountName: authAccount.toLocaleLowerCase().trim()
