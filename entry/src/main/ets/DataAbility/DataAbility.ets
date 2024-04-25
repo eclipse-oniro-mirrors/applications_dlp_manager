@@ -73,6 +73,7 @@ export default class DataAbility extends ServiceExtensionAbility {
       if (sandbox2linkFile.size === 0) {
         HiLog.info(TAG, `sandbox2linkFile empty`);
         (GlobalContext.load('dataContext') as common.ServiceExtensionContext).terminateSelf();
+        (AppStorage.get('viewContext') as common.ServiceExtensionContext).terminateSelf();
       }
     }
   }
