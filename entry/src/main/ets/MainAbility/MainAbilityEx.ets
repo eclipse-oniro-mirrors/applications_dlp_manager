@@ -52,6 +52,7 @@ export default class MainAbility extends UIExtensionAbility {
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private callerToken: number = 0;
   private homeFeature!: HomeFeature;
+  private domainAccount: boolean = !isPC() ? false : true;
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `want: ${JSON.stringify(want)}`);
@@ -64,11 +65,10 @@ export default class MainAbility extends UIExtensionAbility {
     }
     GlobalContext.store('session', session);
     let dlpInfo:DLPInfo = await getDLPInfo();
-    GlobalContext.store('hiPNameId', dlpInfo.name);
-    GlobalContext.store('hiPVersionId', dlpInfo.versionCode);
+    AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
+    AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
     GlobalContext.store('abilityWant', want);
     GlobalContext.store('context', this.context);
-    GlobalContext.store('domainAccount', !isPC() ? false : true);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
 
@@ -125,7 +125,7 @@ export default class MainAbility extends UIExtensionAbility {
 
   async gotoPage(session: UIExtensionContentSession): Promise<void> {
     let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
-    let accountName: string = (GlobalContext.load('domainAccount') as boolean) ?
+    let accountName: string = this.domainAccount ?
       accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
     this.authPerm = getAuthPerm(accountName, GlobalContext.load('dlpProperty'));
 
@@ -139,7 +139,7 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      if (GlobalContext.load('domainAccount') as boolean) {
+      if (this.domainAccount) {
         try {
           await this.checkValidEnterpriseAndAccount(session);
         } catch {
@@ -193,7 +193,7 @@ export default class MainAbility extends UIExtensionAbility {
       HiLog.error(TAG, `need caller info in want.parameters`);
       return false;
     }
-    GlobalContext.store('hiPkgName', callerBundleName);
+    AppStorage.setOrCreate('hiPkgName', callerBundleName);
     let uri = String((GlobalContext.load('abilityWant') as Want).uri);
     if (!isValidPath(uri)) {
       HiLog.error(TAG, `invalid uri in want.uri`);
@@ -248,7 +248,7 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         accountInfo = await getOsAccountInfo();
         GlobalContext.store('accountInfo', accountInfo);
-        GlobalContext.store('accountDomain', accountInfo.domainInfo.domain);
+        AppStorage.setOrCreate('accountDomain', accountInfo.domainInfo.domain);
         resolve();
       } catch (err) {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
@@ -362,6 +362,16 @@ export default class MainAbility extends UIExtensionAbility {
           code: err,
           name: '',
           message: msg,
+        }
+        let accountFlag: boolean = true;
+        if (err === Constants.ERR_JS_USER_NO_PERMISSION) {
+          let accountName: string = msg.split(', contact:')?.[1];
+          accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
+        }
+        if (!accountFlag) {
+          await GetAlertMessage.startAlertAbility(this.context, {
+            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+          return;
         }
         await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
           ansErr as BusinessError, session);

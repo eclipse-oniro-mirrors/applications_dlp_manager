@@ -33,10 +33,10 @@ import hiSysEvent from '@ohos.hiSysEvent';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'Utils';
-
+let domainAccount = !isPC() ? false : true;
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
-  ownerAccountType: GlobalContext.load('domainAccount') as boolean ?
+  ownerAccountType: domainAccount ?
     dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
   authUserList: [],
   contactAccount: '',
@@ -99,26 +99,26 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
 }
 
 function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number {
-  if (GlobalContext.load('domainAccount') as boolean) {
-    GlobalContext.store('hiAccountType', 'Domain_Account');
+  if (domainAccount) {
+    AppStorage.setOrCreate('hiAccountType', 'Domain_Account');
     if (accountInfo.domainInfo.accountName === '' &&
       accountInfo.domainInfo.accountId === '') {
-      GlobalContext.store('hiAccountStatus', 0);
+      AppStorage.setOrCreate('hiAccountStatus', 0);
       return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
     }
     if (!accountInfo.domainInfo.isAuthenticated) {
-      GlobalContext.store('hiAccountStatus', 0);
+      AppStorage.setOrCreate('hiAccountStatus', 0);
       return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
     }
   } else {
-    GlobalContext.store('hiAccountType', 'Cloud_Account');
+    AppStorage.setOrCreate('hiAccountType', 'Cloud_Account');
     if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
       accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-      GlobalContext.store('hiAccountStatus', 0);
+      AppStorage.setOrCreate('hiAccountStatus', 0);
       return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
     }
   }
-  GlobalContext.store('hiAccountStatus', 1);
+  AppStorage.setOrCreate('hiAccountStatus', 1);
   return Constants.ERR_JS_APP_ACCOUNT_INFO;
 }
 
@@ -185,7 +185,7 @@ let removeDuplicate = (arr: AuthAccount[], arg: string) => {
 let calculate = (newValue: Area, allNames: AuthAccount[]) => {
   let editLength = allNames.length;
   let screenWidth = Number(newValue['width']);
-  let nameChange = GlobalContext.load('domainAccount') ? Constants.ENCRYPTION_STAFF_WIDTH_NAME : Constants.ENCRYPTION_STAFF_WIDTH;
+  let nameChange = domainAccount ? Constants.ENCRYPTION_STAFF_WIDTH_NAME : Constants.ENCRYPTION_STAFF_WIDTH;
   let rowNamesLen = Math.floor(screenWidth / (nameChange + Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT));
   let showNamesArr = editLength > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
     ? allNames.slice(0, 2 * rowNamesLen - 1)
@@ -363,12 +363,12 @@ function sendDlpManagerAccountLogin(errorCode: number) {
     name: 'DLP_MANAGER_ACCOUNT_LOGIN',
     eventType: hiSysEvent?.EventType?.BEHAVIOR,
     params: {
-      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
-      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
-      'ACCOUNT_TYPE': GlobalContext.load('hiAccountType') ?? '',
-      'ACCOUNT_STATUS': GlobalContext.load('hiAccountStatus') ?? -1,
+      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
+      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
+      'ACCOUNT_TYPE': AppStorage.get('hiAccountType') ?? '',
+      'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'LOGIN_FAIL_CODE': errorCode ?? -1,
-      'PKG_NAME': GlobalContext.load('hiPkgName') ?? '',
+      'PKG_NAME': AppStorage.get('hiPkgName') ?? '',
     } as Record<string, number>
   };
 
@@ -385,16 +385,16 @@ function sendDlpManagerFileConfiguration() {
     name: 'DLP_MANAGER_FILE_CONFIGURATION',
     eventType: hiSysEvent?.EventType?.BEHAVIOR,
     params: {
-      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
-      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
-      'OPERATION': GlobalContext.load('hiOperation') ?? '',
-      'READ_SCOPE': GlobalContext.load('hiReadScope') ?? '',
-      'WRITE_SCOPE': GlobalContext.load('hiWriteScope') ?? '',
-      'ADVANCED_SETTINGS': GlobalContext.load('hiAdvancedSettings') ?? false,
-      'STORE_PATH': GlobalContext.load('hiStorePath') ?? false,
-      'ACCOUNT_VERIFY_SUCC': GlobalContext.load('hiAccountVerifySucc') ?? -1,
-      'ACCOUNT_VERIFY_FAIL': GlobalContext.load('hiAccountVerifyFail') ?? -1,
-      'VALID_DATE': GlobalContext.load('hiValidDate') ?? false,
+      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
+      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
+      'OPERATION': AppStorage.get('hiOperation') ?? '',
+      'READ_SCOPE': AppStorage.get('hiReadScope') ?? '',
+      'WRITE_SCOPE': AppStorage.get('hiWriteScope') ?? '',
+      'ADVANCED_SETTINGS': AppStorage.get('hiAdvancedSettings') ?? false,
+      'STORE_PATH': AppStorage.get('hiStorePath') ?? false,
+      'ACCOUNT_VERIFY_SUCC': AppStorage.get('hiAccountVerifySucc') ?? -1,
+      'ACCOUNT_VERIFY_FAIL': AppStorage.get('hiAccountVerifyFail') ?? -1,
+      'VALID_DATE': AppStorage.get('hiValidDate') ?? false,
     } as Record<string, number>
   };
 
@@ -405,50 +405,50 @@ function sendDlpManagerFileConfiguration() {
   }
 }
 
-function sendDlpFileCreateEvent() {
+function sendDlpFileCreateProperties() {
   let event: hiSysEvent.SysEventInfo = {
     domain: 'DLP_UE',
     name: 'DLP_FILE_CREATE_EVENT',
     eventType: hiSysEvent?.EventType?.BEHAVIOR,
     params: {
-      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
-      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
-      'CODE': GlobalContext.load('hiCode') ?? -1,
-      'FILE_SIZE': GlobalContext.load('hiFileSize') ?? -1,
-      'FILE_TYPE': GlobalContext.load('hiFileType') ?? '',
-      'POLICY_SIZE_ENC': GlobalContext.load('hiPolicySizeEnc') ?? -1,
-      'PKG_NAME': GlobalContext.load('hiPkgName') ?? '',
+      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
+      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
+      'CODE': AppStorage.get('hiCode') ?? -1,
+      'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
+      'FILE_TYPE': AppStorage.get('hiFileType') ?? '',
+      'POLICY_SIZE_ENC': AppStorage.get('hiPolicySizeEnc') ?? -1,
+      'PKG_NAME': AppStorage.get('hiPkgName') ?? '',
     } as Record<string, number>
   };
 
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    HiLog.error(TAG, `sendDlpFileCreateEvent failed`);
+    HiLog.error(TAG, `sendDlpFileCreateProperties failed`);
   }
 }
 
-function sendDlpFileOpenEvent() {
+function sendDlpFileOpenProperties() {
   let event: hiSysEvent.SysEventInfo = {
     domain: 'DLP_UE',
     name: 'DLP_FILE_OPEN_EVENT',
     eventType: hiSysEvent?.EventType?.BEHAVIOR,
     params: {
-      'PNAMEID': GlobalContext.load('hiPNameId') ?? '',
-      'PVERSIONID': GlobalContext.load('hiPVersionId') ?? '',
-      'CODE': GlobalContext.load('hiCode') ?? -1,
-      'SANDBOX_PKGNAME': GlobalContext.load('hiSandboxPkgName') ?? '',
-      'SANDBOX_INDEX': GlobalContext.load('hiSandboxIndex') ?? -1,
-      'ACCOUNT_TYPE': GlobalContext.load('hiAccountType') ?? '',
-      'FILE_SIZE': GlobalContext.load('hiFileSize') ?? -1,
-      'POLICY_SIZE_ENC': GlobalContext.load('hiPolicySizeEnc') ?? -1,
+      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
+      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
+      'CODE': AppStorage.get('hiCode') ?? -1,
+      'SANDBOX_PKGNAME': AppStorage.get('hiSandboxPkgName') ?? '',
+      'SANDBOX_INDEX': AppStorage.get('hiSandboxIndex') ?? -1,
+      'ACCOUNT_TYPE': AppStorage.get('hiAccountType') ?? '',
+      'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
+      'POLICY_SIZE_ENC': AppStorage.get('hiPolicySizeEnc') ?? -1,
     } as Record<string, number>
   };
 
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    HiLog.error(TAG, `sendDlpFileOpenEvent failed`);
+    HiLog.error(TAG, `sendDlpFileOpenProperties failed`);
   }
 }
 
@@ -491,8 +491,8 @@ export {
   getDLPInfo,
   sendDlpManagerAccountLogin,
   sendDlpManagerFileConfiguration,
-  sendDlpFileCreateEvent,
-  sendDlpFileOpenEvent,
+  sendDlpFileCreateProperties,
+  sendDlpFileOpenProperties,
   DLPInfo,
   isValidPath,
   measureTextSizeWidth,

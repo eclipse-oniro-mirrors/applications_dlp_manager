@@ -36,7 +36,7 @@ import {
   AuthAccount,
   getFileUriByPath,
   isPC,
-  sendDlpFileCreateEvent,
+  sendDlpFileCreateProperties,
   sendDlpManagerFileConfiguration,
   getFileSizeByUri,
   measureTextSizeWidth,
@@ -73,10 +73,10 @@ interface dlpDataType {
   offlineAccess: boolean;
   everyoneAccessList: Array<dlpPermission.DLPFileAccess>;
 }
-
+let domainAccount = !isPC() ? false : true;
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
-  ownerAccountType: (GlobalContext.load('domainAccount') as boolean) ?
+  ownerAccountType: domainAccount ?
     dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
   authUserList: [],
   contactAccount: '',
@@ -104,7 +104,7 @@ struct DlpDialog {
   @State prepareData: boolean = false;
   @State validity: Date = GlobalContext.load('validity') || new Date();
   @State selectedIndex: number = GlobalContext.load('permanent') === false ? 1 : 0;
-  @State domainOrCloudAccount: number = (GlobalContext.load('domainAccount') as boolean) ?
+  @State domainOrCloudAccount: number = domainAccount ?
     dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
   @State permissionDict: PermissionType[] = [
     {
@@ -206,7 +206,7 @@ struct DlpDialog {
       event.params['USER_ID'] = userId;
       await hiSysEvent.write(event);
     } catch (err) {
-      HiLog.error(TAG, `sendDlpFileOpenEvent failed, err: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `sendDlpFileCreateFault failed, err: ${JSON.stringify(err)}`);
     }
   }
 
@@ -224,7 +224,7 @@ struct DlpDialog {
       event.params['USER_ID'] = userId;
       await hiSysEvent.write(event);
     } catch (err) {
-      HiLog.error(TAG, `sendDlpFileOpenEvent, err: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `sendDlpFileCreateEvent, err: ${JSON.stringify(err)}`);
     }
   }
 
@@ -242,16 +242,16 @@ struct DlpDialog {
 
   async setUserStat() {
     if (this.selectedPermissionTypeReadOnly.index === 0) {
-      GlobalContext.store('hiReadScope', 'User');
+      AppStorage.setOrCreate('hiReadScope', 'User');
     } else if (this.selectedPermissionTypeReadOnly.index === 1) {
-      GlobalContext.store('hiReadScope', 'Everyone');
+      AppStorage.setOrCreate('hiReadScope', 'Everyone');
     }
     if (this.selectedPermissionTypeEdit.index === 0) {
-      GlobalContext.store('hiWriteScope', 'User');
+      AppStorage.setOrCreate('hiWriteScope', 'User');
     } else if (this.selectedPermissionTypeEdit.index === 1) {
-      GlobalContext.store('hiWriteScope', 'Everyone');
+      AppStorage.setOrCreate('hiWriteScope', 'Everyone');
     } else {
-      GlobalContext.store('hiWriteScope', 'Onlyme');
+      AppStorage.setOrCreate('hiWriteScope', 'Onlyme');
     }
   }
 
@@ -361,8 +361,8 @@ struct DlpDialog {
       let srcFileUri: string = GlobalContext.load('uri');
       let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(srcFileUri);
       let srcFileSize: number = await getFileSizeByUri(srcFileUri);
-      GlobalContext.store('hiFileSize', srcFileSize);
-      GlobalContext.store('hiFileType', srcFileMsg.fileType);
+      AppStorage.setOrCreate('hiFileSize', srcFileSize);
+      AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
       let documentSaveOptions = new picker.DocumentSaveOptions();
       displayName = displayName + '.dlp';
       documentSaveOptions.newFileNames = [decodeURI(srcFileMsg.fileName)];
@@ -422,9 +422,9 @@ struct DlpDialog {
       } else {
         await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
         let dstFileSize: number = await getFileSizeByUri(uri);
-        GlobalContext.store('hiPolicySizeEnc', dstFileSize);
-        GlobalContext.store('hiCode', 201);
-        sendDlpFileCreateEvent(); // 201: DLP_FILE_CREATE_SUCCESS
+        AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
+        AppStorage.setOrCreate('hiCode', 201);
+        sendDlpFileCreateProperties(); // 201: DLP_FILE_CREATE_SUCCESS
         GlobalContext.store('dlpFileName', uriInfo.name);
         GlobalContext.store('dlpProperty', _dlp);
         GlobalContext.store('uri', uri);
@@ -453,7 +453,7 @@ struct DlpDialog {
     this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) => 
       !this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount)
     );
-    if (GlobalContext.load('domainAccount') as boolean) {
+    if (domainAccount) {
       property.ownerAccount = accountInfo.domainInfo.accountName;
       property.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
     } else {
@@ -525,7 +525,7 @@ struct DlpDialog {
   }
 
   async prepareDlpProperty() {
-    if (GlobalContext.load('domainAccount') as boolean) {
+    if (domainAccount) {
       let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
       this.dlpProperty.ownerAccount = accountInfo.domainInfo.accountName;
       this.dlpProperty.contactAccount = accountInfo.domainInfo.accountName;
@@ -620,8 +620,8 @@ struct DlpDialog {
   async aboutToAppear() {
     this.prepareData = true;
     await this.checkAccount();
-    GlobalContext.store('hiAccountVerifySucc', 0);
-    GlobalContext.store('hiAccountVerifyFail', 0);
+    AppStorage.setOrCreate('hiAccountVerifySucc', 0);
+    AppStorage.setOrCreate('hiAccountVerifyFail', 0);
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       HiLog.info(TAG, `encryption request from sandbox`);
       this.linkFileName = GlobalContext.load('linkFileName') as string;
@@ -889,7 +889,7 @@ struct DlpDialog {
               )
               .height(Constants.FOOTER_BUTTON_HEIGHT)
               .onClick(async (event) => {
-                GlobalContext.store('hiValidDate', false);
+                AppStorage.setOrCreate('hiValidDate', false);
                 if (this.selectedIndex === 1) {
                   let currentTime = new Date().getTime();
                   let validity = this.reconfigurationTime(this.validity).getTime();
@@ -898,16 +898,16 @@ struct DlpDialog {
                     return;
                   }
                   GlobalContext.store('validity', this.reconfigurationTime(this.validity));
-                  GlobalContext.store('hiValidDate', true);
+                  AppStorage.setOrCreate('hiValidDate', true);
                 }
                 GlobalContext.store('permanent', this.selectedIndex ? false : true);
-                GlobalContext.store('hiAdvancedSettings', false);
-                GlobalContext.store('hiStorePath', false);
+                AppStorage.setOrCreate('hiAdvancedSettings', false);
+                AppStorage.setOrCreate('hiStorePath', false);
                 if (this.isDlpFile) {
-                  GlobalContext.store('hiOperation', 'Change_policy');
+                  AppStorage.setOrCreate('hiOperation', 'Change_policy');
                   await this.changeEncrypt();
                 } else {
-                  GlobalContext.store('hiOperation', 'Pack_policy');
+                  AppStorage.setOrCreate('hiOperation', 'Pack_policy');
                   await this.beginEncrypt();
                 }
               })
@@ -921,10 +921,10 @@ struct DlpDialog {
           })
         }
         .visibility(this.processing ? Visibility.Hidden : Visibility.Visible)
-        .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+        .width( domainAccount ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
         .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
         .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-        .constraintSize({ minWidth: isPC() ?
+        .constraintSize({ minWidth: domainAccount ?
           Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
         .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
       }

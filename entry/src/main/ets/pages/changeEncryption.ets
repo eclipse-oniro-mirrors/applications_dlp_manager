@@ -95,6 +95,7 @@ struct changeEncryption {
   @State staffDataArrayReadOnly: AuthAccount[] = [];
   @State staffDataArrayEdit: AuthAccount[] = [];
   private routerData: Record<string, AuthAccount[]> = {};
+  @State domainAccount: boolean = !isPC() ? false : true;
   @State permissionDict: PermissionValue[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as Resource, data: 'target', index: 0
@@ -340,31 +341,31 @@ struct changeEncryption {
     const filterEditFilter = () => {
       if (editData.length === 0) {
         this.selectedPermissionTypeEdit = this.permissionDict[2];
-        GlobalContext.store('hiWriteScope', 'Onlyme');
+        AppStorage.setOrCreate('hiWriteScope', 'Onlyme');
       } else {
         this.staffDataArrayEdit = editData;
         this.selectedPermissionTypeEdit = this.permissionDict[0];
-        GlobalContext.store('hiWriteScope', 'User');
+        AppStorage.setOrCreate('hiWriteScope', 'User');
       }
     };
     if ((defaultDlpProperty.everyoneAccessList !== undefined) && (defaultDlpProperty.everyoneAccessList.length > 0)) {
       let perm = Math.max(...defaultDlpProperty.everyoneAccessList);
       if (perm === dlpPermission.DLPFileAccess.CONTENT_EDIT) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
-        GlobalContext.store('hiReadScope', 'Everyone');
+        AppStorage.setOrCreate('hiReadScope', 'Everyone');
         this.selectedPermissionTypeEdit = this.permissionDict[1];
-        GlobalContext.store('hiWriteScope', 'Everyone');
+        AppStorage.setOrCreate('hiWriteScope', 'Everyone');
         this.staffDataArrayReadOnly = readOnlyData;
       } else if (perm === dlpPermission.DLPFileAccess.READ_ONLY) {
         this.selectedPermissionTypeReadOnly = this.permissionDict[1];
-        GlobalContext.store('hiReadScope', 'Everyone');
+        AppStorage.setOrCreate('hiReadScope', 'Everyone');
         this.staffDataArrayReadOnly = [];
         filterEditFilter();
       } else {
-        GlobalContext.store('hiReadScope', 'User');
+        AppStorage.setOrCreate('hiReadScope', 'User');
       }
     } else {
-      GlobalContext.store('hiReadScope', 'User');
+      AppStorage.setOrCreate('hiReadScope', 'User');
       this.staffDataArrayReadOnly = readOnlyData;
       filterEditFilter(); 
     }
@@ -386,7 +387,7 @@ struct changeEncryption {
         'staffDataArrayEdit': this.staffDataArrayEdit,
       } as Record<string, AuthAccount[]>;
     } else { // ability
-      if (GlobalContext.load('domainAccount')) {
+      if (this.domainAccount) {
         await AccountTipsConfig.getConfigTips();
         await this.getTextContent();
       }
@@ -875,12 +876,12 @@ struct changeEncryption {
                     .height(Constants.FOOTER_HEIGHT)
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .onClick(async (event) => {
-                      GlobalContext.store('hiOperation', 'Delete_policy');
-                      GlobalContext.store('hiAdvancedSettings', false);
-                      GlobalContext.store('hiStorePath', false);
-                      GlobalContext.store('hiValidDate', false);
-                      GlobalContext.store('hiAccountVerifySucc', 0);
-                      GlobalContext.store('hiAccountVerifyFail', 0);
+                      AppStorage.setOrCreate('hiOperation', 'Delete_policy');
+                      AppStorage.setOrCreate('hiAdvancedSettings', false);
+                      AppStorage.setOrCreate('hiStorePath', false);
+                      AppStorage.setOrCreate('hiValidDate', false);
+                      AppStorage.setOrCreate('hiAccountVerifySucc', 0);
+                      AppStorage.setOrCreate('hiAccountVerifyFail', 0);
                       this.unEncrypt();
                       sendDlpManagerFileConfiguration();
                     })
@@ -907,11 +908,11 @@ struct changeEncryption {
                 })
               }
               .visibility(this.prepareData ? Visibility.Hidden : Visibility.Visible)
-              .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+              .width( this.domainAccount ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
               .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
               .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
               .constraintSize({
-                minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH
+                minWidth: this.domainAccount ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH
               })
               .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
             }
