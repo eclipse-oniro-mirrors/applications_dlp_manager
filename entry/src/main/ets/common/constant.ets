@@ -26,13 +26,14 @@ export default class Constants {
   public static HEADER_TEXT_WIDTH = '100%';
   public static HEADER_COLUMN_WIDTH = '100%';
   public static HEADER_COLUMN_HEIGHT = 56;
-  public static HEADER_COLUMN_HEIGHT_READONLY = 48;
+  public static HEADER_COLUMN_HEIGHT_READONLY = 40;
   public static HEADER_COLUMN_PADDING_LEFT = 24;
   public static HEADER_COLUMN_PADDING_RIGHT = 24;
   public static HEADER_COLUMN_PADDING_BOTTOM = 24;
   public static HEADER_COLUMN_MARGIN_BOTTOM = 4;
   public static FOOTER_WIDTH_BUTTON = '48%';
-  public static ENCRYPTION_SUCCESS_ICON = 64;
+  public static ENCRYPTION_SUCCESS_CIRCLE = 64;
+  public static ENCRYPTION_SUCCESS_ICON = 40;
   public static HEADER_COLUMN_MESSAGE_TIPS = 400;
   public static HEADER_COLUMN_MESSAGE_TIPS_CLOUD = 242;
   public static ENCRYPTION_SUCCESS_TRANSLATE = 180;
@@ -100,6 +101,7 @@ export default class Constants {
   public static ENCRYPTION_BUTTON_PADDING_TOP = 16;
   public static ENCRYPTION_BUTTON_MARGIN_BOTTOM = 24;
   public static ENCRYPTION_BUTTON_TO_BUTTON_WIDTH = 16;
+  public static ENCRYPTION_STAFF_ITEM_MARGIN = 12;
   public static ENCRYPTION_STAFF_ITEM_MARGIN_BOTTOM = 12;
   public static ENCRYPTION_ADD_STAFF_HEIGHT = 28;
   public static ENCRYPTION_ADD_STAFF_PADDING_TOP = 10;
@@ -137,7 +139,7 @@ export default class Constants {
   public static ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1 = 24;
   public static ENCRYPTION_MESSAGE_ALERT_MESSAGE_PADDING_LEFT = 24;
   public static ENCRYPTION_MESSAGE_ALERT_MESSAGE_PADDING_TOP = 16;
-  public static ENCRYPTION_PC_FIXING_WIDTH = 608;
+  public static ENCRYPTION_PC_FIXING_WIDTH = 588;
   public static ENCRYPTION_PC_FIXING_STATUS_WIDTH = 400;
   public static ENCRYPTION_PC_FIXING_MINWIDTH = 0;
 
@@ -164,6 +166,7 @@ export default class Constants {
 
   public static FOOTER_OPACITY_ONE = 1;
   public static FOOTER_OPACITY_SEPC = 0.6;
+  public static FOOTER_OPACITY_MID = 0.5;
   public static readonly ERR_JS_APP_ACCOUNT_INFO = 0;
   public static readonly ERR_JS_APP_INSIDE_ERROR = 1;
   public static readonly ERR_JS_GET_ACCOUNT_ERROR = 2;
@@ -231,7 +234,7 @@ export default class Constants {
 
   public static TIPS_HEIGHT_ITEM = 20;
   public static TIPS_COLON_WIDTH = 9;
-  public static TIPS_STAFF_WIDTH = 72;
+  public static TIPS_STAFF_WIDTH = 82;
   public static TIPS_STAFF_MAX_WIDTH = 50;
   public static TIPS_SPACE_ZERO = '\u200B';
   public static TIPS_SPACE_EN = '\u2002';
@@ -241,9 +244,10 @@ export default class Constants {
 
   public static ENTER_KEY_VALUE = '\n';
   public static ENCRYPTION_ADD_STAFF_NO_MARGIN = 0;
-  public static RICH_EDITOR_MIN_HEIGHT = 32;
+  public static RICH_EDITOR_MIN_HEIGHT = 48;
   public static RICH_EDITOR_FIRST = 1;
   public static POPUP_OFFSET_X = -20;
-  public static VALID_DATE_MENU_WIDTH = 165;
   public static SUB_HEADER_HEIGHT = 40;
+  public static STAFF_FONT_SIZE = 10;
+  public static STAFF_FONT_PADDING = 1;
 }

@@ -39,7 +39,6 @@ import {
   sendDlpFileCreateProperties,
   sendDlpManagerFileConfiguration,
   getFileSizeByUri,
-  measureTextSizeWidth,
   colorStatus
 } from '../common/utils';
 import Constants from '../common/constant';
@@ -708,11 +707,11 @@ struct DlpDialog {
                   .fontWeight(FontWeight.Medium)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                Image($r('app.media.details'))
+                Image($r('app.media.ic_public_detail'))
                   .width(Constants.FOOTER_ROW_PAD_RIGHT)
                   .height(Constants.FOOTER_ROW_PAD_RIGHT)
                   .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                  .fillColor($r('sys.color.ohos_id_color_secondary'))
+                  .fillColor($r('sys.color.icon_secondary'))
                   .onClick(() => {
                     this.handlePopupReadOnly = !this.handlePopupReadOnly
                   })
@@ -757,11 +756,11 @@ struct DlpDialog {
                   .fontWeight(FontWeight.Medium)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                Image($r('app.media.details'))
+                Image($r('app.media.ic_public_detail'))
                   .width(Constants.FOOTER_ROW_PAD_RIGHT)
                   .height(Constants.FOOTER_ROW_PAD_RIGHT)
                   .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                  .fillColor($r('sys.color.ohos_id_color_secondary'))
+                  .fillColor($r('sys.color.icon_secondary'))
                   .onClick(() => {
                     this.handlePopupEdit = !this.handlePopupEdit
                   })
@@ -831,7 +830,6 @@ struct DlpDialog {
               }
               .width(Constants.FOOTER_ROW_WIDTH)
               .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-              .margin({ top: Constants.FOOTER_ROW_MARGIN })
             }
           }.constraintSize({
             maxHeight: this.directionStatus ===

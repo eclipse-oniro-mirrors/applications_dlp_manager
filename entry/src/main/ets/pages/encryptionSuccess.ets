@@ -169,11 +169,16 @@ struct encryptionSuccess {
 
               Scroll() {
                 Column() {
-                  Image($r('app.media.finished'))
-                    .draggable(false)
-                    .width(Constants.ENCRYPTION_SUCCESS_ICON)
-                    .height(Constants.ENCRYPTION_SUCCESS_ICON)
-                    .margin({ top: Constants.ENCRYPTION_SUCCESS_IMAGE_MARGIN_TOP })
+                  Stack() {
+                    Circle({ width: Constants.ENCRYPTION_SUCCESS_CIRCLE, height: Constants.ENCRYPTION_SUCCESS_CIRCLE })
+                      .fill($r('sys.color.multi_color_04'));
+                    Image($r('app.media.ic_public_ok'))
+                      .draggable(false)
+                      .fillColor($r('sys.color.icon_on_primary'))
+                      .width(Constants.ENCRYPTION_SUCCESS_ICON)
+                      .height(Constants.ENCRYPTION_SUCCESS_ICON)
+                  }
+                  .margin({ top: Constants.ENCRYPTION_SUCCESS_IMAGE_MARGIN_TOP });
                   Column() {
                     Row() {
                       Text($r('app.string.file_encrypted'))
@@ -242,11 +247,11 @@ struct encryptionSuccess {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.details'))
+                          Image($r('app.media.ic_public_detail'))
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_secondary'))
+                            .fillColor($r('sys.color.icon_secondary'))
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
@@ -282,11 +287,11 @@ struct encryptionSuccess {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.details'))
+                            Image($r('app.media.ic_public_detail'))
                               .width(Constants.FOOTER_ROW_PAD_RIGHT)
                               .height(Constants.FOOTER_ROW_PAD_RIGHT)
                               .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.ohos_id_color_secondary'))
+                              .fillColor($r('sys.color.icon_secondary'))
                               .onClick(() => {
                                 this.handlePopupReadOnly = !this.handlePopupReadOnly
                               })
@@ -393,11 +398,11 @@ struct encryptionSuccess {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.details'))
+                          Image($r('app.media.ic_public_detail'))
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_secondary'))
+                            .fillColor($r('sys.color.icon_secondary'))
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
@@ -434,11 +439,11 @@ struct encryptionSuccess {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.details'))
+                            Image($r('app.media.ic_public_detail'))
                               .width(Constants.FOOTER_ROW_PAD_RIGHT)
                               .height(Constants.FOOTER_ROW_PAD_RIGHT)
                               .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.ohos_id_color_secondary'))
+                              .fillColor($r('sys.color.icon_secondary'))
                               .onClick(() => {
                                 this.handlePopupEdit = !this.handlePopupEdit
                               })

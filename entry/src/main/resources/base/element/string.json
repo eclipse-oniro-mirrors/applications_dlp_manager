@@ -90,7 +90,7 @@
     },
     {
       "name": "header_title_readonly_tips",
-      "value": "Users with the read-only permission can view the file, but cannot edit, copy, or print it."
+      "value": "Users with the read-only access can view this file, but can't edit, copy, or print it."
     },
     {
       "name": "header_title_edit_tips",
@@ -226,11 +226,11 @@
     },
     {
       "name": "apply_for_the_permission",
-      "value": "To request permissions, contact %s."
+      "value": "To request permissions, please contact %s."
     },
     {
       "name": "apply_for_the_subject",
-      "value": "The specific permissions are subject to the actual functions of the app."
+      "value": "Actual permissions may vary by app.\n"
     },
     {
       "name": "delete_account",
@@ -306,7 +306,7 @@
     },
     {
       "name": "TITLE_APP_VERSION_LOWER",
-      "value": "OutDate version"
+      "value": "System update required"
     }
   ]
 }
