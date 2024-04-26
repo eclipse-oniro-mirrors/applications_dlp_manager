@@ -155,12 +155,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = false;
         HiLog.debug(TAG, `startDataAbility success`);
       }
-      try {
-        HiLog.info(TAG, `terminateSelf start`);
-        this.context.terminateSelf();
-      } catch {
-        HiLog.info(TAG, `terminateSelf failed`);
-      }
+      this.context.terminateSelf();
     });
   }
 
@@ -301,27 +296,23 @@ export default class ViewAbility extends ServiceExtensionAbility {
         this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd, callerAppId);
       } catch (err) {
         HiLog.error(TAG, `openDLPFile: ${this.fileName}, failed: ${JSON.stringify(err)}`);
-        try {
-          hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
-          hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
-          opening = false;
-          await this.sendDlpFileOpenFault(
-            Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
-          ); // 103:DLP_FILE_PARSE_ERROR
-          let accountFlag: boolean = true;
-          if (err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
-            let accountName: string = err.message.split(', contact:')?.[1];
-            accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
-          }
-          if (!accountFlag) {
-            await GetAlertMessage.startAlertAbility(this.context, {
-              code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-            return;
-          }
-          await GetAlertMessage.startAlertAbility(this.context, err);
-        } catch (err) {
-          HiLog.error(TAG, `openDLPFile2: ${this.fileName}, failed: ${JSON.stringify(err)}`);
+        hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
+        hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+        opening = false;
+        await this.sendDlpFileOpenFault(
+          Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
+        ); // 103:DLP_FILE_PARSE_ERROR
+        let accountFlag: boolean = true;
+        if (err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
+          let accountName: string = err.message.split(', contact:')?.[1];
+          accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
+        if (!accountFlag) {
+          await GetAlertMessage.startAlertAbility(this.context, {
+            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+          return;
+        }
+        await GetAlertMessage.startAlertAbility(this.context, err);
         fileio.closeSync(this.dlpFd);
         reject();
         return;

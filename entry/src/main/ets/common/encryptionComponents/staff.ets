@@ -14,6 +14,7 @@
  */
 
 import account_osAccount from '@ohos.account.osAccount';
+import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
@@ -41,17 +42,17 @@ struct staffItem {
   @Prop authAccount: string = '';
   @Prop isActive: boolean = false;
   @State color: Resource[] = [
-    $r('sys.color.ohos_id_color_special1'),
-    $r('sys.color.ohos_id_color_special2'),
-    $r('sys.color.ohos_id_color_special3'),
-    $r('sys.color.ohos_id_color_special4'),
-    $r('sys.color.ohos_id_color_special5'),
-    $r('sys.color.ohos_id_color_special6'),
-    $r('sys.color.ohos_id_color_special7'),
-    $r('sys.color.ohos_id_color_special8'),
-    $r('sys.color.ohos_id_color_special9'),
-    $r('sys.color.ohos_id_color_special10'),
-    $r('sys.color.ohos_id_color_special11'),
+    $r('sys.color.multi_color_01'),
+    $r('sys.color.multi_color_02'),
+    $r('sys.color.multi_color_03'),
+    $r('sys.color.multi_color_04'),
+    $r('sys.color.multi_color_05'),
+    $r('sys.color.multi_color_06'),
+    $r('sys.color.multi_color_07'),
+    $r('sys.color.multi_color_08'),
+    $r('sys.color.multi_color_09'),
+    $r('sys.color.multi_color_10'),
+    $r('sys.color.multi_color_11'),
   ];
   @Prop changeIndex: number = 0;
   @State domainTips: string = '';
@@ -132,6 +133,16 @@ struct staffItem {
     return this.textContent;
   }
 
+  private getFontWeight() {
+    try {
+      return (getContext(this) as common.UIAbilityContext).resourceManager.getNumber(
+        $r('sys.float.font_weight_semibold'));
+    } catch (error) {
+      HiLog.error(TAG, `getFontWeight callback getNumber failed: ${JSON.stringify(error)}.`);
+      return FontWeight.Regular;
+    }
+  }
+
   async aboutToAppear() {
     if (!this.domainAccount) {
       this.textContent = this.authAccount;
@@ -140,18 +151,24 @@ struct staffItem {
 
   build() {
     Row() {
-      Text(this.authAccount?.[0]?.toLocaleUpperCase())
-        .fontSize($r('sys.float.ohos_id_text_size_body3'))
-        .fontWeight(FontWeight.Regular)
-        .width(Constants.HEADER_ROW_FONT_SIZE)
-        .height(Constants.HEADER_ROW_FONT_SIZE)
-        .borderRadius(Constants.ENCRYPTION_STAFF_BORDER_RADIUS)
-        .backgroundColor(this.rollColor())
-        .fontColor($r('sys.color.ohos_fa_text_contrary'))
-        .textAlign(TextAlign.Center)
-        .margin({
-          right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
-        })
+      Stack() {
+        Circle({ width: Constants.HEADER_ROW_FONT_SIZE, height: Constants.HEADER_ROW_FONT_SIZE })
+          .fill(this.rollColor())
+          .opacity(Constants.FOOTER_OPACITY_MID);
+        Text(this.authAccount?.[0]?.toLocaleUpperCase())
+          .fontSize(Constants.STAFF_FONT_SIZE)
+          .fontWeight(this.getFontWeight())
+          .width(Constants.HEADER_ROW_FONT_SIZE)
+          .height(Constants.HEADER_ROW_FONT_SIZE)
+          .borderRadius(Constants.ENCRYPTION_STAFF_BORDER_RADIUS)
+          .fontColor($r('sys.color.ohos_fa_text_contrary'))
+          .textAlign(TextAlign.Center)
+          .opacity(Constants.FOOTER_OPACITY_MID)
+          .padding({ bottom: Constants.STAFF_FONT_PADDING });
+      }
+      .margin({
+        right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
+      });
       Text(this.splitContent())
         .constraintSize({
           maxWidth: this.authAccount === this.textContent ?
@@ -210,13 +227,13 @@ struct staffItem {
       {
         top: Constants.ENCRYPTION_STAFF_PAD,
         bottom: Constants.ENCRYPTION_STAFF_PAD,
-        left: Constants.FOOTER_ROW_MARGIN,
-        right: Constants.FOOTER_ROW_MARGIN
+        left: Constants.ENCRYPTION_STAFF_ITEM_MARGIN,
+        right: Constants.ENCRYPTION_STAFF_ITEM_MARGIN
       }
     )
     .margin({
       right: Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT,
-      bottom: this.isActive ? Constants.ENCRYPTION_ADD_STAFF_NO_MARGIN : Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
+      top: Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM
     })
   }
 }

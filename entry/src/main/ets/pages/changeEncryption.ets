@@ -547,11 +547,11 @@ struct changeEncryption {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.details'))
+                          Image($r('app.media.ic_public_detail'))
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_secondary'))
+                            .fillColor($r('sys.color.icon_secondary'))
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
@@ -587,11 +587,11 @@ struct changeEncryption {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.details'))
+                            Image($r('app.media.ic_public_detail'))
                               .width(Constants.FOOTER_ROW_PAD_RIGHT)
                               .height(Constants.FOOTER_ROW_PAD_RIGHT)
                               .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.ohos_id_color_secondary'))
+                              .fillColor($r('sys.color.icon_secondary'))
                               .onClick(() => {
                                 this.handlePopupReadOnly = !this.handlePopupReadOnly
                               })
@@ -697,11 +697,11 @@ struct changeEncryption {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.details'))
+                          Image($r('app.media.ic_public_detail'))
                             .width(Constants.FOOTER_ROW_PAD_RIGHT)
                             .height(Constants.FOOTER_ROW_PAD_RIGHT)
                             .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.ohos_id_color_secondary'))
+                            .fillColor($r('sys.color.icon_secondary'))
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
@@ -738,11 +738,11 @@ struct changeEncryption {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.details'))
+                            Image($r('app.media.ic_public_detail'))
                               .width(Constants.FOOTER_ROW_PAD_RIGHT)
                               .height(Constants.FOOTER_ROW_PAD_RIGHT)
                               .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.ohos_id_color_secondary'))
+                              .fillColor($r('sys.color.icon_secondary'))
                               .onClick(() => {
                                 this.handlePopupEdit = !this.handlePopupEdit
                               })
@@ -912,7 +912,8 @@ struct changeEncryption {
               .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
               .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
               .constraintSize({
-                minWidth: this.domainAccount ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH
+                minWidth: this.domainAccount ?
+                Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH
               })
               .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
             }

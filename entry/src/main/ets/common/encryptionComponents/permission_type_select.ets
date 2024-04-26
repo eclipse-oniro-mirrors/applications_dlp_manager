@@ -13,19 +13,14 @@
  * limitations under the License.
  */
 
-import common from '@ohos.app.ability.common';
-import { BusinessError } from '@ohos.base';
 import Constants from '../constant';
 import { AuthAccount, PermissionType } from '../utils';
-import { HiLog } from '../HiLog';
 
 const TAG = 'Select';
 
 @Extend(MenuItem)
 function timeTextStyle() {
   .labelFont({ size: $r('sys.float.ohos_id_text_size_body1'), weight: FontWeight.Regular })
-  .height(Constants.ENCRYPTION_PROTECTION_TIME_MENU_HEIGHT)
-  .width(Constants.HEADER_TEXT_WIDTH)
   .margin({
     left: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_LEFT,
     right: Constants.ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_RIGHT
@@ -39,8 +34,7 @@ function timeTextStyle() {
 
 @Component
 struct permissionTypeSelect {
-  @State text: string = '';
-  @State index: number = 0
+  @State index: number = 0;
   @Prop isReadType: boolean = false;
   @State permissionTypes: PermissionType[] = [
     { value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0 },
@@ -56,51 +50,15 @@ struct permissionTypeSelect {
       if (this.isDisable) {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT];
         this.index = Constants.ENCRYPTION_TYPE_SELECT;
-        try {
-          (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
-            $r('app.string.PERMISSION_TYPE_SELECT_ALL').id, (error: BusinessError, value: string) => {
-            if (error != null) {
-              HiLog.info(TAG, `error is: ${error}`);
-            } else {
-              this.text = value;
-            }
-          });
-        } catch (error) {
-          HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
-        }
       } else {
         this.selectedItem = this.permissionTypes[Constants.ENCRYPTION_TYPE_SELECT_INDEX];
         this.index = Constants.ENCRYPTION_TYPE_SELECT_INDEX;
-        try {
-          (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
-            $r('app.string.PERMISSION_TYPE_SELECT_TARGET').id, (error: BusinessError, value: string) => {
-            if (error != null) {
-              HiLog.info(TAG, `error is: ${error}`);
-            } else {
-              this.text = value;
-            }
-          });
-        } catch (error) {
-          HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
-        }
       }
     }
   }
 
   selectedItemUpdated(selectedItem: object): void {
     this.index = this.selectedItem.index;
-    try {
-      (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
-        this.selectedItem.value?.id!, (error: BusinessError, value: string) => {
-        if (error != null) {
-          HiLog.info(TAG, `error is: ${error}`);
-        } else {
-          this.text = value;
-        }
-      });
-    } catch (error) {
-      HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
-    }
   }
 
   aboutToAppear() {
@@ -108,18 +66,6 @@ struct permissionTypeSelect {
       this.permissionTypes = this.permissionTypes.filter(item => {
         return item.data !== 'self';
       })
-    }
-    try {
-      (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
-        this.permissionTypes[this.index].value?.id!, (error: BusinessError, value: string) => {
-        if (error != null) {
-          HiLog.info(TAG, `error is: ${error}`);
-        } else {
-          this.text = value;
-        }
-      });
-    } catch (error) {
-      HiLog.error(TAG, `callback getStringValue failed: ${JSON.stringify(error)}`);
     }
     setTimeout(() => {
       let selectIndex = this.selectedItem.index === -1 ? 0 : this.selectedItem.index;
@@ -140,19 +86,18 @@ struct permissionTypeSelect {
           });
       })
     }
-    .width(Constants.VALID_DATE_MENU_WIDTH);
   }
 
   build() {
     Row() {
-      Text(`${this.text}${
-      this.selectedItem?.data === 'target' && this.staffArray.length > 0 ?
-        ` (${this.staffArray.length})` :
-        ''
-      }`)
-        .fontSize($r('sys.float.ohos_id_text_size_body2'))
-        .fontWeight(FontWeight.Medium)
-        .fontColor($r('sys.color.ohos_id_color_text_secondary'));
+      Text() {
+        Span(this.permissionTypes[this.index].value)
+        Span(`${this.selectedItem?.data === 'target' && this.staffArray.length > 0 ?
+          ` (${this.staffArray.length})` : ''}`)
+      }
+      .fontSize($r('sys.float.ohos_id_text_size_body2'))
+      .fontWeight(FontWeight.Medium)
+      .fontColor($r('sys.color.ohos_id_color_text_secondary'));
 
       Image($r('app.media.rectangle'))
         .width(Constants.VALIDITY_IMAGE_WIDTH)
@@ -188,34 +133,17 @@ struct validDateTypeMenuItem {
           });
       })
     }
-    .width(Constants.VALID_DATE_MENU_WIDTH);
   }
 }
 
 @Component
 struct validDateTypeMenu {
-  @State text: string = '';
   @Link selectedIndex: number;
   @Prop isDisable: boolean = false;
   @State validDateTypes: PermissionType[] = [
     { value: $r('app.string.permanently'), data: 'permanently', index: 0 },
     { value: $r('app.string.Appointed_day'), data: 'Appointed_day', index: 1 }
   ];
-
-  aboutToAppear() {
-    try {
-      (getContext(this) as common.UIAbilityContext).resourceManager.getStringValue(
-        this.validDateTypes[this.selectedIndex].value?.id!, (error: BusinessError, value: string) => {
-        if (error != null) {
-          HiLog.info(TAG, `error is: ${error}`);
-        } else {
-          this.text = value;
-        }
-      });
-    } catch (error) {
-      HiLog.error(TAG, `validDateTypeMenu callback getStringValue failed: ${JSON.stringify(error)}.`);
-    }
-  }
 
   @Builder
   ValidDateMenuItem() {
@@ -224,7 +152,7 @@ struct validDateTypeMenu {
 
   build() {
     Row() {
-      Text(this.text)
+      Text(this.validDateTypes[this.selectedIndex].value)
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
         .fontWeight(FontWeight.Medium)
         .fontColor($r('sys.color.ohos_id_color_text_secondary'));

@@ -253,15 +253,12 @@ struct AddStaff {
           .flexGrow(Constants.ENCRYPTION_ADD_STAFF_FLEX_GROW)
           .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
           .borderRadius(Constants.PP_ROW_RADIUS)
+          .align(Alignment.Center)
           .padding({
             top: Constants.PP_BUTTON_PAD,
             bottom: Constants.PP_BUTTON_PAD,
             left: Constants.PP_BUTTON_PAD,
             right: Constants.PP_BUTTON_PAD
-          })
-          .margin({
-            bottom: this.staffArray.length ?
-            Constants.ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM : Constants.ENCRYPTION_ADD_STAFF_NO_MARGIN
           })
           .width(Constants.FOOTER_ROW_WIDTH)
           .constraintSize({
