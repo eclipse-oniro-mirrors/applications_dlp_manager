@@ -95,6 +95,20 @@ export default class ViewAbility extends ServiceExtensionAbility {
     let dlpInfo: DLPInfo = await getDLPInfo();
     AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
+    AppStorage.setOrCreate('viewContext', this.context);
+  }
+
+  async terminateCall(): Promise<void> {
+    return new Promise((resolve, reject) => {
+     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
+      GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+      HiLog.debug(TAG, `sandbox2linkFile size: ${sandbox2linkFile.size}`);
+      if (sandbox2linkFile.size === 0) {
+        this.context.terminateSelf();
+      }
+      reject();
+      return;
+    });
   }
 
   async startDataAbility(): Promise<void> {
@@ -155,7 +169,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = false;
         HiLog.debug(TAG, `startDataAbility success`);
       }
-      this.context.terminateSelf();
     });
   }
 
@@ -423,8 +436,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
     })
   }
 
-  async getAlreadyOpen(startId: number): Promise<void> {
-    return new Promise(async (resolve, reject) => {
+  async generateLinkFileName(startId: number): Promise<string> {
+    return new Promise<string>(async (resolve, reject) => {
       let timestamp = new Date().getTime();
       let splitNames = this.fileName.split('.');
       HiLog.debug(TAG, `splitNames: ${splitNames}`);
@@ -434,13 +447,25 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
-        reject();
+        reject('');
         return;
       }
       let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
       this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + this.appIndex +
         '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
         secondarySuffix + '.dlp.link';
+        resolve(secondarySuffix);
+    });
+  }
+
+  async getAlreadyOpen(startId: number): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.generateLinkFileName(startId);
+      } catch {
+        reject();
+        return;
+      }
       hiTraceMeter.startTrace('DlpAddLinkFileJs', startId);
       try {
         await this.getAddDLPLinkFile(startId);
@@ -461,13 +486,23 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (err) {
         HiLog.error(TAG, `file error: ${err}`);
         opening = false;
-        this.context.terminateSelf();
+        try {
+          await this.terminateCall();
+        } catch (err) {
+          reject();
+          return;
+        }
       }
       this.linkUri = getFileUriByPath(this.linkFilePath);
       if (this.linkUri === '') {
         HiLog.error(TAG, `get linkUri ByPath fail`);
         opening = false;
-        this.context.terminateSelf();
+        try {
+          await this.terminateCall();
+        } catch (err) {
+          reject();
+          return;
+        }
       }
       resolve();
     });
@@ -551,7 +586,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (!isValidPath(this.uri)) {
         opening = false;
         HiLog.error(TAG, `invalid uri in want.uri`);
-        this.context.terminateSelf();
+        try {
+          await this.terminateCall();
+        } catch (err) {
+          reject();
+          return;
+        }
       }
       let strArray: string[] = this.uri.split('/');
       let len: number = strArray.length;
@@ -561,7 +601,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       HiLog.debug(TAG, `dlpFd: ${this.dlpFd}`);
       if (this.dlpFd === -1) {
         opening = false;
-        this.context.terminateSelf();
+        try {
+          await this.terminateCall();
+        } catch (err) {
+          reject();
+          return;
+        }
       }
       resolve();
     })
@@ -584,7 +629,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
       opening = false;
       HiLog.error(TAG, `get parameters failed`);
-      this.context.terminateSelf();
+      try {
+        await this.terminateCall();
+      } catch (err) {
+        return;
+      }
     }
     try {
       await this.getAccountAndOpenDLPFile(startId);
