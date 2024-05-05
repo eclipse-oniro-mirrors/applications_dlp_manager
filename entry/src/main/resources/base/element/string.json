@@ -109,10 +109,6 @@
       "value": "Hide"
     },
     {
-      "name": "storage_path",
-      "value": "Save path"
-    },
-    {
       "name": "permanently",
       "value": "Permanent"
     },
