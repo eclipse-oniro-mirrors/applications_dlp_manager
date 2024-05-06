@@ -109,10 +109,6 @@
       "value": "收起"
     },
     {
-      "name": "storage_path",
-      "value": "储存路径"
-    },
-    {
       "name": "permanently",
       "value": "永久"
     },

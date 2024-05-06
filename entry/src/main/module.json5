@@ -86,7 +86,7 @@
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service",
-        "exported": true
+        "exported": false
       },
       {
         "name": "DataAbility",
