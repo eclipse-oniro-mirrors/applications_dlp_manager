@@ -34,8 +34,7 @@ import {
   directionStatus,
   getTime,
   isPC,
-  sendDlpManagerFileConfiguration,
-  colorStatus
+  sendDlpManagerFileConfiguration
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
@@ -464,9 +463,6 @@ struct changeEncryption {
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
-    colorStatus((counter) => {
-      this.session && this.session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
-    })
   }
 
   build() {
@@ -892,7 +888,6 @@ struct changeEncryption {
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .height(Constants.FOOTER_HEIGHT)
                     .onClick(async (event) => {
-                      emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
                       router.replaceUrl({
                         url: 'pages/encryptionProtection',
                         params: this.routerData
@@ -921,5 +916,6 @@ struct changeEncryption {
         }
       }
     }
+    .backgroundColor($r('app.color.base_background_color_dark'))
   }
 }

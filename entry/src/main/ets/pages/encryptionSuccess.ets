@@ -26,8 +26,7 @@ import {
   toggleShow,
   directionStatus,
   getTime,
-  isPC,
-  colorStatus
+  isPC
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import { BusinessError } from '@ohos.base';
@@ -115,9 +114,6 @@ struct encryptionSuccess {
     this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
-    })
-    colorStatus((counter) => {
-      this.session && this.session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
     })
   }
 
@@ -565,7 +561,6 @@ struct encryptionSuccess {
                             .width(Constants.HEADER_COLUMN_WIDTH)
                             .textAlign(TextAlign.Start)
                             .onClick(() => {
-                              emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
                               router.replaceUrl({
                                 url: 'pages/changeEncryption',
                                 params: this.routerParams
@@ -651,5 +646,6 @@ struct encryptionSuccess {
         }
       }
     }
+    .backgroundColor($r('app.color.base_background_color_dark'))
   }
 }

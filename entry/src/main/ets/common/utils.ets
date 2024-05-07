@@ -230,15 +230,6 @@ function directionStatus(func: Callback<number>) {
   });
 }
 
-function colorStatus(func: Callback<number>) {
-  let innerEvent: emitter.InnerEvent = {
-    eventId: Constants.ENCRYPTION_EMIT_COLOR_MODE
-  };
-  emitter.on(innerEvent, (eventData: emitter.EventData) => {
-    func(eventData.data?.colorMode);
-  });
-}
-
 function isPC(): boolean {
   let deviceTypeName = deviceInfo.deviceType;
   let productModel = deviceInfo.productModel;
@@ -496,6 +487,5 @@ export {
   DLPInfo,
   isValidPath,
   measureTextSizeWidth,
-  colorStatus,
   defaultDlpFile
 };

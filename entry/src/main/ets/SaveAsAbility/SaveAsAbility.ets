@@ -36,11 +36,6 @@ import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'SaveAs';
-let permissionList: Permissions[] = [
-  'ohos.permission.READ_MEDIA',
-  'ohos.permission.WRITE_MEDIA',
-  'ohos.permission.FILE_ACCESS_MANAGER'
-];
 
 class ChangeOption {
   public offset: number = 0
@@ -117,14 +112,6 @@ export default class SaveAsAbility extends UIAbility {
     GlobalContext
       .store('dsHelper', await datafile.createFileAccessHelper(GlobalContext
         .load('context') as common.UIAbilityContext));
-    try {
-      let atManager = abilityAccessCtrl.createAtManager();
-      await atManager.requestPermissionsFromUser(GlobalContext
-        .load('context') as common.UIAbilityContext, permissionList);
-    } catch (err) {
-      HiLog.error(TAG, `requestPermissionsFromUser failed: ${JSON.stringify(err)}`);
-      return;
-    }
     await this.prepareDlpFile();
     try {
       await abilityManager.notifySaveAsResult(this.result, this.requestCode);

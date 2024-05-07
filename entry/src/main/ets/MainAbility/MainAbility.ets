@@ -48,11 +48,6 @@ import { HiLog } from '../common/HiLog';
 import FileUtils from '../common/FileUtils';
 
 const TAG = 'Main';
-let permissionList: Permissions[] = [
-  'ohos.permission.READ_MEDIA',
-  'ohos.permission.WRITE_MEDIA',
-  'ohos.permission.FILE_ACCESS_MANAGER'
-];
 
 let direction: number = -1;
 
@@ -365,14 +360,6 @@ export default class MainAbility extends UIAbility {
     let dlpInfo:DLPInfo = await getDLPInfo();
     AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
-    try {
-      let atManager = abilityAccessCtrl.createAtManager();
-      await atManager.requestPermissionsFromUser(GlobalContext.load('context') as common.UIAbilityContext,
-        permissionList);
-    } catch (err) {
-      HiLog.error(TAG, `requestPermissionsFromUser failed: ${JSON.stringify(err)}`);
-      return;
-    }
     this.homeFeature.connectServiceExtAbility(()=>{
       HiLog.info(TAG, `onWindowStageCreate callback`);
       this.getNewWantPage(GlobalContext.load('abilityWant') as Want);

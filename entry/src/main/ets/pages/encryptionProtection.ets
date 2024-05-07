@@ -38,8 +38,7 @@ import {
   isPC,
   sendDlpFileCreateProperties,
   sendDlpManagerFileConfiguration,
-  getFileSizeByUri,
-  colorStatus
+  getFileSizeByUri
 } from '../common/utils';
 import Constants from '../common/constant';
 import {
@@ -336,7 +335,6 @@ struct DlpDialog {
         GlobalContext.store('dlpFileName', this.srcFileName);
         GlobalContext.store('dlpProperty', _dlp);
         sendDlpManagerFileConfiguration();
-        emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
         router.replaceUrl({
           url: 'pages/encryptionSuccess',
           params: {
@@ -429,7 +427,6 @@ struct DlpDialog {
         GlobalContext.store('uri', uri);
         this.processing = false;
         sendDlpManagerFileConfiguration();
-        emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
         router.replaceUrl({
           url: 'pages/encryptionSuccess',
           params: {
@@ -661,9 +658,6 @@ struct DlpDialog {
     this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
-    })
-    colorStatus((counter) => {
-      this.session && this.session.setWindowBackgroundColor(Constants.TRANSPARENT_GREY_BACKGROUND_COLOR);
     })
   }
 
@@ -967,5 +961,6 @@ struct encryptionProtection {
         }
       }
     }
+    .backgroundColor($r('app.color.base_background_color_dark'))
   }
 }
