@@ -107,9 +107,6 @@
         "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
       },
       {
-        "name": "ohos.permission.MEDIA_LOCATION"
-      },
-      {
         "name": "ohos.permission.GET_DOMAIN_ACCOUNTS"
       }
     ]
