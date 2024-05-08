@@ -180,10 +180,6 @@ struct PermissionStatus {
       .constraintSize({ minHeight: Constants.SUB_HEADER_HEIGHT })
   }
 
-  aboutToDisappear() {
-    emitter.off(Constants.ENCRYPTION_EMIT_COLOR_MODE);
-  }
-
   build() {
     GridRow({
       columns: {
@@ -310,8 +306,8 @@ struct PermissionStatus {
 
               Row() {
                 Button($r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
-                  .backgroundColor($r('app.color.base_button_color'))
-                  .fontColor($r('app.color.encryption_cancel'))
+                  .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+                  .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
                   .height(Constants.FOOTER_BUTTON_HEIGHT)
                   .onClick(() => {

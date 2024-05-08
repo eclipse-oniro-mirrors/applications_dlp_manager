@@ -1,20 +1,8 @@
 {
   "color": [
     {
-      "name": "start_window_background",
-      "value": "#ff0000"
-    },
-    {
-      "name": "dark_backgroundColor",
-      "value": "#031634"
-    },
-    {
-      "name": "dark_dividerColor",
-      "value": "#ffffff"
-    },
-    {
-      "name": "base_button_color",
-      "value": "#E6000000"
+      "name": "base_background_color_dark",
+      "value": "#33182431"
     }
   ]
 }
