@@ -86,17 +86,6 @@ export default class DataAbility extends ServiceExtensionAbility {
         let sandboxAppIndex: number = data.appIndex;
         let key: string = bundleName + sandboxAppIndex;
 
-        let authPerm2Sandbox:Map<dlpPermission.DLPFileAccess, (number | string)[]> =
-          GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>;
-        for (let item of Array.from<(dlpPermission.DLPFileAccess | (number | string)[])[]>(authPerm2Sandbox)) {
-          let itemKey = item[0];
-          let itemValue = item[1];
-          const app: string = (itemValue[0] as string) + (itemValue[1] as number);
-          if (key === app) {
-            authPerm2Sandbox.delete(itemKey as dlpPermission.DLPFileAccess);
-          }
-        }
-
         let token2File:Map<number, (number | string | dlpPermission.DLPFile)[]> =
           GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile)[]>;
         for (let item of Array.from<(number | (number | string | dlpPermission.DLPFile)[])[]>(token2File)) {
