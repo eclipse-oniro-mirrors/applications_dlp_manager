@@ -75,7 +75,7 @@ export default class MainAbility extends UIExtensionAbility {
     GlobalContext.store('homeFeature', this.homeFeature);
 
     this.homeFeature.connectServiceExtAbility(()=>{
-      this.getNewWantPage(session);
+      this.getNewWantPage(want, session);
     });
   }
 
@@ -99,7 +99,6 @@ export default class MainAbility extends UIExtensionAbility {
     if (session !== GlobalContext.load('session')) {
       return;
     }
-    GlobalContext.store('session', '');
     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
       this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
@@ -107,6 +106,7 @@ export default class MainAbility extends UIExtensionAbility {
         }
       });
     }
+    GlobalContext.store('session', '');
   }
 
   async gotoPage(session: UIExtensionContentSession): Promise<void> {
@@ -246,7 +246,7 @@ export default class MainAbility extends UIExtensionAbility {
     })
   }
 
-  async getNewWantPage(session: UIExtensionContentSession): Promise<void> {
+  async getNewWantPage(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `getNewWantPage start`);
     try {
       await this.checkValidWantAndAccount(session)
@@ -260,7 +260,7 @@ export default class MainAbility extends UIExtensionAbility {
         { code: codeMessage } as BusinessError, session);
       return;
     }
-    let requestIsFromSandBox: boolean = await judgeIsSandBox();
+    let requestIsFromSandBox: boolean = await judgeIsSandBox(want);
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
     HiLog.info(TAG, `request is from sandbox: ${requestIsFromSandBox}`);
     if (requestIsFromSandBox) {
@@ -283,9 +283,9 @@ export default class MainAbility extends UIExtensionAbility {
       GlobalContext.store('linkFileName', linkFileName);
       GlobalContext.store('dlpProperty', data);
       GlobalContext.store('uri', uri ?? '');
-      GlobalContext.store('permanent', data.expireTime === 0);
+      AppStorage.setOrCreate('permanent', data.expireTime === 0);
       if (data.expireTime !== 0) {
-        GlobalContext.store('validity', new Date(data.expireTime as number));
+        AppStorage.setOrCreate('validity', new Date(data.expireTime as number));
       }
       this.gotoPage(session);
     });
@@ -350,7 +350,7 @@ export default class MainAbility extends UIExtensionAbility {
           message: msg,
         }
         let accountFlag: boolean = true;
-        if (err === Constants.ERR_JS_USER_NO_PERMISSION) {
+        if (this.domainAccount && err === Constants.ERR_JS_USER_NO_PERMISSION) {
           let accountName: string = msg.split(', contact:')?.[1];
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
@@ -364,9 +364,9 @@ export default class MainAbility extends UIExtensionAbility {
         return;
       } else {
         GlobalContext.store('dlpProperty', data);
-        GlobalContext.store('permanent', data.expireTime === 0);
+        AppStorage.setOrCreate('permanent', data.expireTime === 0);
         if (data.expireTime !== 0) {
-          GlobalContext.store('validity', new Date(data.expireTime as number));
+          AppStorage.setOrCreate('validity', new Date(data.expireTime as number));
         }
         this.gotoPage(session);
       }

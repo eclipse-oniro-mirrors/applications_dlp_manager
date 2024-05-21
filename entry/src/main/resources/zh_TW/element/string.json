@@ -5,10 +5,6 @@
             "value":"儲存"
         },
         {
-            "name":"export",
-            "value":"匯出"
-        },
-        {
             "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
             "value":"該應用程式無法開啟此檔案。"
         },

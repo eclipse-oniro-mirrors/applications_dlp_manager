@@ -29,9 +29,7 @@ import {
   isPC
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
-import { BusinessError } from '@ohos.base';
 import HomeFeature from '../feature/HomeFeature';
-import emitter from '@ohos.events.emitter';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'EncSucc';
@@ -111,7 +109,7 @@ struct encryptionSuccess {
 
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear, encrypt success`);
-    this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
+    this.directionStatus = (getContext(this) as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -573,7 +571,6 @@ struct encryptionSuccess {
                       .margin({ bottom: Constants.ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM })
                     }
                   }
-                  .clip(true)
                 }
               }.constraintSize({
                 maxHeight: this.directionStatus ===
@@ -620,7 +617,7 @@ struct encryptionSuccess {
                         (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
                       }
                       abilityResult.resultCode = 0;
-                      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                      (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                     }
                   })
               }

@@ -22,7 +22,6 @@ import hiSysEvent from '@ohos.hiSysEvent';
 import wantConstant from '@ohos.app.ability.wantConstant';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
-import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import uriPermissionManager from '@ohos.application.uriPermissionManager';
@@ -316,7 +315,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
         ); // 103:DLP_FILE_PARSE_ERROR
         let accountFlag: boolean = true;
-        if (err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
+        if (this.domainAccount && err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
           let accountName: string = err.message.split(', contact:')?.[1];
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
@@ -568,7 +567,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     return new Promise(async (resolve, reject) => {
       this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
       AppStorage.setOrCreate('hiSandboxPkgName', this.callerBundleName);
-      if ((GlobalContext.load('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
+      if ((AppStorage.get('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
         await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
         reject();
@@ -597,7 +596,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
       let len: number = strArray.length;
       this.fileName = strArray[len - 1];
       this.dlpFd = getFileFd(this.uri);
-      GlobalContext.store('uri', this.uri);
       HiLog.debug(TAG, `dlpFd: ${this.dlpFd}`);
       if (this.dlpFd === -1) {
         opening = false;

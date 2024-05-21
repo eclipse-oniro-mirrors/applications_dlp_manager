@@ -54,7 +54,7 @@ export class GetAlertMessage {
         windowHeight
       }
     }, options, async (err: BusinessError) => {
-      if (err.code !== 0) {
+      if (err && err.code !== 0) {
         HiLog.error(TAG, `start AlertAbility failed: ${JSON.stringify(err)}`);
       }
       if (session) {
@@ -115,7 +115,7 @@ export class GetAlertMessage {
   }
 
   public static getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMessage?: Resource) {
-    switch (err.code) {
+    switch (err && err.code) {
       case Constants.ERR_JS_ACCOUNT_NOT_FOUND:
       case Constants.ERR_JS_GET_ACCOUNT_ERROR:
         return { 'msg': $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR') } as Record<string, Resource>;
@@ -146,7 +146,7 @@ export class GetAlertMessage {
   }
 
   public static getAlertTitleMessage(err: BusinessError) {
-    switch (err.code) {
+    switch (err && err.code) {
       case Constants.ERR_JS_USER_NO_PERMISSION:
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
@@ -180,7 +180,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_DLP_FILE_READ_ONLY:
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
-          'msg': $r('app.string.MESSAGE_DLP_READ_ONLY', AppStorage.get('ownerAccount'))
+          'msg': $r('app.string.MESSAGE_DLP_READ_ONLY', AppStorage.get('contactAccount'))
         } as Record<string, Resource>;
       case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
         return {
@@ -196,7 +196,7 @@ export class GetAlertMessage {
   }
 
   public static getAlertButtonMessage(err: BusinessError) {
-    switch (err.code) {
+    switch (err && err.code) {
       case Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED:
         return {
           'title': $r('app.string.header_title'),
@@ -226,13 +226,16 @@ export class GetAlertMessage {
         domain: accountDomain,
         accountName: accountName
       };
-      account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo, (error: BusinessError, isExist: boolean) => {
-        if (isExist) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      })
+      try {
+        account_osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo)
+          .then((result: account_osAccount.DomainAccountInfo) => {
+            resolve(true);
+          }).catch((err: BusinessError) => {
+            resolve(false);
+          })
+      } catch (err) {
+        resolve(false);
+      }
     })
   }
 }
