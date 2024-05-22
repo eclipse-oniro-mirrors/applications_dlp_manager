@@ -39,7 +39,6 @@ import {
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
-import emitter from '@ohos.events.emitter';
 import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/GetAlertMessage';
@@ -322,14 +321,13 @@ struct changeEncryption {
           .delete(GlobalContext.load('uri') as string)
       }
       abilityResult.resultCode = 0;
-      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+      (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
     }
   }
 
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
     this.permissionDict.forEach(async (item, index) => {
-      this.permissionDict[index].value = $r((GlobalContext
-        .load('context') as common.UIAbilityContext).resourceManager.getStringSync(item.value!.id))
+      this.permissionDict[index].value = $r(getContext(this).resourceManager.getStringSync(item.value!.id))
     });
     let readOnlyData = (defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 1;
@@ -411,7 +409,7 @@ struct changeEncryption {
         }
       } catch (err) {
         let session: UIExtensionContentSession = GlobalContext.load('session') as UIExtensionContentSession;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIExtensionContext,
           err as BusinessError, session);
         return Promise.reject();
       }
@@ -428,7 +426,7 @@ struct changeEncryption {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIExtensionContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
@@ -440,7 +438,7 @@ struct changeEncryption {
           { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIExtensionContext,
           { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;
@@ -458,8 +456,7 @@ struct changeEncryption {
       this.prepareData = false;
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
 
-    this.directionStatus = (GlobalContext
-      .load('context') as common.UIAbilityContext).config.direction ?? -1;
+    this.directionStatus = (getContext(this) as common.UIExtensionContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })

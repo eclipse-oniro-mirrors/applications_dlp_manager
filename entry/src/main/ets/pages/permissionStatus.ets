@@ -19,7 +19,6 @@ import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import { directionStatus, isPC } from '../common/utils';
 import common from '@ohos.app.ability.common';
-import emitter from '@ohos.events.emitter';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'PermStat';
@@ -150,8 +149,7 @@ struct PermissionStatus {
     this.authPerm = AppStorage.get('authPerm') ?? 1;
     this.accountId = AppStorage.get('contactAccount') ?? '';
     this.validity = AppStorage.get('validity') ?? 0;
-    this.directionStatus = (GlobalContext
-      .load('context') as common.UIAbilityContext).config.direction ?? -1;
+    this.directionStatus = (getContext(this) as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -323,7 +321,7 @@ struct PermissionStatus {
                         (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
                       }
                       abilityResult.resultCode = 0;
-                      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                      (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                     }
                   })
               }

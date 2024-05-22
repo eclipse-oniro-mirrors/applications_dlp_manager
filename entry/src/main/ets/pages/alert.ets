@@ -209,7 +209,7 @@ struct Index {
               });
             } else {
               abilityResult.resultCode = 0;
-              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+              (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
             }
           })
           .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
@@ -221,14 +221,14 @@ struct Index {
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
               let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
-              if (error.code === Constants.ERR_JS_OFFLINE) {
+              if (error && error.code === Constants.ERR_JS_OFFLINE) {
                 let want: Want = {
                   action: 'action.system.home',
                   entities: ['entity.system.home'],
                   uri: 'wifi_entry'
                 };
-                (GlobalContext.load('alertContext') as common.UIAbilityContext).startAbility(want);
-                (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
+                (getContext(this) as common.UIAbilityContext).startAbility(want);
+                (getContext(this) as common.UIAbilityContext).terminateSelf();
                 return;
               }
               this.authWithPop();

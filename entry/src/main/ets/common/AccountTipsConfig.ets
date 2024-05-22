@@ -94,9 +94,9 @@ export class AccountTipsConfig {
     return new Promise((resolve, reject) => {
       try {
         let filePath: string = configPolicy.getOneCfgFileSync(AccountTipsConfig.ccmConfigPath);
-        let isExitFile: boolean = fs.accessSync(filePath);
+        let isExistFile: boolean = fs.accessSync(filePath);
         let configStr: string = '';
-        if (isExitFile) {
+        if (isExistFile) {
           configStr = fs.readTextSync(filePath);
         } else {
           let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;

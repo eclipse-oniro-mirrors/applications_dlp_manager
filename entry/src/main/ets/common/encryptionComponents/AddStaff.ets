@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 
-import osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
-import account_osAccount from '@ohos.account.osAccount';
 import { staffItem } from './staff';
 import Constants from '../constant';
-import GlobalContext from '../GlobalContext';
 import { AccountTipsConfig } from '../AccountTipsConfig';
 import { HiLog } from '../HiLog';
 import { isPC } from '../utils';
@@ -133,26 +130,6 @@ struct AddStaff {
   }
 
   private createStaffByDomain(i: number, startOffset: number[], endOffset: number[]) {
-    return new Promise<void>((resolve, reject) => {
-      let accountDomain = AppStorage.get('accountDomain') as string;
-      let domainAccountInfo: osAccount.DomainAccountInfo = {
-        domain: accountDomain,
-        accountName: this.inputArray[i].toLocaleLowerCase().trim()
-      };
-      account_osAccount.DomainAccountManager.hasAccount(domainAccountInfo,
-        async (error: BusinessError, isExist: boolean) => {
-        if (isExist) {
-          await this.createStaffItem(i, startOffset, endOffset);
-        } else {
-          HiLog.info(TAG, `hasAccount fail: ${JSON.stringify(error)}`);
-          this.showErrInput(i, error, startOffset, endOffset);
-        }
-        resolve();
-      })
-    });
-  }
-
-  private createStaffItem(i: number, startOffset: number[], endOffset: number[]) {
     return new Promise<void>(async (resolve, reject) => {
       try {
         let result = await AccountTipsConfig.getAccountInfo(this.inputArray[i]);
@@ -310,7 +287,7 @@ struct AddStaff {
             let textNum: number = 0;
             for (let i = 0; i <= len; i++) {
               let buildSpan: RichEditorTextSpanResult = richEditorSpansAll[i] as RichEditorTextSpanResult;
-              if (buildSpan.textStyle) {
+              if (buildSpan?.textStyle) {
                 textNum++;
               }
             }

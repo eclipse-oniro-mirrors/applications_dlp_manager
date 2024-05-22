@@ -51,7 +51,6 @@ import GlobalContext from '../common/GlobalContext';
 import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
 import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
 import HomeFeature from '../feature/HomeFeature';
-import emitter from '@ohos.events.emitter';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import FileUtils, { FileMsg } from '../common/FileUtils';
@@ -100,8 +99,8 @@ struct DlpDialog {
   @State handlePopupEdit: boolean = false;
   @State processing: boolean = false;
   @State prepareData: boolean = false;
-  @State validity: Date = GlobalContext.load('validity') || new Date();
-  @State selectedIndex: number = GlobalContext.load('permanent') === false ? 1 : 0;
+  @State validity: Date = AppStorage.get('validity') || new Date();
+  @State selectedIndex: number = AppStorage.get('permanent') === false ? 1 : 0;
   @State domainOrCloudAccount: number = domainAccount ?
     dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
   @State permissionDict: PermissionType[] = [
@@ -263,7 +262,7 @@ struct DlpDialog {
         return;
       }
     }
-    let filePath = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/' + (new Date().getTime());
+    let filePath = getContext(this).filesDir + '/' + (new Date().getTime());
     let file: fs.File;
     try {
       file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
@@ -459,7 +458,7 @@ struct DlpDialog {
     property.authUserList = [];
     property.everyoneAccessList = [];
     property.offlineAccess = this.selectedIndex === 0 ? true : false;
-    property.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(this.validity).getTime();
+    property.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(new Date(this.validity)).getTime();
     if (this.selectedPermissionTypeEdit.data === 'all') {
       property.everyoneAccessList = [dlpPermission.DLPFileAccess.CONTENT_EDIT];
       this.staffDataArrayReadOnly = [];
@@ -546,7 +545,7 @@ struct DlpDialog {
     let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
     this.permissionDict.forEach(async (item, index) => {
       this.permissionDict[index].value =
-        $r(await (GlobalContext.load('context') as common.UIAbilityContext).resourceManager.getStringValue(item.value.id))
+        $r(await getContext(this).resourceManager.getStringValue(item.value.id))
     })
     let readOnlyData: dlpPermission.AuthUser[] =
       defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
@@ -587,7 +586,7 @@ struct DlpDialog {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIAbilityContext,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
@@ -599,7 +598,7 @@ struct DlpDialog {
           { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIAbilityContext,
           { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
       }
       return;
@@ -655,7 +654,7 @@ struct DlpDialog {
       this.prepareData = false;
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
 
-    this.directionStatus = (GlobalContext.load('context') as common.UIAbilityContext).config.direction ?? -1;
+    this.directionStatus = (getContext(this) as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
@@ -800,7 +799,7 @@ struct DlpDialog {
                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
                 Blank()
                 if (this.selectedIndex === 1) {
-                  CalendarPicker({ selected: this.validity })
+                  CalendarPicker({ selected: new Date(this.validity) })
                     .onChange((value) => {
                       this.validity = value;
                     })
@@ -838,7 +837,7 @@ struct DlpDialog {
             Button($r('app.string.ban'), { type: ButtonType.Capsule, stateEffect: true })
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
               .width(Constants.HEADER_TEXT_WIDTH)
-              .focusable(false)
+              .focusable(true)
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .height(Constants.FOOTER_HEIGHT)
               .onClick(async (event) => {
@@ -861,7 +860,7 @@ struct DlpDialog {
                     (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
                   }
                   abilityResult.resultCode = 0;
-                  (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                  (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                 }
               })
               .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
@@ -870,7 +869,7 @@ struct DlpDialog {
             })
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
               .width(Constants.HEADER_TEXT_WIDTH)
-              .focusable(false)
+              .focusable(true)
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .enabled(
                 this.isAccountCheckSuccess &&
@@ -884,15 +883,15 @@ struct DlpDialog {
                 AppStorage.setOrCreate('hiValidDate', false);
                 if (this.selectedIndex === 1) {
                   let currentTime = new Date().getTime();
-                  let validity = this.reconfigurationTime(this.validity).getTime();
+                  let validity = this.reconfigurationTime(new Date(this.validity)).getTime();
                   if (currentTime >= validity) {
                     this.showErrorDialogNoTitle($r('app.string.Timeout_is_not_supported'));
                     return;
                   }
-                  GlobalContext.store('validity', this.reconfigurationTime(this.validity));
+                  AppStorage.setOrCreate('validity', this.reconfigurationTime(new Date(this.validity)));
                   AppStorage.setOrCreate('hiValidDate', true);
                 }
-                GlobalContext.store('permanent', this.selectedIndex ? false : true);
+                AppStorage.setOrCreate('permanent', this.selectedIndex ? false : true);
                 AppStorage.setOrCreate('hiAdvancedSettings', false);
                 AppStorage.setOrCreate('hiStorePath', false);
                 if (this.isDlpFile) {

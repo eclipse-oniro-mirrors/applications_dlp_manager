@@ -154,17 +154,16 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
       }
     }
   };
-  (GlobalContext.load('context') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+  (getContext() as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
 }
 
-function judgeIsSandBox() {
+function judgeIsSandBox(want: Want) {
   return new Promise<boolean>(async resolve => {
-    let abilityWant: Want = GlobalContext.load('abilityWant') as Want;
-    let callerToken: number = abilityWant.parameters?.['ohos.aafwk.param.callerToken'] as number;
-    let callerBundleName: string = abilityWant.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
-    GlobalContext.store('applicationInfo', await bundleManager.getApplicationInfo(
-      callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT));
-    if (callerToken === (GlobalContext.load('applicationInfo') as bundleManager.ApplicationInfo).accessTokenId) {
+    let callerToken: number = want.parameters?.['ohos.aafwk.param.callerToken'] as number;
+    let callerBundleName: string = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
+    let applicationInfo = await bundleManager.getApplicationInfo(
+      callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
+    if (callerToken === applicationInfo.accessTokenId) {
       resolve(false);
     }
     resolve(true);
@@ -237,14 +236,12 @@ function isPC(): boolean {
   return (deviceTypeName === 'tablet' || deviceTypeName === '2in1') && productModel?.startsWith('HYM') === true
 }
 
-async function showErrorDialogAndExit(error: BusinessError): Promise<void> {
+async function showErrorDialogAndExit(windowStage: window.WindowStage, error: BusinessError): Promise<void> {
   let abilityWant = GlobalContext.load('abilityWant') as Want;
   if (abilityWant.parameters) {
     abilityWant.parameters.error = error;
   }
-  let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
-  GlobalContext.store('alertContext', context);
-  (GlobalContext.load('windowStage') as window.WindowStage).loadContent('pages/alert', (err: BusinessError) => {
+  windowStage.loadContent('pages/alert', (err: BusinessError) => {
     if (err.code !== 0) {
       HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
     }
@@ -296,17 +293,22 @@ function getAppId(bundleName: string) {
 }
 
 function getTime() {
-  let permanent: boolean = GlobalContext.load('permanent');
+  let permanent: boolean | undefined = AppStorage.get('permanent');
   if (permanent) {
     return $r('app.string.permanently');
   }
-  let date: Date = GlobalContext.load('validity');
-  let year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  let day = date.getDate();
-  let hour = date.getHours();
-  let minute = date.getMinutes();
-  return `${year}/${month}/${day} ${hour}:${minute}`;
+  let dateTime: number | undefined = AppStorage.get('validity');
+  if (dateTime !== undefined) {
+    let date = new Date(dateTime);
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    return `${year}/${month}/${day} ${hour}:${minute}`;
+  } else {
+    return '';
+  }
 }
 
 async function getFileSizeByUri(uri: string): Promise<number> {

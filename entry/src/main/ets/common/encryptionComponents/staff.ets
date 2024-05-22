@@ -16,9 +16,7 @@
 import account_osAccount from '@ohos.account.osAccount';
 import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
-import osAccount from '@ohos.account.osAccount';
 import Constants from '../constant';
-import GlobalContext from '../GlobalContext';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 import { GetAlertMessage } from '../GetAlertMessage';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
@@ -119,15 +117,16 @@ struct staffItem {
   }
 
   private splitContent() {
-    if (this.domainAccount) {
-      if (this.textContent) {
-        if (this.textContent.length > Constants.TIPS_NAME_LENGTH) {
-          return this.textContent.split('').join(Constants.TIPS_SPACE_ZERO)
-        } else if (this.textContent.length === Constants.TIPS_NAME_LENGTH) {
-          return this.textContent.split('').join(Constants.TIPS_SPACE_EM)
-        } else {
-          return Constants.TIPS_SPACE_EN + this.textContent;
-        }
+    if (!this.domainAccount) {
+      return this.textContent;
+    }
+    if (this.textContent) {
+      if (this.textContent.length > Constants.TIPS_NAME_LENGTH) {
+        return this.textContent.split('').join(Constants.TIPS_SPACE_ZERO)
+      } else if (this.textContent.length === Constants.TIPS_NAME_LENGTH) {
+        return this.textContent.split('').join(Constants.TIPS_SPACE_EM)
+      } else {
+        return Constants.TIPS_SPACE_EN + this.textContent;
       }
     }
     return this.textContent;

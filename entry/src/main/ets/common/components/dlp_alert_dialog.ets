@@ -76,7 +76,7 @@ struct DlpAlertDialog {
             if (this.action != null) {
               this.action()
             } else {
-              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
+              (getContext(this) as common.UIAbilityContext).terminateSelf();
             }
           })
           .margin({
@@ -89,7 +89,7 @@ struct DlpAlertDialog {
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
-              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
+              (getContext(this) as common.UIAbilityContext).terminateSelf();
             })
             .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
         }

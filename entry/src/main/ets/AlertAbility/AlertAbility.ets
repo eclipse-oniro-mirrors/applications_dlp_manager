@@ -27,7 +27,6 @@ export default class AlertAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     HiLog.info(TAG, `onCreate`);
     GlobalContext.store('abilityWant', want);
-    GlobalContext.store('alertContext', this.context)
   }
 
   onDestroy(): void {
@@ -38,7 +37,7 @@ export default class AlertAbility extends UIAbility {
     // Main window is created, set main page for this ability
     HiLog.info(TAG, `onWindowStageCreate`);
     windowStage.loadContent('pages/alert', (err: BusinessError) => {
-      if (err.code !== 0) {
+      if (err && err.code !== 0) {
         HiLog.error(TAG, `setUIContent failed: ${JSON.stringify(err)}`);
       }
     });
@@ -46,7 +45,7 @@ export default class AlertAbility extends UIAbility {
     let mainWindow: window.Window | undefined = undefined;
 
     windowStage.getMainWindow((err, data) => {
-      if (err.code) {
+      if (err && err.code) {
         HiLog.error(TAG, `Failed to obtain the main window. Cause: ${JSON.stringify(err)}`);
         return;
       }
@@ -60,7 +59,7 @@ export default class AlertAbility extends UIAbility {
 
       let enabled = false;
       mainWindow.setResizeByDragEnabled(enabled, (err: BusinessError) => {
-        if (err.code) {
+        if (err && err.code) {
           HiLog.error(TAG, `Failed to set the function of disabling the resize by dragg window. Cause: ${JSON.stringify(err)}`);
           return;
         }

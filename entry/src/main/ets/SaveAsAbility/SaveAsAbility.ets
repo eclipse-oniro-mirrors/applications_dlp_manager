@@ -14,26 +14,23 @@
  */
 
 import UIAbility from '@ohos.app.ability.UIAbility';
-import datafile from '@ohos.file.fileAccess';
 import picker from '@ohos.file.picker';
-import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
-import { Permissions } from '@ohos.abilityAccessCtrl';
-import fileAccess from '@ohos.file.fileAccess';
 import Want from '@ohos.app.ability.Want';
-import common from '@ohos.app.ability.common';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import window from '@ohos.window';
 import { BusinessError } from '@ohos.base';
 import ability from '@ohos.ability.ability';
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
+import fileUri from '@ohos.file.fileuri';
 import abilityManager from '@ohos.app.ability.abilityManager';
-import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile } from '../common/utils';
+import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile, isPC } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
+import dialogRequest from '@ohos.app.ability.dialogRequest';
 
 const TAG = 'SaveAs';
 
@@ -104,22 +101,18 @@ export default class SaveAsAbility extends UIAbility {
   private newDlpFile: dlpPermission.DLPFile = defaultDlpFile;
   private srcFdPicker: number = -1;
   private linkFileName: string = '';
+  private domainAccount: boolean = !isPC() ? false : true;
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     HiLog.info(TAG, `onCreate`);
-    GlobalContext.store('abilityWant', want);
-    GlobalContext.store('context', this.context);
-    GlobalContext
-      .store('dsHelper', await datafile.createFileAccessHelper(GlobalContext
-        .load('context') as common.UIAbilityContext));
-    await this.prepareDlpFile();
+    await this.prepareDlpFile(want);
     try {
       await abilityManager.notifySaveAsResult(this.result, this.requestCode);
     } catch (err) {
       HiLog.error(TAG, `notifySaveAsResult failed: ${JSON.stringify(err)}`);
     }
-    if (this.isOK === true) {
-      (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
+    if (this.isOK) {
+      this.context.terminateSelf();
     }
   }
 
@@ -147,35 +140,32 @@ export default class SaveAsAbility extends UIAbility {
     HiLog.info(TAG, `onBackground`);
   }
 
-  async parseParams(): Promise<boolean | void> {
-    if (GlobalContext.load('abilityWant') === undefined ||
-      (GlobalContext.load('abilityWant') as Want).parameters === undefined) {
-      HiLog.error(TAG, `invalid abilityWant`);
+  async parseParams(want: Want): Promise<boolean | void> {
+    if (want.parameters === undefined) {
+      HiLog.error(TAG, `invalid want`);
       return false;
     }
 
-    this.requestCode = (GlobalContext.load('abilityWant') as Want)
-      .parameters?.['requestCode'] as number;
+    this.requestCode = want.parameters?.['requestCode'] as number;
     if (this.requestCode === undefined) {
       HiLog.error(TAG, `invalid requestCode`);
       return false;
     }
 
-    this.tokenId = (GlobalContext.load('abilityWant') as Want)
-      .parameters?.['ohos.aafwk.param.callerToken'] as number;
+    this.tokenId = want.parameters?.['ohos.aafwk.param.callerToken'] as number;
     if (this.tokenId === undefined) {
       HiLog.error(TAG, `invalid tokenId`);
       return false;
     }
     try {
-      await this.checkParseParams();
+      await this.checkParseParams(want);
       return true;
     } catch {
       return false;
     }
   }
 
-  checkParseParams(): Promise<void> {
+  checkParseParams(want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       this.authPerm = (GlobalContext.load('token2File') as
       Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
@@ -183,44 +173,44 @@ export default class SaveAsAbility extends UIAbility {
       let dlpFileInfo = (GlobalContext.load('token2File') as
       Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
         .get(this.tokenId)?.[0] as dlpPermission.DLPFile;
-      let ownerAccount = dlpFileInfo.dlpProperty.ownerAccount as string;
-
+      let contactAccount = dlpFileInfo.dlpProperty.contactAccount as string;
       if (this.authPerm != dlpPermission.DLPFileAccess.CONTENT_EDIT &&
         this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
         HiLog.error(TAG, `invalid authPerm: ${this.authPerm}`);
         this.isOK = false;
-        AppStorage.setOrCreate('ownerAccount', ownerAccount);
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-          {
-            code: Constants.ERR_JS_DLP_FILE_READ_ONLY
-          } as BusinessError);
+        AppStorage.setOrCreate('contactAccount', contactAccount);
+        let accountFlag: boolean = true;
+        if (this.domainAccount) {
+          accountFlag = await GetAlertMessage.checkAccountInfo(contactAccount);
+        }
+        if (!accountFlag) {
+          await GetAlertMessage.startAlertAbility(this.context, {
+            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+          reject();
+        }
+        await GetAlertMessage.startAlertAbility(this.context,
+          { code: Constants.ERR_JS_DLP_FILE_READ_ONLY } as BusinessError);
         reject();
-        return false;
       }
       if (!(GlobalContext.load('token2File') as Map<number, Object[]>).has(this.tokenId)) {
         HiLog.error(TAG, `invalid token2File`);
         reject();
-        return;
       }
-      this.fileName = (GlobalContext.load('abilityWant') as Want)
-        .parameters?.['key_pick_file_name'] as string;
-      if (this.fileName === undefined) {
-        HiLog.error(TAG, `invalid fileName`);
+      let newFileName = want.parameters?.['key_pick_file_name'] as [];
+      if (newFileName === undefined) {
+        HiLog.error(TAG, `invalid newFileName`);
         reject();
-        return false;
       }
-      this.fileName = String(this.fileName);
+      this.fileName = newFileName.join('');
       let splitNames = this.fileName.split('.');
-      HiLog.debug(TAG, `splitNames: ${splitNames}`);
+      HiLog.info(TAG, `splitNames: ${splitNames}`);
       if (splitNames.length <= SUFFIX_INDEX) {
         HiLog.error(TAG, `get suffix failed`);
         reject();
-        return;
       }
       this.suffix = splitNames[splitNames.length - SUFFIX_INDEX];
       HiLog.info(TAG, `suffix is: ${this.suffix}`);
       resolve();
-      return true;
     })
   }
 
@@ -247,7 +237,7 @@ export default class SaveAsAbility extends UIAbility {
   }
 
   async copyDlpHead(srcFd: number, dstFd: number) {
-    let appDir = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/';
+    let appDir = this.context.filesDir + '/';
     this.filePath = appDir + 'saveAs' + this.random;
     this.dirPath = appDir + 'saveAsUnzip' + this.random;
     this.encFile = this.dirPath + '/encrypted_data';
@@ -256,12 +246,12 @@ export default class SaveAsAbility extends UIAbility {
     try {
       await this.copyDlpHeadData(srcFd, dstFd);
     } catch (err) {
-      HiLog.error(TAG, `copyDlpHead: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `copyDlpHead: ${JSON.stringify(err)}, message: ${JSON.stringify(err.message)}`);
       try {
         await fs.close(this.ff);
         await fs.close(this.zf2);
       } catch (error) {
-        HiLog.error(TAG, `close: ${JSON.stringify(err)}`);
+        HiLog.error(TAG, `close: ${JSON.stringify(error)}`);
       }
     }
     if (this.zipFlag) {
@@ -344,13 +334,16 @@ export default class SaveAsAbility extends UIAbility {
     return config;
   }
 
-  getDocumentPickerSaveResult(args: ability.AbilityResult) {
+  getDocumentPickerSaveResult(args: dialogRequest.RequestResult | ability.AbilityResult) {
     let saveResult: Record<string, BusinessError | string[]> = {
       'error': {} as BusinessError,
       'data': []
     };
 
-    if ((args.resultCode !== undefined && args.resultCode === 0)) {
+    if (((args as dialogRequest.RequestResult).result !== undefined &&
+        (args as dialogRequest.RequestResult).result === 0) ||
+        ((args as ability.AbilityResult).resultCode !== undefined &&
+        (args as ability.AbilityResult).resultCode === 0)) {
       if (args.want && args.want.parameters) {
         if (args.want.parameters.pick_path_return) {
           saveResult.data = args.want.parameters.pick_path_return as string[];
@@ -358,7 +351,10 @@ export default class SaveAsAbility extends UIAbility {
           saveResult.data = args.want.parameters['ability.params.stream'] as string[];
         }
       }
-    } else if ((args.resultCode !== undefined && args.resultCode === -1)) {
+    } else if (((args as dialogRequest.RequestResult).result !== undefined &&
+        (args as dialogRequest.RequestResult).result === 0) ||
+        ((args as ability.AbilityResult).resultCode !== undefined &&
+        (args as ability.AbilityResult).resultCode === -1)) {
       saveResult.data = [];
     } else {
       saveResult.error = this.getErr(errCode.RESULT_ERROR) as BusinessError;
@@ -371,16 +367,15 @@ export default class SaveAsAbility extends UIAbility {
   getErr(errCode: number) {
     return {code: errCode, message: ERRCODE_MAP.get(errCode)} as BusinessError;
   }
+
   async documentPickerSave(...args: Object[]): Promise<BusinessError | string[] | undefined> {
-    let context = GlobalContext.load('context') as common.UIAbilityContext;
     let config: Record<string, string | Record<string, Object>>;
-    let result: ability.AbilityResult;
+    let result: dialogRequest.RequestResult | ability.AbilityResult;
     try {
-      config = this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION_MODAL);
       config = this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION);
-      result = await context.startAbilityForResult(config, {windowMode: 0});
+      result = await this.context.startAbilityForResult(config, {windowMode: 0});
     } catch (error) {
-      HiLog.info(TAG, `[picker] error: ${error}`);
+      HiLog.info(TAG, `startAbilityForResult${JSON.stringify(error)}`);
       return undefined;
     }
     HiLog.info(TAG, `[picker] Save result: ${JSON.stringify(result)}`);
@@ -404,18 +399,19 @@ export default class SaveAsAbility extends UIAbility {
     return undefined;
   }
 
-  async prepareDlpFile(): Promise<void> {
-    HiLog.info(TAG, `getFile start: ${JSON.stringify(GlobalContext.load('abilityWant'))}`);
+  async prepareDlpFile(want: Want): Promise<void> {
+    HiLog.info(TAG, `getFile start prepareDlpFile`);
     let uri = '';
     let displayName = '';
-
-    let ret = await this.parseParams();
+    let ret = await this.parseParams(want);
     if (!ret) {
+      HiLog.info(TAG, `parseParams failed`);
       return;
     }
     let documentSaveOptions = new picker.DocumentSaveOptions();
     displayName = this.fileName;
     documentSaveOptions.newFileNames = [displayName];
+    documentSaveOptions.fileSuffixChoices = [`.${this.suffix}.dlp`];
     try {
       let saveRes: BusinessError | string[] | undefined = await this.documentPickerSave(documentSaveOptions);
       if (saveRes == undefined || (saveRes instanceof Array && saveRes.length == 0)) {
@@ -429,8 +425,9 @@ export default class SaveAsAbility extends UIAbility {
       }
       try {
         await this.fileOpen(uri);
-        await this.pickerDialog(uri);
+        await this.pickerDialog(uri, want);
       } catch {
+        HiLog.info(TAG, `fileOpen or pickerDialog start failed`);
         return;
       }
     } catch (err) {
@@ -439,20 +436,18 @@ export default class SaveAsAbility extends UIAbility {
         if (this.file != undefined) {
           await fs.close(this.file);
         }
+        await this.deleteUri(uri);
       } catch (err) {
         HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
       }
-      await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
       this.isOK = false;
-      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-        {
-          code: Constants.ERR_JS_APP_INSIDE_ERROR
-        } as BusinessError);
+      await GetAlertMessage.startAlertAbility(this.context,
+        { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
   }
 
-  pickerDialog(uri: string): Promise<void> {
+  pickerDialog(uri: string, want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       let token2FileValue: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[] =
         (GlobalContext
@@ -467,20 +462,18 @@ export default class SaveAsAbility extends UIAbility {
       if (!this.retVal) {
         try {
           await fs.close(this.file);
+          await this.deleteUri(uri);
         } catch (err) {
           HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
         }
-        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         fs.closeSync(this.srcFdPicker);
         this.isOK = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-          {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR
-          } as BusinessError);
+        await GetAlertMessage.startAlertAbility(this.context,
+          { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         reject();
       }
       try {
-        await this.openDLPFile(uri);
+        await this.openDLPFile(uri, want);
         await this.addDLPLinkFile(appId, uri);
       } catch {
         reject();
@@ -516,26 +509,23 @@ export default class SaveAsAbility extends UIAbility {
           if (this.file != undefined) {
             await fs.close(this.file);
           }
+          await this.deleteUri(uri);
         } catch (err) {
           HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
         }
-        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         this.isOK = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-          {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR
-          } as BusinessError);
+        await GetAlertMessage.startAlertAbility(this.context,
+          { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         reject();
       }
     })
   }
 
-  openDLPFile(uri: string): Promise<void> {
+  openDLPFile(uri: string, want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       let callerAppId: string;
       try {
-        let callerBundleName =
-          (GlobalContext.load('abilityWant') as Want).parameters?.['ohos.aafwk.param.callerBundleName'] as string;
+        let callerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
         callerAppId = await getAppId(callerBundleName);
         HiLog.info(TAG, `get AppId: ${callerAppId}`);
       } catch {
@@ -546,16 +536,15 @@ export default class SaveAsAbility extends UIAbility {
         this.newDlpFile = await dlpPermission.openDLPFile(this.dstFdPicker, callerAppId);
       } catch (err) {
         HiLog.error(TAG, `generateDlpFile: ${this.dstFdPicker}, failed: ${JSON.stringify(err)}`);
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext, err);
+        await GetAlertMessage.startAlertAbility(this.context, err);
         try {
           await fs.close(this.file);
+          await this.deleteUri(uri);
         } catch (err) {
           HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
         }
-        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         fs.closeSync(this.srcFdPicker);
         reject();
-        return;
       }
       resolve();
     })
@@ -582,18 +571,34 @@ export default class SaveAsAbility extends UIAbility {
         }
         try {
           await fs.close(this.file);
+          await this.deleteUri(uri);
         } catch (err) {
           HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
         }
-        await (GlobalContext.load('dsHelper') as fileAccess.FileAccessHelper).delete(uri);
         fs.closeSync(this.srcFdPicker);
         this.isOK = false;
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
-          {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR
-          } as BusinessError);
+        await GetAlertMessage.startAlertAbility(this.context,
+          { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         reject();
-        return;
+      }
+      resolve();
+    })
+  }
+
+  deleteUri(uri: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
+      try {
+        uriInfo = new fileUri.FileUri(uri);
+      } catch (err) {
+        HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
+        reject();
+      }
+      try {
+        await fs.unlink(uriInfo.path);
+      } catch (err) {
+        HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
+        reject();
       }
       resolve();
     })

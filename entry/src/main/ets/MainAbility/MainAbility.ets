@@ -14,8 +14,6 @@
  */
 
 import UIAbility from '@ohos.app.ability.UIAbility';
-import abilityAccessCtrl from '@ohos.abilityAccessCtrl';
-import { Permissions } from '@ohos.abilityAccessCtrl';
 import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import Want from '@ohos.app.ability.Want';
@@ -61,10 +59,6 @@ export default class MainAbility extends UIAbility {
     GlobalContext.store('abilityWant', want);
     if (!GlobalContext.load('fileOpenHistoryFromMain')) {
       GlobalContext.store('fileOpenHistoryFromMain', new Map<string, string>());
-    }
-    if (GlobalContext.load('fileOpenHistoryFromMain').has(want.uri)) {
-      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_ENCRYPTING } as BusinessError);
-      return;
     }
     GlobalContext.store('context', this.context);
     GlobalContext.store('uri', want.uri ?? '');
@@ -114,26 +108,26 @@ export default class MainAbility extends UIAbility {
     AppStorage.setOrCreate('validity', GlobalContext.load('dlpProperty').expireTime)
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      await showErrorDialogAndExit(windowStage, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
       if (this.domainAccount) {
         try {
-          await this.checkValidEnterpriseAndAccount();
+          await this.checkValidEnterpriseAndAccount(windowStage);
         } catch {
           return;
         }
       }
 
       windowStage.loadContent('pages/changeEncryption', (err: BusinessError) =>{
-        if (err.code !== 0) {
+        if (err && err.code !== 0) {
           HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
         }
       });
     } else {
       windowStage.loadContent('pages/permissionStatus', (err: BusinessError) =>{
-        if (err.code !== 0) {
+        if (err && err.code !== 0) {
           HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
         }
       });
@@ -181,7 +175,7 @@ export default class MainAbility extends UIAbility {
     return true;
   }
 
-  async checkValidEnterpriseAndAccount(): Promise<void> {
+  async checkValidEnterpriseAndAccount(windowStage: window.WindowStage): Promise<void> {
     return new Promise(async (resolve, reject) => {
       let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
       AccountTipsConfig.getAccountInfo(accountInfo.domainInfo.accountName)
@@ -189,7 +183,7 @@ export default class MainAbility extends UIAbility {
           resolve();
         })
         .catch(async (error: BusinessError) => {
-          await showErrorDialogAndExit(error);
+          await showErrorDialogAndExit(windowStage, error);
           reject();
           return;
         })
@@ -238,7 +232,7 @@ export default class MainAbility extends UIAbility {
     GlobalContext.store('abilityWant', want);
     GlobalContext.store('uri', (GlobalContext.load('abilityWant') as Want).uri as string);
     sendDlpManagerAccountLogin(0);
-    let requestIsFromSandBox: boolean = await judgeIsSandBox();
+    let requestIsFromSandBox: boolean = await judgeIsSandBox(want);
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
     HiLog.info(TAG, `request is from sandbox: ${requestIsFromSandBox}`);
     if (requestIsFromSandBox) {
@@ -260,9 +254,9 @@ export default class MainAbility extends UIAbility {
       GlobalContext.store('dlpFileName', dlpFileName);
       GlobalContext.store('linkFileName', linkFileName);
       GlobalContext.store('dlpProperty', data);
-      GlobalContext.store('permanent', data.expireTime === 0);
+      AppStorage.setOrCreate('permanent', data.expireTime === 0);
       if (data.expireTime !== 0) {
-        GlobalContext.store('validity', new Date(data.expireTime as number));
+        AppStorage.setOrCreate('validity', new Date(data.expireTime as number));
       }
       GlobalContext.store('uri', uri ?? '');
       this.gotoPage(windowStage);
@@ -276,7 +270,7 @@ export default class MainAbility extends UIAbility {
     try {
       isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'));
     } catch {
-      await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      await showErrorDialogAndExit(windowStage, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
     if (!isDlpSuffix) {
@@ -284,7 +278,7 @@ export default class MainAbility extends UIAbility {
       GlobalContext.store('originFileName', fileName);
       GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
       windowStage.loadContent('pages/encryptionProtection', (err: BusinessError) =>{
-        if (err.code !== 0) {
+        if (err && err.code !== 0) {
           HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
         }
       });
@@ -300,7 +294,7 @@ export default class MainAbility extends UIAbility {
   async dlpFilesToEncrypt(windowStage: window.WindowStage): Promise<void> {
     let uri: string = GlobalContext.load('uri') as string;
     try {
-      await this.findFileOpenHistoryHome(uri);
+      await this.findFileOpenHistoryHome(windowStage, uri);
     } catch {
       return;
     }
@@ -324,14 +318,14 @@ export default class MainAbility extends UIAbility {
           name: '',
           message: msg,
         }
-        await showErrorDialogAndExit(ansErr);
+        await showErrorDialogAndExit(windowStage, ansErr);
         return;
       } else {
         GlobalContext.store('dlpProperty', data);
-        GlobalContext.store('permanent', data.expireTime === 0);
+        AppStorage.setOrCreate('permanent', data.expireTime === 0);
         GlobalContext.store('fileOpenHistoryFromMain', new Map<string, string>());
         if (data.expireTime !== 0) {
-          GlobalContext.store('validity', new Date(data.expireTime as number));
+          AppStorage.setOrCreate('validity', new Date(data.expireTime as number));
         }
         let fileOpenHistoryFromMain: Map<string, string> =
          GlobalContext.load('fileOpenHistoryFromMain') as Map<string, string>;
@@ -342,11 +336,11 @@ export default class MainAbility extends UIAbility {
     })
   }
 
-  findFileOpenHistoryHome(uri: string): Promise<void> {
+  findFileOpenHistoryHome(windowStage: window.WindowStage, uri: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.homeFeature.fileOpenHistoryHome(uri, async (err: number) => {
         if (err === 0) {
-          await showErrorDialogAndExit({ code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
+          await showErrorDialogAndExit(windowStage, { code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
           reject();
         }
         resolve();
