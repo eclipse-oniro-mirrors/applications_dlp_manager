@@ -86,7 +86,7 @@
     },
     {
       "name": "header_title_readonly_tips",
-      "value": "Users with the read-only access can view this file, but can't edit, copy, or print it."
+      "value": "Users with read-only access can view this file, but can't edit, copy, or print it."
     },
     {
       "name": "header_title_edit_tips",
@@ -126,7 +126,7 @@
     },
     {
       "name": "enter_a_complete_work_ID",
-      "value": "Enter employee ID and press Enter. Ex: a00123456"
+      "value": "Enter employee ID and press Enter. For example: a00123456"
     },
     {
       "name": "incorrect_work_ID",
