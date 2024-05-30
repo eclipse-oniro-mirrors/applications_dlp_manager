@@ -82,9 +82,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (!GlobalContext.load('fileOpenHistory')) {
       GlobalContext.store('fileOpenHistory', new Map<string, (number | string)[]>());
     }
-    if (!GlobalContext.load('authPerm2Sandbox')) {
-      GlobalContext.store('authPerm2Sandbox', new Map<dlpPermission.DLPFileAccess, (number | string)[]>());
-    }
     if (!GlobalContext.load('token2File')) {
       GlobalContext.store('token2File', new Map<number, (number | string | dlpPermission.DLPFile)[]>());
     }
@@ -157,8 +154,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
           (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(
             this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri]
           );
-          (GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess,
-            (number | string)[]>).set(this.authPerm, [this.sandboxBundleName, this.appIndex]);
           (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile |
             dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId,
             [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
@@ -401,16 +396,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         } else {
           await this.getOpenDLPFile(startId);
         }
-        this.gatheringType = await dlpPermission.getDLPGatheringPolicy();
-        let authPerm2Sandbox: Map<dlpPermission.DLPFileAccess, (number | string)[]> =
-          GlobalContext.load('authPerm2Sandbox') as Map<dlpPermission.DLPFileAccess, (number | string)[]>;
-        if (authPerm2Sandbox.has(this.authPerm) &&
-          this.gatheringType === dlpPermission.GatheringPolicyType.GATHERING) {
-          this.appIndex = authPerm2Sandbox.get(this.authPerm)?.[1] as number;
-          HiLog.info(TAG, `Dlp gathering is on: ${this.fileName}, to sandbox: ${this.sandboxBundleName}${this.appIndex}`);
-          this.sortByAuthPerm = true;
-        }
-        if (!this.alreadyOpen && !this.sortByAuthPerm) {
+        if (!this.alreadyOpen) {
           hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
           let appInfo: dlpPermission.DLPSandboxInfo = await dlpPermission.installDLPSandbox(
             this.sandboxBundleName, this.authPerm, this.userId, this.uri
