@@ -33,12 +33,12 @@ import {
   getFileFd,
   getFileUriByPath,
   getAppId,
-  isPC,
   DLPInfo,
   getDLPInfo,
   sendDlpFileOpenProperties,
   isValidPath,
-  defaultDlpFile
+  defaultDlpFile,
+  getAccountType
 } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
@@ -73,7 +73,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private userId: number = -1;
   private linkFileWriteable: boolean = false;
   private callerBundleName: string = '';
-  private domainAccount: boolean = !isPC() ? false : true;
+  private accountType: number = dlpPermission.AccountType.DOMAIN_ACCOUNT;
 
   async onCreate(want: Want): Promise<void> {
     if (!GlobalContext.load('sandbox2linkFile')) {
@@ -216,10 +216,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'SANDBOX_PKGNAME': sandboxName,
       } as Record<string, number | string>
     };
-    if (appIndex !== -1) {
+    if (appIndex !== -1 && event.params) {
       event.params['SANDBOX_INDEX'] = appIndex;
     }
-    if (reason !== undefined) {
+    if (reason !== undefined && event.params) {
       event.params['REASON'] = reason;
     }
     try {
@@ -240,7 +240,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'SANDBOX_PKGNAME': sandboxName,
       } as Record<string, number | string>
     };
-    if (appIndex !== -1) {
+    if (appIndex !== -1 && event.params) {
       event.params['SANDBOX_INDEX'] = appIndex;
     }
     try {
@@ -257,6 +257,18 @@ export default class ViewAbility extends ServiceExtensionAbility {
       fileio.closeSync(this.dlpFd);
     } catch (err) {
       HiLog.error(TAG, `closeFile failed: ${JSON.stringify(err)}`);
+    }
+  }
+
+  async startLoginAbility(): Promise<void> {
+    let accountWant: Want = {
+      bundleName: 'com.huawei.hmos.dlpcredmgr',
+      abilityName: 'DlpCredLoginAbility'
+    };
+    try {
+      await this.context.startAbility(accountWant);
+    } catch {
+      HiLog.info(TAG, `startLoginAbility failed`);
     }
   }
 
@@ -279,6 +291,17 @@ export default class ViewAbility extends ServiceExtensionAbility {
         return;
       }
       hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
+      if (this.accountType === dlpPermission.AccountType.CLOUD_ACCOUNT) {
+        if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+          this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+          HiLog.info(TAG, 'account not login');
+          await this.startLoginAbility();
+          reject();
+          return;
+        }
+        resolve();
+        return;
+      }
       let codeMessage = checkDomainAccountInfo(this.accountInfo);
       if (codeMessage) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
@@ -306,6 +329,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           return;
         }
         this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd, callerAppId);
+        this.accountType = this.dlpFile.dlpProperty.ownerAccountType;
       } catch (err) {
         HiLog.error(TAG, `openDLPFile: ${this.fileName}, failed: ${JSON.stringify(err)}`);
         hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
@@ -315,7 +339,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
           Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
         ); // 103:DLP_FILE_PARSE_ERROR
         let accountFlag: boolean = true;
-        if (this.domainAccount && err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
+        if (this.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT &&
+          err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
           let accountName: string = err.message.split(', contact:')?.[1];
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
@@ -342,10 +367,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async dlpGetAuthPerm(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      if (this.domainAccount) {
+      if (this.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
         this.authPerm = getAuthPerm(this.accountInfo?.domainInfo.accountName ?? '', this.dlpFile.dlpProperty);
       } else {
-        this.authPerm = getAuthPerm(this.accountInfo?.distributedInfo.name ?? '', this.dlpFile.dlpProperty);
+        this.authPerm = dlpPermission.DLPFileAccess.READ_ONLY;
       }
       if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
         this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
@@ -617,6 +642,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     } catch {
       return;
     }
+    try {
+      this.accountType = await getAccountType(this.context, this.dlpFd);
+    } catch {
+      return;
+    }
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
     this.sandboxBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
@@ -641,14 +671,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
     }
     // uri permission just for domainAccount
-    if (this.domainAccount) {
-      let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
-        wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
-      let targetBundleName = this.sandboxBundleName;
-      uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
-        HiLog.info(TAG, `grandUriPermission result: ${JSON.stringify(result)}`);
-      });
-    }
+    let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
+      wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
+    let targetBundleName = this.sandboxBundleName;
+    uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
+      HiLog.info(TAG, `grandUriPermission result: ${JSON.stringify(result)}`);
+    });
     this.startSandboxApp(startId);
     AppStorage.setOrCreate('hiCode', Constants.DLP_START_SANDBOX_SUCCESS);
     sendDlpFileOpenProperties();

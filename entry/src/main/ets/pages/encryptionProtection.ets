@@ -35,7 +35,6 @@ import {
   directionStatus,
   AuthAccount,
   getFileUriByPath,
-  isPC,
   sendDlpFileCreateProperties,
   sendDlpManagerFileConfiguration,
   getFileSizeByUri
@@ -70,11 +69,9 @@ interface dlpDataType {
   offlineAccess: boolean;
   everyoneAccessList: Array<dlpPermission.DLPFileAccess>;
 }
-let domainAccount = !isPC() ? false : true;
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
-  ownerAccountType: domainAccount ?
-    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  ownerAccountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
   authUserList: [],
   contactAccount: '',
   offlineAccess: true,
@@ -101,8 +98,7 @@ struct DlpDialog {
   @State prepareData: boolean = false;
   @State validity: Date = AppStorage.get('validity') || new Date();
   @State selectedIndex: number = AppStorage.get('permanent') === false ? 1 : 0;
-  @State domainOrCloudAccount: number = domainAccount ?
-    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT
+  @State domainOrCloudAccount: number = dlpPermission.AccountType.DOMAIN_ACCOUNT
   @State permissionDict: PermissionType[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0
@@ -200,8 +196,10 @@ struct DlpDialog {
 
     try {
       let userId = await getUserId();
-      event.params['USER_ID'] = userId;
-      await hiSysEvent.write(event);
+      if (event.params) {
+        event.params['USER_ID'] = userId;
+        await hiSysEvent.write(event);
+      }
     } catch (err) {
       HiLog.error(TAG, `sendDlpFileCreateFault failed, err: ${JSON.stringify(err)}`);
     }
@@ -218,8 +216,10 @@ struct DlpDialog {
     };
     try {
       let userId = await getUserId();
-      event.params['USER_ID'] = userId;
-      await hiSysEvent.write(event);
+      if (event.params) {
+        event.params['USER_ID'] = userId;
+        await hiSysEvent.write(event);
+      }
     } catch (err) {
       HiLog.error(TAG, `sendDlpFileCreateEvent, err: ${JSON.stringify(err)}`);
     }
@@ -420,7 +420,7 @@ struct DlpDialog {
         let dstFileSize: number = await getFileSizeByUri(uri);
         AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
         AppStorage.setOrCreate('hiCode', 201);
-        sendDlpFileCreateProperties(); // 201: DLP_FILE_CREATE_SUCCESS
+        sendDlpFileCreateProperties('DLP_FILE_CREATE_EVENT'); // 201: DLP_FILE_CREATE_SUCCESS
         GlobalContext.store('dlpFileName', uriInfo.name);
         GlobalContext.store('dlpProperty', _dlp);
         GlobalContext.store('uri', uri);
@@ -448,13 +448,8 @@ struct DlpDialog {
     this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) => 
       !this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount)
     );
-    if (domainAccount) {
-      property.ownerAccount = accountInfo.domainInfo.accountName;
-      property.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
-    } else {
-      property.ownerAccount = accountInfo.distributedInfo.name;
-      property.ownerAccountID = accountInfo.distributedInfo.id;
-    }
+    property.ownerAccount = accountInfo.domainInfo.accountName;
+    property.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
     property.authUserList = [];
     property.everyoneAccessList = [];
     property.offlineAccess = this.selectedIndex === 0 ? true : false;
@@ -520,17 +515,10 @@ struct DlpDialog {
   }
 
   async prepareDlpProperty() {
-    if (domainAccount) {
-      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
-      this.dlpProperty.ownerAccount = accountInfo.domainInfo.accountName;
-      this.dlpProperty.contactAccount = accountInfo.domainInfo.accountName;
-      this.dlpProperty.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
-    } else {
-      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
-      this.dlpProperty.ownerAccount = accountInfo.distributedInfo.name;
-      this.dlpProperty.contactAccount = accountInfo.distributedInfo.name;
-      this.dlpProperty.ownerAccountID = accountInfo.distributedInfo.id;
-    }
+    let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo') as osAccount.OsAccountInfo;
+    this.dlpProperty.ownerAccount = accountInfo.domainInfo.accountName;
+    this.dlpProperty.contactAccount = accountInfo.domainInfo.accountName;
+    this.dlpProperty.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
     let ownerAccount: dlpPermission.AuthUser = {
       authAccount: this.dlpProperty.ownerAccount,
       dlpFileAccess: dlpPermission.DLPFileAccess.FULL_CONTROL,
@@ -912,11 +900,10 @@ struct DlpDialog {
           })
         }
         .visibility(this.processing ? Visibility.Hidden : Visibility.Visible)
-        .width( domainAccount ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+        .width(Constants.ENCRYPTION_PC_FIXING_WIDTH)
         .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
         .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-        .constraintSize({ minWidth: domainAccount ?
-          Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+        .constraintSize({minWidth: Constants.ENCRYPTION_PC_FIXING_WIDTH})
         .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
       }
     }

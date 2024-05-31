@@ -24,7 +24,7 @@ import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
 import abilityManager from '@ohos.app.ability.abilityManager';
-import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile, isPC } from '../common/utils';
+import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile } from '../common/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
@@ -101,7 +101,6 @@ export default class SaveAsAbility extends UIAbility {
   private newDlpFile: dlpPermission.DLPFile = defaultDlpFile;
   private srcFdPicker: number = -1;
   private linkFileName: string = '';
-  private domainAccount: boolean = !isPC() ? false : true;
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     HiLog.info(TAG, `onCreate`);
@@ -179,10 +178,7 @@ export default class SaveAsAbility extends UIAbility {
         HiLog.error(TAG, `invalid authPerm: ${this.authPerm}`);
         this.isOK = false;
         AppStorage.setOrCreate('contactAccount', contactAccount);
-        let accountFlag: boolean = true;
-        if (this.domainAccount) {
-          accountFlag = await GetAlertMessage.checkAccountInfo(contactAccount);
-        }
+        let accountFlag = await GetAlertMessage.checkAccountInfo(contactAccount);
         if (!accountFlag) {
           await GetAlertMessage.startAlertAbility(this.context, {
             code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);

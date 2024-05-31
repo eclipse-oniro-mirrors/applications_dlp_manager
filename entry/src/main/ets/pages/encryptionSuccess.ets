@@ -26,7 +26,6 @@ import {
   toggleShow,
   directionStatus,
   getTime,
-  isPC
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -631,12 +630,12 @@ struct encryptionSuccess {
                 right: Constants.FOOTER_ROW_PAD_RIGHT
               })
             }
-            .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+            .width(Constants.ENCRYPTION_PC_FIXING_WIDTH)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
             .constraintSize({
-              minWidth: isPC() ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH,
-              minHeight: isPC() ? Constants.ENCRYPTION_LOADING_HEIGHT : Constants.ENCRYPTION_PC_FIXING_MINWIDTH
+              minWidth: Constants.ENCRYPTION_PC_FIXING_WIDTH,
+              minHeight: Constants.ENCRYPTION_LOADING_HEIGHT
             })
             .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
           }

@@ -4,6 +4,7 @@
     "pages/encryptionProtection",
     "pages/encryptionSuccess",
     "pages/changeEncryption",
-    "pages/permissionStatus"
+    "pages/permissionStatus",
+    "pages/encryptedSharing"
   ]
 }

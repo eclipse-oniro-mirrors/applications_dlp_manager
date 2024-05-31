@@ -21,7 +21,6 @@ import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 import { GetAlertMessage } from '../GetAlertMessage';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 import { HiLog } from '../HiLog';
-import { isPC } from '../utils';
 
 const TAG = 'staff';
 
@@ -60,7 +59,7 @@ struct staffItem {
   @Prop textContent: string = '';
   @State accountTipsArray: AccountTips[] = [];
   @State isHover: boolean = false;
-  @State domainAccount: boolean = !isPC() ? false : true;
+  @State domainAccount: boolean = true;
   dlpAlertDialog?: CustomDialogController;
 
   @Builder popupBuilderTips() {

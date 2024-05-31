@@ -17,6 +17,10 @@
       "value": "DLPViewer"
     },
     {
+      "name": "EncryptedSharing",
+      "value": "EncryptedSharing"
+    },
+    {
       "name": "ban",
       "value": "Cancel"
     },
@@ -201,6 +205,10 @@
       "value": "You don't have permission to view this file. To apply for permission, contact %s."
     },
     {
+      "name": "MESSAGE_APP_NOT_HAVE_PERM",
+      "value": "You don't have permission to view this file."
+    },
+    {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
       "value": "Unable to open file. Check and try again."
     },
@@ -299,6 +307,34 @@
     {
       "name": "TITLE_APP_VERSION_LOWER",
       "value": "System update required"
+    },
+    {
+      "name": "Share_Add_Viewable_Users",
+      "value": "Add Viewable Users"
+    },
+    {
+      "name": "Share_Enter_Mobile_Number",
+      "value": "Enter the bound mobile number"
+    },
+    {
+      "name": "Share_Only_Supported_Mobile_Number",
+      "value": "Currently, only mobile numbers are supported."
+    },
+    {
+      "name": "Share_Tips_Phone_Format",
+      "value": "Enter a mobile number in the correct format."
+    },
+    {
+      "name": "Share_Confirms",
+      "value": "Confirms"
+    },
+    {
+      "name": "Share_File_Encrypted_Success",
+      "value": "File encrypted successfully."
+    },
+    {
+      "name": "Share_File_Encrypted_Failed",
+      "value": "Failed to encrypt the file."
     }
   ]
 }

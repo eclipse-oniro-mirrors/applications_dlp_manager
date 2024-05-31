@@ -21,9 +21,9 @@ import emitter from '@ohos.events.emitter';
 import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager'
 import fs from '@ohos.file.fs';
+import zlib from '@ohos.zlib';
 import fileUri from '@ohos.file.fileuri';
 import { BusinessError, Callback } from '@ohos.base'
-import deviceInfo from '@ohos.deviceInfo';
 import Want from '@ohos.app.ability.Want';
 import common from '@ohos.app.ability.common';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
@@ -33,11 +33,14 @@ import hiSysEvent from '@ohos.hiSysEvent';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'Utils';
-let domainAccount = !isPC() ? false : true;
+const HEAD_LENGTH_IN_BYTE = 20;
+class ChangeOption {
+  public offset: number = 0
+  public length: number = 0
+}
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
-  ownerAccountType: domainAccount ?
-    dlpPermission.AccountType.DOMAIN_ACCOUNT : dlpPermission.AccountType.CLOUD_ACCOUNT,
+  ownerAccountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
   authUserList: [],
   contactAccount: '',
   offlineAccess: true,
@@ -99,24 +102,15 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
 }
 
 function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number {
-  if (domainAccount) {
-    AppStorage.setOrCreate('hiAccountType', 'Domain_Account');
-    if (accountInfo.domainInfo.accountName === '' &&
-      accountInfo.domainInfo.accountId === '') {
-      AppStorage.setOrCreate('hiAccountStatus', 0);
-      return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
-    }
-    if (!accountInfo.domainInfo.isAuthenticated) {
-      AppStorage.setOrCreate('hiAccountStatus', 0);
-      return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
-    }
-  } else {
-    AppStorage.setOrCreate('hiAccountType', 'Cloud_Account');
-    if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
-      accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-      AppStorage.setOrCreate('hiAccountStatus', 0);
-      return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
-    }
+  AppStorage.setOrCreate('hiAccountType', 'Domain_Account');
+  if (accountInfo.domainInfo.accountName === '' &&
+    accountInfo.domainInfo.accountId === '') {
+    AppStorage.setOrCreate('hiAccountStatus', 0);
+    return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
+  }
+  if (!accountInfo.domainInfo.isAuthenticated) {
+    AppStorage.setOrCreate('hiAccountStatus', 0);
+    return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
   }
   AppStorage.setOrCreate('hiAccountStatus', 1);
   return Constants.ERR_JS_APP_ACCOUNT_INFO;
@@ -184,7 +178,7 @@ let removeDuplicate = (arr: AuthAccount[], arg: string) => {
 let calculate = (newValue: Area, allNames: AuthAccount[]) => {
   let editLength = allNames.length;
   let screenWidth = Number(newValue['width']);
-  let nameChange = domainAccount ? Constants.ENCRYPTION_STAFF_WIDTH_NAME : Constants.ENCRYPTION_STAFF_WIDTH;
+  let nameChange = Constants.ENCRYPTION_STAFF_WIDTH_NAME;
   let rowNamesLen = Math.floor(screenWidth / (nameChange + Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT));
   let showNamesArr = editLength > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
     ? allNames.slice(0, 2 * rowNamesLen - 1)
@@ -227,13 +221,6 @@ function directionStatus(func: Callback<number>) {
   emitter.on(innerEvent, (eventData: emitter.EventData) => {
     func(eventData.data?.direction);
   });
-}
-
-function isPC(): boolean {
-  let deviceTypeName = deviceInfo.deviceType;
-  let productModel = deviceInfo.productModel;
-
-  return (deviceTypeName === 'tablet' || deviceTypeName === '2in1') && productModel?.startsWith('HYM') === true
 }
 
 async function showErrorDialogAndExit(windowStage: window.WindowStage, error: BusinessError): Promise<void> {
@@ -398,10 +385,10 @@ function sendDlpManagerFileConfiguration() {
   }
 }
 
-function sendDlpFileCreateProperties() {
+function sendDlpFileCreateProperties(name: string) {
   let event: hiSysEvent.SysEventInfo = {
     domain: 'DLP_UE',
-    name: 'DLP_FILE_CREATE_EVENT',
+    name: name,
     eventType: hiSysEvent?.EventType?.BEHAVIOR,
     params: {
       'PNAMEID': AppStorage.get('hiPNameId') ?? '',
@@ -445,6 +432,26 @@ function sendDlpFileOpenProperties() {
   }
 }
 
+function sendDlpManager2CAccountLogin(errorCode: number) {
+  let event: hiSysEvent.SysEventInfo = {
+    domain: 'DLP_UE',
+    name: 'DLP_2C_MANAGER_ACCOUNT_LOGIN',
+    eventType: hiSysEvent?.EventType?.BEHAVIOR,
+    params: {
+      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
+      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
+      'ACCOUNT_TYPE': 1,
+      'PKG_NAME': AppStorage.get('hiPkgName') ?? '',
+    } as Record<string, number>
+  };
+
+  try {
+    hiSysEvent.write(event);
+  } catch (err) {
+    HiLog.error(TAG, `sendDlpManagerAccountLogin failed`);
+  }
+}
+
 function isValidPath(path: string): Boolean {
   if (path.indexOf('/./') !== -1 || path.indexOf('/../') !== -1) {
     return false;
@@ -458,7 +465,63 @@ function measureTextSizeWidth(str: Resource | string) {
     fontSize: '16fp'
   })
   return px2vp(Number(itemLenWithPX.width) + Constants.ENCRYPTION_PROTECTION_TIME_MENU_WIDTH);
-} 
+}
+
+function getAccountType(
+  context: common.ServiceExtensionContext | common.UIExtensionContext, fd: number): Promise<number> {
+  return new Promise(async (resolve, reject) => {
+    let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
+    let option: ChangeOption = {
+      offset: 0,
+      length: HEAD_LENGTH_IN_BYTE
+    };
+    let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
+    let filePath = context.filesDir + '/saveAs' + random;
+    let dirPath = context.filesDir + '/saveAsUnzip' + random;
+    let fileName = dirPath + '/dlp_cert';
+    try {
+      fs.readSync(fd, z, option);
+      let ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+      await fs.copyFile(fd, ff.fd);
+      await fs.mkdir(dirPath);
+      await zlib.decompressFile(filePath, dirPath);
+      let dlpInfo = fs.readTextSync(fileName);
+      let infoArray = dlpInfo.split('accountType');
+      let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
+      HiLog.info(TAG, `accountType: ${type}`);
+      GlobalContext.store('accountType', Number(type));
+      resolve(Number(type));
+    } catch (err) {
+      HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`)
+      reject();
+    } finally {
+      deleteFile(filePath);
+      removeDir(dirPath);
+    }
+  })
+}
+
+function deleteFile(file: string) {
+  try {
+    let res = fs.accessSync(file);
+    if (res) {
+      fs.unlinkSync(file);
+    }
+  } catch (err) {
+    HiLog.error(TAG, `deleteFile: ${JSON.stringify(err)}`);
+  }
+}
+
+function removeDir(file: string) {
+  try {
+    let res = fs.accessSync(file);
+    if (res) {
+      fs.rmdirSync(file);
+    }
+  } catch (err) {
+    HiLog.error(TAG, `rmdirSync: ${JSON.stringify(err)}`);
+  }
+}
 
 export {
   AuthAccount,
@@ -475,7 +538,6 @@ export {
   calculate,
   toggleShow,
   directionStatus,
-  isPC,
   showErrorDialogAndExit,
   goToAlertMessagePage,
   getAppId,
@@ -486,8 +548,10 @@ export {
   sendDlpManagerFileConfiguration,
   sendDlpFileCreateProperties,
   sendDlpFileOpenProperties,
+  sendDlpManager2CAccountLogin,
   DLPInfo,
   isValidPath,
   measureTextSizeWidth,
-  defaultDlpFile
+  defaultDlpFile,
+  getAccountType
 };

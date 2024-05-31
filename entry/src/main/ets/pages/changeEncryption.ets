@@ -33,7 +33,6 @@ import {
   toggleShow,
   directionStatus,
   getTime,
-  isPC,
   sendDlpManagerFileConfiguration
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
@@ -93,7 +92,7 @@ struct changeEncryption {
   @State staffDataArrayReadOnly: AuthAccount[] = [];
   @State staffDataArrayEdit: AuthAccount[] = [];
   private routerData: Record<string, AuthAccount[]> = {};
-  @State domainAccount: boolean = !isPC() ? false : true;
+  @State domainAccount: boolean = true;
   @State permissionDict: PermissionValue[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as Resource, data: 'target', index: 0
@@ -384,10 +383,8 @@ struct changeEncryption {
         'staffDataArrayEdit': this.staffDataArrayEdit,
       } as Record<string, AuthAccount[]>;
     } else { // ability
-      if (this.domainAccount) {
-        await AccountTipsConfig.getConfigTips();
-        await this.getTextContent();
-      }
+      await AccountTipsConfig.getConfigTips();
+      await this.getTextContent();
 
       this.routerData = {
         'staffDataArrayReadOnly': this.staffDataArrayReadOnly,
@@ -900,12 +897,11 @@ struct changeEncryption {
                 })
               }
               .visibility(this.prepareData ? Visibility.Hidden : Visibility.Visible)
-              .width( this.domainAccount ? Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+              .width(Constants.ENCRYPTION_PC_FIXING_WIDTH)
               .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
               .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
               .constraintSize({
-                minWidth: this.domainAccount ?
-                Constants.ENCRYPTION_PC_FIXING_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH
+                minWidth: Constants.ENCRYPTION_PC_FIXING_WIDTH
               })
               .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
             }

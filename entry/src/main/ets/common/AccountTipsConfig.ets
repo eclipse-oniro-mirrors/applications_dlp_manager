@@ -99,7 +99,7 @@ export class AccountTipsConfig {
         if (isExistFile) {
           configStr = fs.readTextSync(filePath);
         } else {
-          let context: common.UIAbilityContext = GlobalContext.load('context') as common.UIAbilityContext;
+          let context: common.UIAbilityContext = getContext() as common.UIAbilityContext;
           let resourceManager: resourceManager.ResourceManager = context?.resourceManager;
           if (resourceManager === null) {
             HiLog.error(TAG, `loadCcmConfigs failed. resourceManager is null.`);
