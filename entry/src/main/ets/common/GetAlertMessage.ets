@@ -22,6 +22,7 @@ import osAccount from '@ohos.account.osAccount';
 import account_osAccount from '@ohos.account.osAccount';
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
+import dlpPermission from '@ohos.dlpPermission';
 import { measureTextSizeWidth } from './utils';
 import { HiLog } from '../common/HiLog';
 
@@ -51,7 +52,8 @@ export class GetAlertMessage {
       abilityName: 'AlertAbility',
       parameters: {
         error: error,
-        windowHeight
+        windowHeight,
+        accountType: GlobalContext.load('accountType')
       }
     }, options, async (err: BusinessError) => {
       if (err && err.code !== 0) {
@@ -64,8 +66,6 @@ export class GetAlertMessage {
             'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
           },
         });
-      } else if (GlobalContext.load('context')) {
-        (GlobalContext.load('context') as common.UIAbilityContext).terminateSelf();
       } else {
         context.terminateSelf();
       }
@@ -98,7 +98,6 @@ export class GetAlertMessage {
       Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
       Constants.ERR_JS_DLP_FILE_READ_ONLY,
       Constants.ERR_JS_FILE_EXPIRATION,
-      Constants.ERR_JS_USER_NO_PERMISSION,
       Constants.ERR_JS_APP_PARAM_ERROR,
       Constants.ERR_JS_APP_OPEN_REJECTED,
     ].includes(error.code)) {
@@ -111,6 +110,11 @@ export class GetAlertMessage {
     ].includes(error.code)) {
       windowHeight = Constants.START_ABILITY_HEIGHT_FOUR_ROWS;
     };
+    if ([Constants.ERR_JS_USER_NO_PERMISSION].includes(error.code)) {
+      HiLog.info(TAG, `accountType: ${GlobalContext.load('accountType')}`);
+      windowHeight = GlobalContext.load('accountType') === dlpPermission.AccountType.CLOUD_ACCOUNT ?
+      Constants.START_ABILITY_HEIGHT_DEFAULT : Constants.START_ABILITY_HEIGHT_THREE_ROWS;
+    }
     return windowHeight;
   }
 
@@ -136,6 +140,8 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_NOT_DLP_FILE:
         return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
+      case Constants.ERR_JS_USER_NO_PERMISSION:
+        return { 'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage != undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;

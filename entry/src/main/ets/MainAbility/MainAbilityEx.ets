@@ -29,11 +29,11 @@ import {
   judgeIsSandBox,
   getFileFd,
   getAppId,
-  isPC,
   DLPInfo,
   getDLPInfo,
   sendDlpManagerAccountLogin,
-  isValidPath
+  isValidPath,
+  getAccountType
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
@@ -51,7 +51,6 @@ export default class MainAbility extends UIExtensionAbility {
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private callerToken: number = 0;
   private homeFeature!: HomeFeature;
-  private domainAccount: boolean = !isPC() ? false : true;
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `want: ${JSON.stringify(want)}`);
@@ -67,7 +66,6 @@ export default class MainAbility extends UIExtensionAbility {
     AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
     GlobalContext.store('abilityWant', want);
-    GlobalContext.store('context', this.context);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
 
@@ -111,8 +109,7 @@ export default class MainAbility extends UIExtensionAbility {
 
   async gotoPage(session: UIExtensionContentSession): Promise<void> {
     let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
-    let accountName: string = this.domainAccount ?
-      accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
+    let accountName: string = accountInfo.domainInfo.accountName;
     this.authPerm = getAuthPerm(accountName, GlobalContext.load('dlpProperty'));
 
     AppStorage.setOrCreate('authPerm', this.authPerm);
@@ -120,17 +117,15 @@ export default class MainAbility extends UIExtensionAbility {
     AppStorage.setOrCreate('validity', GlobalContext.load('dlpProperty').expireTime)
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+      await GetAlertMessage.startAlertAbility(this.context,
         { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError, session);
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      if (this.domainAccount) {
-        try {
-          await this.checkValidEnterpriseAndAccount(session);
-        } catch {
-          return;
-        }
+      try {
+        await this.checkValidEnterpriseAndAccount(session);
+      } catch {
+        return;
       }
 
       let storage: LocalStorage = new LocalStorage({
@@ -214,8 +209,7 @@ export default class MainAbility extends UIExtensionAbility {
           resolve();
         })
         .catch(async (error: BusinessError) => {
-          await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
-            error, session);
+          await GetAlertMessage.startAlertAbility(this.context, error, session);
           reject();
           return;
         })
@@ -225,7 +219,7 @@ export default class MainAbility extends UIExtensionAbility {
   async checkValidWantAndAccount(session: UIExtensionContentSession): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!this.checkValidWant()) {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        await GetAlertMessage.startAlertAbility(this.context,
           { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError, session);
         reject();
         return;
@@ -238,7 +232,7 @@ export default class MainAbility extends UIExtensionAbility {
         resolve();
       } catch (err) {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+        await GetAlertMessage.startAlertAbility(this.context,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError, session);
         reject();
         return;
@@ -256,7 +250,7 @@ export default class MainAbility extends UIExtensionAbility {
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
     sendDlpManagerAccountLogin(0);
     if (codeMessage) {
-      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+      await GetAlertMessage.startAlertAbility(this.context,
         { code: codeMessage } as BusinessError, session);
       return;
     }
@@ -298,7 +292,7 @@ export default class MainAbility extends UIExtensionAbility {
     try {
       isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'));
     } catch {
-      await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+      await GetAlertMessage.startAlertAbility(this.context,
         { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError, session);
       return;
     }
@@ -318,7 +312,18 @@ export default class MainAbility extends UIExtensionAbility {
       }
       return;
     } else {
-      this.dlpFilesToEncrypt(session);
+      try {
+        let dlpFd = getFileFd(String((GlobalContext.load('abilityWant') as Want).uri));
+        let accountType = await getAccountType(this.context, dlpFd);
+        if (accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+          this.dlpFilesToEncrypt(session);
+        } else {
+          await GetAlertMessage.startAlertAbility(this.context, {
+            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+        }
+      } catch {
+        return;
+      }
     }
   }
 
@@ -350,7 +355,7 @@ export default class MainAbility extends UIExtensionAbility {
           message: msg,
         }
         let accountFlag: boolean = true;
-        if (this.domainAccount && err === Constants.ERR_JS_USER_NO_PERMISSION) {
+        if (err === Constants.ERR_JS_USER_NO_PERMISSION) {
           let accountName: string = msg.split(', contact:')?.[1];
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
@@ -359,25 +364,33 @@ export default class MainAbility extends UIExtensionAbility {
             code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
           return;
         }
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
-          ansErr as BusinessError, session);
+        await GetAlertMessage.startAlertAbility(this.context, ansErr as BusinessError, session);
         return;
       } else {
-        GlobalContext.store('dlpProperty', data);
-        AppStorage.setOrCreate('permanent', data.expireTime === 0);
-        if (data.expireTime !== 0) {
-          AppStorage.setOrCreate('validity', new Date(data.expireTime as number));
-        }
-        this.gotoPage(session);
+        this.getOwnerAccountTypeInfo(data, session);
       }
     })
+  }
+
+  async getOwnerAccountTypeInfo(data: dlpPermission.DLPProperty, session: UIExtensionContentSession) {
+    GlobalContext.store('dlpProperty', data);
+    AppStorage.setOrCreate('permanent', data.expireTime === 0);
+    if (data.expireTime !== 0) {
+      AppStorage.setOrCreate('validity', new Date(data.expireTime as number));
+    }
+    if (data.ownerAccountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+      this.gotoPage(session);
+    } else {
+      await GetAlertMessage.startAlertAbility(this.context, {
+        code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+    }
   }
 
   findFileOpenHistoryHome(uri: string, session: UIExtensionContentSession): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.homeFeature.fileOpenHistoryHome(uri, async (err: number) => {
         if (err === 0) {
-          await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIExtensionContext,
+          await GetAlertMessage.startAlertAbility(this.context,
             { code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError, session);
           reject();
         }

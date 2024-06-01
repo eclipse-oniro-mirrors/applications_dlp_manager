@@ -26,7 +26,6 @@ import {
   getOsAccountInfo,
   judgeIsSandBox,
   getFileFd,
-  isPC,
   getAppId,
   getDLPInfo,
   sendDlpManagerAccountLogin,
@@ -53,14 +52,12 @@ export default class MainAbility extends UIAbility {
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private callerToken:number = 0;
   private homeFeature!: HomeFeature;
-  private domainAccount: boolean = !isPC() ? false : true;
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     GlobalContext.store('abilityWant', want);
     if (!GlobalContext.load('fileOpenHistoryFromMain')) {
       GlobalContext.store('fileOpenHistoryFromMain', new Map<string, string>());
     }
-    GlobalContext.store('context', this.context);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
     if (!GlobalContext.load('linkSet')) {
@@ -99,8 +96,7 @@ export default class MainAbility extends UIAbility {
 
   async gotoPage(windowStage: window.WindowStage): Promise<void> {
     let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
-    let accountName: string = this.domainAccount ?
-      accountInfo.domainInfo.accountName : accountInfo.distributedInfo.name;
+    let accountName: string = accountInfo.domainInfo.accountName;
     this.authPerm = getAuthPerm(accountName, GlobalContext.load('dlpProperty'));
 
     AppStorage.setOrCreate('authPerm', this.authPerm);
@@ -112,12 +108,10 @@ export default class MainAbility extends UIAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      if (this.domainAccount) {
-        try {
-          await this.checkValidEnterpriseAndAccount(windowStage);
-        } catch {
-          return;
-        }
+      try {
+        await this.checkValidEnterpriseAndAccount(windowStage);
+      } catch {
+        return;
       }
 
       windowStage.loadContent('pages/changeEncryption', (err: BusinessError) =>{
@@ -193,7 +187,7 @@ export default class MainAbility extends UIAbility {
   async checkValidWantAndAccount(want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!this.checkValidWant(want)) {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(this.context,
           { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
         reject();
         return;
@@ -206,14 +200,14 @@ export default class MainAbility extends UIAbility {
         resolve();
       } catch (err) {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(this.context,
           { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         reject();
         return;
       }
       let codeMessage = checkDomainAccountInfo(accountInfo);
       if (codeMessage) {
-        await GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+        await GetAlertMessage.startAlertAbility(this.context,
           { code: codeMessage } as BusinessError);
         reject();
         return;

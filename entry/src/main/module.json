@@ -88,6 +88,44 @@
         "description": "service",
         "type": "service",
         "exported": false
+      },
+      {
+        "name": "EncryptedSharingAbility",
+        "srcEntry": "./ets/EncryptedSharingAbility/EncryptedSharingAbility.ets",
+        "icon": "$media:ic_public_lock",
+        "label": "$string:EncryptedSharing",
+        "description": "service",
+        "type": "action",
+        "exported": true,
+        "skills": [
+          {
+            "actions": [
+              "ohos.want.action.sendData"
+            ],
+            "uris": [
+              {
+                "scheme": "file",
+                "utd": "general.file",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "general.plain-text",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "com.adobe.pdf",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "org.openxmlformats.openxml",
+                "maxFileSupported": 1
+              }
+            ]
+          }
+        ]
       }
     ],
     "requestPermissions": [

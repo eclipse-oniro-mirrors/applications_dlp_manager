@@ -22,8 +22,8 @@ import Constants from '../common/constant';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
+import dlpPermission from '@ohos.dlpPermission';
 import { sendDlpManagerAccountLogin } from '../common/utils';
-import { isPC } from '../common/utils';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'Alert';
@@ -125,9 +125,9 @@ struct Index {
     try {
       let messageCode = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError).code;
       let errorMsg = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
+      let accountType = (GlobalContext.load('abilityWant') as Want).parameters?.accountType as number;
       let errInfo: Record<string, Resource> = {};
       if ([
-        Constants.ERR_JS_USER_NO_PERMISSION,
         Constants.ERR_JS_APP_PARAM_ERROR,
         Constants.ERR_JS_APP_OPEN_REJECTED,
         Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
@@ -139,6 +139,9 @@ struct Index {
         errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
       } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED, Constants.ERR_JS_OFFLINE].includes(messageCode)) {
         errInfo = GetAlertMessage.getAlertButtonMessage(errorMsg);
+      } else if ([Constants.ERR_JS_USER_NO_PERMISSION].includes(messageCode)) {
+        errInfo = accountType === dlpPermission.AccountType.CLOUD_ACCOUNT ?
+        GetAlertMessage.getAlertMessage(errorMsg) : GetAlertMessage.getAlertTitleMessage(errorMsg);
       } else {
         errInfo = GetAlertMessage.getAlertMessage(errorMsg);
       }
@@ -247,7 +250,7 @@ struct Index {
     .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
-    .height( isPC() ? Constants.HEADER_COLUMN_WIDTH : this.windowHeight)
+    .height(Constants.HEADER_COLUMN_WIDTH)
     .shadow(ShadowStyle.OUTER_DEFAULT_MD)
     .border({ width: Constants.DIALOG_MD_OFFSET, color: $r('app.color.encryption_divider_color') })
     .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THIN);

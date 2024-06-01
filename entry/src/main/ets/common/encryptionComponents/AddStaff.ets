@@ -18,7 +18,6 @@ import { staffItem } from './staff';
 import Constants from '../constant';
 import { AccountTipsConfig } from '../AccountTipsConfig';
 import { HiLog } from '../HiLog';
-import { isPC } from '../utils';
 
 interface Staff {
   authAccount: string;
@@ -55,7 +54,7 @@ struct AddStaff {
   @State isInputInvalidFlag: boolean = false;
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
-  @State domainAccount: boolean = !isPC() ? false : true;
+  @State domainAccount: boolean = true;
 
   @Builder
   StaffItemBuilder(authAccount: string, textContent: string, index: number) {
@@ -221,8 +220,7 @@ struct AddStaff {
         wrap: FlexWrap.Wrap,
       }) {
         RichEditor(this.options)
-          .placeholder(!this.staffArray.length ? (this.domainAccount
-            ? $r('app.string.enter_a_complete_work_ID') : $r('app.string.enter_a_complete_account')) : '',
+          .placeholder(!this.staffArray.length ? ($r('app.string.enter_a_complete_work_ID')) : '',
             {
               font: { size: $r('sys.float.ohos_id_text_size_body1') },
               fontColor: $r('sys.color.ohos_id_color_text_hint')
@@ -321,11 +319,11 @@ struct AddStaff {
 
       Flex({ direction: FlexDirection.Row }) {
         if (this.isInputInvalid && !this.isNetworkInvalid) {
-          Text(this.domainAccount ? $r('app.string.incorrect_work_ID') : $r('app.string.incorrect_account'))
+          Text($r('app.string.incorrect_work_ID'))
             .inputMessageText()
         }
         if (this.isNetworkInvalid) {
-          Text(this.domainAccount ? $r('app.string.network_invalid') : $r('app.string.incorrect_account'))
+          Text($r('app.string.network_invalid'))
             .inputMessageText()
         }
         Blank()

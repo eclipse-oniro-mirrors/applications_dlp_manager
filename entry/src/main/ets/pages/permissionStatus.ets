@@ -17,7 +17,7 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import ability from '@ohos.ability.ability';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
-import { directionStatus, isPC } from '../common/utils';
+import { directionStatus } from '../common/utils';
 import common from '@ohos.app.ability.common';
 import { HiLog } from '../common/HiLog';
 
@@ -333,12 +333,11 @@ struct PermissionStatus {
                 right: Constants.FOOTER_ROW_PAD_RIGHT
               })
             }
-            .width( isPC() ? Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.HEADER_COLUMN_WIDTH)
+            .width(Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH)
             .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
             .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
             .shadow(ShadowStyle.OUTER_DEFAULT_MD)
-            .constraintSize({ minWidth: isPC() ?
-              Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH : Constants.ENCRYPTION_PC_FIXING_MINWIDTH })
+            .constraintSize({ minWidth: Constants.ENCRYPTION_PC_FIXING_STATUS_WIDTH })
             .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
           }
         }

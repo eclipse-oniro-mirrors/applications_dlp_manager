@@ -17,6 +17,10 @@
       "value": "DLPViewer"
     },
     {
+      "name": "EncryptedSharing",
+      "value": "加密分享"
+    },
+    {
       "name": "ban",
       "value": "取消"
     },
@@ -201,6 +205,10 @@
       "value": "您没有权限查看此文件。如需申请权限，请联系：%s"
     },
     {
+      "name": "MESSAGE_APP_NOT_HAVE_PERM",
+      "value": "您没有权限查看此文件。"
+    },
+    {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
       "value": "无法打开此文件。请检查后重试。"
     },
@@ -299,6 +307,34 @@
     {
       "name": "TITLE_APP_VERSION_LOWER",
       "value": "系统版本过低"
+    },
+    {
+      "name": "Share_Add_Viewable_Users",
+      "value": "添加可查看用户"
+    },
+    {
+      "name": "Share_Enter_Mobile_Number",
+      "value": "输入绑定的手机号码"
+    },
+    {
+      "name": "Share_Only_Supported_Mobile_Number",
+      "value": "当前仅支持输入手机号码"
+    },
+    {
+      "name": "Share_Tips_Phone_Format",
+      "value": "请输入正确格式的手机号"
+    },
+    {
+      "name": "Share_Confirms",
+      "value": "确认"
+    },
+    {
+      "name": "Share_File_Encrypted_Success",
+      "value": "文件加密成功"
+    },
+    {
+      "name": "Share_File_Encrypted_Failed",
+      "value": "文件加密失败"
     }
   ]
 }

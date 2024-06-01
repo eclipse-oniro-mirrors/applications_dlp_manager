@@ -222,6 +222,8 @@ export default class Constants {
   public static FUSE_PATH = '/mnt/data/fuse/';
   public static RAND_START = 2;
   public static RAND_END = 18;
+  public static TYPE_START = 2;
+  public static TYPE_END = 3;
   public static BUNDLE_LEN = 20;
 
   public static DLP_ZIP_MAGIC = 0x04034b50;
@@ -249,4 +251,32 @@ export default class Constants {
   public static SUB_HEADER_HEIGHT = 40;
   public static STAFF_FONT_SIZE = 10;
   public static STAFF_FONT_PADDING = 1;
+
+  // encryptionShare
+  public static REQUEST_CODE = 1;
+  public static INTERNATIONAL_DIALING_CODE = '0086';
+  public static CONTACTS_PICKER_WIDTH = '100%';
+  public static CONTACTS_PICKER_HEIGHT = '100%';
+  public static SHARE_TITLE_HEAD_HEIGHT = 56;
+  public static SHARE_TITLE_HEAD_MARGIN_TOP = 8;
+  public static SHARE_TITLE_HEAD_MARGIN_RIGHT = 16;
+  public static SHARE_TITLE_HEAD_MARGIN_BOTTOM = 24;
+  public static SHARE_TITLE_HEAD_MARGIN_LEFT = 16;
+  public static SHARE_CONTACTS_GROUP_WIDTH = 24;
+  public static SHARE_CONTACTS_GROUP_HEIGHT = 24;
+  public static SHARE_TEXT_INPUT_HEIGHT = 40;
+  public static SHARE_TEXT_INPUT_MAX_LENGTH = 11;
+  public static SHARE_CONTACTS_GROUP_OFFSET_X = -40;
+  public static SHARE_CONTACTS_GROUP_OFFSET_Y = 0;
+  public static SHARE_TITLE_HEAD_PADDING_LEFT = 16;
+  public static SHARE_TEXT_INPUT_MARGIN_RIGHT = 24;
+  public static SHARE_TEXT_INPUT_MARGIN_LEFT = 24;
+  public static SHARE_BUTTON_WIDTH = '100%';
+  public static SHARE_BUTTON_MARGIN_TOP = 64;
+  public static SHARE_BUTTON_MARGIN_LEFT = 24;
+  public static SHARE_BUTTON_MARGIN_RIGHT = 24;
+  public static SHARE_BUTTON_PADDING_BOTTOM = 24;
+  public static SHARE_PAGES_COLUMN_WIDTH = '100%';
+  public static SHARE_PAGES_COLUMN_HEIGHT = '100%';
+  public static SHARE_SET_TIMEOUT = 1500;
 }
