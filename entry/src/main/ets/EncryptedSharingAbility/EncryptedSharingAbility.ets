@@ -17,7 +17,7 @@ import ActionExtensionAbility from '@ohos.app.ability.ActionExtensionAbility';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
 import { HiLog } from '../common/HiLog';
-import { getDLPInfo, DLPInfo, sendDlpManager2CAccountLogin } from '../common/utils';
+import { getDLPInfo, DLPInfo } from '../common/utils';
 
 const TAG = 'share';
 const BG_COLOR = '#00000000';
@@ -56,7 +56,6 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     let dlpInfo: DLPInfo = await getDLPInfo();
     AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
-    sendDlpManager2CAccountLogin(0);
     let storage: LocalStorage = new LocalStorage({
       'session': session,
       'actionWant': want

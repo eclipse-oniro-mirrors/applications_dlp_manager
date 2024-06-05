@@ -24,7 +24,14 @@ import fs from '@ohos.file.fs';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
 import FileUtils, { FileMsg } from '../common/FileUtils';
-import { getFileUriByPath, getFileFd, sendDlpFileCreateProperties, getFileSizeByUri } from '../common/utils';
+import {
+  getFileUriByPath,
+  getFileFd,
+  sendDlpFileCreateProperties,
+  getFileSizeByUri,
+  sendDlpManagerAccountLogin,
+  getAppId
+} from '../common/utils';
 
 const TAG = 'Share';
 class Test {
@@ -65,11 +72,11 @@ struct encryptedSharing {
   @State cloudAccountLogin: boolean = true;
   @State actionWant: Want | undefined = storage.get<Want>('actionWant');
   @State inputValue: string = '';
-  @State showTipsMsg: boolean = true;
-  @State phoneFormatTips: boolean = true;
+  @State phoneFormatTips: boolean = false;
   @State ownerAccount: string = '';
   @State ownerAccountID: string = '';
-  @State credentialCallBackMsg: string = '';
+  @State contactExists: boolean = true;
+  @State credentialCallBackMsg: string | Resource = '';
   @State session: UIExtensionContentSession | undefined =
     storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
 
@@ -82,6 +89,7 @@ struct encryptedSharing {
         parameters: {
           'ability.want.params.uiExtensionType': 'sys/commonUI',
           'targetUrl': 'BatchSelectContactsPage',
+          'isContactMultiSelect': false,
         }
       })
         .onRelease((code) => {
@@ -120,7 +128,8 @@ struct encryptedSharing {
     }
     if (!(/^[1][3,4,5,6,7,8,9][0-9]{9}$/.test(phone))) {
       HiLog.info(TAG, `Please enter the phone.`);
-      this.phoneFormatTips = false;
+      this.phoneFormatTips = true;
+      this.credentialCallBackMsg = $r('app.string.Share_Tips_Phone_Format');
       HiLog.info(TAG, `phoneFormatTips: ${this.phoneFormatTips}`);
       return false;
     };
@@ -162,7 +171,7 @@ struct encryptedSharing {
       let dstFileSize: number = await getFileSizeByUri(filePathUri);
       AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
       AppStorage.setOrCreate('hiCode', 201);
-      sendDlpFileCreateProperties('DLP_2C_FILE_CREATE_EVENT'); // 201: DLP_2C_FILE_CREATE_EVENT
+      sendDlpFileCreateProperties(dlpPermission.AccountType.CLOUD_ACCOUNT); // 201: DLP_2C_FILE_CREATE_EVENT
       this.backToPages(filePathUri, filePatch);
       try {
         await fs.close(file);
@@ -170,7 +179,6 @@ struct encryptedSharing {
         HiLog.info(TAG, `close failed: ${JSON.stringify(err)}`);
       }
     } catch (err) {
-      this.showTipsMsg = false;
       this.enabledFocus = true;
       HiLog.info(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
       AppStorage.setOrCreate('isInputInvalid', '');
@@ -217,7 +225,7 @@ struct encryptedSharing {
     if (!credentialCallBack.status) {
       HiLog.info(TAG, `credentialCallBack: ${credentialCallBack.msg}`);
       this.credentialCallBackMsg = credentialCallBack.msg;
-      this.showTipsMsg = false;
+      this.phoneFormatTips = true;
       AppStorage.setOrCreate('isInputInvalid', '');
       return false;
     }
@@ -239,8 +247,17 @@ struct encryptedSharing {
     return true;
   }
 
+  async checkContacts() {
+    let callerBundleName = 'com.ohos.contacts';
+    let callerAppId = await getAppId(callerBundleName);
+    this.contactExists = callerAppId ? true : false;
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtension}`);
+    AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
+    sendDlpManagerAccountLogin(-1);
+    this.checkContacts();
   }
 
   build() {
@@ -274,61 +291,56 @@ struct encryptedSharing {
           .height(Constants.SHARE_TITLE_HEAD_HEIGHT)
           .margin({
             top: Constants.SHARE_TITLE_HEAD_MARGIN_TOP,
-            right: Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT,
             bottom: Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM,
-            left: Constants.SHARE_TITLE_HEAD_MARGIN_LEFT
           })
         Column() {
           Row() {
-            TextInput({ text: this.inputValue, placeholder: $r('app.string.Share_Enter_Mobile_Number') })
+            TextInput({ text: this.inputValue })
               .enabled(this.enabledFocus)
               .height(Constants.SHARE_TEXT_INPUT_HEIGHT)
               .defaultFocus(true)
               .type(InputType.PhoneNumber)
               .contentType(ContentType.PHONE_COUNTRY_CODE)
               .enterKeyType(EnterKeyType.NEW_LINE)
-              .border(!this.showTipsMsg ?
-                { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : {})
-              .maxLength(Constants.SHARE_TEXT_INPUT_MAX_LENGTH)
+              .border(this.phoneFormatTips ?
+                { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : { width: 0})
               .onChange((value: string) => {
                 this.inputValue = value;
-                this.showTipsMsg = true;
-                this.phoneFormatTips = true;
+                this.phoneFormatTips = false;
               })
-            Image($r('app.media.ic_public_contacts_group'))
-              .fillColor($r('sys.color.ohos_id_color_secondary'))
-              .width(Constants.SHARE_CONTACTS_GROUP_WIDTH)
-              .height(Constants.SHARE_CONTACTS_GROUP_HEIGHT)
-              .offset({x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X, y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y})
-              .onClick(() => {
-                this.isShowSheet = !this.isShowSheet;
-              })
-              .bindSheet(this.isShowSheet, this.contactsPicker(), {
-                height: SheetSize.LARGE,
-                dragBar: false,
-                showClose: false,
-                onDisappear: () => {
-                  this.isShowSheet = false;
-                }
-              })
+            if (this.contactExists) {
+              Image($r('app.media.ic_public_contacts_group'))
+                .fillColor(this.enabledFocus ? $r('sys.color.icon_primary') : $r('sys.color.icon_tertiary'))
+                .width(Constants.SHARE_CONTACTS_GROUP_WIDTH)
+                .height(Constants.SHARE_CONTACTS_GROUP_HEIGHT)
+                .offset({x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X, y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y})
+                .onClick(() => {
+                  this.isShowSheet = !this.isShowSheet;
+                })
+                .bindSheet(this.isShowSheet, this.contactsPicker(), {
+                  height: SheetSize.LARGE,
+                  dragBar: false,
+                  showClose: false,
+                  onDisappear: () => {
+                    this.isShowSheet = false;
+                  }
+                })
+            }
           }
 
           Text(){
-            if (this.showTipsMsg) {
-              if (this.phoneFormatTips) {
-                Span($r('app.string.Share_Only_Supported_Mobile_Number'))
-              } else {
-                Span($r('app.string.Share_Tips_Phone_Format'))
-              }
-            } else {
+            if (this.phoneFormatTips) {
               Span(this.credentialCallBackMsg)
                 .fontColor($r('sys.color.ohos_id_color_warning'))
+            } else {
+              Span($r('app.string.Share_Enter_Mobile_Number'))
             }
           }
           .inputMessageText()
           .width(Constants.CONTACTS_PICKER_WIDTH)
           .padding({left: Constants.SHARE_TITLE_HEAD_PADDING_LEFT})
         }
+        .height(Constants.SHARE_TEXT_INPUT_COLUMN_HEIGHT)
         .margin({ left: Constants.SHARE_TEXT_INPUT_MARGIN_LEFT, right: Constants.SHARE_TEXT_INPUT_MARGIN_RIGHT })
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })

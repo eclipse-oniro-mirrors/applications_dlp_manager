@@ -17,7 +17,6 @@ import Want from '@ohos.app.ability.Want';
 import fileio from '@ohos.fileio';
 import dlpPermission from '@ohos.dlpPermission';
 import common from '@ohos.app.ability.common';
-import { BusinessError } from '@ohos.base';
 import GlobalContext from '../common/GlobalContext';
 import { HiLog } from '../common/HiLog';
 

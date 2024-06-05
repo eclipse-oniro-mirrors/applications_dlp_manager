@@ -15,7 +15,6 @@
 
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
-import { BusinessError } from '@ohos.base';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'FileUtils';
