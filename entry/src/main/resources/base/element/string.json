@@ -310,15 +310,11 @@
     },
     {
       "name": "Share_Add_Viewable_Users",
-      "value": "Add Viewable Users"
+      "value": "Adding a user"
     },
     {
       "name": "Share_Enter_Mobile_Number",
-      "value": "Enter the bound mobile number"
-    },
-    {
-      "name": "Share_Only_Supported_Mobile_Number",
-      "value": "Currently, only mobile numbers are supported."
+      "value": "Enter a mobile number."
     },
     {
       "name": "Share_Tips_Phone_Format",

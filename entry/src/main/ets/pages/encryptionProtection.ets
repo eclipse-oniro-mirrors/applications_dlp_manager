@@ -420,7 +420,7 @@ struct DlpDialog {
         let dstFileSize: number = await getFileSizeByUri(uri);
         AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
         AppStorage.setOrCreate('hiCode', 201);
-        sendDlpFileCreateProperties('DLP_FILE_CREATE_EVENT'); // 201: DLP_FILE_CREATE_SUCCESS
+        sendDlpFileCreateProperties(dlpPermission.AccountType.DOMAIN_ACCOUNT); // 201: DLP_FILE_CREATE_SUCCESS
         GlobalContext.store('dlpFileName', uriInfo.name);
         GlobalContext.store('dlpProperty', _dlp);
         GlobalContext.store('uri', uri);

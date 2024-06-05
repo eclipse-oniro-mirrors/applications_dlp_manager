@@ -19,7 +19,7 @@ import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import emitter from '@ohos.events.emitter';
 import dlpPermission from '@ohos.dlpPermission';
-import bundleManager from '@ohos.bundle.bundleManager'
+import bundleManager from '@ohos.bundle.bundleManager';
 import fs from '@ohos.file.fs';
 import zlib from '@ohos.zlib';
 import fileUri from '@ohos.file.fileuri';
@@ -102,7 +102,7 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
 }
 
 function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number {
-  AppStorage.setOrCreate('hiAccountType', 'Domain_Account');
+  AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.DOMAIN_ACCOUNT);
   if (accountInfo.domainInfo.accountName === '' &&
     accountInfo.domainInfo.accountId === '') {
     AppStorage.setOrCreate('hiAccountStatus', 0);
@@ -385,12 +385,13 @@ function sendDlpManagerFileConfiguration() {
   }
 }
 
-function sendDlpFileCreateProperties(name: string) {
+function sendDlpFileCreateProperties(accountType: number) {
   let event: hiSysEvent.SysEventInfo = {
     domain: 'DLP_UE',
-    name: name,
+    name: 'DLP_FILE_CREATE_EVENT',
     eventType: hiSysEvent?.EventType?.BEHAVIOR,
     params: {
+      'ACCOUNT_TYPE': accountType,
       'PNAMEID': AppStorage.get('hiPNameId') ?? '',
       'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
       'CODE': AppStorage.get('hiCode') ?? -1,
@@ -429,26 +430,6 @@ function sendDlpFileOpenProperties() {
     hiSysEvent.write(event);
   } catch (err) {
     HiLog.error(TAG, `sendDlpFileOpenProperties failed`);
-  }
-}
-
-function sendDlpManager2CAccountLogin(errorCode: number) {
-  let event: hiSysEvent.SysEventInfo = {
-    domain: 'DLP_UE',
-    name: 'DLP_2C_MANAGER_ACCOUNT_LOGIN',
-    eventType: hiSysEvent?.EventType?.BEHAVIOR,
-    params: {
-      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
-      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
-      'ACCOUNT_TYPE': 1,
-      'PKG_NAME': AppStorage.get('hiPkgName') ?? '',
-    } as Record<string, number>
-  };
-
-  try {
-    hiSysEvent.write(event);
-  } catch (err) {
-    HiLog.error(TAG, `sendDlpManagerAccountLogin failed`);
   }
 }
 
@@ -548,7 +529,6 @@ export {
   sendDlpManagerFileConfiguration,
   sendDlpFileCreateProperties,
   sendDlpFileOpenProperties,
-  sendDlpManager2CAccountLogin,
   DLPInfo,
   isValidPath,
   measureTextSizeWidth,

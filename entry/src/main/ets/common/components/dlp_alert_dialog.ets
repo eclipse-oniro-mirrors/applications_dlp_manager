@@ -13,10 +13,7 @@
  * limitations under the License.
  */
 
-import { BusinessError } from '@ohos.base';
-import Want from '@ohos.app.ability.Want';
 import Constants from '../constant';
-import GlobalContext from '../GlobalContext';
 import common from '@ohos.app.ability.common';
 
 const TAG = '[DLPManager_dialog]';
