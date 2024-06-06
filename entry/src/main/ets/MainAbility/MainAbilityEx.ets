@@ -319,7 +319,7 @@ export default class MainAbility extends UIExtensionAbility {
           this.dlpFilesToEncrypt(session);
         } else {
           await GetAlertMessage.startAlertAbility(this.context, {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+            code: Constants.ERR_JS_APP_CANNOT_OPEN } as BusinessError);
         }
       } catch {
         return;
