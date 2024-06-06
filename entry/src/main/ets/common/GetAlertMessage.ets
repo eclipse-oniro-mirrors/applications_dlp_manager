@@ -142,6 +142,8 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_USER_NO_PERMISSION:
         return { 'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM') } as Record<string, Resource>;
+      case Constants.ERR_JS_APP_CANNOT_OPEN:
+        return { 'msg': $r('app.string.CANNOT_OPEN_THIS_TYPE_FILE') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage != undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;

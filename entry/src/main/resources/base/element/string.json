@@ -209,6 +209,10 @@
       "value": "You don't have permission to view this file."
     },
     {
+      "name": "CANNOT_OPEN_THIS_TYPE_FILE",
+      "value": "Cannot open this type of file"
+    },
+    {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
       "value": "Unable to open file. Check and try again."
     },
