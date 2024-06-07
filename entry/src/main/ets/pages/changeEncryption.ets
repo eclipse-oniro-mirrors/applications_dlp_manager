@@ -414,11 +414,11 @@ struct changeEncryption {
     if (codeMessage) {
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage(
-          { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+          { code: codeMessage } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       } else {
         await GetAlertMessage.startAlertAbility(getContext(this) as common.UIExtensionContext,
-          { code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+          { code: codeMessage } as BusinessError);
       }
       return;
     }
