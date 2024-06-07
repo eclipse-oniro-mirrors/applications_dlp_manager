@@ -90,7 +90,7 @@ export default class MainAbility extends UIAbility {
   }
 
   onNewWant(want: Want) {
-    HiLog.info(TAG, `onNewWant: ${JSON.stringify(want)}`);
+    HiLog.info(TAG, `onNewWant start`);
     this.getNewWantPage(want);
   }
 

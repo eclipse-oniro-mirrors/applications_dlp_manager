@@ -53,7 +53,7 @@ export default class MainAbility extends UIExtensionAbility {
   private homeFeature!: HomeFeature;
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
-    HiLog.info(TAG, `want: ${JSON.stringify(want)}`);
+    HiLog.info(TAG, `onSessionCreate start`);
     if (GlobalContext.load('session')) {
       await GetAlertMessage.startAlertAbility(this.context as common.UIExtensionContext,
         { code: Constants.ERR_JS_APP_ENCRYPTING,
