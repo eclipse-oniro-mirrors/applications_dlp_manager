@@ -105,22 +105,12 @@
             "uris": [
               {
                 "scheme": "file",
-                "utd": "general.file",
-                "maxFileSupported": 1
-              },
-              {
-                "scheme": "file",
                 "utd": "general.plain-text",
                 "maxFileSupported": 1
               },
               {
                 "scheme": "file",
                 "utd": "com.adobe.pdf",
-                "maxFileSupported": 1
-              },
-              {
-                "scheme": "file",
-                "utd": "org.openxmlformats.openxml",
                 "maxFileSupported": 1
               }
             ]
