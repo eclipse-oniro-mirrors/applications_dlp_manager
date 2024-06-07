@@ -285,7 +285,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
         await GetAlertMessage.startAlertAbility(this.context, {
-          code: Constants.ERR_JS_APP_NO_ACCOUNT_ERROR } as BusinessError);
+          code: codeMessage } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject();
         return;

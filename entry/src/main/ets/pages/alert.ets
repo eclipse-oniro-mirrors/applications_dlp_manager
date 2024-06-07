@@ -72,14 +72,8 @@ struct Index {
             }
             return;
           }
-          if (this.session !== undefined) {
-            this.session.terminateSelfWithResult({
-              'resultCode': 0,
-              'want': {
-                'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-              },
-            });
-          }
+          abilityResult.resultCode = 0;
+          (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
           HiLog.info(TAG, `auth resultCode: ${resultCode}`);
           HiLog.info(TAG, `auth authResult: ${JSON.stringify(authResult)}`);
         }
