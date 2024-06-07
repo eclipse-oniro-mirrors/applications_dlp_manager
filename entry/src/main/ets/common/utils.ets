@@ -458,9 +458,10 @@ function getAccountType(
     let filePath = context.filesDir + '/saveAs' + random;
     let dirPath = context.filesDir + '/saveAsUnzip' + random;
     let fileName = dirPath + '/dlp_cert';
+    let ff: fs.File | undefined;
     try {
       fs.readSync(fd, z, option);
-      let ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+      ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
       await fs.copyFile(fd, ff.fd);
       await fs.mkdir(dirPath);
       await zlib.decompressFile(filePath, dirPath);
@@ -474,6 +475,9 @@ function getAccountType(
       HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`)
       reject();
     } finally {
+      if (ff) {
+        fs.closeSync(ff);
+      }
       deleteFile(filePath);
       removeDir(dirPath);
     }
