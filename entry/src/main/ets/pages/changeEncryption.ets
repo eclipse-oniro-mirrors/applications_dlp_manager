@@ -254,26 +254,9 @@ struct changeEncryption {
     }
     try {
       file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
-    } catch (err) {
-      HiLog.error(TAG, `open: ${plainUri}, failed: ${JSON.stringify(err)}`);
-      try {
-        await fs.unlink(uriInfo!.path);
-      } catch (err) {
-        HiLog.info(TAG, `unlink fail: ${JSON.stringify(err)}`);
-      }
-      this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
-      await this.catchProcess();
-      return;
-    };
-    try {
       await this.recoverDLPFileHome(plainUri);
     } catch (err) {
       HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${JSON.stringify(err)}`);
-      try {
-        await fs.close(file);
-      } catch (err) {
-        HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-      }
       try {
         await fs.unlink(uriInfo!.path);
       } catch (err) {
@@ -284,11 +267,10 @@ struct changeEncryption {
       this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
       await this.catchProcess();
       return;
-    }
-    try {
-      await fs.close(file);
-    } catch (err) {
-      HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
+    } finally {
+      if (file) {
+        fs.closeSync(file);
+      }
     }
     await this.terminateSelfWithResult();
   }

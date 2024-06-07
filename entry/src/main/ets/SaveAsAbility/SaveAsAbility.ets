@@ -285,23 +285,30 @@ export default class SaveAsAbility extends UIAbility {
 
     let magic = buf[0];
     if (magic === Constants.DLP_ZIP_MAGIC) {
-      this.zipFlag = true;
-      this.ff = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
-      await fs.copyFile(srcFd, this.ff.fd);
-      await fs.mkdir(this.dirPath);
-      let options: zlib.Options = {
-        level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
-        memLevel:zlib.MemLevel.MEM_LEVEL_DEFAULT,
-        strategy:zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
-      };
-      await zlib.decompressFile(this.filePath, this.dirPath, options);
-      await fs.truncate(this.encFile);
-      await zlib.compressFile(this.dirPath, this.zipPath, options);
-      this.zf2 = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
-      await fs.copyFile(this.zf2.fd, dstFd);
-      await fs.close(this.ff);
-      await fs.close(this.zf2);
-      this.retVal = true;
+      try {
+        this.zipFlag = true;
+        this.ff = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+        await fs.copyFile(srcFd, this.ff.fd);
+        await fs.mkdir(this.dirPath);
+        let options: zlib.Options = {
+          level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
+          memLevel:zlib.MemLevel.MEM_LEVEL_DEFAULT,
+          strategy:zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
+        };
+        await zlib.decompressFile(this.filePath, this.dirPath, options);
+        await fs.truncate(this.encFile);
+        await zlib.compressFile(this.dirPath, this.zipPath, options);
+        this.zf2 = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
+        await fs.copyFile(this.zf2.fd, dstFd);
+        this.retVal = true;
+      } catch (err) {
+        HiLog.error(TAG, `open failed: ${JSON.stringify(err)}`);
+      } finally {
+        if (this.ff || this.zf2) {
+          await fs.close(this.ff);
+          await fs.close(this.zf2);
+        }
+      }
     } else {
       let txtOffset = buf[TXT_OFFSET];
       let head = new ArrayBuffer(txtOffset);

@@ -199,6 +199,10 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     } catch (err) {
       let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       callback((err as BusinessError).code, _dlp, (err as BusinessError).message);
+    } finally {
+      if (inFile) {
+        fs.closeSync(inFile);
+      }
     }
   }
 
@@ -246,12 +250,17 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   async recoverDlpFile(srcUri: string, pathUri: string, callback: recoverDlpFileCallback): Promise<void> {
     let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(srcUri);
     if (dlpFile !== null) {
-      let inFile = await fs.open(pathUri, fs.OpenMode.READ_WRITE);
+      let inFile: fs.File | undefined;
       try {
+        inFile = await fs.open(pathUri, fs.OpenMode.READ_WRITE);
         await dlpFile.recoverDLPFile(inFile.fd);
       } catch (err) {
         HiLog.error(TAG, `recoverDlpFileInner4: ${JSON.stringify(err)}`);
         callback((err as BusinessError).code);
+      } finally {
+        if (inFile) {
+          fs.closeSync(inFile);
+        }
       }
     } else {
       HiLog.info(TAG, `recoverDlpFile not find: ${srcUri}`);

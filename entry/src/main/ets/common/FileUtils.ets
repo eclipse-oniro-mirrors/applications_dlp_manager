@@ -69,21 +69,23 @@ export default class FileUtils {
 
   static isDLPFile(uri: string) {
     return new Promise<boolean>(async (resolve, reject) => {
-      let file: fs.File;
+      let file: fs.File | undefined;
       try {
         file = fs.openSync(uri);
         try {
           let res = await dlpPermission.isDLPFile(file.fd);
-          fs.closeSync(file);
           resolve(res);
         } catch (err) {
           HiLog.error(TAG, `isDLPFile error: ${JSON.stringify(err)}`);
-          fs.closeSync(file);
           reject(err);
         }
       } catch (err) {
         HiLog.error(TAG, `openSync error: ${JSON.stringify(err)}`);
         reject(err);
+      } finally {
+        if (file) {
+          fs.closeSync(file);
+        }
       }
     })
   }

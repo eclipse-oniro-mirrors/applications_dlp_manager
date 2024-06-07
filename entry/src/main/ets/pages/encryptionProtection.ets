@@ -263,18 +263,21 @@ struct DlpDialog {
         return;
       }
     }
-    let filePath = (GlobalContext.load('context') as common.UIAbilityContext).filesDir + '/' + (new Date().getTime());
-    let file: fs.File;
+    let filePath = getContext(this).filesDir + '/' + (new Date().getTime());
+    let file: fs.File | undefined;
     try {
       file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
-      fs.close(file);
       HiLog.info(TAG, `open temp file`);
     } catch (err) {
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
       this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
       await this.catchProcess();
       return;
-    }
+    } finally {
+      if (file) {
+        fs.closeSync(file);
+      }
+    };
     let filePathUri = getFileUriByPath(filePath);
     try {
       await new Promise<void>((resolve, reject) => {
