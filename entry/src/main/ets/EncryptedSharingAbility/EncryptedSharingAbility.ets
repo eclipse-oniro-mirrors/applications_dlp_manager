@@ -47,7 +47,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
   }
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
-    HiLog.info(TAG, `EncryptedSharingAbility onSessionCreate. want: ${JSON.stringify(want)}`);
+    HiLog.info(TAG, `EncryptedSharingAbility onSessionCreate.`);
     try {
       await this.checkValidSharedRecords(want);
     } catch {

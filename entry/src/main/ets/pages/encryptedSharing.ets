@@ -153,19 +153,12 @@ struct encryptedSharing {
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
     AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
     let filePath = getContext(this).filesDir + '/' + filePatch;
-    let file: fs.File;
-    try {
-      file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
-      HiLog.info(TAG, `open temp file: ${file.fd}`);
-    } catch (err) {
-      HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
-      this.enabledFocus = true;
-      return;
-    }
+    let file: fs.File | undefined;
     let filePathUri = getFileUriByPath(filePath);
     this.enabledFocus = false;
     HiLog.info(TAG, `this.dlpProperty: ${JSON.stringify(this.dlpProperty)}`);
     try {
+      file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
       await dlpPermission.generateDLPFile(inFileFd, file.fd, this.dlpProperty);
       this.showToast($r('app.string.Share_File_Encrypted_Success'));
       let dstFileSize: number = await getFileSizeByUri(filePathUri);
@@ -173,16 +166,16 @@ struct encryptedSharing {
       AppStorage.setOrCreate('hiCode', 201);
       sendDlpFileCreateProperties(dlpPermission.AccountType.CLOUD_ACCOUNT); // 201: DLP_2C_FILE_CREATE_EVENT
       this.backToPages(filePathUri, filePatch);
-      try {
-        await fs.close(file);
-      } catch (err) {
-        HiLog.info(TAG, `close failed: ${JSON.stringify(err)}`);
-      }
     } catch (err) {
       this.enabledFocus = true;
+      HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
       HiLog.info(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
       AppStorage.setOrCreate('isInputInvalid', '');
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+    } finally {
+      if (file) {
+        fs.closeSync(file);
+      }
     }
   }
 
