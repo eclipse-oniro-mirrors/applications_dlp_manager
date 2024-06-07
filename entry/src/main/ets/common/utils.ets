@@ -299,22 +299,20 @@ function getTime() {
 }
 
 async function getFileSizeByUri(uri: string): Promise<number> {
-  let inFile: fs.File;
-
+  let inFile: fs.File | undefined;
   try {
     inFile = await fs.open(uri, fs.OpenMode.READ_ONLY);
-  } catch (error) {
-    HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(error)}`);
-    return -1;
-  }
-
-  try {
     let stat = await fs.stat(inFile.fd);
     HiLog.info(TAG, `get file info succeed, the size of file is: ${stat.size}`);
     return stat.size;
   } catch (err) {
+    HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(err)}`);
     HiLog.info(TAG, `get file info failed with error message: ${JSON.stringify(err)}`);
     return -1;
+  } finally {
+    if (inFile) {
+      fs.closeSync(inFile);
+    }
   }
 }
 
