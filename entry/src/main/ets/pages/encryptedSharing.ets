@@ -17,6 +17,7 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import ConnectService from '../common/share/ConnectService';
+import { KeyboardAvoidMode } from '@ohos.arkui.UIContext';
 import dlpPermission from '@ohos.dlpPermission';
 import promptAction from '@ohos.promptAction';
 import Want from '@ohos.app.ability.Want';
@@ -38,6 +39,13 @@ class Test {
   public '0': number = 0;
   public '1': number = 0;
   public '4': string = '';
+}
+
+class AuthUserList {
+  public authAccount: string = '';
+  public authAccountType: number = 0;
+  public dlpFileAccess: number = 0;
+  public permExpiryTime: number = 0;
 }
 
 let defaultDlpProperty: dlpPermission.DLPProperty = {
@@ -222,18 +230,19 @@ struct encryptedSharing {
       AppStorage.setOrCreate('isInputInvalid', '');
       return false;
     }
+    let authUserList: AuthUserList[] = [
+      {
+        'authAccount': credentialCallBack.userIdCipher,
+        'authAccountType': 1,
+        'dlpFileAccess': 1,
+        'permExpiryTime': Date.UTC(9999, 1, 1),
+      }
+    ];
     this.dlpProperty = {
       'ownerAccount': this.ownerAccount,
       'ownerAccountID': this.ownerAccountID,
       'ownerAccountType': 1,
-      'authUserList': [
-        {
-          'authAccount': credentialCallBack.userIdCipher,
-          'authAccountType': 1,
-          'dlpFileAccess': 1,
-          'permExpiryTime': Date.UTC(9999, 1, 1),
-        }
-      ],
+      'authUserList': authUserList,
       'contactAccount': this.ownerAccount,
       'offlineAccess': true,
     }
@@ -251,6 +260,9 @@ struct encryptedSharing {
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
     this.checkContacts();
+    let pathDir = getContext(this).filesDir;
+    fs.rmdirSync(pathDir);
+    this.getUIContext().setKeyboardAvoidMode(KeyboardAvoidMode.RESIZE);
   }
 
   build() {

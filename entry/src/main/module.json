@@ -105,6 +105,11 @@
             "uris": [
               {
                 "scheme": "file",
+                "utd": "general.file",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
                 "utd": "general.plain-text",
                 "maxFileSupported": 1
               },
