@@ -98,7 +98,6 @@ struct DlpDialog {
   @State prepareData: boolean = false;
   @State validity: Date = AppStorage.get('validity') || new Date();
   @State selectedIndex: number = AppStorage.get('permanent') === false ? 1 : 0;
-  @State domainOrCloudAccount: number = dlpPermission.AccountType.DOMAIN_ACCOUNT
   @State permissionDict: PermissionType[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET'), data: 'target', index: 0
@@ -504,7 +503,7 @@ struct DlpDialog {
         authAccount: item.authAccount,
         dlpFileAccess: dlpPermission.DLPFileAccess.READ_ONLY,
         permExpiryTime: Date.UTC(9999, 1, 1),
-        authAccountType: this.domainOrCloudAccount,
+        authAccountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
       })
     })
     this.staffDataArrayEdit && this.staffDataArrayEdit.forEach(item => {
@@ -512,7 +511,7 @@ struct DlpDialog {
         authAccount: item.authAccount,
         dlpFileAccess: dlpPermission.DLPFileAccess.CONTENT_EDIT,
         permExpiryTime: Date.UTC(9999, 1, 1),
-        authAccountType: this.domainOrCloudAccount,
+        authAccountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
       })
     })
   }
@@ -526,7 +525,7 @@ struct DlpDialog {
       authAccount: this.dlpProperty.ownerAccount,
       dlpFileAccess: dlpPermission.DLPFileAccess.FULL_CONTROL,
       permExpiryTime: Date.UTC(9999, 1, 1),
-      authAccountType: this.domainOrCloudAccount,
+      authAccountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
     }
     this.dlpProperty.authUserList?.push(ownerAccount)
     return

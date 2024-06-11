@@ -22,7 +22,7 @@ const TAG = 'CredCallbackStub';
 export default class CredCallbackStub extends rpc.RemoteObject {
   private connectService: ConnectService = new ConnectService(getContext(this));
   private static readonly DESCRIPTOR: string = 'OHOS.HapDlpCredAbilityServiceStub';
-  private static readonly COMMAND_ON_RESULT = 1;
+  private static readonly COMMAND_SEARCH_USER_INFO = 1;
 
   constructor(des: string) {
     super(des);
@@ -39,7 +39,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       return false;
     }
     switch (code) {
-      case CredCallbackStub.COMMAND_ON_RESULT: {
+      case CredCallbackStub.COMMAND_SEARCH_USER_INFO: {
         let resultVar = data.readString();
         HiLog.info(TAG, `onRemoteMessageRequest data: ${JSON.stringify(resultVar)}`);
         AppStorage.setOrCreate('isInputInvalid', resultVar);

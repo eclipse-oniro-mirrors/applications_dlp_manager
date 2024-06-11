@@ -19,7 +19,6 @@ import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import Constants from '../common/constant';
-import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import dlpPermission from '@ohos.dlpPermission';
@@ -37,7 +36,7 @@ let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct Index {
-  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+  @State alertWant: Want | undefined = storage.get<Want>('alertWant');
   @State title: string | Resource = '';
   @State message: string | Resource = '';
   @State cancel: string | Resource = '';
@@ -57,23 +56,14 @@ struct Index {
           value: this.cancel ? this.cancel : $r('app.string.da_button'),
           buttonStyle: ButtonStyleMode.TEXTUAL,
           action: () => {
-            if (this.session !== undefined) {
-              this.session.terminateSelfWithResult({
-                'resultCode': 0,
-                'want': {
-                  'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-                },
-              });
-            } else {
-              abilityResult.resultCode = 0;
-              (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
-            }
+            abilityResult.resultCode = 0;
+            (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
           }
         }, {
           value: this.ok,
           buttonStyle: ButtonStyleMode.TEXTUAL,
           action: () => {
-            let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
+            let error = this.alertWant?.parameters?.error as BusinessError;
             if (error && error.code === Constants.ERR_JS_OFFLINE) {
               let want: Want = {
                 action: 'action.system.home',
@@ -93,17 +83,8 @@ struct Index {
           value: this.cancel ? this.cancel : $r('app.string.da_button'),
           buttonStyle: ButtonStyleMode.TEXTUAL,
           action: () => {
-            if (this.session !== undefined) {
-              this.session.terminateSelfWithResult({
-                'resultCode': 0,
-                'want': {
-                  'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-                },
-              });
-            } else {
-              abilityResult.resultCode = 0;
-              (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
-            }
+            abilityResult.resultCode = 0;
+            (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
           }
         }
       ],
@@ -183,9 +164,9 @@ struct Index {
   async aboutToAppear() {
     HiLog.info(TAG, `alert aboutToAppear start`);
     try {
-      let messageCode = ((GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError).code;
-      let errorMsg = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
-      let accountType = (GlobalContext.load('abilityWant') as Want).parameters?.accountType as number;
+      let messageCode = (this.alertWant?.parameters?.error as BusinessError).code;
+      let errorMsg = this.alertWant?.parameters?.error as BusinessError;
+      let accountType = this.alertWant?.parameters?.accountType as number;
       let errInfo: Record<string, Resource> = {};
       this.accountType = accountType;
       if ([
@@ -206,7 +187,7 @@ struct Index {
       } else {
         errInfo = GetAlertMessage.getAlertMessage(errorMsg);
       }
-      this.windowHeight = (GlobalContext.load('abilityWant') as Want).parameters?.windowHeight as number;
+      this.windowHeight = this.alertWant?.parameters?.windowHeight as number;
       this.windowHeight = Number(this.windowHeight) - Constants.START_ABILITY_MSG_HEIGHT_ROWS;
       this.title = errInfo.title;
       this.message = errInfo.msg;
@@ -301,17 +282,8 @@ struct Index {
             .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .height(Constants.FOOTER_HEIGHT)
             .onClick(async (event) => {
-              if (this.session !== undefined) {
-                this.session.terminateSelfWithResult({
-                  'resultCode': 0,
-                  'want': {
-                    'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-                  },
-                });
-              } else {
-                abilityResult.resultCode = 0;
-                (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
-              }
+              abilityResult.resultCode = 0;
+              (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
             })
             .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
           if (this.ok) {
@@ -321,7 +293,7 @@ struct Index {
               .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .height(Constants.FOOTER_BUTTON_HEIGHT)
               .onClick(async (event) => {
-                let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
+                let error = this.alertWant?.parameters?.error as BusinessError;
                 if (error && error.code === Constants.ERR_JS_OFFLINE) {
                   let want: Want = {
                     action: 'action.system.home',

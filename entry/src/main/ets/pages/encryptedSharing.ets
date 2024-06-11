@@ -223,9 +223,18 @@ struct encryptedSharing {
       return false;
     };
     let credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
-    if (!credentialCallBack.status) {
+    if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
       HiLog.info(TAG, `credentialCallBack: ${credentialCallBack.msg}`);
       this.credentialCallBackMsg = credentialCallBack.msg;
+      this.phoneFormatTips = true;
+      AppStorage.setOrCreate('isInputInvalid', '');
+      return false;
+    }
+    if (!credentialCallBack.status && Number(credentialCallBack.errorCode) !== Constants.ERR_CODE_SUCCESS) {
+      promptAction.showToast({
+        message: $r('app.string.network_invalid'),
+        duration: Constants.SHARE_SET_TIMEOUT
+      });
       this.phoneFormatTips = true;
       AppStorage.setOrCreate('isInputInvalid', '');
       return false;

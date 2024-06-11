@@ -319,7 +319,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         let callerAppId: string;
         try {
           callerAppId = await getAppId(this.callerBundleName);
-          HiLog.info(TAG, `get AppId: ${callerAppId}`);
+          HiLog.info(TAG, `get AppId success`);
         } catch {
           return;
         }
