@@ -299,6 +299,10 @@
     {
       "name": "TITLE_APP_VERSION_LOWER",
       "value": "系统版本过低"
+    },
+    {
+      "name": "Function_Is_Not_Available",
+      "value": "此功能暂未开放"
     }
   ]
 }

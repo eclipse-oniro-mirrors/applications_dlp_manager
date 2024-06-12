@@ -227,9 +227,35 @@ export default class MainAbility extends UIAbility {
     })
   }
 
+  async checkIsDLPFeatureProvided(windowStage: window.WindowStage): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      await dlpPermission.isDLPFeatureProvided().then((res: Boolean) => {
+        HiLog.info(TAG, `isDLPFeatureProvided: ${res}`);
+        if (res === false) {
+          GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+            { code: Constants.ERR_JS_DLP_NOT_PROVIDED } as BusinessError);
+          reject();
+          return;
+        }
+        resolve();
+      }).catch((err: BusinessError) => {
+        HiLog.error(TAG, `isDLPFeatureProvided error: ${JSON.stringify(err)}`);
+        GetAlertMessage.startAlertAbility(GlobalContext.load('context') as common.UIAbilityContext,
+          { code: Constants.ERR_JS_DLP_NOT_PROVIDED } as BusinessError);
+        reject();
+        return;
+      });
+    })
+  }
+
   async getNewWantPage(want: Want): Promise<void> {
     HiLog.info(TAG, `getNewWantPage start`);
     let windowStage: window.WindowStage = GlobalContext.load('windowStage') as window.WindowStage;
+    try {
+      await this.checkIsDLPFeatureProvided(windowStage);
+    } catch {
+      return;
+    }
     try {
       await this.checkValidWantAndAccount(want)
     } catch {

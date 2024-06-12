@@ -136,6 +136,8 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_NOT_DLP_FILE:
         return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
+      case Constants.ERR_JS_DLP_NOT_PROVIDED:
+        return { 'msg': $r('app.string.Function_Is_Not_Available') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage != undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
