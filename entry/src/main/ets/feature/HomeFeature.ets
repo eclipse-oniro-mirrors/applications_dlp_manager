@@ -121,7 +121,7 @@ export default class HomeFeature {
   }
 
   async sandBoxLinkFileHome(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback) {
-    HiLog.info(TAG, `sandBoxLinkFileHome start: ${callerToken}`);
+    HiLog.info(TAG, `sandBoxLinkFileHome start`);
     await GlobalContext.load('dlpRpcProxy').sandBoxLinkFile(linkFileName, callerToken, callback);
   }
 
