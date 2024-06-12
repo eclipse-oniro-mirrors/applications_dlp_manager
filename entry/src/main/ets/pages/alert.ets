@@ -149,101 +149,107 @@ struct Index {
   }
 
   build() {
-    Column() {
-      if (this.title) {
-        Row() {
-          Text(this.title)
-            .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
-            .width(Constants.DU_WIDTH_FULL)
-            .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
-            .fontColor($r('sys.color.ohos_id_color_text_primary'))
-            .fontWeight(FontWeight.Bold)
-            .align(Alignment.Start)
+    Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center}) {
+      Column() {
+        if (this.title) {
+          Row() {
+            Text(this.title)
+              .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
+              .width(Constants.DU_WIDTH_FULL)
+              .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
+              .fontColor($r('sys.color.ohos_id_color_text_primary'))
+              .fontWeight(FontWeight.Bold)
+              .align(Alignment.Start)
+          }
+          .width(Constants.HEADER_COLUMN_WIDTH)
+          .height(this.title ? Constants.DA_ROW_HEIGHT : '')
+          .padding({
+            left: Constants.HEADER_COLUMN_PADDING_LEFT,
+            right: Constants.HEADER_COLUMN_PADDING_RIGHT
+          })
         }
-        .width(Constants.HEADER_COLUMN_WIDTH)
-        .height(this.title ? Constants.DA_ROW_HEIGHT : '')
+        Row() {
+          Text() {
+            Span(this.message)
+          }
+          .wordBreak(WordBreak.BREAK_WORD)
+          .fontWeight(FontWeight.Regular)
+          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+          .fontSize($r('sys.float.ohos_id_text_size_body1'))
+          .textAlign(TextAlign.Start)
+        }
+        .height(this.messageHeight)
+        .width(this.title ? Constants.HEADER_TEXT_WIDTH : '')
+        .align(Alignment.Center)
         .padding({
           left: Constants.HEADER_COLUMN_PADDING_LEFT,
-          right: Constants.HEADER_COLUMN_PADDING_RIGHT
+          right: Constants.HEADER_COLUMN_PADDING_RIGHT,
+          top: this.title ?
+            Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
         })
-      }
-      Row() {
-        Text() {
-          Span(this.message)
-        }
-        .wordBreak(WordBreak.BREAK_WORD)
-        .fontWeight(FontWeight.Regular)
-        .fontColor($r('sys.color.ohos_id_color_text_primary'))
-        .fontSize($r('sys.float.ohos_id_text_size_body1'))
-        .textAlign(TextAlign.Start)
-      }
-      .height(this.messageHeight)
-      .width(this.title ? Constants.HEADER_TEXT_WIDTH : '')
-      .align(Alignment.Center)
-      .padding({
-        left: Constants.HEADER_COLUMN_PADDING_LEFT,
-        right: Constants.HEADER_COLUMN_PADDING_RIGHT,
-        top: this.title ?
-          Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
-      })
-      Flex({ direction: FlexDirection.Row }) {
-        Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
-          .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
-          .width(Constants.HEADER_TEXT_WIDTH)
-          .focusable(false)
-          .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-          .height(Constants.FOOTER_HEIGHT)
-          .onClick(async (event) => {
-            if (this.session !== undefined) {
-              this.session.terminateSelfWithResult({
-                'resultCode': 0,
-                'want': {
-                  'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-                },
-              });
-            } else {
-              abilityResult.resultCode = 0;
-              (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
-            }
-          })
-          .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
-        if (this.ok) {
-          Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
+        Flex({ direction: FlexDirection.Row }) {
+          Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
+            .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
             .width(Constants.HEADER_TEXT_WIDTH)
             .focusable(false)
-            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
-            .height(Constants.FOOTER_BUTTON_HEIGHT)
+            .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+            .height(Constants.FOOTER_HEIGHT)
             .onClick(async (event) => {
-              let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
-              if (error.code === Constants.ERR_JS_OFFLINE) {
-                let want: Want = {
-                  action: 'action.system.home',
-                  entities: ['entity.system.home'],
-                  uri: 'wifi_entry'
-                };
-                (GlobalContext.load('alertContext') as common.UIAbilityContext).startAbility(want);
-                (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
-                return;
+              if (this.session !== undefined) {
+                this.session.terminateSelfWithResult({
+                  'resultCode': 0,
+                  'want': {
+                    'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+                  },
+                });
+              } else {
+                abilityResult.resultCode = 0;
+                (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
               }
-              this.authWithPop();
             })
-            .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+            .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+          if (this.ok) {
+            Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
+              .width(Constants.HEADER_TEXT_WIDTH)
+              .focusable(false)
+              .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
+              .height(Constants.FOOTER_BUTTON_HEIGHT)
+              .onClick(async (event) => {
+                let error = (GlobalContext.load('abilityWant') as Want).parameters?.error as BusinessError;
+                if (error.code === Constants.ERR_JS_OFFLINE) {
+                  let want: Want = {
+                    action: 'action.system.home',
+                    entities: ['entity.system.home'],
+                    uri: 'wifi_entry'
+                  };
+                  (GlobalContext.load('alertContext') as common.UIAbilityContext).startAbility(want);
+                  (GlobalContext.load('alertContext') as common.UIAbilityContext).terminateSelf();
+                  return;
+                }
+                this.authWithPop();
+              })
+              .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+          }
         }
+        .margin({
+          left:
+            this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
+          right:
+            this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
+          bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM,
+          top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
+        })
       }
-      .margin({
-        left: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
-        right: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
-        bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM,
-        top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
-      })
+      .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
+      .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
+      .alignItems(HorizontalAlign.Center)
+      .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+      .height( isPC() ? Constants.HEADER_COLUMN_WIDTH : this.windowHeight)
+      .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+      .border({ width: Constants.DIALOG_MD_OFFSET, color: $r('app.color.encryption_divider_color') })
+      .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THIN);
     }
-    .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
-    .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-    .alignItems(HorizontalAlign.Center)
-    .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
-    .height( isPC() ? Constants.HEADER_COLUMN_WIDTH : this.windowHeight)
-    .shadow(ShadowStyle.OUTER_DEFAULT_MD)
-    .border({ width: Constants.DIALOG_MD_OFFSET, color: $r('app.color.encryption_divider_color') })
-    .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THIN);
+    .height(Constants.HEADER_COLUMN_WIDTH)
+    .width(Constants.HEADER_COLUMN_WIDTH)
   }
 }

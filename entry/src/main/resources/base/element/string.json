@@ -299,6 +299,10 @@
     {
       "name": "TITLE_APP_VERSION_LOWER",
       "value": "System update required"
+    },
+    {
+      "name": "Function_Is_Not_Available",
+      "value": "This function is not currently available."
     }
   ]
 }
