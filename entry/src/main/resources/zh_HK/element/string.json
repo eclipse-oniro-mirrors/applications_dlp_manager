@@ -22,7 +22,7 @@
         },
         {
             "name":"Timeout_is_not_supported",
-            "value":"不支援將有效期設定為已經過去的日期，請重新設定。"
+            "value":"不支援設定為已經過去的日期，請重新設定。"
         },
         {
             "name":"PERMISSION_TYPE_SELECT_SELF",
@@ -90,7 +90,7 @@
         },
         {
             "name":"header_title_readonly_tips",
-            "value":"擁有唯讀權限的用戶可以檢視此檔案，但不能編輯、複製或列印。"
+            "value":"擁有唯讀權限的用戶可以檢視，但不可編輯、複製和列印檔案。"
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
@@ -106,7 +106,7 @@
         },
         {
             "name":"apply_for_the_permission",
-            "value":"如需申請權限，請聯絡：%s"
+            "value":"如需申請權限，請聯絡 %s"
         },
         {
             "name":"Appointed_day",
@@ -226,7 +226,7 @@
         },
         {
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
-            "value":"系統版本過舊，無法開啟在新版本系統上已加密的檔案。請先升級系統，然後再試。"
+            "value":"無法開啟使用高版本系統加密的檔案。請先升級系統，然後再試。"
         },
         {
             "name":"stow_away",
@@ -275,6 +275,14 @@
         {
             "name":"delete_account",
             "value":"刪除"
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"系統版本過舊"
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"具體權限以應用程式實際功能為準。"
         }
     ]
 }
