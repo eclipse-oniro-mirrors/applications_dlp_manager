@@ -198,6 +198,7 @@ export default class Constants {
   public static DLP_START_SANDBOX_ERROR = 105;
   public static DLP_START_SANDBOX_SUCCESS = 203;
   public static DLP_INSTALL_SANDBOX_ERROR = 104;
+  public static ERR_JS_DLP_NOT_PROVIDED = 301;
 
   public static GUTTER = 0;
   public static XS_COLUMNS = 2;
