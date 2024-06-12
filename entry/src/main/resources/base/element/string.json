@@ -335,6 +335,10 @@
     {
       "name": "Share_File_Encrypted_Failed",
       "value": "Failed to encrypt the file."
+    },
+    {
+      "name": "Function_Is_Not_Available",
+      "value": "This function is not currently available."
     }
   ]
 }

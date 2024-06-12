@@ -335,6 +335,10 @@
     {
       "name": "Share_File_Encrypted_Failed",
       "value": "文件加密失败"
+    },
+    {
+      "name": "Function_Is_Not_Available",
+      "value": "此功能暂未开放"
     }
   ]
 }
