@@ -235,30 +235,6 @@ async function showErrorDialogAndExit(windowStage: window.WindowStage, error: Bu
   });
 }
 
-async function goToAlertMessagePage(
-  session: UIExtensionContentSession,
-  title?: Resource,
-  message?: Resource,
-  messageName?: Object,
-  cancel?: Resource,
-  ok?: Resource
-  ) {
-  let storage: LocalStorage = new LocalStorage({
-    'session': session,
-    'title': title,
-    'message': message,
-    'messageName': messageName,
-    'cancel': cancel,
-    'ok': ok
-  } as Record<string, UIExtensionContentSession | Object | Resource>);
-  try {
-    session.loadContent('pages/alertMessage', storage);
-    session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-  } catch (exception) {
-    HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
-  }
-}
-
 function getAppId(bundleName: string) {
   return new Promise<string>(async resolve => {
     let bundleFlags: number = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO;
@@ -522,7 +498,6 @@ export {
   toggleShow,
   directionStatus,
   showErrorDialogAndExit,
-  goToAlertMessagePage,
   getAppId,
   getTime,
   getFileSizeByUri,

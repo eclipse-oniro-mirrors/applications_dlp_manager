@@ -150,8 +150,8 @@ export default class MainAbility extends UIExtensionAbility {
     }
   }
 
-  async checkValidWant(): Promise<boolean> {
-    let parameters = (GlobalContext.load('abilityWant') as Want).parameters;
+  async checkValidWant(want: Want): Promise<boolean> {
+    let parameters = want.parameters;
     if (parameters === undefined) {
       HiLog.error(TAG, `need parameters in want`);
       return false;
@@ -164,7 +164,7 @@ export default class MainAbility extends UIExtensionAbility {
       HiLog.error(TAG, `need name in want.parameters.fileName`);
       return false;
     }
-    if ((GlobalContext.load('abilityWant') as Want).uri === undefined) {
+    if (want.uri === undefined) {
       HiLog.error(TAG, `need uri in want`);
       return false;
     }
@@ -175,7 +175,7 @@ export default class MainAbility extends UIExtensionAbility {
       return false;
     }
     AppStorage.setOrCreate('hiPkgName', callerBundleName);
-    let uri = String((GlobalContext.load('abilityWant') as Want).uri);
+    let uri = String(want.uri);
     if (!isValidPath(uri)) {
       HiLog.error(TAG, `invalid uri in want.uri`);
       return false;
@@ -216,9 +216,9 @@ export default class MainAbility extends UIExtensionAbility {
     })
   }
 
-  async checkValidWantAndAccount(session: UIExtensionContentSession): Promise<void> {
+  async checkValidWantAndAccount(session: UIExtensionContentSession, want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      if (!this.checkValidWant()) {
+      if (!this.checkValidWant(want)) {
         await GetAlertMessage.startAlertAbility(this.context,
           { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError, session);
         reject();
@@ -243,7 +243,7 @@ export default class MainAbility extends UIExtensionAbility {
   async getNewWantPage(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `getNewWantPage start`);
     try {
-      await this.checkValidWantAndAccount(session)
+      await this.checkValidWantAndAccount(session, want)
     } catch {
       return;
     }
@@ -258,21 +258,20 @@ export default class MainAbility extends UIExtensionAbility {
     GlobalContext.store('requestIsFromSandBox', requestIsFromSandBox);
     HiLog.info(TAG, `request is from sandbox: ${requestIsFromSandBox}`);
     if (requestIsFromSandBox) {
-      this.requestIsFromSandBox(session);
+      this.requestIsFromSandBox(session, want);
     } else {
-      this.requestIsNotFromSandBox(session);
+      this.requestIsNotFromSandBox(session, want);
     }
   }
 
-  requestIsFromSandBox(session: UIExtensionContentSession): void {
-    let abilityWant: Want = GlobalContext.load('abilityWant') as Want;
-    const linkFileName: string = (abilityWant.parameters?.linkFileName as Record<string, string>)?.name;
+  requestIsFromSandBox(session: UIExtensionContentSession, want: Want): void {
+    const linkFileName: string = (want.parameters?.linkFileName as Record<string, string>)?.name;
     this.homeFeature.sandBoxLinkFileHome(linkFileName, this.callerToken,
       (err: number, data: dlpPermission.DLPProperty, uri: string) => {
       if (err !== 0) {
         return;
       }
-      let dlpFileName: string = (abilityWant.parameters?.fileName as Record<string, string>)?.name;
+      let dlpFileName: string = (want.parameters?.fileName as Record<string, string>)?.name;
       GlobalContext.store('dlpFileName', dlpFileName);
       GlobalContext.store('linkFileName', linkFileName);
       GlobalContext.store('dlpProperty', data);
@@ -285,9 +284,8 @@ export default class MainAbility extends UIExtensionAbility {
     });
   }
 
-  async requestIsNotFromSandBox(session: UIExtensionContentSession): Promise<void> {
-    let fileName: string =
-      ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
+  async requestIsNotFromSandBox(session: UIExtensionContentSession, want: Want): Promise<void> {
+    let fileName: string = (want.parameters?.fileName as Record<string, string>)?.name;
     let isDlpSuffix: boolean = false;
     try {
       isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'));
@@ -313,10 +311,10 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     } else {
       try {
-        let dlpFd = getFileFd(String((GlobalContext.load('abilityWant') as Want).uri));
+        let dlpFd = getFileFd(String(want.uri));
         let accountType = await getAccountType(this.context, dlpFd);
         if (accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
-          this.dlpFilesToEncrypt(session);
+          this.dlpFilesToEncrypt(session, want);
         } else {
           await GetAlertMessage.startAlertAbility(this.context, {
             code: Constants.ERR_JS_APP_CANNOT_OPEN } as BusinessError);
@@ -327,15 +325,14 @@ export default class MainAbility extends UIExtensionAbility {
     }
   }
 
-  async dlpFilesToEncrypt(session: UIExtensionContentSession): Promise<void> {
+  async dlpFilesToEncrypt(session: UIExtensionContentSession, want: Want): Promise<void> {
     let uri: string = GlobalContext.load('uri') as string;
     try {
       await this.findFileOpenHistoryHome(uri, session);
     } catch {
       return;
     }
-    let dlpFileName: string =
-      ((GlobalContext.load('abilityWant') as Want).parameters?.fileName as Record<string, string>)?.name;
+    let dlpFileName: string = (want.parameters?.fileName as Record<string, string>)?.name;
     GlobalContext.store('dlpFileName', dlpFileName);
     let callerAppId: string;
     try {

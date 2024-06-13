@@ -92,7 +92,6 @@ struct changeEncryption {
   @State staffDataArrayReadOnly: AuthAccount[] = [];
   @State staffDataArrayEdit: AuthAccount[] = [];
   private routerData: Record<string, AuthAccount[]> = {};
-  @State domainAccount: boolean = true;
   @State permissionDict: PermissionValue[] = [
     {
       value: $r('app.string.PERMISSION_TYPE_SELECT_TARGET') as Resource, data: 'target', index: 0

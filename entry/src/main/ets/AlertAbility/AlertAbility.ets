@@ -26,7 +26,7 @@ const TAG = 'Alert';
 export default class AlertAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     HiLog.info(TAG, `onCreate`);
-    GlobalContext.store('abilityWant', want);
+    GlobalContext.store('alertWant', want);
   }
 
   onDestroy(): void {
@@ -36,12 +36,15 @@ export default class AlertAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     // Main window is created, set main page for this ability
     HiLog.info(TAG, `onWindowStageCreate`);
-    windowStage.loadContent('pages/alert', (err: BusinessError) => {
-      if (err && err.code !== 0) {
-        HiLog.error(TAG, `setUIContent failed: ${JSON.stringify(err)}`);
-      }
-    });
-    windowStage.disableWindowDecor();
+    let storage: LocalStorage = new LocalStorage({
+      'alertWant': GlobalContext.load('alertWant')
+    } as Record<string, Want>);
+    try {
+      windowStage.loadContent('pages/alert', storage);
+      windowStage.disableWindowDecor();
+    } catch (exception) {
+      HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+    }
     let mainWindow: window.Window | undefined = undefined;
 
     windowStage.getMainWindow((err, data) => {

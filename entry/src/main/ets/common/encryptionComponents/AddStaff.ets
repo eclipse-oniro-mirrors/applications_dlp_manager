@@ -54,7 +54,6 @@ struct AddStaff {
   @State isInputInvalidFlag: boolean = false;
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
-  @State domainAccount: boolean = true;
 
   @Builder
   StaffItemBuilder(authAccount: string, textContent: string, index: number) {
@@ -99,11 +98,7 @@ struct AddStaff {
         this.errInput = [];
         break;
       }
-      if (this.domainAccount) {
-        await this.createStaffByDomain(i, startOffset, endOffset);
-      } else {
-        this.createStaffByCloud(i, startOffset, endOffset);
-      }
+      await this.createStaffByDomain(i, startOffset, endOffset);
     }
     this.isAccountCheckSuccess = true;
     if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
@@ -112,20 +107,6 @@ struct AddStaff {
         this.isInputInvalid = true;
       }
     }
-  }
-
-  private createStaffByCloud(i: number, startOffset: number[], endOffset: number[]) {
-    let o2: Staff = {
-      authAccount: this.inputArray[i],
-      textContent: this.inputArray[i]
-    };
-    this.staffArray.push(o2);
-    if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
-      this.deleteBuildSpan(startOffset, endOffset);
-    }
-    this.succ = AppStorage.get('hiAccountVerifySucc') as number + 1;
-    AppStorage.setOrCreate('hiAccountVerifySucc', this.succ);
-    this.addBuildSpan(i, this.inputArray[i]);
   }
 
   private createStaffByDomain(i: number, startOffset: number[], endOffset: number[]) {
@@ -202,10 +183,8 @@ struct AddStaff {
   }
 
   async aboutToAppear() {
-    if (this.domainAccount) {
-      await AccountTipsConfig.getConfigTips();
-      this.textContent = AccountTipsConfig.showContentKey;
-    }
+    await AccountTipsConfig.getConfigTips();
+    this.textContent = AccountTipsConfig.showContentKey;
     if (this.staffArray.length) {
       setTimeout(() => {
         this.onDataChange();

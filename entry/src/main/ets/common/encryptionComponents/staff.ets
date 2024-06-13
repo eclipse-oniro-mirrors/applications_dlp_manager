@@ -59,31 +59,21 @@ struct staffItem {
   @Prop textContent: string = '';
   @State accountTipsArray: AccountTips[] = [];
   @State isHover: boolean = false;
-  @State domainAccount: boolean = true;
   dlpAlertDialog?: CustomDialogController;
 
   @Builder popupBuilderTips() {
     Column() {
-      if (this.domainAccount) {
-        ForEach(this.accountTipsArray, (item: AccountTips) => {
-          if (item.isShow) {
-            Row() {
-              if (AccountTipsConfig.isSysLanguage()) {
-                Text(item.description?.replace('%s', item.value)).tipsTextStyle()
-              } else {
-                Text(item.descriptionEn?.replace('%s', item.value)).tipsTextStyle()
-              }
-            }.height(Constants.TIPS_HEIGHT_ITEM)
-          }
-        }, (item: AccountTips) => item.key)
-      } else {
-        Row() {
-          Text($r('app.string.encrypt_employee_id', this.accountNameTips))
-            .wordBreak(WordBreak.BREAK_ALL)
-            .tipsTextStyle()
+      ForEach(this.accountTipsArray, (item: AccountTips) => {
+        if (item.isShow) {
+          Row() {
+            if (AccountTipsConfig.isSysLanguage()) {
+              Text(item.description?.replace('%s', item.value)).tipsTextStyle()
+            } else {
+              Text(item.descriptionEn?.replace('%s', item.value)).tipsTextStyle()
+            }
+          }.height(Constants.TIPS_HEIGHT_ITEM)
         }
-        .width(Constants.HEADER_COLUMN_MESSAGE_TIPS_CLOUD)
-      }
+      }, (item: AccountTips) => item.key)
     }
     .alignItems(HorizontalAlign.Start)
     .padding({
@@ -116,9 +106,6 @@ struct staffItem {
   }
 
   private splitContent() {
-    if (!this.domainAccount) {
-      return this.textContent;
-    }
     if (this.textContent) {
       if (this.textContent.length > Constants.TIPS_NAME_LENGTH) {
         return this.textContent.split('').join(Constants.TIPS_SPACE_ZERO)
@@ -141,11 +128,7 @@ struct staffItem {
     }
   }
 
-  async aboutToAppear() {
-    if (!this.domainAccount) {
-      this.textContent = this.authAccount;
-    }
-  }
+  async aboutToAppear() {}
 
   build() {
     Row() {
@@ -180,28 +163,23 @@ struct staffItem {
         .height(Constants.HEADER_ROW_FONT_SIZE);
     }
     .onClick(() => {
-      if (this.domainAccount) {
-        try {
-          AccountTipsConfig.getAccountInfo(this.authAccount)
-            .then(async (result: account_osAccount.DomainAccountInfo) => {
-              this.accountTipsArray = await AccountTipsConfig.getConfigTips();
-              this.handlePopupTips = !this.handlePopupTips;
-              this.accountTipsArray?.forEach((item: AccountTips) => {
-                let value: string = result[item.key];
-                item.value = value;
-              })
+      try {
+        AccountTipsConfig.getAccountInfo(this.authAccount)
+          .then(async (result: account_osAccount.DomainAccountInfo) => {
+            this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+            this.handlePopupTips = !this.handlePopupTips;
+            this.accountTipsArray?.forEach((item: AccountTips) => {
+              let value: string = result[item.key];
+              item.value = value;
             })
-            .catch((err: BusinessError) => {
-              HiLog.error(TAG, `getAccountInfo error: ${JSON.stringify(err)}`);
-              let errInfo = GetAlertMessage.getAlertMessage(err);
-              this.showErrorDialog(errInfo.title, errInfo.msg);
-            })
-        } catch (err) {
-          HiLog.error(TAG, `getAccountInfo exception: ${JSON.stringify(err)}`);
-        }
-      } else {
-        this.handlePopupTips = !this.handlePopupTips;
-        this.accountNameTips = this.authAccount;
+          })
+          .catch((err: BusinessError) => {
+            HiLog.error(TAG, `getAccountInfo error: ${JSON.stringify(err)}`);
+            let errInfo = GetAlertMessage.getAlertMessage(err);
+            this.showErrorDialog(errInfo.title, errInfo.msg);
+          })
+      } catch (err) {
+        HiLog.error(TAG, `getAccountInfo exception: ${JSON.stringify(err)}`);
       }
     })
     .hitTestBehavior(HitTestMode.Block)
