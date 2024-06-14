@@ -291,8 +291,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
           HiLog.info(TAG, 'account not login');
           await this.startLoginAbility();
-          reject();
-          return;
+          try {
+            await this.terminateCall();
+          } catch (err) {
+            reject();
+            return;
+          }
         }
         resolve();
         return;
