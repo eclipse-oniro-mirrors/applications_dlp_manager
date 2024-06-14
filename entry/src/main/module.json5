@@ -52,7 +52,8 @@
         "label": "$string:MainAbility_label",
         "startWindowIcon": "$media:icon",
         "startWindowBackground": "$color:white",
-        "excludeFromMissions": true
+        "excludeFromMissions": true,
+        "removeMissionAfterTerminate": true
       },
       {
         "name": "SaveAsAbility",
