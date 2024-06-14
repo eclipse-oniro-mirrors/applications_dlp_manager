@@ -271,7 +271,7 @@ struct encryptedSharing {
     this.checkContacts();
     let pathDir = getContext(this).filesDir;
     fs.rmdirSync(pathDir);
-    this.getUIContext().setKeyboardAvoidMode(KeyboardAvoidMode.RESIZE);
+    this.getUIContext().setKeyboardAvoidMode(1);
   }
 
   build() {
@@ -310,6 +310,7 @@ struct encryptedSharing {
         Column() {
           Row() {
             TextInput({ text: this.inputValue })
+              .padding({ right: Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT})
               .enabled(this.enabledFocus)
               .height(Constants.SHARE_TEXT_INPUT_HEIGHT)
               .defaultFocus(true)
