@@ -85,9 +85,20 @@ function getFileUriByPath(filePath: string): string {
   }
 }
 
-function getFileFd(uri: string): number {
+function getFileFdReadOnly(uri: string): number {
   try {
     let file = fs.openSync(uri, fs.OpenMode.READ_ONLY);
+    HiLog.info(TAG, `open: ${uri}, as: ${file.fd}`);
+    return file.fd;
+  } catch (err) {
+    HiLog.info(TAG, `getFileFdReadOnly openSync error: ${JSON.stringify(err)}`);
+    return -1;
+  }
+}
+
+function getFileFd(uri: string): number {
+  try {
+    let file = fs.openSync(uri, fs.OpenMode.READ_WRITE);
     HiLog.info(TAG, `open: ${uri}, as: ${file.fd}`);
     return file.fd;
   } catch (err) {
@@ -492,6 +503,7 @@ export {
   terminateSelfWithResult,
   judgeIsSandBox,
   getFileFd,
+  getFileFdReadOnly,
   getFileUriByPath,
   removeDuplicate,
   calculate,

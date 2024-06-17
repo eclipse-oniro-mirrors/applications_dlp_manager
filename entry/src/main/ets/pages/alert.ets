@@ -36,7 +36,7 @@ let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct Index {
-  @State alertWant: Want | undefined = storage.get<Want>('alertWant');
+  @State alertWant: Want | undefined = GlobalContext.load('alertWant');
   @State title: string | Resource = '';
   @State message: string | Resource = '';
   @State cancel: string | Resource = '';

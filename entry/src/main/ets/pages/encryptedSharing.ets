@@ -27,7 +27,7 @@ import Constants from '../common/constant';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import {
   getFileUriByPath,
-  getFileFd,
+  getFileFdReadOnly,
   sendDlpFileCreateProperties,
   getFileSizeByUri,
   sendDlpManagerAccountLogin,
@@ -156,7 +156,7 @@ struct encryptedSharing {
     let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
     let inputFileName = srcFileMsg.fileName;
     let filePatch = inputFileName + srcFileMsg.fileType + '.dlp';
-    let inFileFd = getFileFd(inputUri);
+    let inFileFd = getFileFdReadOnly(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
     AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
@@ -338,7 +338,9 @@ struct encryptedSharing {
                   showClose: false,
                   onDisappear: () => {
                     this.isShowSheet = false;
-                  }
+                  },
+                  backgroundColor: Color.Transparent,
+                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
                 })
             }
           }
