@@ -27,7 +27,7 @@ import Constants from '../common/constant';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import {
   getFileUriByPath,
-  getFileFdReadOnly,
+  getFileFd,
   sendDlpFileCreateProperties,
   getFileSizeByUri,
   sendDlpManagerAccountLogin,
@@ -156,7 +156,7 @@ struct encryptedSharing {
     let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
     let inputFileName = srcFileMsg.fileName;
     let filePatch = inputFileName + srcFileMsg.fileType + '.dlp';
-    let inFileFd = getFileFdReadOnly(inputUri);
+    let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
     AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
@@ -164,7 +164,6 @@ struct encryptedSharing {
     let file: fs.File | undefined;
     let filePathUri = getFileUriByPath(filePath);
     this.enabledFocus = false;
-    HiLog.info(TAG, `this.dlpProperty: ${JSON.stringify(this.dlpProperty)}`);
     try {
       file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
       await dlpPermission.generateDLPFile(inFileFd, file.fd, this.dlpProperty);

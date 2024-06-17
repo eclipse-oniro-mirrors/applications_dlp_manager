@@ -196,7 +196,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           dlpPermission.DLPFileAccess.READ_ONLY ? true : false
       }
     };
-    want.parameters = ObjectUtil.Assign(want.parameters, dlpWant.parameters);
+    ObjectUtil.Assign(want.parameters, dlpWant.parameters);
     this.startAbility(want, startId);
   }
 
@@ -610,7 +610,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       let strArray: string[] = this.uri.split('/');
       let len: number = strArray.length;
       this.fileName = strArray[len - 1];
-      this.dlpFd = getFileFd(this.uri);
+      this.dlpFd = getFileFd(this.uri, fs.OpenMode.READ_WRITE);
       HiLog.debug(TAG, `dlpFd: ${this.dlpFd}`);
       if (this.dlpFd === -1) {
         opening = false;
