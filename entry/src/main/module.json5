@@ -152,6 +152,9 @@
       },
       {
         "name": "ohos.permission.GET_DOMAIN_ACCOUNTS"
+      },
+      {
+        "name": "ohos.permission.GET_NETWORK_INFO"
       }
     ]
   }
