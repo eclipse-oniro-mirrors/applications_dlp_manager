@@ -22,6 +22,7 @@ import hiSysEvent from '@ohos.hiSysEvent';
 import wantConstant from '@ohos.app.ability.wantConstant';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
+import connection from '@ohos.net.connection';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import uriPermissionManager from '@ohos.application.uriPermissionManager';
@@ -261,7 +262,18 @@ export default class ViewAbility extends ServiceExtensionAbility {
       abilityName: 'DlpCredLoginAbility'
     };
     try {
-      await this.context.startAbility(accountWant);
+      let netHandle = connection.getDefaultNetSync();
+      connection.getNetCapabilities(netHandle, async (error: BusinessError, data: connection.NetCapabilities) => {
+        if (error) {
+          HiLog.error(TAG, `Failed to get net capabilities. Code: ${error.code}, message: ${error.message}`);
+          GetAlertMessage.startAlertAbility(this.context, {
+            code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+          return;
+        }
+        HiLog.info(TAG, `Succeeded to get data: ${JSON.stringify(data)}`);
+        await this.context.startAbility(accountWant);
+        await this.terminateCall();
+      })
     } catch {
       HiLog.info(TAG, `startLoginAbility failed`);
     }
@@ -291,12 +303,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
           HiLog.info(TAG, 'account not login');
           await this.startLoginAbility();
-          try {
-            await this.terminateCall();
-          } catch (err) {
-            reject();
-            return;
-          }
+          reject();
+          return;
         }
         resolve();
         return;
