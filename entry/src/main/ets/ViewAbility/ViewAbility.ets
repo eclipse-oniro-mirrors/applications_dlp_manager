@@ -45,6 +45,7 @@ import GlobalContext from '../common/GlobalContext';
 import rpc from '@ohos.rpc';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
+import { ObjectUtil } from '../common/ObjectUtil';
 
 const TAG = 'View';
 const SUFFIX_INDEX = 2;
@@ -67,9 +68,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private accountInfo?: osAccount.OsAccountInfo;
   private uriInfo: fileUri.FileUri = new fileUri.FileUri('');
   private linkUri: string = '';
-  private gatheringType: number = dlpPermission.GatheringPolicyType.NON_GATHERING;
   private alreadyOpen: boolean = false;
-  private sortByAuthPerm: boolean = false;
   private userId: number = -1;
   private linkFileWriteable: boolean = false;
   private callerBundleName: string = '';
@@ -166,15 +165,15 @@ export default class ViewAbility extends ServiceExtensionAbility {
     });
   }
 
-  startSandboxApp(startId: number): void {
+  startSandboxApp(startId: number, want: Want): void {
     startId = Number(startId);
     hiTraceMeter.startTrace('DlpStartSandboxJs', startId);
-    let want: Want = {
-      bundleName: this.sandboxBundleName,
-      abilityName: this.sandboxAbilityName,
-      uri: this.linkUri,
-      flags: this.linkFileWriteable ?
-        wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION,
+    want.bundleName = this.sandboxBundleName;
+    want.abilityName = this.sandboxAbilityName;
+    want.uri = this.linkUri;
+    want.flags = this.linkFileWriteable ?
+        wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+    let dlpWant: Want = {
       parameters: {
         'linkFileName': {
           'name': this.linkFileName
@@ -197,6 +196,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           dlpPermission.DLPFileAccess.READ_ONLY ? true : false
       }
     };
+    ObjectUtil.Assign(want.parameters, dlpWant.parameters);
     this.startAbility(want, startId);
   }
 
@@ -610,7 +610,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       let strArray: string[] = this.uri.split('/');
       let len: number = strArray.length;
       this.fileName = strArray[len - 1];
-      this.dlpFd = getFileFd(this.uri);
+      this.dlpFd = getFileFd(this.uri, fs.OpenMode.READ_WRITE);
       HiLog.debug(TAG, `dlpFd: ${this.dlpFd}`);
       if (this.dlpFd === -1) {
         opening = false;
@@ -667,7 +667,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
       HiLog.info(TAG, `grandUriPermission result: ${JSON.stringify(result)}`);
     });
-    this.startSandboxApp(startId);
+    this.startSandboxApp(startId, want);
     AppStorage.setOrCreate('hiCode', Constants.DLP_START_SANDBOX_SUCCESS);
     sendDlpFileOpenProperties();
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);

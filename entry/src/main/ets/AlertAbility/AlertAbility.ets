@@ -36,11 +36,8 @@ export default class AlertAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     // Main window is created, set main page for this ability
     HiLog.info(TAG, `onWindowStageCreate`);
-    let storage: LocalStorage = new LocalStorage({
-      'alertWant': GlobalContext.load('alertWant')
-    } as Record<string, Want>);
     try {
-      windowStage.loadContent('pages/alert', storage);
+      windowStage.loadContent('pages/alert');
       windowStage.disableWindowDecor();
     } catch (exception) {
       HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);

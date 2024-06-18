@@ -164,7 +164,6 @@ struct encryptedSharing {
     let file: fs.File | undefined;
     let filePathUri = getFileUriByPath(filePath);
     this.enabledFocus = false;
-    HiLog.info(TAG, `this.dlpProperty: ${JSON.stringify(this.dlpProperty)}`);
     try {
       file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
       await dlpPermission.generateDLPFile(inFileFd, file.fd, this.dlpProperty);
@@ -338,7 +337,9 @@ struct encryptedSharing {
                   showClose: false,
                   onDisappear: () => {
                     this.isShowSheet = false;
-                  }
+                  },
+                  backgroundColor: Color.Transparent,
+                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
                 })
             }
           }

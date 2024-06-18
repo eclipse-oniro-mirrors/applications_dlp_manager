@@ -85,9 +85,10 @@ function getFileUriByPath(filePath: string): string {
   }
 }
 
-function getFileFd(uri: string): number {
+function getFileFd(uri: string, mode?: number): number {
+  mode = mode || fs.OpenMode.READ_ONLY;
   try {
-    let file = fs.openSync(uri, fs.OpenMode.READ_ONLY);
+    let file = fs.openSync(uri, mode);
     HiLog.info(TAG, `open: ${uri}, as: ${file.fd}`);
     return file.fd;
   } catch (err) {
