@@ -62,7 +62,7 @@ struct Index {
         }, {
           value: this.ok,
           buttonStyle: ButtonStyleMode.TEXTUAL,
-          action: () => {
+          action: async () => {
             let error = this.alertWant?.parameters?.error as BusinessError;
             if (error && error.code === Constants.ERR_JS_OFFLINE) {
               let want: Want = {
@@ -70,8 +70,8 @@ struct Index {
                 entities: ['entity.system.home'],
                 uri: 'wifi_entry'
               };
-              (getContext(this) as common.UIAbilityContext).startAbility(want);
-              (getContext(this) as common.UIAbilityContext).terminateSelf();
+              await (getContext(this) as common.UIAbilityContext).startAbility(want);
+              await (getContext(this) as common.UIAbilityContext).terminateSelf();
               return;
             }
             this.authWithPop();
@@ -225,7 +225,6 @@ struct Index {
           .fontSize($r('sys.float.ohos_id_text_size_body1'))
           .textAlign(TextAlign.Start)
       }
-      .height(this.messageHeight)
       .width(this.title ? Constants.HEADER_TEXT_WIDTH : '')
       .align(Alignment.Center)
       .padding({
