@@ -23,6 +23,8 @@ import account_osAccount from '@ohos.account.osAccount';
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
 import dlpPermission from '@ohos.dlpPermission';
+import deviceInfo from '@ohos.deviceInfo';
+import promptAction from '@ohos.promptAction';
 import { measureTextSizeWidth } from './utils';
 import { HiLog } from '../common/HiLog';
 
@@ -35,6 +37,10 @@ export class GetAlertMessage {
     error: BusinessError,
     session?: UIExtensionContentSession
   ) {
+    if (deviceInfo.deviceType !== '2in1') {
+      GetAlertMessage.phoneHandle(context, error);
+      return;
+    }
     let dis = display.getDefaultDisplaySync();
     let xNumber = Math.floor((dis.width - Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS) / 2);
     let yNumber = Math.floor((dis.height - Constants.START_ABILITY_YNUMBER) / 2);
@@ -70,6 +76,27 @@ export class GetAlertMessage {
         context.terminateSelf();
       }
     })
+  }
+
+  private static async phoneHandle(
+    context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
+    error: BusinessError
+  ) {
+    try {
+      let resource = GetAlertMessage.getToastMessage(error);
+      let toastMessage = await context.resourceManager.getStringValue(resource);
+      promptAction.showToast({
+        message: toastMessage,
+        duration: Constants.SHARE_SET_TIMEOUT
+      });
+      HiLog.info(TAG, 'showToast end.');
+    } catch (error) {
+      HiLog.error(TAG, `showToast error: ${JSON.stringify(error)}`);
+    } finally {
+      setTimeout(() => {
+        context.terminateSelf();
+      }, Constants.SHARE_SET_TIMEOUT);
+    }
   }
 
   private static setOptions(error: BusinessError) {
@@ -226,6 +253,25 @@ export class GetAlertMessage {
           'title': $r('app.string.header_title'),
           'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR')
         } as Record<string, Resource>;
+    }
+  }
+
+  public static getToastMessage(err: BusinessError) {
+    switch (err && err.code) {
+      case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
+        return $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR');
+      case Constants.ERR_JS_NETWORK_INVALID:
+      case Constants.ERR_JS_APP_NETWORK_INVALID:
+      case Constants.ERR_JS_OFFLINE:
+        return $r('app.string.network_invalid');
+      case Constants.ERR_JS_NOT_DLP_FILE:
+        return $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR');
+      case Constants.ERR_JS_USER_NO_PERMISSION:
+        return $r('app.string.MESSAGE_APP_NOT_HAVE_PERM');
+      case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
+        return $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED');
+      default:
+        return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
     }
   }
 
