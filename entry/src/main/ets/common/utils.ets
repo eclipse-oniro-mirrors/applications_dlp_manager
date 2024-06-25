@@ -434,7 +434,7 @@ function getAccountType(
     let option: ChangeOption = { offset: 0, length: HEAD_LENGTH_IN_BYTE };
     let num = fs.readSync(fd, z, option);
     let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
-    if (buf[0] === Constants.DLP_ZIP_MAGIC) {
+    if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
       let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
       let filePath = context.filesDir + '/saveAs' + random;
       let dirPath = context.filesDir + '/saveAsUnzip' + random;
