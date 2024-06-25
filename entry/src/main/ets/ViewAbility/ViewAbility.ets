@@ -633,14 +633,19 @@ export default class ViewAbility extends ServiceExtensionAbility {
     })
   }
 
+  grandUriPermission() {
+    let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
+      wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
+    let targetBundleName = this.sandboxBundleName;
+    uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
+      HiLog.info(TAG, `grandUriPermission result: ${JSON.stringify(result)}`);
+    });
+  }
+
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.debug(TAG, `enter onRequest`);
     try {
       await this.dlpFileMapHistory(want);
-    } catch {
-      return;
-    }
-    try {
       this.accountType = await getAccountType(this.context, this.dlpFd);
     } catch {
       return;
@@ -661,6 +666,17 @@ export default class ViewAbility extends ServiceExtensionAbility {
         return;
       }
     }
+    let fileOpenHistory: Map<string, (number | string)[]> =
+        GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
+    if (fileOpenHistory.has(this.uri)) {
+      let value: (number | string)[] = fileOpenHistory.get(this.uri) as (number | string)[];
+      if (this.sandboxBundleName !== value[Constants.FILE_OPEN_HISTORY_ZERO] as string) {
+        HiLog.error(TAG, `other app is opening this file`);
+        await GetAlertMessage.startAlertAbility(this.context, {
+          code: Constants.ERR_JS_OTHER_APP_OPEN_FILE } as BusinessError);
+        return;
+      }
+    }
     try {
       await this.getAccountAndOpenDLPFile(startId);
       await this.getPolicyAndInstallSandbox(startId);
@@ -668,13 +684,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     } catch {
       return;
     }
-    // uri permission just for domainAccount
-    let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
-      wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
-    let targetBundleName = this.sandboxBundleName;
-    uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
-      HiLog.info(TAG, `grandUriPermission result: ${JSON.stringify(result)}`);
-    });
+    this.grandUriPermission();
     this.startSandboxApp(startId, want);
     AppStorage.setOrCreate('hiCode', Constants.DLP_START_SANDBOX_SUCCESS);
     sendDlpFileOpenProperties();

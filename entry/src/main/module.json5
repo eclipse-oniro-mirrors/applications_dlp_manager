@@ -131,7 +131,7 @@
         "name": "ohos.permission.ACCESS_DLP_FILE"
       },
       {
-        "name": "ohos.permission.MANAGE_LOCAL_ACCOUNTS"
+        "name": "ohos.permission.GET_LOCAL_ACCOUNTS"
       },
       {
         "name": "ohos.permission.START_ABILITIES_FROM_BACKGROUND"
@@ -144,6 +144,9 @@
       },
       {
         "name": "ohos.permission.GET_NETWORK_INFO"
+      },
+      {
+        "name": "ohos.permission.START_DLP_CRED"
       }
     ]
   }
