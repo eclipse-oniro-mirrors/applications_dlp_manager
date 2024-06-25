@@ -249,5 +249,4 @@ export default class Constants {
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;
   public static readonly ERR_CODE_CONNECTION_TIME_OUT: number = -310;
   public static readonly ERR_CODE_SUCCESS: number = 0;
-  public static readonly ADD_ACCOUNT_TYPE: number = 3;
 }

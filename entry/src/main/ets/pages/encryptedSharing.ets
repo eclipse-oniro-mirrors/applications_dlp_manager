@@ -173,6 +173,7 @@ struct encryptedSharing {
       AppStorage.setOrCreate('hiCode', 201);
       sendDlpFileCreateProperties(dlpPermission.AccountType.CLOUD_ACCOUNT); // 201: DLP_2C_FILE_CREATE_EVENT
       this.backToPages(filePathUri, filePatch);
+      HiLog.info(TAG, `beginToGenerateDLPFile success`);
     } catch (err) {
       this.enabledFocus = true;
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
@@ -229,7 +230,11 @@ struct encryptedSharing {
       AppStorage.setOrCreate('isInputInvalid', '');
       return false;
     }
-    if (!credentialCallBack.status && Number(credentialCallBack.errorCode) !== Constants.ERR_CODE_SUCCESS) {
+    if (!credentialCallBack.status && [
+      Constants.ERR_CODE_NETWORK_ERROR,
+      Constants.ERR_CODE_CONNECTION_FAIL,
+      Constants.ERR_CODE_CONNECTION_TIME_OUT
+    ].includes(Number(credentialCallBack.errorCode))) {
       promptAction.showToast({
         message: $r('app.string.network_invalid'),
         duration: Constants.SHARE_SET_TIMEOUT
