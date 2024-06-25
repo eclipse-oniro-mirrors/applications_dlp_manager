@@ -64,6 +64,7 @@ export default class Constants {
   public static DA_MARGIN_TOP = 12;
   public static ROW_FONT_SIZE = 16;
 
+  public static FILE_OPEN_HISTORY_ZERO = 0;
   public static FILE_OPEN_HISTORY_ONE = 1;
   public static FILE_OPEN_HISTORY_TWO = 2;
   public static FILE_OPEN_HISTORY_THREE = 3;
@@ -166,6 +167,7 @@ export default class Constants {
   public static DLP_START_SANDBOX_SUCCESS = 203;
   public static DLP_INSTALL_SANDBOX_ERROR = 104;
   public static ERR_JS_DLP_NOT_PROVIDED = 301;
+  public static ERR_JS_OTHER_APP_OPEN_FILE = 302;
 
   public static XS_COLUMNS = 2;
   public static XS_SPAN = 2;

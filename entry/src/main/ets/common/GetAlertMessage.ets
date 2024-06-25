@@ -173,6 +173,8 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.CANNOT_OPEN_THIS_TYPE_FILE') } as Record<string, Resource>;
       case Constants.ERR_JS_DLP_NOT_PROVIDED:
         return { 'msg': $r('app.string.Function_Is_Not_Available') } as Record<string, Resource>;
+      case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
+        return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage != undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
