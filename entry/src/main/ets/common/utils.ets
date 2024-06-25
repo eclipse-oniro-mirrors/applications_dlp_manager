@@ -22,6 +22,7 @@ import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager';
 import fs from '@ohos.file.fs';
 import zlib from '@ohos.zlib';
+import util from '@ohos.util';
 import fileUri from '@ohos.file.fileuri';
 import { BusinessError, Callback } from '@ohos.base'
 import Want from '@ohos.app.ability.Want';
@@ -33,7 +34,10 @@ import hiSysEvent from '@ohos.hiSysEvent';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'Utils';
-const HEAD_LENGTH_IN_BYTE = 20;
+const HEAD_LENGTH_IN_BYTE = 28;
+const HEAD_LENGTH_IN_U32 = 7;
+const CERT_OFFSET = 5;
+const CERT_SIZE = 6;
 class ChangeOption {
   public offset: number = 0
   public length: number = 0
@@ -427,38 +431,61 @@ function getAccountType(
   context: common.ServiceExtensionContext | common.UIExtensionContext, fd: number): Promise<number> {
   return new Promise(async (resolve, reject) => {
     let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
-    let option: ChangeOption = {
-      offset: 0,
-      length: HEAD_LENGTH_IN_BYTE
-    };
-    let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
-    let filePath = context.filesDir + '/saveAs' + random;
-    let dirPath = context.filesDir + '/saveAsUnzip' + random;
-    let fileName = dirPath + '/dlp_cert';
-    let ff: fs.File | undefined;
-    try {
-      fs.readSync(fd, z, option);
-      ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
-      await fs.copyFile(fd, ff.fd);
-      await fs.mkdir(dirPath);
-      await zlib.decompressFile(filePath, dirPath);
-      let dlpInfo = fs.readTextSync(fileName);
-      let infoArray = dlpInfo.split('accountType');
-      let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
-      HiLog.info(TAG, `accountType: ${type}`);
-      GlobalContext.store('accountType', Number(type));
-      resolve(Number(type));
-    } catch (err) {
-      HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`)
-      reject();
-    } finally {
-      if (ff) {
-        fs.closeSync(ff);
+    let option: ChangeOption = { offset: 0, length: HEAD_LENGTH_IN_BYTE };
+    let num = fs.readSync(fd, z, option);
+    let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
+    if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
+      let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
+      let filePath = context.filesDir + '/saveAs' + random;
+      let dirPath = context.filesDir + '/saveAsUnzip' + random;
+      let fileName = dirPath + '/dlp_cert';
+      let ff: fs.File | undefined;
+      try {
+        fs.readSync(fd, z, option);
+        ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+        await fs.copyFile(fd, ff.fd);
+        await fs.mkdir(dirPath);
+        await zlib.decompressFile(filePath, dirPath);
+        let dlpInfo = fs.readTextSync(fileName);
+        let infoArray = dlpInfo.split('accountType');
+        let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
+        GlobalContext.store('accountType', Number(type));
+        resolve(Number(type));
+      } catch (err) {
+        HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`);
+        reject();
+      } finally {
+        closeFile(ff);
+        deleteFile(filePath);
+        removeDir(dirPath);
       }
-      deleteFile(filePath);
-      removeDir(dirPath);
+    } else {
+      let cert = new ArrayBuffer(buf[CERT_SIZE]);
+      option = { offset: buf[CERT_OFFSET], length: buf[CERT_SIZE] };
+      num = fs.readSync(fd, cert, option);
+      try {
+        let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
+        let fdString: string = textDecoder.decodeWithStream(new Uint8Array(cert), { stream: false });
+        let infoArray = fdString.split('accountType');
+        let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
+        GlobalContext.store('accountType', Number(type));
+        resolve(Number(type));
+      } catch (err) {
+        HiLog.error(TAG, `getStringFromFd error: ${JSON.stringify(err)}`);
+        reject();
+      }
     }
   })
+}
+
+function closeFile(file: fs.File | undefined) {
+  try {
+    if (file) {
+      fs.closeSync(file);
+    }
+  } catch (err) {
+    HiLog.error(TAG, `closeSync: ${JSON.stringify(err)}`);
+  }
 }
 
 function deleteFile(file: string) {
