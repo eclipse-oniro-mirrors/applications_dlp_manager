@@ -132,7 +132,6 @@ export class GetAlertMessage {
     }
     if ([
       Constants.ERR_JS_DLP_FILE_READ_ONLY,
-      Constants.ERR_JS_OFFLINE,
       Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
     ].includes(error.code)) {
       windowHeight = Constants.START_ABILITY_HEIGHT_FOUR_ROWS;
@@ -175,6 +174,8 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.Function_Is_Not_Available') } as Record<string, Resource>;
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
         return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
+      case Constants.ERR_JS_OFFLINE:
+        return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage != undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
@@ -242,13 +243,6 @@ export class GetAlertMessage {
           'msg': $r('app.string.MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED'),
           'cancel': $r('app.string.ban'),
           'ok': $r('app.string.SYSTEM_IS_AUTHENTICATED_LOGIN')
-        } as Record<string, Resource>;
-      case Constants.ERR_JS_OFFLINE:
-        return {
-          'title': $r('app.string.Network_not_connected'),
-          'msg': $r('app.string.Network_not_connected_description'),
-          'cancel': $r('app.string.ban'),
-          'ok': $r('app.string.Go_setting')
         } as Record<string, Resource>;
       default:
         return {

@@ -316,7 +316,6 @@ export default class MainAbility extends UIExtensionAbility {
         if (accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
           this.dlpFilesToEncrypt(session, want);
         } else {
-          GlobalContext.store('accountType', Constants.ADD_ACCOUNT_TYPE);
           await GetAlertMessage.startAlertAbility(this.context, {
             code: Constants.ERR_JS_APP_CANNOT_OPEN } as BusinessError);
         }

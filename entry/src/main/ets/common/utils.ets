@@ -103,7 +103,7 @@ function getFileFd(uri: string, mode?: number): number {
 
 async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   let accountMgr = account_osAccount.getAccountManager();
-  return await accountMgr.getCurrentOsAccount();
+  return await accountMgr.queryOsAccount();
 }
 
 function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number {
@@ -218,25 +218,12 @@ let toggleShow = (allNames: AuthAccount[], showNamesArr: AuthAccount[], editFlag
   }
 }
 
-
 function directionStatus(func: Callback<number>) {
   let innerEvent: emitter.InnerEvent = {
     eventId: Constants.ENCRYPTION_EMIT_DIRECTION_STATUS
   };
   emitter.on(innerEvent, (eventData: emitter.EventData) => {
     func(eventData.data?.direction);
-  });
-}
-
-async function showErrorDialogAndExit(windowStage: window.WindowStage, error: BusinessError): Promise<void> {
-  let abilityWant = GlobalContext.load('abilityWant') as Want;
-  if (abilityWant.parameters) {
-    abilityWant.parameters.error = error;
-  }
-  windowStage.loadContent('pages/alert', (err: BusinessError) => {
-    if (err.code !== 0) {
-      HiLog.error(TAG, `loadContent failed: ${JSON.stringify(err)}`);
-    }
   });
 }
 
@@ -525,7 +512,6 @@ export {
   calculate,
   toggleShow,
   directionStatus,
-  showErrorDialogAndExit,
   getAppId,
   getTime,
   getFileSizeByUri,

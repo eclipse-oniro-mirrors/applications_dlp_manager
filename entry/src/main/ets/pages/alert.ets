@@ -89,11 +89,6 @@ struct Index {
       this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT;
     }
     if ([
-      Constants.ERR_JS_OFFLINE,
-    ].includes(messageCode)) {
-      this.messageHeight = Constants.START_ABILITY_MESSAGE_HEIGHT1;
-    }
-    if ([
       Constants.ERR_JS_APP_PARAM_ERROR,
       Constants.ERR_JS_APP_OPEN_REJECTED,
     ].includes(messageCode)) {
@@ -130,7 +125,7 @@ struct Index {
         Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
       ].includes(messageCode)) {
         errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
-      } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED, Constants.ERR_JS_OFFLINE].includes(messageCode)) {
+      } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED].includes(messageCode)) {
         errInfo = GetAlertMessage.getAlertButtonMessage(errorMsg);
       } else if ([Constants.ERR_JS_USER_NO_PERMISSION].includes(messageCode)) {
         errInfo = accountType === dlpPermission.AccountType.CLOUD_ACCOUNT ?
@@ -208,16 +203,6 @@ struct Index {
             .height(Constants.FOOTER_BUTTON_HEIGHT)
             .onClick(async (event) => {
               let error = this.alertWant?.parameters?.error as BusinessError;
-              if (error && error.code === Constants.ERR_JS_OFFLINE) {
-                let want: Want = {
-                  action: 'action.system.home',
-                  entities: ['entity.system.home'],
-                  uri: 'wifi_entry'
-                };
-                (getContext(this) as common.UIAbilityContext).startAbility(want);
-                (getContext(this) as common.UIAbilityContext).terminateSelf();
-                return;
-              }
               this.authWithPop();
             })
             .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })

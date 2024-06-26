@@ -642,6 +642,6 @@ struct encryptionSuccess {
         }
       }
     }
-    .backgroundColor($r('app.color.base_background_color_dark'))
+    .backgroundColor($r('sys.color.mask_fourth'))
   }
 }
