@@ -103,7 +103,7 @@ function getFileFd(uri: string, mode?: number): number {
 
 async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   let accountMgr = account_osAccount.getAccountManager();
-  return await accountMgr.getCurrentOsAccount();
+  return await accountMgr.queryOsAccount();
 }
 
 function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number {
