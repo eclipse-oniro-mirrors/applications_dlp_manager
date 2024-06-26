@@ -324,6 +324,7 @@ struct encryptedSharing {
               .border(this.phoneFormatTips ?
                 { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : { width: 0})
               .onChange((value: string) => {
+                HiLog.info(TAG, `input length: ${value.length}`);
                 this.inputValue = value;
                 this.phoneFormatTips = false;
               })
