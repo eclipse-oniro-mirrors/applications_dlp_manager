@@ -339,6 +339,10 @@
     {
       "name": "Function_Is_Not_Available",
       "value": "This function is not currently available."
+    },
+    {
+      "name": "This_File_is_Open_By_Other_App",
+      "value": "This file has been opened by another application."
     }
   ]
 }
