@@ -672,6 +672,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       let value: (number | string)[] = fileOpenHistory.get(this.uri) as (number | string)[];
       if (this.sandboxBundleName !== value[Constants.FILE_OPEN_HISTORY_ZERO] as string) {
         HiLog.error(TAG, `other app is opening this file`);
+        opening = false;
         await GetAlertMessage.startAlertAbility(this.context, {
           code: Constants.ERR_JS_OTHER_APP_OPEN_FILE } as BusinessError);
         return;
