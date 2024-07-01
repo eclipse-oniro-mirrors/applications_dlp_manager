@@ -323,6 +323,10 @@
         {
             "name":"Share_File_Name_Too_Long",
             "value":"檔案名稱過長，加密失敗"
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"其他應用程式已開啟此加密檔案。"
         }
     ]
 }

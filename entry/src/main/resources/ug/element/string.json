@@ -323,6 +323,10 @@
         {
             "name":"Share_File_Name_Too_Long",
             "value":"مەخپىيلەشتۈرۈلمىدى، ھۆججەت نامى بەك ئۇزۇن."
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"بۇ مەخپىيلەشتۈرۈلگەن ھۆججەت باشقا ئەپتە ئوچۇق."
         }
     ]
 }
