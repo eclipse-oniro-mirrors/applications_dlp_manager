@@ -20,6 +20,7 @@ ohos_hap("dlp_manager") {
     ":dlp_manager_js_assets",
     ":dlp_manager_resources",
   ]
+  publicity_file = "publicity.xml"
   js_build_mode = "debug"
   certificate_profile = "signature/dlpmanager.p7b"
   hap_name = "dlp_manager"
