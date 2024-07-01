@@ -16,13 +16,13 @@
 import rpc from '@ohos.rpc';
 import ConnectService from './ConnectService';
 import { HiLog } from '../HiLog';
+import Constants from '../constant';
 
 const TAG = 'CredCallbackStub';
 
 export default class CredCallbackStub extends rpc.RemoteObject {
   private connectService: ConnectService = new ConnectService(getContext(this));
   private static readonly DESCRIPTOR: string = 'OHOS.HapDlpCredAbilityServiceStub';
-  private static readonly COMMAND_SEARCH_USER_INFO = 1;
 
   constructor(des: string) {
     super(des);
@@ -39,15 +39,23 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       return false;
     }
     switch (code) {
-      case CredCallbackStub.COMMAND_SEARCH_USER_INFO: {
+      case Constants.COMMAND_SEARCH_USER_INFO: {
+        HiLog.info(TAG, `onRemoteMessageRequest command search user info`);
         let resultVar = data.readString();
-        HiLog.info(TAG, `onRemoteMessageRequest data: ${JSON.stringify(resultVar)}`);
-        AppStorage.setOrCreate('isInputInvalid', resultVar);
+        AppStorage.setOrCreate('commandSearchUserInfo', resultVar);
+        this.connectService.disconnectServiceShareAbility();
+        return true;
+      }
+      case Constants.COMMAND_GET_ACCOUNT_INFO: {
+        HiLog.info(TAG, `onRemoteMessageRequest command get account info`);
+        let resultVar = data.readString();
+        AppStorage.setOrCreate('commandGetAccountInfo', resultVar);
         this.connectService.disconnectServiceShareAbility();
         return true;
       }
       default: {
-        HiLog.info(TAG, `invalid request code: ${code}`);
+        HiLog.error(TAG, `invalid request code: ${code}`);
+        this.connectService.disconnectServiceShareAbility();
         break;
       }
     }
