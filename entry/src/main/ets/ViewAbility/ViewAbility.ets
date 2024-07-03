@@ -330,6 +330,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     });
   }
 
+  async callAlertAbility(errCode: BusinessError): Promise<void> {
+      await GetAlertMessage.startAlertAbility(this.context, errCode);
+      return;
+  }
+
   async getOpenDLPFile(startId: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
       hiTraceMeter.startTrace('DlpOpenDlpFileJs', startId);
@@ -341,8 +346,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           HiLog.info(TAG, `get AppId success`);
         } catch {
           HiLog.error(TAG, `get AppId failed`);
-          await GetAlertMessage.startAlertAbility(this.context, {
-            code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION } as BusinessError);
+          await this.callAlertAbility({code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION } as BusinessError);
           return;
         }
         this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd, callerAppId);
@@ -362,11 +366,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
         if (!accountFlag) {
-          await GetAlertMessage.startAlertAbility(this.context, {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+          await this.callAlertAbility({code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
           return;
         }
-        await GetAlertMessage.startAlertAbility(this.context, err);
+        await this.callAlertAbility(err.code === Constants.ERR_JS_APP_PERMISSION_DENY ?
+          {code: Constants.ERR_JS_RELEASE_FILE_OPEN } as BusinessError : err);
         fileio.closeSync(this.dlpFd);
         reject();
         return;

@@ -154,6 +154,7 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
         return { 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') } as Record<string, Resource>;
+      case Constants.ERR_JS_RELEASE_FILE_OPEN:
       case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
         return { 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
       case Constants.ERR_JS_NETWORK_INVALID:

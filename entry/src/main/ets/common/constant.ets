@@ -147,6 +147,8 @@ export default class Constants {
   public static readonly ERR_JS_APP_NETWORK_INVALID = 9;
   public static readonly ERR_JS_APP_ENCRYPTING = 10;
   public static readonly ERR_JS_APP_CANNOT_OPEN = 11;
+  public static readonly ERR_JS_RELEASE_FILE_OPEN = 13
+  public static readonly ERR_JS_APP_PERMISSION_DENY = 201;
   public static readonly ERR_JS_CREDENTIAL_TIMEOUT = 19100003;
   public static readonly ERR_JS_CREDENTIAL_SERVICE_ERROR = 19100004;
   public static readonly ERR_JS_CREDENTIAL_SERVER_ERROR = 19100005;
