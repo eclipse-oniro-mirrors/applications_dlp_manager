@@ -78,7 +78,7 @@ export class GetAlertMessage {
     })
   }
 
-  private static async phoneHandle(
+  public static async phoneHandle(
     context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
     error: BusinessError
   ) {
@@ -168,8 +168,6 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_USER_NO_PERMISSION:
         return { 'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM') } as Record<string, Resource>;
-      case Constants.ERR_JS_APP_CANNOT_OPEN:
-        return { 'msg': $r('app.string.CANNOT_OPEN_THIS_TYPE_FILE') } as Record<string, Resource>;
       case Constants.ERR_JS_DLP_NOT_PROVIDED:
         return { 'msg': $r('app.string.Function_Is_Not_Available') } as Record<string, Resource>;
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
@@ -266,6 +264,8 @@ export class GetAlertMessage {
         return $r('app.string.MESSAGE_APP_NOT_HAVE_PERM');
       case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
         return $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED');
+      case Constants.ERR_JS_APP_CANNOT_OPEN:
+        return $r('app.string.THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION');
       default:
         return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
     }

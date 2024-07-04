@@ -269,10 +269,17 @@ export default class ViewAbility extends ServiceExtensionAbility {
           GetAlertMessage.startAlertAbility(this.context, {
             code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
           return;
-        }
+        };
         HiLog.info(TAG, `Succeeded to get data: ${JSON.stringify(data)}`);
-        await this.context.startAbility(accountWant);
-        await this.terminateCall();
+        const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
+          .every(element => data.networkCap?.includes(element));
+        if (result) {
+          await this.context.startAbility(accountWant);
+          await this.terminateCall();
+        } else {
+          GetAlertMessage.startAlertAbility(this.context, {
+            code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+        }
       })
     } catch {
       HiLog.info(TAG, `startLoginAbility failed`);
@@ -333,6 +340,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
           callerAppId = await getAppId(this.callerBundleName);
           HiLog.info(TAG, `get AppId success`);
         } catch {
+          HiLog.error(TAG, `get AppId failed`);
+          await GetAlertMessage.startAlertAbility(this.context, {
+            code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION } as BusinessError);
           return;
         }
         this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd, callerAppId);
