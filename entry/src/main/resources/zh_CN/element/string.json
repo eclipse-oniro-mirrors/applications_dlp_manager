@@ -209,8 +209,8 @@
       "value": "您没有权限查看此文件。"
     },
     {
-      "name": "CANNOT_OPEN_THIS_TYPE_FILE",
-      "value": "无法打开此类型文件。"
+      "name": "THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+      "value": "此文件不支持加密保护"
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",

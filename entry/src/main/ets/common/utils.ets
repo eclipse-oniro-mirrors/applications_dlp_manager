@@ -228,21 +228,25 @@ function directionStatus(func: Callback<number>) {
 }
 
 function getAppId(bundleName: string) {
-  return new Promise<string>(async resolve => {
+  return new Promise<string>(async (resolve, reject) => {
     let bundleFlags: number = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO;
     let userId = await getUserId();
     try {
       bundleManager.getBundleInfo(bundleName, bundleFlags, userId, (err, data) => {
         if (err) {
           HiLog.error(TAG, `get appId failed: ${JSON.stringify(err)}`);
-          resolve('');
+          reject();
         } else {
-          resolve(data.signatureInfo.appId);
+          if (data.signatureInfo.appId) {
+            resolve(data.signatureInfo.appId);
+            return;
+          }
+          reject();
         }
       })
     } catch (err) {
       HiLog.error(TAG, `get appId failed: ${JSON.stringify(err)}`);
-      resolve('');
+      reject();
     }
   })
 }

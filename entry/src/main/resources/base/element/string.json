@@ -209,8 +209,8 @@
       "value": "You don't have permission to view this file."
     },
     {
-      "name": "CANNOT_OPEN_THIS_TYPE_FILE",
-      "value": "Cannot open this type of file"
+      "name": "THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+      "value": "This file does not support encryption protection."
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
