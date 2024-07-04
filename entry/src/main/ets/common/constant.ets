@@ -219,7 +219,6 @@ export default class Constants {
   public static STAFF_FONT_PADDING = 1;
 
   // encryptionShare
-  public static REQUEST_CODE = 1;
   public static INTERNATIONAL_DIALING_CODE = '0086';
   public static CONTACTS_PICKER_WIDTH = '100%';
   public static CONTACTS_PICKER_HEIGHT = '100%';
@@ -251,4 +250,6 @@ export default class Constants {
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;
   public static readonly ERR_CODE_CONNECTION_TIME_OUT: number = -310;
   public static readonly ERR_CODE_SUCCESS: number = 0;
+  public static readonly COMMAND_SEARCH_USER_INFO = 1;
+  public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
 }

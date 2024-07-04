@@ -26,15 +26,28 @@ const TAG = 'ConnectService';
 export default class ConnectService {
   private context: ESObject;
   private connection = -1;
-  private options: common.ConnectOptions;
+  private optionsSearchUser: common.ConnectOptions;
+  private optionsGetAccount: common.ConnectOptions;
 
   constructor(context: ESObject) {
     let that = this;
     this.context = context;
-    this.options = {
+    this.optionsSearchUser = {
       onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success${JSON.stringify(elementName)}`);
-        that.sendDataRequest(remote);
+        HiLog.info(TAG, `onConnect success ${JSON.stringify(elementName)}`);
+        that.searchUserInfo(remote);
+      },
+      onDisconnect: () => {
+        HiLog.info(TAG, `onDisconnect`);
+      },
+      onFailed: () => {
+        HiLog.info(TAG, `onFailed`);
+      }
+    }
+    this.optionsGetAccount = {
+      onConnect: (elementName, remote) => {
+        HiLog.info(TAG, `onConnect success ${JSON.stringify(elementName)}`);
+        that.getAccountInfo(remote);
       },
       onDisconnect: () => {
         HiLog.info(TAG, `onDisconnect`);
@@ -45,24 +58,32 @@ export default class ConnectService {
     }
   }
 
-  connectServiceShareAbility() {
+  connectServiceShareAbility(code: number) {
     HiLog.info(TAG, `connectServiceShareAbility start`);
     let want: Want = {
       bundleName: 'com.huawei.hmos.dlpcredmgr',
       abilityName: 'DlpCredDataExtAbility',
     };
     try {
-      this.connection = this.context.connectServiceExtensionAbility(want, this.options);
-      AppStorage.setOrCreate('connection', this.connection);
+      switch (code) {
+        case Constants.COMMAND_SEARCH_USER_INFO: {
+          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsSearchUser);
+          AppStorage.setOrCreate('connection', this.connection);
+        }
+        case Constants.COMMAND_GET_ACCOUNT_INFO: {
+          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
+          AppStorage.setOrCreate('connection', this.connection);
+        }
+      }
     } catch (err) {
       HiLog.error(TAG, `connectServiceExtAbility failed: ${JSON.stringify(err)}`);
     }
     HiLog.info(TAG, `connectServiceExtAbility result: ${this.connection}`);
   }
 
-  sendDataRequest(remote: rpc.IRemoteObject) {
+  searchUserInfo(remote: rpc.IRemoteObject) {
     let cloudPhone: string | undefined = AppStorage.get('cloudPhone');
-    HiLog.info(TAG, `sendDataRequest start`);
+    HiLog.info(TAG, `searchUserInfo start`);
     let option = new rpc.MessageOption();
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
@@ -74,11 +95,29 @@ export default class ConnectService {
       HiLog.info(TAG, `onConnect remote is null.`);
       return;
     }
-    HiLog.info(TAG, `sendDataRequest success ${JSON.stringify(data)}`);
-    remote.sendMessageRequest(Constants.REQUEST_CODE, data, reply, option).then((result) => {
-      HiLog.info(TAG, `sendDataRequest. result: ${JSON.stringify(result)}`);
+    remote.sendMessageRequest(Constants.COMMAND_SEARCH_USER_INFO, data, reply, option).then((result) => {
+      HiLog.info(TAG, `searchUserInfo success. result: ${JSON.stringify(result)}`);
     }).catch((e: string) => {
-      HiLog.info(TAG, `sendDataRequest error: ${e}`);
+      HiLog.info(TAG, `searchUserInfo error: ${e}`);
+    });
+  }
+
+  getAccountInfo(remote: rpc.IRemoteObject) {
+    HiLog.info(TAG, `getAccountInfo start`);
+    let option = new rpc.MessageOption();
+    let data = new rpc.MessageSequence();
+    let reply = new rpc.MessageSequence();
+    data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
+    let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
+    data.writeRemoteObject(callback.asObject());
+    if (remote === null) {
+      HiLog.info(TAG, `onConnect remote is null.`);
+      return;
+    }
+    remote.sendMessageRequest(Constants.COMMAND_GET_ACCOUNT_INFO, data, reply, option).then((result) => {
+      HiLog.info(TAG, `getAccountInfo success. result: ${JSON.stringify(result)}`);
+    }).catch((e: string) => {
+      HiLog.info(TAG, `getAccountInfo error: ${e}`);
     });
   }
 

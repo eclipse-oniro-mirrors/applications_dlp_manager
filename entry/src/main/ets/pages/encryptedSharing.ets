@@ -18,8 +18,11 @@ import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import ConnectService from '../common/share/ConnectService';
 import { KeyboardAvoidMode } from '@ohos.arkui.UIContext';
+import { LengthMetrics } from '@ohos.arkui.node';
 import dlpPermission from '@ohos.dlpPermission';
 import promptAction from '@ohos.promptAction';
+import connection from '@ohos.net.connection';
+import { BusinessError } from '@ohos.base';
 import Want from '@ohos.app.ability.Want';
 import fs from '@ohos.file.fs';
 import { HiLog } from '../common/HiLog';
@@ -31,7 +34,8 @@ import {
   sendDlpFileCreateProperties,
   getFileSizeByUri,
   sendDlpManagerAccountLogin,
-  getAppId
+  getAppId,
+  getOsAccountInfo
 } from '../common/utils';
 
 const TAG = 'Share';
@@ -72,12 +76,17 @@ let storage = LocalStorage.getShared();
 @Component
 struct encryptedSharing {
   private connectService: ConnectService = new ConnectService(getContext(this));
-  @StorageLink('isInputInvalid') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
+  @State titlebarMargin: LocalizedMargin = {
+    start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
+    end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
+  };
+  @StorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
+  @State commandGetAccountInfoFlag: boolean = false;
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
   @State enabledFocus: boolean = true;
   @State isShowSheet: boolean = false;
-  @State showUIExtension: boolean = true;
-  @State cloudAccountLogin: boolean = true;
+  @State showUIExtension: boolean = false;
+  @State cloudAccountLogin: boolean = false;
   @State actionWant: Want | undefined = storage.get<Want>('actionWant');
   @State inputValue: string = '';
   @State phoneFormatTips: boolean = false;
@@ -122,12 +131,27 @@ struct encryptedSharing {
   private async beginShareEncrypt() {
     if (this.checkCloudPhone(this.inputValue)) {
       HiLog.info(TAG, `this.cloudAccountLogin: ${this.cloudAccountLogin}`);
-      if (this.cloudAccountLogin) {
-        this.connectService.connectServiceShareAbility();
+      let cloudAccountLoginFlag = this.cloudAccountLoginFlag();
+      if (cloudAccountLoginFlag) {
+        this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
       } else {
         this.showUIExtension = true;
       }
     }
+  }
+
+  cloudAccountLoginFlag(): boolean {
+    if (this.commandGetAccountInfoFlag) {
+      let info = AppStorage.get('commandGetAccountInfo') as string;
+      let resultVal = JSON.parse(info) as Record<string, object>;
+      if (Number(resultVal.errorCode) === Constants.ERR_CODE_SUCCESS) {
+        let res = resultVal.result as Record<string, string>;
+        this.ownerAccount = res.uid;
+        this.ownerAccountID = res.uid;
+      };
+      return true;
+    };
+    return this.cloudAccountLogin;
   }
 
   checkCloudPhone(phone: string): boolean {
@@ -147,14 +171,14 @@ struct encryptedSharing {
   }
 
   async beginToGenerateDLPFile() {
-    HiLog.info(TAG, `beginToGenerateDLPFile start: ${JSON.stringify(this.actionWant)}`);
+    HiLog.info(TAG, `beginToGenerateDLPFile start`);
     if (!this.getInputInvalid()) {
       return;
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
     let inputUri: string = parameters['ability.params.stream'][0];
     let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
-    let inputFileName = srcFileMsg.fileName;
+    let inputFileName = decodeURIComponent(srcFileMsg.fileName);
     let filePatch = inputFileName + srcFileMsg.fileType + '.dlp';
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
@@ -178,7 +202,7 @@ struct encryptedSharing {
       this.enabledFocus = true;
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
       HiLog.info(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
-      AppStorage.setOrCreate('isInputInvalid', '');
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
     } finally {
       if (file) {
@@ -208,7 +232,6 @@ struct encryptedSharing {
         'general.file': arr,
       }
       this.actionWant.parameters['ability.picker.records'] = generalFile;
-      HiLog.info(TAG, `this.actionWant: ${JSON.stringify(this.actionWant)}`);
       setTimeout(() => {
         this.session!.terminateSelfWithResult({
           resultCode: 2,
@@ -224,10 +247,10 @@ struct encryptedSharing {
     };
     let credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
-      HiLog.info(TAG, `credentialCallBack: ${credentialCallBack.msg}`);
+      HiLog.info(TAG, `credentialCallBack msg`);
       this.credentialCallBackMsg = credentialCallBack.msg;
       this.phoneFormatTips = true;
-      AppStorage.setOrCreate('isInputInvalid', '');
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     if (!credentialCallBack.status && [
@@ -235,12 +258,13 @@ struct encryptedSharing {
       Constants.ERR_CODE_CONNECTION_FAIL,
       Constants.ERR_CODE_CONNECTION_TIME_OUT
     ].includes(Number(credentialCallBack.errorCode))) {
-      promptAction.showToast({
-        message: $r('app.string.network_invalid'),
-        duration: Constants.SHARE_SET_TIMEOUT
-      });
-      this.phoneFormatTips = true;
-      AppStorage.setOrCreate('isInputInvalid', '');
+      this.showToast($r('app.string.network_invalid'));
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
+      return false;
+    }
+    if (!credentialCallBack.status && Number(credentialCallBack.errorCode) !== Constants.ERR_CODE_SUCCESS) {
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     let authUserList: AuthUserList[] = [
@@ -268,8 +292,58 @@ struct encryptedSharing {
     this.contactExists = callerAppId ? true : false;
   }
 
+  checkNetworkStatus(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        let netHandle = connection.getDefaultNetSync();
+        connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
+          if (error) {
+            HiLog.info(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
+            reject();
+            return;
+          };
+          HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
+          const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
+            .every(element => data.networkCap?.includes(element));
+          if (result) {
+            resolve();
+            return;
+          }
+          reject();
+          return;
+        })
+      } catch {
+        HiLog.info(TAG, `checkNetworkStatus failed`);
+        reject();
+        return;
+      }
+    })
+  }
+
+  async getAccountInfo() {
+    try {
+      await this.checkNetworkStatus();
+      try {
+        let accountInfo = await getOsAccountInfo();
+        if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+          accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+          this.showUIExtension = true;
+        } else {
+          this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
+          this.commandGetAccountInfoFlag = true;
+        }
+      } catch (err) {
+        HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+        this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      }
+    } catch {
+      this.showToast($r('app.string.network_invalid'));
+    }
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtension}`);
+    this.getAccountInfo();
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
     this.checkContacts();
@@ -284,6 +358,7 @@ struct encryptedSharing {
         EditableTitleBar({
           leftIconStyle: EditableLeftIconType.Back,
           title: $r('app.string.Share_Add_Viewable_Users'),
+          contentMargin: this.titlebarMargin,
           menuItems: [
             {
               value: $r('sys.media.ohos_ic_public_cancel'),
@@ -371,8 +446,14 @@ struct encryptedSharing {
             .fontWeight(FontWeight.Medium)
             .width(Constants.SHARE_BUTTON_WIDTH)
             .height(Constants.FOOTER_HEIGHT)
-            .onClick(() => {
-              this.beginShareEncrypt()
+            .onClick(async () => {
+              try {
+                await this.checkNetworkStatus();
+                this.beginShareEncrypt();
+              } catch (err) {
+                this.showToast($r('app.string.network_invalid'));
+                HiLog.error(TAG, `checkNetworkStatus error: ${JSON.stringify(err)}`)
+              };
             })
         }
         .justifyContent(FlexAlign.Center)
@@ -404,15 +485,12 @@ struct encryptedSharing {
               let checkCloudPhone = this.checkCloudPhone(this.inputValue);
               HiLog.info(TAG, `checkCloudPhone: ${checkCloudPhone}`);
               if (checkCloudPhone) {
-                this.connectService.connectServiceShareAbility();
+                this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
               }
             } else {
               this.cloudAccountLogin = false;
-              if (['12300001', '1001502005'].includes(res.code.toString())) {
-                promptAction.showToast({
-                  message: $r('app.string.network_invalid'),
-                  duration: Constants.SHARE_SET_TIMEOUT
-                });
+              if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
+                this.showToast($r('app.string.network_invalid'));
               }
             }
             this.showUIExtension = false;
