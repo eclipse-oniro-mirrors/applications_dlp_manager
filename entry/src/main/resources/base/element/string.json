@@ -337,6 +337,10 @@
       "value": "Failed to encrypt the file."
     },
     {
+      "name": "Share_File_Name_Too_Long",
+      "value": "File name too long, Failed to encrypt the file."
+    },
+    {
       "name": "Function_Is_Not_Available",
       "value": "This function is not currently available."
     },

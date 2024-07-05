@@ -130,8 +130,8 @@ struct encryptedSharing {
 
   private async beginShareEncrypt() {
     if (this.checkCloudPhone(this.inputValue)) {
-      HiLog.info(TAG, `this.cloudAccountLogin: ${this.cloudAccountLogin}`);
       let cloudAccountLoginFlag = this.cloudAccountLoginFlag();
+      HiLog.info(TAG, `cloudAccountLoginFlag: ${cloudAccountLoginFlag}`);
       if (cloudAccountLoginFlag) {
         this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
       } else {
@@ -143,6 +143,11 @@ struct encryptedSharing {
   cloudAccountLoginFlag(): boolean {
     if (this.commandGetAccountInfoFlag) {
       let info = AppStorage.get('commandGetAccountInfo') as string;
+      if (info === undefined) {
+        HiLog.error(TAG, `command get account info undefined`);
+        this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+        return false;
+      };
       let resultVal = JSON.parse(info) as Record<string, object>;
       if (Number(resultVal.errorCode) === Constants.ERR_CODE_SUCCESS) {
         let res = resultVal.result as Record<string, string>;
@@ -203,6 +208,10 @@ struct encryptedSharing {
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
       HiLog.info(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
       AppStorage.setOrCreate('commandSearchUserInfo', '');
+      if ([13900030].includes(err.code)) {
+        this.showToast($r('app.string.Share_File_Name_Too_Long'));
+        return;
+      };
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
     } finally {
       if (file) {
@@ -245,6 +254,7 @@ struct encryptedSharing {
     if (!this.isInputInvalid) {
       return false;
     };
+    HiLog.info(TAG, `credential Call Back`);
     let credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
       HiLog.info(TAG, `credentialCallBack msg`);
@@ -288,41 +298,40 @@ struct encryptedSharing {
 
   async checkContacts() {
     let callerBundleName = 'com.ohos.contacts';
-    let callerAppId = await getAppId(callerBundleName);
-    this.contactExists = callerAppId ? true : false;
+    try {
+      await getAppId(callerBundleName);
+      this.contactExists = true;
+    } catch {
+      this.contactExists = false;
+    }
   }
 
   checkNetworkStatus(): Promise<void> {
     return new Promise((resolve, reject) => {
-      try {
-        let netHandle = connection.getDefaultNetSync();
-        connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
-          if (error) {
-            HiLog.info(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
-            reject();
-            return;
-          };
-          HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
-          const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
-            .every(element => data.networkCap?.includes(element));
-          if (result) {
-            resolve();
-            return;
-          }
+      let netHandle = connection.getDefaultNetSync();
+      connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
+        if (error) {
+          HiLog.info(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
           reject();
           return;
-        })
-      } catch {
-        HiLog.info(TAG, `checkNetworkStatus failed`);
+        };
+        HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
+        const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
+          .every(element => data.networkCap?.includes(element));
+        if (result) {
+          resolve();
+          return;
+        }
         reject();
         return;
-      }
+      })
     })
   }
 
   async getAccountInfo() {
     try {
       await this.checkNetworkStatus();
+      HiLog.info(TAG, `get Account Info start`);
       try {
         let accountInfo = await getOsAccountInfo();
         if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
