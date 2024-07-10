@@ -15,6 +15,8 @@
 
 import ActionExtensionAbility from '@ohos.app.ability.ActionExtensionAbility';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import { Configuration } from '@ohos.app.ability.Configuration';
+import emitter from '@ohos.events.emitter';
 import Want from '@ohos.app.ability.Want';
 import { HiLog } from '../common/HiLog';
 import { getDLPInfo, DLPInfo } from '../common/utils';
@@ -30,6 +32,11 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
 
   onBackground(): void {
     HiLog.info(TAG, `EncryptedSharingAbility onBackground.`);
+  }
+
+  onConfigurationUpdate(newConfig: Configuration): void {
+    HiLog.info(TAG, 'haringAbility onConfigurationUpdate new language: ' + newConfig.language);
+    emitter.emit('onConfigurationUpdate');
   }
 
   checkValidSharedRecords(want: Want): Promise<void> {
