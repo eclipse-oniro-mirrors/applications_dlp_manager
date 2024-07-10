@@ -232,18 +232,12 @@ function getAppId(bundleName: string) {
     let bundleFlags: number = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO;
     let userId = await getUserId();
     try {
-      bundleManager.getBundleInfo(bundleName, bundleFlags, userId, (err, data) => {
-        if (err) {
-          HiLog.error(TAG, `get appId failed: ${JSON.stringify(err)}`);
-          reject();
-        } else {
-          if (data.signatureInfo.appId) {
-            resolve(data.signatureInfo.appId);
-            return;
-          }
-          reject();
-        }
-      })
+      let data = await bundleManager.getBundleInfo(bundleName, bundleFlags, userId);
+      if (data.signatureInfo.appId) {
+        resolve(data.signatureInfo.appId);
+        return;
+      }
+      reject();
     } catch (err) {
       HiLog.error(TAG, `get appId failed: ${JSON.stringify(err)}`);
       reject();

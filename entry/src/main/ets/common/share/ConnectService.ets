@@ -96,7 +96,7 @@ export default class ConnectService {
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_SEARCH_USER_INFO, data, reply, option).then((result) => {
-      HiLog.info(TAG, `searchUserInfo success. result: ${JSON.stringify(result)}`);
+      HiLog.info(TAG, `searchUserInfo success.`);
     }).catch((e: string) => {
       HiLog.info(TAG, `searchUserInfo error: ${e}`);
     });
@@ -115,7 +115,7 @@ export default class ConnectService {
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_GET_ACCOUNT_INFO, data, reply, option).then((result) => {
-      HiLog.info(TAG, `getAccountInfo success. result: ${JSON.stringify(result)}`);
+      HiLog.info(TAG, `getAccountInfo success.`);
     }).catch((e: string) => {
       HiLog.info(TAG, `getAccountInfo error: ${e}`);
     });
