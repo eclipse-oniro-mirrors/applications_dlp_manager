@@ -18,7 +18,7 @@
     },
     {
       "name": "EncryptedSharing",
-      "value": "EncryptedSharing"
+      "value": "Encrypted share"
     },
     {
       "name": "ban",
@@ -314,19 +314,19 @@
     },
     {
       "name": "Share_Add_Viewable_Users",
-      "value": "Adding a user"
+      "value": "Add a user"
     },
     {
       "name": "Share_Enter_Mobile_Number",
-      "value": "Enter a mobile number."
+      "value": "Enter their phone number"
     },
     {
       "name": "Share_Tips_Phone_Format",
-      "value": "Enter a mobile number in the correct format."
+      "value": "Enter a valid phone number"
     },
     {
       "name": "Share_Confirms",
-      "value": "Confirms"
+      "value": "Confirm"
     },
     {
       "name": "Share_File_Encrypted_Success",
@@ -334,7 +334,7 @@
     },
     {
       "name": "Share_File_Encrypted_Failed",
-      "value": "Failed to encrypt the file."
+      "value": "Unable to encrypt file."
     },
     {
       "name": "Function_Is_Not_Available",

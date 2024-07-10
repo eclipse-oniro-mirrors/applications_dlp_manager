@@ -279,6 +279,38 @@
         {
             "name":"apply_for_the_subject",
             "value":"كونكرېت ئىجازەت ئەپكە قاراپ ئوخشىمايدۇ."
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"مەخپىي ئورتاقلىشىش"
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"بۇ ھۆججەتنى كۆرۈش ئىجازىتىڭىز يوق."
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلدى."
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"يانفون نومۇرى كىرگۈزۈڭ"
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"ئىشلەتكۈچى قوشۇش"
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلمىدى."
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"جەزملەش"
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"يانفون نومۇرىنى توغرا كىرگۈزۈڭ."
         }
     ]
 }

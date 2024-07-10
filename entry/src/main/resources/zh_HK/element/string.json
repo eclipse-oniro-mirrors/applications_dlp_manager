@@ -279,6 +279,38 @@
         {
             "name":"apply_for_the_subject",
             "value":"具體權限以應用程式實際功能為準。"
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"加密分享"
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"您沒有權限檢視此檔案。"
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"檔案加密成功"
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"請輸入手機號碼"
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"新增用戶"
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"無法加密檔案"
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"確認"
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"請輸入正確格式的手機號碼"
         }
     ]
 }

@@ -142,11 +142,11 @@
     },
     {
       "name": "enter_a_complete_account",
-      "value": "请输入用户帐号"
+      "value": "请输入用户账号"
     },
     {
       "name": "incorrect_account",
-      "value": "帐号错误，请输入有效的帐号"
+      "value": "账号错误，请输入有效的账号"
     },
     {
       "name": "encryption_loading_title",
@@ -178,11 +178,11 @@
     },
     {
       "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
-      "value": "帐号信息获取失败，请稍后重试。"
+      "value": "账号信息获取失败，请稍后重试。"
     },
     {
       "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
-      "value": "帐号未登录，请登录帐号后重试。"
+      "value": "账号未登录，请登录账号后重试。"
     },
     {
       "name": "MESSAGE_SERVICE_INSIDE_ERROR",
@@ -262,7 +262,7 @@
     },
     {
       "name": "MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
-      "value": "未识别到您的登录信息，此功能仅支持企业用户使用，请先登录企业帐号。"
+      "value": "未识别到您的登录信息，此功能仅支持企业用户使用，请先登录企业账号。"
     },
     {
       "name": "MESSAGE_DLP_ENCRYPTION",

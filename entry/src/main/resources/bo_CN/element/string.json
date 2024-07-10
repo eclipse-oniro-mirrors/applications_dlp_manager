@@ -279,6 +279,38 @@
         {
             "name":"apply_for_the_subject",
             "value":"ཞིབ་ཕྲའི་དབང་ཚད་ནི་ཉེར་སྤྱོད་ཀྱི་དོན་དངོས་རྩོལ་ནུས་གཞིར་འཛིན་རོགས།"
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"གསང་སྡོམ་བརྒྱབ་ནས་མཉམ་སྤྱོད།"
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"ཁྱེད་ལ་ཡིག་ཆ་འདི་ལ་བལྟ་བའི་དབང་ཚད་མེད།"
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"ཡིག་ཆར་གསང་སྡོམ་རྒྱག་ཐུབ་སོང་།"
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"ཁ་པར་ཨང་གྲངས་ནང་འཇུག་གནང་རོགས།"
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"སྤྱོད་མཁན་སྣོན་པ།"
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"ཡིག་ཆར་གསང་སྡོམ་རྒྱག་མ་ཐུབ།"
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"གཏན་འཁེལ།"
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"རྣམ་གཞན་ཡང་དག་པའི་ཁ་པར་ཨང་གྲངས་ནང་འཇུག་གནང་རོགས།"
         }
     ]
 }
