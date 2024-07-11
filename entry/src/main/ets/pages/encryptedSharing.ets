@@ -25,6 +25,7 @@ import connection from '@ohos.net.connection';
 import { BusinessError } from '@ohos.base';
 import Want from '@ohos.app.ability.Want';
 import fs from '@ohos.file.fs';
+import emitter from '@ohos.events.emitter';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
 import FileUtils, { FileMsg } from '../common/FileUtils';
@@ -96,6 +97,7 @@ struct encryptedSharing {
   @State credentialCallBackMsg: string | Resource = '';
   @State session: UIExtensionContentSession | undefined =
     storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+  @State placeHolderStr: ResourceStr = '';
 
   @Builder
   contactsPicker() {
@@ -258,7 +260,8 @@ struct encryptedSharing {
     let credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
       HiLog.info(TAG, `credentialCallBack msg`);
-      this.credentialCallBackMsg = credentialCallBack.msg;
+      let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'no_user');
+      this.credentialCallBackMsg = str.length > 0 ? str : credentialCallBack.msg;
       this.phoneFormatTips = true;
       AppStorage.setOrCreate('commandSearchUserInfo', '');
       return false;
@@ -350,6 +353,36 @@ struct encryptedSharing {
     }
   }
 
+  onLanguageChange() {
+    let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
+    if (str.length > 0) {
+      this.placeHolderStr = str;
+    }
+    str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'no_user');
+    if (str.length > 0) {
+      this.credentialCallBackMsg = str;
+    }
+  }
+
+  subscribeLanguageChange() {
+    emitter.on('onConfigurationUpdate', () => {
+      this.onLanguageChange();
+    })
+  }
+
+  getExternalResourceString(bundle: string, module: string, resourceName: string): string {
+    try {
+      let ctx = getContext().createModuleContext(bundle, module);
+      HiLog.info(TAG, 'getExternalResourceString get context from: ' + ctx.applicationInfo.name);
+      let str = ctx.resourceManager.getStringByNameSync(resourceName);
+      return str;
+    } catch (e) {
+      let error = e as BusinessError;
+      HiLog.error(TAG, 'getExternalResourceString error: ' + error.code + ' ' + error.message);
+      return '';
+    }
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtension}`);
     this.getAccountInfo();
@@ -359,6 +392,9 @@ struct encryptedSharing {
     let pathDir = getContext(this).filesDir;
     fs.rmdirSync(pathDir);
     this.getUIContext().setKeyboardAvoidMode(1);
+    this.subscribeLanguageChange();
+    let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
+    this.placeHolderStr = str.length > 0 ? str : $r('app.string.Share_Enter_Mobile_Number');
   }
 
   build() {
@@ -397,7 +433,7 @@ struct encryptedSharing {
           })
         Column() {
           Row() {
-            TextInput({ text: this.inputValue })
+            TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
               .padding({ right: Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT})
               .enabled(this.enabledFocus)
               .height(Constants.SHARE_TEXT_INPUT_HEIGHT)
@@ -438,8 +474,6 @@ struct encryptedSharing {
             if (this.phoneFormatTips) {
               Span(this.credentialCallBackMsg)
                 .fontColor($r('sys.color.ohos_id_color_warning'))
-            } else {
-              Span($r('app.string.Share_Enter_Mobile_Number'))
             }
           }
           .inputMessageText()

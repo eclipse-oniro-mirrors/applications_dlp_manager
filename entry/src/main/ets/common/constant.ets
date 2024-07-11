@@ -116,6 +116,7 @@ export default class Constants {
 
   public static DLPRPC_SERVICE_PROXY_ERRCODE = 0;
   public static DLP_MANAGER_BUNDLE_NAME = 'com.ohos.dlpmanager';
+  public static DLP_CREDMGR_BUNDLE_NAME = 'com.huawei.hmos.dlpcredmgr';
   public static TRANSPARENT_BACKGROUND_COLOR = '#00000000';
   public static START_ABILITY_YNUMBER = 300;
   public static START_ABILITY_WINDOW_WIDTH = 492;
