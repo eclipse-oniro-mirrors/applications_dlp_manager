@@ -91,7 +91,6 @@ export default class SaveAsAbility extends UIAbility {
   private filePath: string = '';
   private dirPath: string = '';
   private encFile: string = '';
-  private retVal: boolean = false;
   private zipPath: string = '';
   private ff: fs.File | undefined = undefined;
   private zf2: fs.File | undefined = undefined;
@@ -233,44 +232,63 @@ export default class SaveAsAbility extends UIAbility {
   }
 
   async copyDlpHead(srcFd: number, dstFd: number) {
-    let appDir = this.context.filesDir + '/';
-    this.filePath = appDir + 'saveAs' + this.random;
-    this.dirPath = appDir + 'saveAsUnzip' + this.random;
-    this.encFile = this.dirPath + '/encrypted_data';
-    this.zipPath = appDir + 'saveAsZip' + this.random;
-    this.zipName = this.zipPath + '.zip';
-    try {
-      await this.copyDlpHeadData(srcFd, dstFd);
-    } catch (err) {
-      HiLog.error(TAG, `copyDlpHead: ${JSON.stringify(err)}, message: ${JSON.stringify(err.message)}`);
+    return new Promise<boolean>(async (resolve, reject) => {
+      let appDir = this.context.filesDir + '/';
+      this.filePath = appDir + 'saveAs' + this.random;
+      this.dirPath = appDir + 'saveAsUnzip' + this.random;
+      this.encFile = this.dirPath + '/encrypted_data';
+      this.zipPath = appDir + 'saveAsZip' + this.random;
+      this.zipName = this.zipPath + '.zip';
       try {
-        await fs.close(this.ff);
-        await fs.close(this.zf2);
-      } catch (error) {
-        HiLog.error(TAG, `close: ${JSON.stringify(error)}`);
+        let success = await this.copyDlpHeadData(srcFd, dstFd);
+        resolve(success);
+      } catch (err) {
+        HiLog.error(TAG, `copyDlpHead: ${JSON.stringify(err)}, message: ${JSON.stringify(err.message)}`);
+        try {
+          await fs.close(this.ff);
+          await fs.close(this.zf2);
+        } catch (error) {
+          HiLog.error(TAG, `close: ${JSON.stringify(error)}`);
+        }
+        resolve(false);
       }
-    }
-    if (this.zipFlag) {
-      this.deleteFile(this.dirPath + '/encrypted_data');
-      this.deleteFile(this.dirPath + '/dlp_general_info');
-      this.deleteFile(this.dirPath + '/dlp_cert');
-      this.rmDir(this.dirPath);
-      this.deleteFile(this.filePath);
-      this.deleteFile(this.zipName);
-    }
+      if (this.zipFlag) {
+        this.deleteFile(this.dirPath + '/encrypted_data');
+        this.deleteFile(this.dirPath + '/dlp_general_info');
+        this.deleteFile(this.dirPath + '/dlp_cert');
+        this.rmDir(this.dirPath);
+        this.deleteFile(this.filePath);
+        this.deleteFile(this.zipName);
+      }
+    })
   }
 
   async copyDlpHeadData(srcFd: number, dstFd: number) {
-    let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
-    let option: ChangeOption = {
-      offset: 0,
-      length: HEAD_LENGTH_IN_BYTE
-    };
-    let num = fs.readSync(srcFd, z, option);
-    let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
+    return new Promise<boolean>(async (resolve, reject) => {
+      let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
+      let option: ChangeOption = {
+        offset: 0,
+        length: HEAD_LENGTH_IN_BYTE
+      };
+      let num = fs.readSync(srcFd, z, option);
+      let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
+      let magic = buf[0];
 
-    let magic = buf[0];
-    if (magic === Constants.DLP_ZIP_MAGIC) {
+      if(magic !== Constants.DLP_ZIP_MAGIC) {
+        let txtOffset = buf[TXT_OFFSET];
+        let head = new ArrayBuffer(txtOffset);
+        option = {
+          offset: 0,
+          length: txtOffset
+        };
+        num = fs.readSync(srcFd, head, option);
+        let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
+        buf2[SIZE_OFFSET] = 0;
+        num = fs.writeSync(dstFd, head, option);
+        resolve(true);
+        return;
+      }
+
       try {
         this.zipFlag = true;
         this.ff = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
@@ -286,28 +304,17 @@ export default class SaveAsAbility extends UIAbility {
         await zlib.compressFile(this.dirPath, this.zipPath, options);
         this.zf2 = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
         await fs.copyFile(this.zf2.fd, dstFd);
-        this.retVal = true;
+        resolve(true);
       } catch (err) {
         HiLog.error(TAG, `open failed: ${JSON.stringify(err)}`);
+        resolve(false);
       } finally {
         if (this.ff || this.zf2) {
           await fs.close(this.ff);
           await fs.close(this.zf2);
         }
       }
-    } else {
-      let txtOffset = buf[TXT_OFFSET];
-      let head = new ArrayBuffer(txtOffset);
-      option = {
-        offset: 0,
-        length: txtOffset
-      };
-      num = fs.readSync(srcFd, head, option);
-      let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
-      buf2[SIZE_OFFSET] = 0;
-      num = fs.writeSync(dstFd, head, option);
-      this.retVal = true;
-    }
+    })
   }
 
   parseDocumentPickerSaveOption(args: picker.DocumentSaveOptions[], action: string) {
@@ -461,8 +468,8 @@ export default class SaveAsAbility extends UIAbility {
       let appId: number = token2FileValue[2] as number;
       let srcUri: string = token2FileValue[4] as string;
       this.srcFdPicker = getFileFd(srcUri);
-      await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
-      if (!this.retVal) {
+      let success = await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
+      if (success) {
         try {
           await fs.close(this.file);
           await this.deleteUri(uri);
