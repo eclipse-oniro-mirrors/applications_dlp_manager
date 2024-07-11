@@ -309,6 +309,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
           this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
           HiLog.info(TAG, 'account not login');
+          opening = false;
           await this.startLoginAbility();
           reject();
           return;
@@ -611,12 +612,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
         return;
       }
       if (opening) {
-        HiLog.debug(TAG, `file is opening: ${this.uri}`);
+        HiLog.info(TAG, `file is opening: ${this.uri}`);
         reject();
         return;
       } else {
         opening = true;
-        HiLog.debug(TAG, `file is opened: ${this.uri}`);
+        HiLog.info(TAG, `file is opened: ${this.uri}`);
       }
       this.uri = want.uri as string;
       if (!isValidPath(this.uri)) {
