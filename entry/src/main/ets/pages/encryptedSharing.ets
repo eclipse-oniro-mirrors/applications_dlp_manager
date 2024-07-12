@@ -25,6 +25,7 @@ import connection from '@ohos.net.connection';
 import { BusinessError } from '@ohos.base';
 import Want from '@ohos.app.ability.Want';
 import fs from '@ohos.file.fs';
+import systemParameterEnhance from '@ohos.systemParameterEnhance';
 import emitter from '@ohos.events.emitter';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
@@ -38,6 +39,7 @@ import {
   getAppId,
   getOsAccountInfo
 } from '../common/utils';
+import FontSizeScale from '../common/FontSizeScale';
 
 const TAG = 'Share';
 class Test {
@@ -65,7 +67,7 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 
 @Extend(Text)
 function inputMessageText() {
-  .fontSize($r('sys.float.ohos_fa_text_size_body'))
+  .fontSize($r('sys.float.ohos_id_text_size_body3'))
   .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
   .fontColor($r('sys.color.ohos_id_color_text_secondary'))
   .fontWeight(FontWeight.Regular)
@@ -81,7 +83,8 @@ struct encryptedSharing {
     start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
     end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
   };
-  @StorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
+  @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
+  @LocalStorageLink('commandGetAccountInfo') commandGetAccountInfo: string = '';
   @State commandGetAccountInfoFlag: boolean = false;
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
   @State enabledFocus: boolean = true;
@@ -98,6 +101,7 @@ struct encryptedSharing {
   @State session: UIExtensionContentSession | undefined =
     storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State placeHolderStr: ResourceStr = '';
+  @State contactPerson: string = '';
 
   @Builder
   contactsPicker() {
@@ -135,6 +139,7 @@ struct encryptedSharing {
       let cloudAccountLoginFlag = this.cloudAccountLoginFlag();
       HiLog.info(TAG, `cloudAccountLoginFlag: ${cloudAccountLoginFlag}`);
       if (cloudAccountLoginFlag) {
+        this.enabledFocus = false;
         this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
       } else {
         this.showUIExtension = true;
@@ -144,7 +149,7 @@ struct encryptedSharing {
 
   cloudAccountLoginFlag(): boolean {
     if (this.commandGetAccountInfoFlag) {
-      let info = AppStorage.get('commandGetAccountInfo') as string;
+      let info = this.commandGetAccountInfo;
       if (info === undefined) {
         HiLog.error(TAG, `command get account info undefined`);
         this.showToast($r('app.string.Share_File_Encrypted_Failed'));
@@ -180,6 +185,7 @@ struct encryptedSharing {
   async beginToGenerateDLPFile() {
     HiLog.info(TAG, `beginToGenerateDLPFile start`);
     if (!this.getInputInvalid()) {
+      this.enabledFocus = true;
       return;
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
@@ -194,7 +200,6 @@ struct encryptedSharing {
     let filePath = getContext(this).filesDir + '/' + filePatch;
     let file: fs.File | undefined;
     let filePathUri = getFileUriByPath(filePath);
-    this.enabledFocus = false;
     try {
       file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
       await dlpPermission.generateDLPFile(inFileFd, file.fd, this.dlpProperty);
@@ -206,16 +211,16 @@ struct encryptedSharing {
       this.backToPages(filePathUri, filePatch);
       HiLog.info(TAG, `beginToGenerateDLPFile success`);
     } catch (err) {
-      this.enabledFocus = true;
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
       HiLog.info(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
-      AppStorage.setOrCreate('commandSearchUserInfo', '');
-      if ([13900030].includes(err.code)) {
+      storage.setOrCreate('commandSearchUserInfo', '');
+      if (err.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
         this.showToast($r('app.string.Share_File_Name_Too_Long'));
         return;
       };
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
     } finally {
+      this.enabledFocus = true;
       if (file) {
         fs.closeSync(file);
       }
@@ -256,14 +261,14 @@ struct encryptedSharing {
     if (!this.isInputInvalid) {
       return false;
     };
-    HiLog.info(TAG, `credential Call Back`);
     let credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
+    HiLog.info(TAG, `credential Call Back errorCode: ${credentialCallBack.errorCode}`);
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
       HiLog.info(TAG, `credentialCallBack msg`);
       let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'no_user');
       this.credentialCallBackMsg = str.length > 0 ? str : credentialCallBack.msg;
       this.phoneFormatTips = true;
-      AppStorage.setOrCreate('commandSearchUserInfo', '');
+      storage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     if (!credentialCallBack.status && [
@@ -272,12 +277,12 @@ struct encryptedSharing {
       Constants.ERR_CODE_CONNECTION_TIME_OUT
     ].includes(Number(credentialCallBack.errorCode))) {
       this.showToast($r('app.string.network_invalid'));
-      AppStorage.setOrCreate('commandSearchUserInfo', '');
+      storage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) !== Constants.ERR_CODE_SUCCESS) {
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      AppStorage.setOrCreate('commandSearchUserInfo', '');
+      storage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     let authUserList: AuthUserList[] = [
@@ -362,6 +367,7 @@ struct encryptedSharing {
     if (str.length > 0) {
       this.credentialCallBackMsg = str;
     }
+    this.getContactPersonString();
   }
 
   subscribeLanguageChange() {
@@ -383,6 +389,36 @@ struct encryptedSharing {
     }
   }
 
+  getContactPersonString() {
+    try {
+      getContext().resourceManager.getStringValue($r('app.string.Share_Contact_Person').id,
+        (error: BusinessError, value: string) => {
+          if (error === undefined || error === null) {
+            this.contactPerson = value;
+          } else {
+            HiLog.error(TAG, `error is ${JSON.stringify(error)}`);
+          }
+      });
+    } catch (error) {
+      HiLog.error(TAG, `callback getStringValue failed, error ${JSON.stringify(error)}`);
+    }
+  }
+
+  private getSettingItemPadding(): number {
+    const FONT_SIZE_SCALE_PARAM = 'persist.sys.font_scale_for_user0';
+    let fontSizeScale = Number.parseFloat(systemParameterEnhance.getSync(FONT_SIZE_SCALE_PARAM, '1'));
+    switch (fontSizeScale) {
+      case FontSizeScale.XXL1:
+        return Constants.GET_SETTING_ITEM_XXL1;
+      case FontSizeScale.XXL2:
+        return Constants.GET_SETTING_ITEM_XXL2;
+      case FontSizeScale.XXL3:
+        return Constants.GET_SETTING_ITEM_XXL3;
+      default:
+        return Constants.GET_SETTING_ITEM_DEFAULT;
+    }
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtension}`);
     this.getAccountInfo();
@@ -395,6 +431,7 @@ struct encryptedSharing {
     this.subscribeLanguageChange();
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
     this.placeHolderStr = str.length > 0 ? str : $r('app.string.Share_Enter_Mobile_Number');
+    this.getContactPersonString();
   }
 
   build() {
@@ -434,9 +471,9 @@ struct encryptedSharing {
         Column() {
           Row() {
             TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
-              .padding({ right: Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT})
+              .padding({ right: Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT + this.getSettingItemPadding()})
               .enabled(this.enabledFocus)
-              .height(Constants.SHARE_TEXT_INPUT_HEIGHT)
+              .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
               .defaultFocus(true)
               .type(InputType.PhoneNumber)
               .contentType(ContentType.PHONE_COUNTRY_CODE)
@@ -449,24 +486,30 @@ struct encryptedSharing {
                 this.phoneFormatTips = false;
               })
             if (this.contactExists) {
-              Image($r('app.media.ic_public_contacts_group'))
-                .fillColor(this.enabledFocus ? $r('sys.color.icon_primary') : $r('sys.color.icon_tertiary'))
-                .width(Constants.SHARE_CONTACTS_GROUP_WIDTH)
-                .height(Constants.SHARE_CONTACTS_GROUP_HEIGHT)
-                .offset({x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X, y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y})
-                .onClick(() => {
-                  this.isShowSheet = !this.isShowSheet;
-                })
-                .bindSheet(this.isShowSheet, this.contactsPicker(), {
-                  height: SheetSize.LARGE,
-                  dragBar: false,
-                  showClose: false,
-                  onDisappear: () => {
-                    this.isShowSheet = false;
-                  },
-                  backgroundColor: Color.Transparent,
-                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
-                })
+              Column() {
+                SymbolGlyph($r('sys.symbol.person_2'))
+                  .fontSize(`${Constants.SYMBOL_GLYPH_FONT_SIZE}fp`)
+                  .fontColor(this.enabledFocus ? [$r('sys.color.icon_primary')] : [$r('sys.color.icon_tertiary')])
+              }
+              .accessibilityText(this.contactPerson)
+              .enabled(this.enabledFocus)
+              .offset({
+                x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X - this.getSettingItemPadding(),
+                y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y
+              })
+              .onClick(() => {
+                this.isShowSheet = !this.isShowSheet;
+              })
+              .bindSheet(this.isShowSheet, this.contactsPicker(), {
+                height: SheetSize.LARGE,
+                dragBar: false,
+                showClose: false,
+                onDisappear: () => {
+                  this.isShowSheet = false;
+                },
+                backgroundColor: Color.Transparent,
+                blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
+              })
             }
           }
 
@@ -486,9 +529,8 @@ struct encryptedSharing {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
             .enabled(this.enabledFocus)
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
-            .fontWeight(FontWeight.Medium)
             .width(Constants.SHARE_BUTTON_WIDTH)
-            .height(Constants.FOOTER_HEIGHT)
+            .controlSize(ControlSize.NORMAL)
             .onClick(async () => {
               try {
                 await this.checkNetworkStatus();
@@ -503,9 +545,11 @@ struct encryptedSharing {
         .margin({
           top: Constants.SHARE_BUTTON_MARGIN_TOP,
           left: Constants.SHARE_BUTTON_MARGIN_LEFT,
-          right: Constants.SHARE_BUTTON_MARGIN_RIGHT
+          right: Constants.SHARE_BUTTON_MARGIN_RIGHT,
+          bottom: Constants.SHARE_BUTTON_PADDING_BOTTOM
         })
         .padding({
+          top: Constants.SHARE_BUTTON_MARGIN_TOP,
           bottom: Constants.SHARE_BUTTON_PADDING_BOTTOM
         })
       }

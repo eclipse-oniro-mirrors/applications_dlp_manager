@@ -341,6 +341,10 @@
       "value": "文件名过长，加密失败"
     },
     {
+      "name": "Share_Contact_Person",
+      "value": "联系人"
+    },
+    {
       "name": "Function_Is_Not_Available",
       "value": "此功能暂未开放"
     },

@@ -28,7 +28,7 @@ const TAG = 'AddStaff';
 
 @Extend(Text)
 function inputMessageText() {
-  .fontSize($r('sys.float.ohos_fa_text_size_body'))
+  .fontSize($r('sys.float.ohos_id_text_size_body3'))
   .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
   .fontColor($r('sys.color.ohos_id_color_handup'))
   .fontWeight(FontWeight.Medium)
@@ -309,7 +309,7 @@ struct AddStaff {
         if (this.staffArray.length >=
           Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX * Constants.ENCRYPTION_ADD_STAFF_LENGTH) {
           Text(`${this.staffArray.length}/${Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX}`)
-            .fontSize($r('sys.float.ohos_fa_text_size_body'))
+            .fontSize($r('sys.float.ohos_id_text_size_body3'))
             .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
             .fontColor(this.staffArrayLength
               ? $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_secondary'))

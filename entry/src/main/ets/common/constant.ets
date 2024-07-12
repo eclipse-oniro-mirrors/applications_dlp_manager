@@ -248,6 +248,7 @@ export default class Constants {
   public static SHARE_PAGES_COLUMN_WIDTH = '100%';
   public static SHARE_PAGES_COLUMN_HEIGHT = '100%';
   public static SHARE_SET_TIMEOUT = 1500;
+  public static SHARE_FILE_NAME_TOO_LONG = 13900030;
 
   public static readonly ERR_CODE_NETWORK_ERROR: number = -4;
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;
@@ -255,4 +256,9 @@ export default class Constants {
   public static readonly ERR_CODE_SUCCESS: number = 0;
   public static readonly COMMAND_SEARCH_USER_INFO = 1;
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
+  public static readonly GET_SETTING_ITEM_XXL1 = 8;
+  public static readonly GET_SETTING_ITEM_XXL2 = 18;
+  public static readonly GET_SETTING_ITEM_XXL3 = 48;
+  public static readonly GET_SETTING_ITEM_DEFAULT = 0;
+  public static readonly SYMBOL_GLYPH_FONT_SIZE = 24;
 }

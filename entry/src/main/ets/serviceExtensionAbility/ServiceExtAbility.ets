@@ -69,8 +69,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     return null;
   }
 
-  async genDlpFile(
-    inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback
+  async genDlpFile(inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback
   ): Promise<void> {
     HiLog.info(TAG, `genDlpFile in service`);
     let result: Record<string, number>;
@@ -96,11 +95,9 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.dlpFileMap.set(outputUri, dlpFile);
         AppStorage.setOrCreate('dlpFileMap', this.dlpFileMap);
       } else {
-        HiLog.info(TAG, `map is overwrite: ${outputUri}`);
         let rawDlpFile = this.dlpFileMap.get(outputUri) ?? null;
         if (rawDlpFile !== null) {
           try {
-            HiLog.info(TAG, `closeDLPFile start`);
             await rawDlpFile.closeDLPFile();
           } catch (err) {
             HiLog.error(TAG, `closeDlpFile file: ${JSON.stringify(err)}`);

@@ -217,7 +217,6 @@ struct Index {
         top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
       })
     }
-    .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
     .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
     .alignItems(HorizontalAlign.Center)
     .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))

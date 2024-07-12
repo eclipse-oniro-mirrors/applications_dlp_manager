@@ -34,7 +34,7 @@ export default class ConnectService {
     this.context = context;
     this.optionsSearchUser = {
       onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success ${JSON.stringify(elementName)}`);
+        HiLog.info(TAG, `onConnect success search account ${JSON.stringify(elementName)}`);
         that.searchUserInfo(remote);
       },
       onDisconnect: () => {
@@ -46,7 +46,7 @@ export default class ConnectService {
     }
     this.optionsGetAccount = {
       onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success ${JSON.stringify(elementName)}`);
+        HiLog.info(TAG, `onConnect success get account ${JSON.stringify(elementName)}`);
         that.getAccountInfo(remote);
       },
       onDisconnect: () => {
@@ -69,10 +69,15 @@ export default class ConnectService {
         case Constants.COMMAND_SEARCH_USER_INFO: {
           this.connection = this.context.connectServiceExtensionAbility(want, this.optionsSearchUser);
           AppStorage.setOrCreate('connection', this.connection);
+          break;
         }
         case Constants.COMMAND_GET_ACCOUNT_INFO: {
           this.connection = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
           AppStorage.setOrCreate('connection', this.connection);
+          break;
+        }
+        default: {
+          HiLog.error(TAG, `code is not exist ${code}`);
         }
       }
     } catch (err) {
