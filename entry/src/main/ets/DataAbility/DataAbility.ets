@@ -69,11 +69,11 @@ export default class DataAbility extends ServiceExtensionAbility {
           fileOpenHistory.delete(itemKey as string);
         }
       }
-      if (sandbox2linkFile.size === 0) {
+    }
+    if (sandbox2linkFile.size === 0) {
         HiLog.info(TAG, `sandbox2linkFile empty`);
         (GlobalContext.load('dataContext') as common.ServiceExtensionContext).terminateSelf();
         (AppStorage.get('viewContext') as common.ServiceExtensionContext).terminateSelf();
-      }
     }
   }
 
