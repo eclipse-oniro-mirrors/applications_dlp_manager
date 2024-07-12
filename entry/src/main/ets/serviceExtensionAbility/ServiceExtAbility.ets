@@ -113,12 +113,14 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       callback(0);
     } catch (err) {
       HiLog.info(TAG, `genDlpFile file: ${JSON.stringify(err)}`);
+      callback((err as BusinessError).code);
+    } finally {
       try {
+        await fs.close(this.inFile);
         await fs.close(this.outFile);
       } catch (err) {
         HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
       }
-      callback((err as BusinessError).code);
     }
   }
 
@@ -145,6 +147,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         outFileFd = this.outFile.fd;
       } catch (error) {
         try {
+          await fs.close(this.inFile);
           await fs.unlink(uriInfo.path);
         } catch (err) {
           HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
