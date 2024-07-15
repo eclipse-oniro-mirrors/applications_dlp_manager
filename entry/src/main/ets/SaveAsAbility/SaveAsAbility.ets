@@ -47,6 +47,9 @@ const SIZE_OFFSET = 4;
 const ARGS_ZERO = 0;
 const ARGS_ONE = 1;
 const ARGS_TWO = 2;
+const FILENAME_MAX_LEN = 255;
+const FOPEN_EXCEPTION_IS_DIR = 13900019;
+const SRC_URI_OFFSET = 4;
 const ACTION: Record<string, string> = {
   'SELECT_ACTION': 'ohos.want.action.OPEN_FILE',
   'SELECT_ACTION_MODAL': 'ohos.want.action.OPEN_FILE_SERVICE',
@@ -317,6 +320,52 @@ export default class SaveAsAbility extends UIAbility {
     })
   }
 
+  isValidDirUri(uri: string | undefined) {
+    if (uri == undefined) {
+      return true;
+    }
+    let uriObj = new fileUri.FileUri(uri);
+    let dirUri = uriObj.getFullDirectoryUri(); // get directory path of a uri
+    let file: fs.File | undefined = undefined;
+    try {
+      file = fs.openSync(dirUri, fs.OpenMode.READ_ONLY);
+      let stat = fs.statSync(file.fd);
+      let isDir = stat.isDirectory();
+      HiLog.info(TAG, `test dir ${isDir? 'is' : 'not'} a directory`);
+      return isDir;
+    } catch (e) {
+      let error = e as BusinessError;
+      if (error.code === FOPEN_EXCEPTION_IS_DIR) {
+        HiLog.info(TAG, `test dir is a directory`);
+        return true;
+      }
+      return false;
+    } finally {
+      if (file != undefined) {
+        fs.closeSync(file.fd);
+      }
+    }
+  }
+  
+  getSourceFileName() {
+    try {
+      let token2FileValue: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[] =
+        (GlobalContext
+          .load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
+          .get(this.tokenId) as (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[];
+      let srcUri: string = token2FileValue[SRC_URI_OFFSET] as string;
+      let uriObj = new fileUri.FileUri(srcUri);
+      let dir = uriObj.getFullDirectoryUri(); // get directory path
+      let name = srcUri.replace(dir, '').replace('/',''); // strip directory path and '/'
+      HiLog.info(TAG, 'getSourceFileName: ' + name);
+      return name;
+    } catch (e) {
+      let error = e as BusinessError;
+      HiLog.error(TAG, 'getSourceFileName error:' + error.message);
+      return '';
+    }
+  }
+
   parseDocumentPickerSaveOption(args: picker.DocumentSaveOptions[], action: string) {
     let config: Record<string, string | Record<string, Object>> = {
       'action': action,
@@ -328,12 +377,26 @@ export default class SaveAsAbility extends UIAbility {
     if (args.length > ARGS_ZERO && typeof args[ARGS_ZERO] === 'object') {
       let option: picker.DocumentSaveOptions = args[ARGS_ZERO];
       if ((option.newFileNames !== undefined) && option.newFileNames.length > 0) {
+        if (option.newFileNames[0] == undefined) { // if option name not provided, default to empty string
+          option.newFileNames[0] = '';
+        }
+        if (option.newFileNames[0].length > FILENAME_MAX_LEN) {
+          throw new Error('file name exceeds max length');
+        }
+        let srcName = this.getSourceFileName();
+        if (option.newFileNames[0].length > 0 && srcName != option.newFileNames[0]) {
+          HiLog.error(TAG, `src file name is not same with newFileName provided`);
+          throw new Error('picker filename error');
+        }
         config.parameters['key_pick_file_name'] = option.newFileNames;
         config.parameters['saveFile'] = option.newFileNames[0];
       }
 
-      if (option.defaultFilePathUri !== undefined) {
+      let isDir = this.isValidDirUri(option.defaultFilePathUri); // undefined returns true
+      if (isDir) {
         config.parameters['key_pick_dir_path'] = option.defaultFilePathUri;
+      } else {
+        throw new Error(`defaultFilePathUri is not a valid directory uri`);
       }
       if ((option.fileSuffixChoices !== undefined) && option.fileSuffixChoices.length > 0) {
         config.parameters['key_file_suffix_choices'] = option.fileSuffixChoices;
@@ -469,7 +532,7 @@ export default class SaveAsAbility extends UIAbility {
       let srcUri: string = token2FileValue[4] as string;
       this.srcFdPicker = getFileFd(srcUri);
       let success = await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
-      if (success) {
+      if (!success) {
         try {
           await fs.close(this.file);
           await this.deleteUri(uri);
