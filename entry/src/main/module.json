@@ -107,6 +107,11 @@
                 "scheme": "file",
                 "utd": "com.adobe.pdf",
                 "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "org.openxmlformats.openxml",
+                "maxFileSupported": 1
               }
             ]
           }
