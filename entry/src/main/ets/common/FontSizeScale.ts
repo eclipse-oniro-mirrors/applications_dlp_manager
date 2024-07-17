@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,17 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-{
-  "app": {
-    "bundleName": "com.ohos.dlpmanager",
-    "vendor": "example",
-    "versionCode": 1000053,
-    "versionName": "1.0.0.53",
-    "icon": "$media:app_icon",
-    "label": "$string:app_name",
-    "minAPIVersion": 12,
-    "targetAPIVersion": 12,
-    "distributedNotificationEnabled": true,
-    "apiReleaseType" : "Beta5"
-  }
+
+enum FontSizeScale {
+  SM = 0.85,
+  MD = 1.0,
+  DEFAULT = MD,
+  L = 1.15,
+  XL = 1.3,
+  XXL = 1.45,
+  XXL1 = 1.75,
+  XXL2 = 2,
+  XXL3 = 3.2,
 }
+
+export default FontSizeScale;

@@ -40,16 +40,18 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     }
     switch (code) {
       case Constants.COMMAND_SEARCH_USER_INFO: {
+        let storage = LocalStorage.getShared();
         HiLog.info(TAG, `onRemoteMessageRequest command search user info`);
         let resultVar = data.readString();
-        AppStorage.setOrCreate('commandSearchUserInfo', resultVar);
+        storage.setOrCreate('commandSearchUserInfo', resultVar);
         this.connectService.disconnectServiceShareAbility();
         return true;
       }
       case Constants.COMMAND_GET_ACCOUNT_INFO: {
+        let storage = LocalStorage.getShared();
         HiLog.info(TAG, `onRemoteMessageRequest command get account info`);
         let resultVar = data.readString();
-        AppStorage.setOrCreate('commandGetAccountInfo', resultVar);
+        storage.setOrCreate('commandGetAccountInfo', resultVar);
         this.connectService.disconnectServiceShareAbility();
         return true;
       }

@@ -341,6 +341,10 @@
       "value": "File name too long, Failed to encrypt the file."
     },
     {
+      "name": "Share_Contact_Person",
+      "value": "Contact Person"
+    },
+    {
       "name": "Function_Is_Not_Available",
       "value": "This function is not currently available."
     },
