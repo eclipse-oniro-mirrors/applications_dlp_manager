@@ -164,6 +164,7 @@ export default class Constants {
   public static ERR_JS_INVALID_PARAMETER = 12300002;
   public static ERR_JS_ACCOUNT_NOT_FOUND = 12300003;
   public static ERR_JS_NETWORK_INVALID = 12300013;
+  public static ERR_JS_APP_NOT_EXIST = 16000001;
   public static DLP_FILE_PARSE_ERROR = 103;
   public static DLP_INSTALL_SANDBOX_SUCCESS = 202;
   public static DLP_START_SANDBOX_ERROR = 105;

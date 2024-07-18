@@ -136,6 +136,10 @@ export default class ViewAbility extends ServiceExtensionAbility {
           HiLog.error(TAG, `dlpFile closeDLPFile failed: ${JSON.stringify(err)}`);
         }
         opening = false;
+        //when errCode is ERR_JS_APP_NOT_EXIST, delete info.
+        if (err.code === Constants.ERR_JS_APP_NOT_EXIST) {
+          await this.deleteData();
+        }
         await GetAlertMessage.startAlertAbility(this.context,
           {code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.appIndex,
@@ -164,6 +168,21 @@ export default class ViewAbility extends ServiceExtensionAbility {
         HiLog.debug(TAG, `startDataAbility success`);
       }
     });
+  }
+
+  async deleteData(): Promise<void> {
+    HiLog.info(TAG, `deleteData start`);
+    try {
+      fileio.closeSync(this.dlpFd);
+    } catch (err) {
+      HiLog.error(TAG, `closeSync failed: ${JSON.stringify(err)}`);
+    }
+    (GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>).
+      delete(this.uri);
+    (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile)[]>).
+      delete(this.tokenId);
+    (GlobalContext.load('linkSet') as Set<string>).delete(this.linkUri);
+    (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).delete(this.uri);
   }
 
   startSandboxApp(startId: number, want: Want): void {
@@ -443,19 +462,20 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.appIndex = value[Constants.FILE_OPEN_HISTORY_ONE] as number;
           this.linkFileName = value[Constants.FILE_OPEN_HISTORY_TWO] as string;
           this.linkUri = value[Constants.FILE_OPEN_HISTORY_THREE] as string;
-          fileio.closeSync(this.dlpFd);
           this.alreadyOpen = true;
-        } else {
-          await this.getOpenDLPFile(startId);
         }
-        if (!this.alreadyOpen) {
-          hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
-          let appInfo: dlpPermission.DLPSandboxInfo = await dlpPermission.installDLPSandbox(
-            this.sandboxBundleName, this.authPerm, this.userId, this.uri
-          );
-          this.appIndex = appInfo.appIndex;
-          this.tokenId = appInfo.tokenID;
+        await this.getOpenDLPFile(startId);
+        hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
+        let appInfo: dlpPermission.DLPSandboxInfo = await dlpPermission.installDLPSandbox(
+          this.sandboxBundleName, this.authPerm, this.userId, this.uri
+        );
+        if (this.alreadyOpen && (this.appIndex != appInfo.appIndex || this.tokenId != appInfo.tokenID)) {
+          HiLog.info(TAG, `return a new appIndex, old appIndex:${this.appIndex} new appIndex:${appInfo.appIndex} ` +
+            `old tokenId:${this.tokenId} new tokenId:${appInfo.tokenID} `);
+          this.alreadyOpen = false;
         }
+        this.appIndex = appInfo.appIndex;
+        this.tokenId = appInfo.tokenID;
         resolve();
       } catch (err) {
         HiLog.error(TAG, `installDLPSandbox failed: ${JSON.stringify(err)}`);
@@ -521,7 +541,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.linkFileWriteable = false;
         }
       } catch (err) {
-        HiLog.error(TAG, `file error: ${err}`);
+        HiLog.error(TAG, `file error: ${JSON.stringify(err)}`);
         opening = false;
         try {
           await this.terminateCall();
