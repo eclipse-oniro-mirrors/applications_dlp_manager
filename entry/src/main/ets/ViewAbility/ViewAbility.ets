@@ -41,6 +41,14 @@ import {
   defaultDlpFile,
   getAccountType
 } from '../common/utils';
+import {
+  DlpFileInfo,
+  deleteSandbox2linkFileData,
+  deleteFileOpenHistoryData,
+  deleteLinkSetData,
+  deleteToken2FileData,
+  getDlpFileInfoFromSandbox2linkFileData,
+} from '../common/DataUtils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import rpc from '@ohos.rpc';
@@ -69,7 +77,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private accountInfo?: osAccount.OsAccountInfo;
   private uriInfo: fileUri.FileUri = new fileUri.FileUri('');
   private linkUri: string = '';
-  private alreadyOpen: boolean = false;
+  private alreadyOpened: boolean = false;
   private userId: number = -1;
   private linkFileWriteable: boolean = false;
   private callerBundleName: string = '';
@@ -152,7 +160,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         if (!sandbox2linkFile.has(this.sandboxBundleName + this.appIndex)) {
           sandbox2linkFile.set(this.sandboxBundleName + this.appIndex, []);
         }
-        if (!this.alreadyOpen) {
+        if (!this.alreadyOpened) {
           sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push(
             [this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId, this.uri]);
           (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(
@@ -177,12 +185,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
     } catch (err) {
       HiLog.error(TAG, `closeSync failed: ${JSON.stringify(err)}`);
     }
-    (GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>).
-      delete(this.uri);
-    (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile)[]>).
-      delete(this.tokenId);
-    (GlobalContext.load('linkSet') as Set<string>).delete(this.linkUri);
-    (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).delete(this.uri);
+    try {
+      await deleteSandbox2linkFileData(this.sandboxBundleName + this.appIndex, false);
+      await deleteToken2FileData(this.tokenId);
+      await deleteLinkSetData(this.linkUri);
+      await deleteFileOpenHistoryData(this.uri);
+    } catch (err) {
+      HiLog.error(TAG, `deleteData failed`);
+    }
   }
 
   startSandboxApp(startId: number, want: Want): void {
@@ -355,7 +365,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
   }
 
-  async getOpenDLPFile(startId: number): Promise<void> {
+  async getOpenedDLPFile(startId: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
       hiTraceMeter.startTrace('DlpOpenDlpFileJs', startId);
       try {
@@ -428,7 +438,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async getPolicyAndInstallSandbox(startId: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      this.alreadyOpen = false;
+      this.alreadyOpened = false;
       try {
         await this.sandboxSetData(startId);
       } catch {
@@ -439,7 +449,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
       // 202: DLP_INSTALL_SANDBOX_SUCCESS
       await this.sendDlpFileOpenEvent(Constants.DLP_INSTALL_SANDBOX_SUCCESS, this.sandboxBundleName, this.appIndex);
-      if (!this.alreadyOpen) {
+      if (!this.alreadyOpened) {
         try {
           await this.getAlreadyOpen(startId);
         } catch {
@@ -462,17 +472,31 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.appIndex = value[Constants.FILE_OPEN_HISTORY_ONE] as number;
           this.linkFileName = value[Constants.FILE_OPEN_HISTORY_TWO] as string;
           this.linkUri = value[Constants.FILE_OPEN_HISTORY_THREE] as string;
-          this.alreadyOpen = true;
+          fs.closeSync(this.dlpFd);
+          let dlpFileInfo =
+            await getDlpFileInfoFromSandbox2linkFileData(this.sandboxBundleName + this.appIndex, this.uri);
+          this.dlpFile = dlpFileInfo.dlpFile;
+          this.tokenId = dlpFileInfo.tokenId;
+          this.accountType = this.dlpFile.dlpProperty.ownerAccountType;
+          await this.dlpGetAuthPerm();
+          this.alreadyOpened = true;
+        } else {
+          await this.getOpenedDLPFile(startId);
         }
-        await this.getOpenDLPFile(startId);
         hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
         let appInfo: dlpPermission.DLPSandboxInfo = await dlpPermission.installDLPSandbox(
           this.sandboxBundleName, this.authPerm, this.userId, this.uri
         );
-        if (this.alreadyOpen && (this.appIndex != appInfo.appIndex || this.tokenId != appInfo.tokenID)) {
+        if (this.alreadyOpened && (this.appIndex != appInfo.appIndex || this.tokenId != appInfo.tokenID)) {
           HiLog.info(TAG, `return a new appIndex, old appIndex:${this.appIndex} new appIndex:${appInfo.appIndex} ` +
             `old tokenId:${this.tokenId} new tokenId:${appInfo.tokenID} `);
-          this.alreadyOpen = false;
+          await deleteSandbox2linkFileData(this.sandboxBundleName + this.appIndex, true);
+          await deleteToken2FileData(this.tokenId);
+          await deleteLinkSetData(this.linkUri);
+          await deleteFileOpenHistoryData(this.uri);
+          this.dlpFd = getFileFd(this.uri, fs.OpenMode.READ_WRITE);
+          await this.getOpenedDLPFile(startId);
+          this.alreadyOpened = false;
         }
         this.appIndex = appInfo.appIndex;
         this.tokenId = appInfo.tokenID;
