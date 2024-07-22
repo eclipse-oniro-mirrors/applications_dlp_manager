@@ -19,54 +19,43 @@ import dlpPermission from '@ohos.dlpPermission';
 import common from '@ohos.app.ability.common';
 import GlobalContext from '../common/GlobalContext';
 import { HiLog } from '../common/HiLog';
+import {
+  deleteSandbox2linkFileData,
+  deleteFileOpenHistoryData,
+  deleteLinkSetData,
+  deleteToken2FileData,
+} from '../common/DataUtils'
 
 const TAG = 'DataAbility';
 const INDEX_TWO = 2;
 const INDEX_ONE = 1;
 const INDEX_ZERO = 0;
 const INDEX_THREE = 3;
-const INDEX_FOUR = 4;
-const INDEX_FIVE = 5;
+
 export default class DataAbility extends ServiceExtensionAbility {
   private isSubscriber = false;
 
   async sandbox2linkFile(key: string) {
+    try {
+      await deleteSandbox2linkFileData(key, true);
+    } catch (err) {
+      HiLog.error(TAG, `deleteSandbox2linkFileData error`);
+    }
     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
       GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
     if (sandbox2linkFile.has(key)) {
-      let fileArray: (number | string | dlpPermission.DLPFile)[][] =
-        sandbox2linkFile.get(key) as (number | string | dlpPermission.DLPFile)[][];
-      for (let i of fileArray) {
-        let linkFile: (number | string | dlpPermission.DLPFile)[] = i;
-        let dlpFile: dlpPermission.DLPFile = linkFile[INDEX_ZERO] as dlpPermission.DLPFile;
-        try {
-          await dlpFile.deleteDLPLinkFile(linkFile[INDEX_ONE] as string);
-        } catch (err) {
-          HiLog.error(TAG, `deleteDLPLinkFile failed: ${JSON.stringify(err)}`);
-        }
-        try {
-          await dlpFile.closeDLPFile();
-        } catch (err) {
-          HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
-        }
-        try {
-          let dlpFd: number = linkFile[INDEX_TWO] as number;
-          fileio.closeSync(dlpFd);
-        } catch (err) {
-          HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
-        }
-      }
-      sandbox2linkFile.delete(key);
       let fileOpenHistory:Map<string, (number | string)[]> =
         GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
       for (let item of Array.from<(string | (number | string)[])[]>(fileOpenHistory)) {
-        let itemKey = item[0];
-        let itemValue = item[1];
-        let tmp: string = (itemValue[0] as string) + (itemValue[1] as number);
-        if (tmp === key) {
-          let linkUri: string = itemValue[INDEX_THREE] as string;
-          (GlobalContext.load('linkSet') as Set<string>).delete(linkUri);
-          fileOpenHistory.delete(itemKey as string);
+        if (item.length < INDEX_TWO || Object.keys(item[INDEX_ONE]).length < INDEX_TWO) {
+          continue;
+        }
+        let itemKey = item[INDEX_ZERO];
+        let itemValue = item[INDEX_ONE];
+        let tmp: string = (itemValue[INDEX_ZERO] as string) + (itemValue[INDEX_ONE] as number);
+        if (tmp === key && itemValue.length > INDEX_THREE) {
+          await deleteLinkSetData(itemValue[INDEX_THREE] as string);
+          await deleteFileOpenHistoryData(itemKey as string);
         }
       }
     }
@@ -88,11 +77,14 @@ export default class DataAbility extends ServiceExtensionAbility {
         let token2File:Map<number, (number | string | dlpPermission.DLPFile)[]> =
           GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile)[]>;
         for (let item of Array.from<(number | (number | string | dlpPermission.DLPFile)[])[]>(token2File)) {
-          let itemKey = item[0];
-          let itemValue = item[1] as Record<number, Object>;
+          if (item.length < INDEX_TWO || Object.keys(item[INDEX_ONE]).length < INDEX_THREE) {
+            continue;
+          }
+          let itemKey = item[INDEX_ZERO];
+          let itemValue = item[INDEX_ONE] as Record<number, Object>;
           const APP_ID: string = (itemValue[INDEX_ONE] as string) + (itemValue[INDEX_TWO] as number);
           if (key === APP_ID) {
-            token2File.delete(itemKey as number);
+            deleteToken2FileData(itemKey as number);
           }
         }
         try {

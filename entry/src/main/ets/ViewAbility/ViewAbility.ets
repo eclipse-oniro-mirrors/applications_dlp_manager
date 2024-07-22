@@ -147,7 +147,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = false;
         //when errCode is ERR_JS_APP_NOT_EXIST, delete info.
         if (err.code === Constants.ERR_JS_APP_NOT_EXIST) {
-          await this.deleteData();
+          await this.deleteData(true, false);
         }
         await GetAlertMessage.startAlertAbility(this.context,
           {code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -179,15 +179,17 @@ export default class ViewAbility extends ServiceExtensionAbility {
     });
   }
 
-  async deleteData(): Promise<void> {
+  async deleteData(isNeedCloseFd: boolean, isNeedDeleteLink: boolean): Promise<void> {
     HiLog.info(TAG, `deleteData start`);
-    try {
-      fileio.closeSync(this.dlpFd);
-    } catch (err) {
-      HiLog.error(TAG, `closeSync failed: ${JSON.stringify(err)}`);
+    if (isNeedCloseFd) {
+      try {
+        fileio.closeSync(this.dlpFd);
+      } catch (err) {
+        HiLog.error(TAG, `closeSync failed: ${JSON.stringify(err)}`);
+      }
     }
     try {
-      await deleteSandbox2linkFileData(this.sandboxBundleName + this.appIndex, false);
+      await deleteSandbox2linkFileData(this.sandboxBundleName + this.appIndex, isNeedDeleteLink);
       await deleteToken2FileData(this.tokenId);
       await deleteLinkSetData(this.linkUri);
       await deleteFileOpenHistoryData(this.uri);
@@ -481,12 +483,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.sandboxBundleName, this.authPerm, this.userId, this.uri
         );
         if (this.alreadyOpened && (this.appIndex != appInfo.appIndex || this.tokenId != appInfo.tokenID)) {
-          HiLog.info(TAG, `return a new appIndex, old appIndex:${this.appIndex} new appIndex:${appInfo.appIndex} ` +
-            `old tokenId:${this.tokenId} new tokenId:${appInfo.tokenID} `);
-          await deleteSandbox2linkFileData(this.sandboxBundleName + this.appIndex, true);
-          await deleteToken2FileData(this.tokenId);
-          await deleteLinkSetData(this.linkUri);
-          await deleteFileOpenHistoryData(this.uri);
+          HiLog.info(TAG, `return:${this.appIndex} ${appInfo.appIndex} ${this.tokenId} ${appInfo.tokenID} `);
+          await this.deleteData(false, true);
           this.dlpFd = getFileFd(this.uri, fs.OpenMode.READ_WRITE);
           await this.getOpenedDLPFile(startId);
           this.alreadyOpened = false;
