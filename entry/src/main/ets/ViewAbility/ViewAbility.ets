@@ -82,6 +82,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private linkFileWriteable: boolean = false;
   private callerBundleName: string = '';
   private accountType: number = dlpPermission.AccountType.DOMAIN_ACCOUNT;
+  private distributedInfoId: string = '';
 
   async onCreate(want: Want): Promise<void> {
     if (!GlobalContext.load('sandbox2linkFile')) {
@@ -164,7 +165,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           sandbox2linkFile.get(this.sandboxBundleName + this.appIndex)?.push(
             [this.dlpFile, this.linkFileName, this.dlpFd, this.tokenId, this.uri]);
           (GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>).set(
-            this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri]
+            this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri, this.distributedInfoId]
           );
           (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile |
             dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId,
@@ -320,6 +321,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     return new Promise(async (resolve, reject) => {
       try {
         this.accountInfo = await getOsAccountInfo();
+        this.distributedInfoId = this.accountInfo.distributedInfo.id;
         AppStorage.setOrCreate('accountDomain', this.accountInfo.domainInfo.domain);
         this.userId = await getUserId();
       } catch (err) {
@@ -466,7 +468,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       try {
         let fileOpenHistory: Map<string, (number | string)[]> =
           GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
-        if (fileOpenHistory.has(this.uri)) {
+        if (fileOpenHistory.has(this.uri) && this.historyOpenSame(fileOpenHistory)) {
           HiLog.info(TAG, `file: ${this.fileName} already open`);
           let value: (number | string)[] = fileOpenHistory.get(this.uri) as (number | string)[];
           this.appIndex = value[Constants.FILE_OPEN_HISTORY_ONE] as number;
@@ -515,6 +517,15 @@ export default class ViewAbility extends ServiceExtensionAbility {
         reject();
       }
     })
+  }
+
+  historyOpenSame(fileOpenHistory: Map<string, (number | string)[]>): boolean {
+    let historyDistributedInfoId = fileOpenHistory.get(this.uri);
+    let distributeId = historyDistributedInfoId ? historyDistributedInfoId[4] : '';
+    if (distributeId === this.distributedInfoId) {
+      return true;
+    };
+    return false;
   }
 
   async generateLinkFileName(startId: number): Promise<string> {
