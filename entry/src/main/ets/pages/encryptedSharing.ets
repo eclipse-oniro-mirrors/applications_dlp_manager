@@ -21,7 +21,6 @@ import { KeyboardAvoidMode } from '@ohos.arkui.UIContext';
 import { LengthMetrics } from '@ohos.arkui.node';
 import dlpPermission from '@ohos.dlpPermission';
 import promptAction from '@ohos.promptAction';
-import connection from '@ohos.net.connection';
 import { BusinessError } from '@ohos.base';
 import Want from '@ohos.app.ability.Want';
 import fs from '@ohos.file.fs';
@@ -37,7 +36,8 @@ import {
   getFileSizeByUri,
   sendDlpManagerAccountLogin,
   getAppId,
-  getOsAccountInfo
+  getOsAccountInfo,
+  checkNetworkStatus
 } from '../common/utils';
 import FontSizeScale from '../common/FontSizeScale';
 
@@ -314,31 +314,9 @@ struct encryptedSharing {
     }
   }
 
-  checkNetworkStatus(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      let netHandle = connection.getDefaultNetSync();
-      connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
-        if (error) {
-          HiLog.info(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
-          reject();
-          return;
-        };
-        HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
-        const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
-          .every(element => data.networkCap?.includes(element));
-        if (result) {
-          resolve();
-          return;
-        }
-        reject();
-        return;
-      })
-    })
-  }
-
   async getAccountInfo() {
     try {
-      await this.checkNetworkStatus();
+      await checkNetworkStatus();
       HiLog.info(TAG, `get Account Info start`);
       try {
         let accountInfo = await getOsAccountInfo();
@@ -533,7 +511,7 @@ struct encryptedSharing {
             .controlSize(ControlSize.NORMAL)
             .onClick(async () => {
               try {
-                await this.checkNetworkStatus();
+                await checkNetworkStatus();
                 this.beginShareEncrypt();
               } catch (err) {
                 this.showToast($r('app.string.network_invalid'));

@@ -151,10 +151,6 @@ struct staffItem {
         right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
       });
       Text(this.splitContent())
-        .constraintSize({
-          maxWidth: this.authAccount === this.textContent ?
-            Constants.ENCRYPTION_STAFF_MAX_WIDTH : Constants.TIPS_STAFF_MAX_WIDTH
-        })
         .textOverflow({
           overflow: TextOverflow.Ellipsis
         })
@@ -194,7 +190,6 @@ struct staffItem {
         }
       }
     })
-    .width(this.authAccount === this.textContent ? Constants.ENCRYPTION_ADD_STAFF_WIDTH : Constants.TIPS_STAFF_WIDTH)
     .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
     .alignItems(VerticalAlign.Center)
     .backgroundColor(this.isActive && this.handlePopupTips ? '#1A0A59F7' : $r('sys.color.ohos_id_color_button_normal'))

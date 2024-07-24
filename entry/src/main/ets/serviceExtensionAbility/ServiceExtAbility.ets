@@ -110,14 +110,21 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       callback(0);
     } catch (err) {
       HiLog.info(TAG, `genDlpFile file: ${JSON.stringify(err)}`);
+      await this.closeFile();
       callback((err as BusinessError).code);
-    } finally {
-      try {
-        await fs.close(this.inFile);
-        await fs.close(this.outFile);
-      } catch (err) {
-        HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-      }
+    }
+  }
+
+  async closeFile(): Promise<void> {
+    try {
+      await fs.close(this.inFile);
+    } catch (err) {
+      HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
+    }
+    try {
+      await fs.close(this.outFile);
+    } catch (err) {
+      HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
     }
   }
 

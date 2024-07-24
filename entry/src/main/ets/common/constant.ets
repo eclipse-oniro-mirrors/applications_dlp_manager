@@ -118,20 +118,10 @@ export default class Constants {
   public static DLP_MANAGER_BUNDLE_NAME = 'com.ohos.dlpmanager';
   public static DLP_CREDMGR_BUNDLE_NAME = 'com.huawei.hmos.dlpcredmgr';
   public static TRANSPARENT_BACKGROUND_COLOR = '#00000000';
-  public static START_ABILITY_YNUMBER = 300;
-  public static START_ABILITY_WINDOW_WIDTH = 492;
-  public static START_ABILITY_BASIC_WIDTH = 350;
-  public static START_ABILITY_MSG_HEIGHT_ROWS = 25;
-  public static START_ABILITY_HEIGHT_DEFAULT1 = 165;
-  public static START_ABILITY_HEIGHT_DEFAULT = 154;
-  public static START_ABILITY_HEIGHT_ONE_ROWS = 174;
-  public static START_ABILITY_HEIGHT_THREE_ROWS = 214;
-  public static START_ABILITY_HEIGHT_FOUR_ROWS = 240;
-  public static START_ABILITY_MESSAGE_HEIGHT = '20%';
-  public static START_ABILITY_MESSAGE_HEIGHT1 = '31%';
-  public static START_ABILITY_MESSAGE_HEIGHT_ONE = '24%';
-  public static START_ABILITY_MESSAGE_HEIGHT_TWO = '32%';
-  public static START_ABILITY_MESSAGE_HEIGHT_THREE = '45%';
+  public static START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH = 400;
+  public static START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT = 125;
+  public static START_ABILITY_CUSTOM_CONTENT_MARGIN_BOTTOM = 8;
+  public static RATIO_HALF = 0.5;
 
   public static FOOTER_OPACITY_ONE = 1;
   public static FOOTER_OPACITY_SEPC = 0.6;

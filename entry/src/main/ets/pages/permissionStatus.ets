@@ -246,14 +246,14 @@ struct PermissionStatus {
                             Column() {
                               Row() {
                                 Text(item.label)
-                                  .height(Constants.SUB_HEADER_HEIGHT)
+                                  .constraintSize({ minHeight: Constants.SUB_HEADER_HEIGHT })
                                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
                                   .textAlign(TextAlign.Start)
                                   .fontWeight(FontWeight.Medium)
                                 Blank()
                                 if (item.date) {
                                   Text(this.getTime(this.validity))
-                                    .height(Constants.SUB_HEADER_HEIGHT)
+                                    .constraintSize({ minHeight: Constants.SUB_HEADER_HEIGHT })
                                     .fontSize($r('sys.float.ohos_id_text_size_body2'))
                                     .textAlign(TextAlign.Start)
                                     .fontWeight(FontWeight.Regular)
@@ -270,7 +270,7 @@ struct PermissionStatus {
                               Divider()
                                 .width(Constants.HEADER_TEXT_WIDTH)
                                 .height(Constants.FOOTER_OPACITY_ONE)
-                                .color($r('app.color.encryption_divider_color'));
+                                .color($r('sys.color.comp_divider'));
                             }
                           }
                         }, (item: StatusContent) => JSON.stringify(item))
