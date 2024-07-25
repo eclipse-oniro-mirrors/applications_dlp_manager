@@ -125,6 +125,21 @@
                 "scheme": "file",
                 "utd": "org.openxmlformats.openxml",
                 "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "com.microsoft.word.doc",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "com.microsoft.excel.xls",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "com.microsoft.powerpoint.ppt",
+                "maxFileSupported": 1
               }
             ]
           }
