@@ -42,15 +42,18 @@ export class GetAlertMessage {
       return;
     }
     let dis = display.getDefaultDisplaySync();
-    let xNumber = Math.floor((dis.width - Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS) / 2);
-    let yNumber = Math.floor((dis.height - Constants.START_ABILITY_YNUMBER) / 2);
-    let windowHeight = GetAlertMessage.setOptions(error);
+    let xNumber = Math.floor(
+      (dis.width - Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH) * Constants.RATIO_HALF
+    );
+    let yNumber = Math.floor(
+      (dis.height - Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT) * Constants.RATIO_HALF
+    );
     let options: StartOptions = {
       withAnimation: true,
       windowLeft: xNumber,
       windowTop: yNumber,
-      windowWidth: Constants.START_ABILITY_WINDOW_WIDTH,
-      windowHeight: windowHeight
+      windowWidth: Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH,
+      windowHeight: Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT
     };
     HiLog.info(TAG, `set options: ${JSON.stringify(options)}`);
     context.startAbility({
@@ -58,7 +61,6 @@ export class GetAlertMessage {
       abilityName: 'AlertAbility',
       parameters: {
         error: error,
-        windowHeight,
         accountType: GlobalContext.load('accountType')
       }
     }, options, async (err: BusinessError) => {
@@ -97,51 +99,6 @@ export class GetAlertMessage {
         context.terminateSelf();
       }, Constants.SHARE_SET_TIMEOUT);
     }
-  }
-
-  private static setOptions(error: BusinessError) {
-    let windowHeight = Constants.START_ABILITY_HEIGHT_DEFAULT;
-    if ([
-      Constants.ERR_JS_APP_ENCRYPTING,
-    ].includes(error.code)) {
-      let errInfo = GetAlertMessage.getAlertTitleMessage(error as BusinessError);
-      let width = measureTextSizeWidth(`${error?.data}${errInfo.msg}`);
-      let rowsNum = Math.ceil(width / Constants.START_ABILITY_BASIC_WIDTH);
-      let rowsNumYu: number = Number((width / Constants.START_ABILITY_BASIC_WIDTH).toFixed(1));
-      if (Math.floor(rowsNumYu * 10) % 10 >= 5) {
-        rowsNum += 1;
-      }
-      HiLog.info(TAG, `rowsNum: ${rowsNum}, rowsNumYu: ${rowsNumYu}`);
-      windowHeight = Constants.START_ABILITY_HEIGHT_DEFAULT1 + Constants.START_ABILITY_MSG_HEIGHT_ROWS * rowsNum;
-    }
-    if ([
-      Constants.ERR_JS_GET_ACCOUNT_ERROR,
-      Constants.ERR_JS_NOT_DLP_FILE,
-    ].includes(error.code)) {
-      windowHeight = Constants.START_ABILITY_HEIGHT_ONE_ROWS;
-    }
-    if ([
-      Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED,
-      Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
-      Constants.ERR_JS_DLP_FILE_READ_ONLY,
-      Constants.ERR_JS_FILE_EXPIRATION,
-      Constants.ERR_JS_APP_PARAM_ERROR,
-      Constants.ERR_JS_APP_OPEN_REJECTED,
-    ].includes(error.code)) {
-      windowHeight = Constants.START_ABILITY_HEIGHT_THREE_ROWS;
-    }
-    if ([
-      Constants.ERR_JS_DLP_FILE_READ_ONLY,
-      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
-    ].includes(error.code)) {
-      windowHeight = Constants.START_ABILITY_HEIGHT_FOUR_ROWS;
-    };
-    if ([Constants.ERR_JS_USER_NO_PERMISSION].includes(error.code)) {
-      HiLog.info(TAG, `accountType: ${GlobalContext.load('accountType')}`);
-      windowHeight = GlobalContext.load('accountType') === dlpPermission.AccountType.CLOUD_ACCOUNT ?
-      Constants.START_ABILITY_HEIGHT_DEFAULT : Constants.START_ABILITY_HEIGHT_THREE_ROWS;
-    }
-    return windowHeight;
   }
 
   public static getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMessage?: Resource) {

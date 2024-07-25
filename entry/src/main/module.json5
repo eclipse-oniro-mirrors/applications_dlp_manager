@@ -20,7 +20,8 @@
     "description": "$string:entry_desc",
     "deviceTypes": [
       "default",
-      "tablet"
+      "tablet",
+      "2in1"
     ],
     "deliveryWithInstall": true,
     "installationFree": false,

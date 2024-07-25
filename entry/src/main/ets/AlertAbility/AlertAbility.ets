@@ -18,6 +18,7 @@ import Want from '@ohos.app.ability.Want';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import window from '@ohos.window';
 import { BusinessError } from '@ohos.base';
+import display from '@ohos.display';
 import GlobalContext from '../common/GlobalContext';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
@@ -33,9 +34,15 @@ export default class AlertAbility extends UIAbility {
     HiLog.info(TAG, `onDestroy`);
   }
 
-  onWindowStageCreate(windowStage: window.WindowStage): void {
-    // Main window is created, set main page for this ability
-    HiLog.info(TAG, `onWindowStageCreate`);
+  onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    HiLog.info(TAG, `onNewWant start`);
+    this.getNewWantPage();
+  }
+
+  getNewWantPage(): void {
+    HiLog.info(TAG, `getNewWantPage start`);
+    let windowStage: window.WindowStage = GlobalContext.load('windowStage') as window.WindowStage;
+    let dis = display.getDefaultDisplaySync();
     try {
       windowStage.loadContent('pages/alert');
       windowStage.disableWindowDecor();
@@ -50,22 +57,36 @@ export default class AlertAbility extends UIAbility {
         return;
       }
       mainWindow = data;
-      GlobalContext.store('mainWindow', mainWindow);
       try {
         mainWindow.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
       } catch (exception) {
         HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
       }
-
+      let windowLimits = mainWindow.getWindowLimits();
+      mainWindow.resize(windowLimits.minWidth, windowLimits.minHeight);
+      let xNumber = windowLimits.minWidth ? windowLimits.minWidth : Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH;
+      let yNumber = windowLimits.minHeight ? windowLimits.minHeight :
+        Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT;
+      mainWindow.moveWindowTo(
+        Math.floor((dis.width - xNumber) * Constants.RATIO_HALF),
+        Math.floor((dis.height - yNumber) * Constants.RATIO_HALF)
+      );
       let enabled = false;
       mainWindow.setResizeByDragEnabled(enabled, (err: BusinessError) => {
         if (err && err.code) {
-          HiLog.error(TAG, `Failed to set the function of disabling the resize by dragg window. Cause: ${JSON.stringify(err)}`);
+          HiLog.error(TAG, `Failed to set the function of disabling the resize by dragg window. Cause: ${err.code}`);
           return;
         }
         HiLog.info(TAG, `Succeeded in setting the function of disabling the resize by dragg window.`);
       });
     })
+  }
+
+  onWindowStageCreate(windowStage: window.WindowStage): void {
+    // Main window is created, set main page for this ability
+    HiLog.info(TAG, `onWindowStageCreate`);
+    GlobalContext.store('windowStage', windowStage);
+    this.getNewWantPage()
   }
 
   onWindowStageDestroy(): void {

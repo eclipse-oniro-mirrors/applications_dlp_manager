@@ -22,7 +22,6 @@ import hiSysEvent from '@ohos.hiSysEvent';
 import wantConstant from '@ohos.app.ability.wantConstant';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
-import connection from '@ohos.net.connection';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import uriPermissionManager from '@ohos.application.uriPermissionManager';
@@ -39,7 +38,8 @@ import {
   sendDlpFileOpenProperties,
   isValidPath,
   defaultDlpFile,
-  getAccountType
+  getAccountType,
+  checkNetworkStatus
 } from '../common/utils';
 import {
   DlpFileInfo,
@@ -292,28 +292,19 @@ export default class ViewAbility extends ServiceExtensionAbility {
       abilityName: 'DlpCredLoginAbility'
     };
     try {
-      let netHandle = connection.getDefaultNetSync();
-      connection.getNetCapabilities(netHandle, async (error: BusinessError, data: connection.NetCapabilities) => {
-        if (error) {
-          HiLog.error(TAG, `Failed to get net capabilities. Code: ${error.code}, message: ${error.message}`);
-          GetAlertMessage.startAlertAbility(this.context, {
-            code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
-          return;
-        };
-        HiLog.info(TAG, `Succeeded to get data: ${JSON.stringify(data)}`);
-        const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
-          .every(element => data.networkCap?.includes(element));
-        if (result) {
-          await this.context.startAbility(accountWant);
-          await this.terminateCall();
-        } else {
-          GetAlertMessage.startAlertAbility(this.context, {
-            code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
-        }
-      })
+      await checkNetworkStatus();
     } catch {
-      HiLog.info(TAG, `startLoginAbility failed`);
+      GetAlertMessage.startAlertAbility(this.context, {
+        code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+      return;
+    };
+    try {
+      await this.context.startAbility(accountWant);
+    } catch(err) {
+      HiLog.info(TAG, `Failed to invoke startAbility, ${JSON.stringify(err)}`)
+      return;
     }
+    await this.terminateCall();
   }
 
   async getAccountAndOpenDLPFile(startId: number): Promise<void> {

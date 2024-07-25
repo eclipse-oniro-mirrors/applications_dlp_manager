@@ -27,6 +27,7 @@ import fileUri from '@ohos.file.fileuri';
 import { BusinessError, Callback } from '@ohos.base'
 import Want from '@ohos.app.ability.Want';
 import common from '@ohos.app.ability.common';
+import connection from '@ohos.net.connection';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Constants from '../common/constant';
 import GlobalContext from './GlobalContext';
@@ -495,6 +496,27 @@ function removeDir(file: string) {
   }
 }
 
+function checkNetworkStatus(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let netHandle = connection.getDefaultNetSync();
+    connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
+      if (error) {
+        HiLog.error(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
+        reject();
+        return;
+      };
+      HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
+      const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
+        .every(element => data.networkCap?.includes(element));
+      if (result) {
+        resolve();
+        return;
+      }
+      reject();
+    })
+  })
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -522,5 +544,6 @@ export {
   isValidPath,
   measureTextSizeWidth,
   defaultDlpFile,
-  getAccountType
+  getAccountType,
+  checkNetworkStatus
 };
