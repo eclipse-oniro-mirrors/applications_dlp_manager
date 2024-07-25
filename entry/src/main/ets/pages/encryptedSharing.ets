@@ -190,9 +190,12 @@ struct encryptedSharing {
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
     let inputUri: string = parameters['ability.params.stream'][0];
+    let inputFileName: string = this.getFileName(parameters);
     let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
-    let inputFileName = decodeURIComponent(srcFileMsg.fileName);
-    let filePatch = inputFileName + srcFileMsg.fileType + '.dlp';
+    if (inputFileName === undefined) {
+      inputFileName = srcFileMsg.fileName + srcFileMsg.fileType;
+    };
+    let filePatch = decodeURIComponent(inputFileName) + '.dlp';
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
@@ -225,6 +228,15 @@ struct encryptedSharing {
         fs.closeSync(file);
       }
     }
+  }
+
+  getFileName(parameters: Record<string, Array<string>>): string {
+    let abilityPickerRecords = parameters['ability.picker.records'];
+    let res: string = '';
+    Object.keys(abilityPickerRecords).forEach(key => {
+      res = abilityPickerRecords[key][0]?.['4'];
+    });
+    return res;
   }
 
   showToast(msg: Resource) {
