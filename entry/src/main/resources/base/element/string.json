@@ -210,7 +210,7 @@
     },
     {
       "name": "THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
-      "value": "This file does not support encryption protection."
+      "value": "This file cannot be encrypted."
     },
     {
       "name": "MESSAGE_APP_FILE_PARAM_ERROR",
@@ -338,11 +338,11 @@
     },
     {
       "name": "Share_File_Name_Too_Long",
-      "value": "File name too long, Failed to encrypt the file."
+      "value": "Unable to encrypt. File name too long."
     },
     {
       "name": "Share_Contact_Person",
-      "value": "Contact Person"
+      "value": "Contacts"
     },
     {
       "name": "Function_Is_Not_Available",

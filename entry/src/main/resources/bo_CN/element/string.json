@@ -311,6 +311,18 @@
         {
             "name":"Share_Tips_Phone_Format",
             "value":"རྣམ་གཞན་ཡང་དག་པའི་ཁ་པར་ཨང་གྲངས་ནང་འཇུག་གནང་རོགས།"
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"འབྲེལ་གཏུག་མི་སྣ།"
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"ཡིག་ཆ་འདིས་གསང་སྡོམ་སྲུང་སྐྱོབ་ལ་རྒྱབ་སྐྱོར་མི་བྱེད།"
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"ཡིག་ཆའི་མིང་རིང་དྲགས། གསང་སྡོམ་རྒྱག་མ་ཐུབ།"
         }
     ]
 }

@@ -311,6 +311,18 @@
         {
             "name":"Share_Tips_Phone_Format",
             "value":"請輸入正確格式的手機號碼"
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"聯絡人"
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"此檔案不支援加密保護"
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"檔案名稱過長，無法加密"
         }
     ]
 }
