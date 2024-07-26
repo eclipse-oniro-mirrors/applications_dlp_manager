@@ -31,23 +31,31 @@ interface DlpFileInfo {
   tokenId: number;
 }
 
-async function deleteLinkFile(dlpFile: dlpPermission.DLPFile, linkFileName: string, dlpFd: number): Promise<void> {
+async function deleteLinkFile(fileArray: (number | string | dlpPermission.DLPFile)[][]): Promise<void> {
   HiLog.info(TAG, `deleteLinkFile enter`);
   return new Promise(async (resolve, reject) => {
-    try {
-      await dlpFile.deleteDLPLinkFile(linkFileName);
-    } catch (err) {
-      HiLog.error(TAG, `deleteDLPLinkFile failed: ${JSON.stringify(err)}`);
-    }
-    try {
-      await dlpFile.closeDLPFile();
-    } catch (err) {
-      HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
-    }
-    try {
-      fileio.closeSync(dlpFd);
-    } catch (err) {
-      HiLog.error(TAG, `closeSync failed: ${JSON.stringify(err)}`);
+    for (let linkFile of fileArray) {
+      if (linkFile.length <= INDEX_TWO) {
+        HiLog.error(TAG, `linkFile size:${linkFile.length} error`);
+        reject();
+        return;
+      }
+      let dlpFile: dlpPermission.DLPFile = linkFile[INDEX_ZERO] as dlpPermission.DLPFile;
+      try {
+        await dlpFile.deleteDLPLinkFile(linkFile[INDEX_ONE] as string);
+      } catch (err) {
+        HiLog.error(TAG, `deleteDLPLinkFile failed: ${JSON.stringify(err)}`);
+      }
+      try {
+        await dlpFile.closeDLPFile();
+      } catch (err) {
+        HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
+      }
+      try {
+        fileio.closeSync(linkFile[INDEX_TWO] as number);
+      } catch (err) {
+        HiLog.error(TAG, `closeSync failed: ${JSON.stringify(err)}`);
+      }
     }
     resolve();
   });
@@ -58,33 +66,21 @@ async function deleteSandbox2linkFileData(sandboxId: string, isNeedDeleteLink: b
     return new Promise(async (resolve, reject) => {
       let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
         GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-      if (sandbox2linkFile.has(sandboxId)) {
-        try {
-          let fileArray: (number | string | dlpPermission.DLPFile)[][] =
-            sandbox2linkFile.get(sandboxId) as (number | string | dlpPermission.DLPFile)[][];
-          if (isNeedDeleteLink) {
-            for (let i of fileArray) {
-              let linkFile: (number | string | dlpPermission.DLPFile)[] = i;
-              if (linkFile.length < INDEX_TWO) {
-                HiLog.error(TAG, `linkFile size:${linkFile.length} error`);
-                reject();
-                return;
-              }
-              await deleteLinkFile(linkFile[INDEX_ZERO] as dlpPermission.DLPFile, linkFile[INDEX_ONE] as string,
-                linkFile[INDEX_TWO] as number);
-            }
-          }
-          sandbox2linkFile.delete(sandboxId);
-          resolve();
-          return;
-        } catch (err) {
-          HiLog.error(TAG, `getHistoryDlpFile failed`);
-          reject();
-          return;
-        }
+      if (!sandbox2linkFile.has(sandboxId)) {
+        HiLog.info(TAG, `deleteSandbox2linkFileData not found ${sandboxId}`);
+        resolve();
+        return;
       }
-      HiLog.info(TAG, `deleteSandbox2linkFileData not found ${sandboxId}`);
-      resolve();
+      try {
+        if (isNeedDeleteLink) {
+          await deleteLinkFile(sandbox2linkFile.get(sandboxId) as (number | string | dlpPermission.DLPFile)[][]);
+        }
+        sandbox2linkFile.delete(sandboxId);
+        resolve();
+      } catch (err) {
+        HiLog.error(TAG, `getHistoryDlpFile failed`);
+        reject();
+      }
     });
 }
 
@@ -120,26 +116,28 @@ async function getDlpFileInfoFromSandbox2linkFileData(sandboxId: string, dlpFile
   return new Promise(async (resolve, reject) => {
     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
         GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-    if (sandbox2linkFile.has(sandboxId)) {
-      let fileArray: (number | string | dlpPermission.DLPFile)[][] =
-        sandbox2linkFile.get(sandboxId) as (number | string | dlpPermission.DLPFile)[][];
-      for (let i of fileArray) {
-        let linkFile: (number | string | dlpPermission.DLPFile)[] = i;
-        if (linkFile.length < INDEX_FIVE) {
-          continue;
-        }
-        if (linkFile[INDEX_FOUR] !== dlpFileUri) {
-          continue;
-        }
-        let result : DlpFileInfo = {
-          dlpFile: linkFile[INDEX_ZERO] as dlpPermission.DLPFile,
-          tokenId: linkFile[INDEX_THREE] as number
-        }
-        resolve(result);
-        return;
-      }
+    if (!sandbox2linkFile.has(sandboxId)) {
+      HiLog.info(TAG, `getDlpFileInfoFromSandbox2linkFileData not found ${sandboxId}, ${dlpFileUri}`);
+      reject();
+      return;
     }
-    HiLog.info(TAG, `getDlpFileInfoFromSandbox2linkFileData not found ${sandboxId}, ${dlpFileUri}`);
+    let fileArray: (number | string | dlpPermission.DLPFile)[][] =
+      sandbox2linkFile.get(sandboxId) as (number | string | dlpPermission.DLPFile)[][];
+    for (let linkFile of fileArray) {
+      if (linkFile.length < INDEX_FIVE) {
+        continue;
+      }
+      if (linkFile[INDEX_FOUR] !== dlpFileUri) {
+        continue;
+      }
+      let result : DlpFileInfo = {
+        dlpFile: linkFile[INDEX_ZERO] as dlpPermission.DLPFile,
+        tokenId: linkFile[INDEX_THREE] as number
+      }
+      resolve(result);
+      return;
+    }
+    HiLog.info(TAG, `getDlpFileInfoFromSandbox2linkFileData not found in linkFile ${sandboxId}, ${dlpFileUri}`);
     reject();
   });
 }
