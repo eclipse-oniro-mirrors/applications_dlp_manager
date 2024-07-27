@@ -126,8 +126,6 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_USER_NO_PERMISSION:
         return { 'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM') } as Record<string, Resource>;
-      case Constants.ERR_JS_DLP_NOT_PROVIDED:
-        return { 'msg': $r('app.string.Function_Is_Not_Available') } as Record<string, Resource>;
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
         return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
       case Constants.ERR_JS_OFFLINE:
