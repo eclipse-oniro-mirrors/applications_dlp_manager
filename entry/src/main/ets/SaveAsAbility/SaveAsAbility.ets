@@ -277,7 +277,7 @@ export default class SaveAsAbility extends UIAbility {
       let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
       let magic = buf[0];
 
-      if(magic !== Constants.DLP_ZIP_MAGIC) {
+      if (magic !== Constants.DLP_ZIP_MAGIC) {
         let txtOffset = buf[TXT_OFFSET];
         let head = new ArrayBuffer(txtOffset);
         option = {
@@ -331,7 +331,7 @@ export default class SaveAsAbility extends UIAbility {
       file = fs.openSync(dirUri, fs.OpenMode.READ_ONLY);
       let stat = fs.statSync(file.fd);
       let isDir = stat.isDirectory();
-      HiLog.info(TAG, `test dir ${isDir? 'is' : 'not'} a directory`);
+      HiLog.info(TAG, `test dir ${isDir ? 'is' : 'not'} a directory`);
       return isDir;
     } catch (e) {
       let error = e as BusinessError;
@@ -356,7 +356,7 @@ export default class SaveAsAbility extends UIAbility {
       let srcUri: string = token2FileValue[SRC_URI_OFFSET] as string;
       let uriObj = new fileUri.FileUri(srcUri);
       let dir = uriObj.getFullDirectoryUri(); // get directory path
-      let name = srcUri.replace(dir, '').replace('/',''); // strip directory path and '/'
+      let name = srcUri.replace(dir, '').replace('/', ''); // strip directory path and '/'
       HiLog.info(TAG, 'getSourceFileName: ' + name);
       return name;
     } catch (e) {
