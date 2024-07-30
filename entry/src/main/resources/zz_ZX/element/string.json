@@ -1,0 +1,348 @@
+{
+    "string":[
+        {
+            "name":"save",
+            "value":"[TS_850764]_Save"
+        },
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"[TS_876512]_This app can't open this file."
+        },
+        {
+            "name":"typeface",
+            "value":"[TS_850766]_HarmonyHeiTi"
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"[TS_850742]_DLP app did not launch. Check your parameters and try again."
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"[TS_850765]_Encrypting file…"
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"[TS_872898]_The expiration date can't be in the past. Please set another date."
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"[TS_850752]_Only myself"
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"[TS_850780]_Specified users"
+        },
+        {
+            "name":"Network_not_connected_description",
+            "value":"[TS_872903]_A validity period has been set for access to this file. Please connect to the Internet to confirm permissions."
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"[TS_934972]_Encrypted share"
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"[TS_869448]_Close this file before encrypting it."
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"[TS_850727]_You don't have permission to view this file. To apply for permission, contact %s."
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"[TS_850779]_Invalid employee ID. Please re-enter."
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"[TS_934968]_You don't have permission to view this file."
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"[TS_850717]_This file is protected. You have \"Read-only\" permission."
+        },
+        {
+            "name":"entry_desc",
+            "value":"[TS_850722]_description"
+        },
+        {
+            "name":"MainAbility_desc",
+            "value":"[TS_850748]_DLPManager"
+        },
+        {
+            "name":"screenshot",
+            "value":"[TS_850743]_Screenshot"
+        },
+        {
+            "name":"duplicate",
+            "value":"[TS_850738]_Copy"
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"[TS_934974]_File encrypted successfully."
+        },
+        {
+            "name":"MainAbility_label",
+            "value":"[TS_850777]_DLPManager"
+        },
+        {
+            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
+            "value":"[TS_850768]_Unable to open file. Check and try again."
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"[TS_869447]_Login information could not be identified. Please log in to your work account to continue."
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"[TS_850731]_Unable to obtain account information. Try again later."
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"[TS_875499]_\"%s\" is currently being encrypted. Try again later."
+        },
+        {
+            "name":"loading_title",
+            "value":"[TS_882451]_Loading…"
+        },
+        {
+            "name":"header_title_list",
+            "value":"[TS_850773]_Protect the file with restricted access."
+        },
+        {
+            "name":"Document_valid",
+            "value":"[TS_872897]_Validity"
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"[TS_850724]_Users with read-only access can view this file, but can't edit, copy, or print it."
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"[TS_850715]_Everyone"
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"[TS_850739]_You don't have permission to save another copy of this file. To request permission, contact %s."
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"[TS_934969]_Enter their phone number"
+        },
+        {
+            "name":"encrypt_employee_id",
+            "value":"[TS_869451]_Employee ID: %s"
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"[TS_850734]_To request permissions, please contact %s."
+        },
+        {
+            "name":"Appointed_day",
+            "value":"[TS_872900]_Specified date"
+        },
+        {
+            "name":"change_encryption",
+            "value":"[TS_850736]_Change protection"
+        },
+        {
+            "name":"print",
+            "value":"[TS_850763]_Print"
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"[TS_934970]_Add a user"
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"[TS_850747]_Enter employee ID and press Enter. For example: a00123456"
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"[TS_945314]_This file is open in another app."
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"[TS_850754]_Read-only"
+        },
+        {
+            "name":"permanently",
+            "value":"[TS_850728]_Permanent"
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"[TS_850719]_App error"
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"[TS_934973]_Unable to encrypt file."
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"[TS_858984]_This file is currently being encrypted. Wait for encryption to finish and try again."
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"[TS_869450]_Log in"
+        },
+        {
+            "name":"network_invalid",
+            "value":"[TS_855178]_Network error. Try again later."
+        },
+        {
+            "name":"header_title_edit",
+            "value":"[TS_850726]_Edit"
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"[TS_850772]_This file is protected, accessible only to specified users."
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"[TS_850725]_Edit"
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"[TS_872905]_Your file permissions have expired. To regain access, contact %s."
+        },
+        {
+            "name":"file_encrypted",
+            "value":"[TS_850716]_File protected"
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"[TS_850744]_Unable to change encryption. Try again later."
+        },
+        {
+            "name":"header_title",
+            "value":"[TS_850761]_File permissions"
+        },
+        {
+            "name":"enter_a_complete_account",
+            "value":"[TS_850741]_Enter account"
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"[TS_850756]_Read-only"
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"[TS_850762]_Unable to do this right now. Try again later."
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"[TS_948030]_This file cannot be encrypted."
+        },
+        {
+            "name":"save_as",
+            "value":"[TS_850745]_Save as"
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"[TS_850759]_Access denied"
+        },
+        {
+            "name":"Network_not_connected",
+            "value":"[TS_872902]_No Internet connection"
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"[TS_915011]_System update required"
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"[TS_850755]_Log in to your account and try again."
+        },
+        {
+            "name":"Go_setting",
+            "value":"[TS_872901]_Settings"
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"[TS_872899]_Permissions expired"
+        },
+        {
+            "name":"screen_recording",
+            "value":"[TS_850769]_Record screen"
+        },
+        {
+            "name":"finished",
+            "value":"[TS_850751]_Finish"
+        },
+        {
+            "name":"incorrect_account",
+            "value":"[TS_850770]_Invalid account name"
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"[TS_861174]_Unable to open files that were encrypted in a newer system version. Please update your system software and try again."
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"[TS_934971]_Confirm"
+        },
+        {
+            "name":"stow_away",
+            "value":"[TS_850758]_Hide"
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"[TS_850774]_View details"
+        },
+        {
+            "name":"ViewAbility_desc",
+            "value":"[TS_850746]_DLPViewer"
+        },
+        {
+            "name":"sure",
+            "value":"[TS_850776]_Ok"
+        },
+        {
+            "name":"permission_status_title",
+            "value":"[TS_850729]_This file is protected. You have \"Read-only\" and \"Edit\" permissions."
+        },
+        {
+            "name":"da_button",
+            "value":"[TS_876495]_OK"
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"[TS_949903]_Unable to encrypt. File name too long."
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"[TS_850713]_Unable to obtain permission. Try again later."
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"[TS_915012]_Actual permissions may vary by app.\n"
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"[TS_934967]_Enter a valid phone number"
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"[TS_872904]_Valid until"
+        },
+        {
+            "name":"share_the_screen",
+            "value":"[TS_850723]_Share screen"
+        },
+        {
+            "name":"unencrypted",
+            "value":"[TS_850749]_Revoke protection"
+        },
+        {
+            "name":"ban",
+            "value":"[TS_850760]_Cancel"
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"[TS_850757]_Users with this permission can view, edit, copy, screen-record, save, and print this file."
+        },
+        {
+            "name":"delete_account",
+            "value":"[TS_850735]_Delete"
+        }
+    ]
+}
