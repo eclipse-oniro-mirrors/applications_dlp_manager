@@ -37,9 +37,9 @@
         "name": "AlertAbility",
         "srcEntry": "./ets/AlertAbility/AlertAbility.ets",
         "description": "$string:MainAbility_desc",
-        "icon": "$media:icon",
+        "icon": "$media:app_icon",
         "label": "$string:MainAbility_label",
-        "startWindowIcon": "$media:icon",
+        "startWindowIcon": "$media:app_icon",
         "startWindowBackground": "$color:white",
         "excludeFromMissions": true,
         "exported": true,
@@ -100,6 +100,7 @@
         "label": "$string:EncryptedSharing",
         "description": "service",
         "type": "action",
+        "extensionProcessMode": "instance",
         "exported": true
       }
     ],

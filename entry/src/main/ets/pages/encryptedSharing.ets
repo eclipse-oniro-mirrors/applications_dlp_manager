@@ -84,12 +84,13 @@ struct encryptedSharing {
     end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
   };
   @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
-  @LocalStorageLink('commandGetAccountInfo') commandGetAccountInfo: string = '';
+  @LocalStorageLink('commandGetAccountInfo') @Watch('changeAccountInfo') commandGetAccountInfo: string = '';
   @State commandGetAccountInfoFlag: boolean = false;
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
   @State enabledFocus: boolean = true;
+  @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
-  @State showUIExtension: boolean = false;
+  @State showUIExtensionForAccountLogin: boolean = false;
   @State cloudAccountLogin: boolean = false;
   @State actionWant: Want | undefined = storage.get<Want>('actionWant');
   @State inputValue: string = '';
@@ -102,6 +103,7 @@ struct encryptedSharing {
     storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State placeHolderStr: ResourceStr = '';
   @State contactPerson: string = '';
+  @State recordHashUid: string = '';
 
   @Builder
   contactsPicker() {
@@ -136,14 +138,23 @@ struct encryptedSharing {
 
   private async beginShareEncrypt() {
     if (this.checkCloudPhone(this.inputValue)) {
-      let cloudAccountLoginFlag = this.cloudAccountLoginFlag();
-      HiLog.info(TAG, `cloudAccountLoginFlag: ${cloudAccountLoginFlag}`);
-      if (cloudAccountLoginFlag) {
-        this.enabledFocus = false;
-        this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
-      } else {
-        this.showUIExtension = true;
-      }
+      this.enabledFocus = false;
+      this.isConfirmButtonEnabled = false;
+      this.getAccountInfo();
+    }
+  }
+
+  changeAccountInfo() {
+    HiLog.info(TAG, `changeAccountInfo start`);
+    if (!this.checkCloudPhone(this.inputValue) || !this.commandGetAccountInfo) {
+      return;
+    }
+    let cloudAccountLoginFlag = this.cloudAccountLoginFlag();
+    HiLog.info(TAG, `cloudAccountLoginFlag: ${cloudAccountLoginFlag}`);
+    if (cloudAccountLoginFlag) {
+      this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
+    } else {
+      this.showUIExtensionForAccountLogin = true;
     }
   }
 
@@ -155,13 +166,15 @@ struct encryptedSharing {
         this.showToast($r('app.string.Share_File_Encrypted_Failed'));
         return false;
       };
-      let resultVal = JSON.parse(info) as Record<string, object>;
-      if (Number(resultVal.errorCode) === Constants.ERR_CODE_SUCCESS) {
-        let res = resultVal.result as Record<string, string>;
-        this.ownerAccount = res.uid;
-        this.ownerAccountID = res.uid;
-      };
-      return true;
+      if (info) {
+        let resultVal = JSON.parse(info) as Record<string, object>;
+        if (Number(resultVal.errorCode) === Constants.ERR_CODE_SUCCESS) {
+          let res = resultVal.result as Record<string, string>;
+          this.ownerAccount = res.uid;
+          this.ownerAccountID = res.uid;
+        };
+        return true;
+      }
     };
     return this.cloudAccountLogin;
   }
@@ -184,8 +197,9 @@ struct encryptedSharing {
 
   async beginToGenerateDLPFile() {
     HiLog.info(TAG, `beginToGenerateDLPFile start`);
-    if (!this.getInputInvalid()) {
+    if (!this.isInputValid()) {
       this.enabledFocus = true;
+      this.isConfirmButtonEnabled = true;
       return;
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
@@ -222,8 +236,9 @@ struct encryptedSharing {
         return;
       };
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-    } finally {
       this.enabledFocus = true;
+      this.isConfirmButtonEnabled = true;
+    } finally {
       if (file) {
         fs.closeSync(file);
       }
@@ -247,6 +262,7 @@ struct encryptedSharing {
   }
 
   backToPages(filePathUri: string, filePatch: string) {
+    HiLog.info(TAG, `backToPages start`);
     if (this.actionWant && this.actionWant.parameters) {
       this.actionWant.parameters['ability.params.stream'] = [filePathUri];
       let arr: Test[] = [
@@ -269,7 +285,7 @@ struct encryptedSharing {
     }
   }
 
-  getInputInvalid(): boolean {
+  isInputValid(): boolean {
     if (!this.isInputInvalid) {
       return false;
     };
@@ -334,17 +350,27 @@ struct encryptedSharing {
         let accountInfo = await getOsAccountInfo();
         if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
           accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-          this.showUIExtension = true;
-        } else {
+          this.showUIExtensionForAccountLogin = true;
+          return;
+        };
+        if (accountInfo.distributedInfo.id !== this.recordHashUid) {
           this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
           this.commandGetAccountInfoFlag = true;
+          return;
+        } else {
+          this.changeAccountInfo();
         }
       } catch (err) {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
         this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+        this.enabledFocus = true;
+        this.isConfirmButtonEnabled = true;
+        return;
       }
     } catch {
       this.showToast($r('app.string.network_invalid'));
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = true;
     }
   }
 
@@ -410,7 +436,7 @@ struct encryptedSharing {
   }
 
   aboutToAppear() {
-    HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtension}`);
+    HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtensionForAccountLogin}`);
     this.getAccountInfo();
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
@@ -474,6 +500,7 @@ struct encryptedSharing {
                 HiLog.info(TAG, `input length: ${value.length}`);
                 this.inputValue = value;
                 this.phoneFormatTips = false;
+                this.isConfirmButtonEnabled = value.length > 0;
               })
             if (this.contactExists) {
               Column() {
@@ -493,7 +520,7 @@ struct encryptedSharing {
               .bindSheet(this.isShowSheet, this.contactsPicker(), {
                 height: SheetSize.LARGE,
                 dragBar: false,
-                showClose: false,
+                showClose: true,
                 onDisappear: () => {
                   this.isShowSheet = false;
                 },
@@ -517,18 +544,12 @@ struct encryptedSharing {
         .margin({ left: Constants.SHARE_TEXT_INPUT_MARGIN_LEFT, right: Constants.SHARE_TEXT_INPUT_MARGIN_RIGHT })
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
-            .enabled(this.enabledFocus)
+            .enabled(this.isConfirmButtonEnabled)
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .width(Constants.SHARE_BUTTON_WIDTH)
             .controlSize(ControlSize.NORMAL)
             .onClick(async () => {
-              try {
-                await checkNetworkStatus();
-                this.beginShareEncrypt();
-              } catch (err) {
-                this.showToast($r('app.string.network_invalid'));
-                HiLog.error(TAG, `checkNetworkStatus error: ${JSON.stringify(err)}`)
-              };
+              this.beginShareEncrypt();
             })
         }
         .justifyContent(FlexAlign.Center)
@@ -545,7 +566,7 @@ struct encryptedSharing {
       }
       .width(Constants.SHARE_PAGES_COLUMN_WIDTH)
       .height(Constants.SHARE_PAGES_COLUMN_HEIGHT)
-      if (this.showUIExtension) {
+      if (this.showUIExtensionForAccountLogin) {
         UIExtensionComponent({
           bundleName: 'com.huawei.hmos.dlpcredmgr',
           abilityName: 'DlpCredAccountAbility',
@@ -562,15 +583,19 @@ struct encryptedSharing {
               let checkCloudPhone = this.checkCloudPhone(this.inputValue);
               HiLog.info(TAG, `checkCloudPhone: ${checkCloudPhone}`);
               if (checkCloudPhone) {
+                this.enabledFocus = false;
+                this.isConfirmButtonEnabled = false;
                 this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
               }
             } else {
               this.cloudAccountLogin = false;
+              this.enabledFocus = true;
+              this.isConfirmButtonEnabled = this.inputValue.length > 0;
               if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
-            this.showUIExtension = false;
+            this.showUIExtensionForAccountLogin = false;
           })
           .size({
             width: Constants.SHARE_PAGES_COLUMN_WIDTH, height: Constants.SHARE_PAGES_COLUMN_HEIGHT

@@ -405,14 +405,6 @@ function isValidPath(path: string): Boolean {
   return true;
 }
 
-function measureTextSizeWidth(str: Resource | string) {
-  let itemLenWithPX: SizeOptions = measure.measureTextSize({
-    textContent: str,
-    fontSize: '16fp'
-  })
-  return px2vp(Number(itemLenWithPX.width) + Constants.ENCRYPTION_PROTECTION_TIME_MENU_WIDTH);
-}
-
 function getAccountType(
   context: common.ServiceExtensionContext | common.UIExtensionContext, fd: number): Promise<number> {
   return new Promise(async (resolve, reject) => {
@@ -542,7 +534,6 @@ export {
   sendDlpFileOpenProperties,
   DLPInfo,
   isValidPath,
-  measureTextSizeWidth,
   defaultDlpFile,
   getAccountType,
   checkNetworkStatus
