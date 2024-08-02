@@ -294,7 +294,7 @@
         },
         {
             "name":"Share_Enter_Mobile_Number",
-            "value":"請輸入手機號碼"
+            "value":"僅支援輸入手機號碼。加密後的檔案只能在 %s 或更新版本的裝置上查看。"
         },
         {
             "name":"Share_Add_Viewable_Users",

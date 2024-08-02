@@ -318,7 +318,7 @@
     },
     {
       "name": "Share_Enter_Mobile_Number",
-      "value": "Enter their phone number"
+      "value": "Mobile numbers only. Encrypted files can be viewed on devices running %s or later."
     },
     {
       "name": "Share_Tips_Phone_Format",

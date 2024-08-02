@@ -65,11 +65,9 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   everyoneAccessList: []
 };
 
-@Extend(Text)
+@Extend(TextArea)
 function inputMessageText() {
   .fontSize($r('sys.float.ohos_id_text_size_body3'))
-  .lineHeight(Constants.PP_TEXT_LINE_HEIGHT2)
-  .fontColor($r('sys.color.ohos_id_color_text_secondary'))
   .fontWeight(FontWeight.Regular)
   .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
 }
@@ -104,6 +102,7 @@ struct encryptedSharing {
   @State placeHolderStr: ResourceStr = '';
   @State contactPerson: string = '';
   @State recordHashUid: string = '';
+  @State osVersion: ResourceStr = '';
 
   @Builder
   contactsPicker() {
@@ -383,6 +382,10 @@ struct encryptedSharing {
     if (str.length > 0) {
       this.credentialCallBackMsg = str;
     }
+    str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'hmos_version_label');
+    if (str.length > 0) {
+      this.osVersion = str;
+    }
     this.getContactPersonString();
   }
 
@@ -446,7 +449,9 @@ struct encryptedSharing {
     this.getUIContext().setKeyboardAvoidMode(1);
     this.subscribeLanguageChange();
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
-    this.placeHolderStr = str.length > 0 ? str : $r('app.string.Share_Enter_Mobile_Number');
+    this.placeHolderStr = str.length > 0 ? str : '';
+    str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'hmos_version_label');
+    this.osVersion = str.length > 0 ? str : '';
     this.getContactPersonString();
   }
 
@@ -487,7 +492,7 @@ struct encryptedSharing {
         Column() {
           Row() {
             TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
-              .padding({ right: Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT + this.getSettingItemPadding()})
+              .padding({ right: Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT})
               .enabled(this.enabledFocus)
               .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
               .defaultFocus(true)
@@ -505,13 +510,13 @@ struct encryptedSharing {
             if (this.contactExists) {
               Column() {
                 SymbolGlyph($r('sys.symbol.person_2'))
-                  .fontSize(`${Constants.SYMBOL_GLYPH_FONT_SIZE}fp`)
+                  .fontSize(`${Constants.SYMBOL_GLYPH_FONT_SIZE}vp`)
                   .fontColor(this.enabledFocus ? [$r('sys.color.icon_primary')] : [$r('sys.color.icon_tertiary')])
               }
               .accessibilityText(this.contactPerson)
               .enabled(this.enabledFocus)
               .offset({
-                x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X - this.getSettingItemPadding(),
+                x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
                 y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y
               })
               .onClick(() => {
@@ -530,17 +535,20 @@ struct encryptedSharing {
             }
           }
 
-          Text(){
-            if (this.phoneFormatTips) {
-              Span(this.credentialCallBackMsg)
-                .fontColor($r('sys.color.ohos_id_color_warning'))
-            }
-          }
-          .inputMessageText()
-          .width(Constants.CONTACTS_PICKER_WIDTH)
-          .padding({left: Constants.SHARE_TITLE_HEAD_PADDING_LEFT})
+          TextArea({text: this.phoneFormatTips ?
+            this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion)})
+            .fontColor(this.phoneFormatTips ?
+             $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
+            .inputMessageText()
+            .constraintSize({
+              maxHeight: `${Constants.SHARE_TEXTAREA_MAX_HEIGHT}vp`
+            })
+            .backgroundColor(Color.Transparent)
+            .focusable(false)
+            .barState(BarState.Off)
+            .width(Constants.CONTACTS_PICKER_WIDTH)
+            .padding({ left: Constants.SHARE_TITLE_HEAD_PADDING_LEFT })
         }
-        .height(Constants.SHARE_TEXT_INPUT_COLUMN_HEIGHT)
         .margin({ left: Constants.SHARE_TEXT_INPUT_MARGIN_LEFT, right: Constants.SHARE_TEXT_INPUT_MARGIN_RIGHT })
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
