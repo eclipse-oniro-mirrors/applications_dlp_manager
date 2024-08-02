@@ -318,7 +318,7 @@
     },
     {
       "name": "Share_Enter_Mobile_Number",
-      "value": "请输入手机号码"
+      "value": "仅支持输入手机号。加密后的文件仅可在 %s 或更高版本的设备上查看。"
     },
     {
       "name": "Share_Tips_Phone_Format",

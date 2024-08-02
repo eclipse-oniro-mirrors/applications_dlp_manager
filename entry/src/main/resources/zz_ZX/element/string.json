@@ -126,7 +126,7 @@
         },
         {
             "name":"Share_Enter_Mobile_Number",
-            "value":"[TS_934969]_Enter their phone number"
+            "value":"[TS_934969]_Mobile numbers only. Encrypted files can be viewed on devices running %s or later."
         },
         {
             "name":"encrypt_employee_id",
