@@ -22,10 +22,8 @@ import osAccount from '@ohos.account.osAccount';
 import account_osAccount from '@ohos.account.osAccount';
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
-import dlpPermission from '@ohos.dlpPermission';
 import deviceInfo from '@ohos.deviceInfo';
 import promptAction from '@ohos.promptAction';
-import { measureTextSizeWidth } from './utils';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'AlertMessage';

@@ -203,6 +203,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     hiTraceMeter.startTrace('DlpStartSandboxJs', startId);
     want.bundleName = this.sandboxBundleName;
     want.abilityName = this.sandboxAbilityName;
+    want.moduleName = this.sandboxModuleName;
     want.uri = this.linkUri;
     want.flags = this.linkFileWriteable ?
         wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
