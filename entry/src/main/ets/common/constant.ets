@@ -226,6 +226,7 @@ export default class Constants {
   public static SHARE_TEXTAREA_MAX_HEIGHT = 188;
   public static SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT = 32;
   public static SHARE_CONTACTS_GROUP_OFFSET_X = -32;
+  public static SHARE_CONTACTS_GROUP_OFFSET_X_RTL = 32;
   public static SHARE_CONTACTS_GROUP_OFFSET_Y = 0;
   public static SHARE_TITLE_HEAD_PADDING_LEFT = 16;
   public static SHARE_TEXT_INPUT_MARGIN_RIGHT = 16;
