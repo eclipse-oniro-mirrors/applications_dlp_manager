@@ -39,6 +39,7 @@ import {
   getOsAccountInfo,
   checkNetworkStatus
 } from '../common/utils';
+import { SystemUtils } from '../common/systemUtils';
 import FontSizeScale from '../common/FontSizeScale';
 
 const TAG = 'Share';
@@ -130,6 +131,7 @@ struct encryptedSharing {
         })
         .width(Constants.CONTACTS_PICKER_WIDTH)
         .height(Constants.CONTACTS_PICKER_HEIGHT)
+        .hitTestBehavior(HitTestMode.Block)
     }
     .width(Constants.CONTACTS_PICKER_WIDTH)
     .height(Constants.CONTACTS_PICKER_HEIGHT)
@@ -355,6 +357,7 @@ struct encryptedSharing {
         if (accountInfo.distributedInfo.id !== this.recordHashUid) {
           this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
           this.commandGetAccountInfoFlag = true;
+          this.recordHashUid = accountInfo.distributedInfo.id;
           return;
         } else {
           this.changeAccountInfo();
@@ -516,7 +519,8 @@ struct encryptedSharing {
               .accessibilityText(this.contactPerson)
               .enabled(this.enabledFocus)
               .offset({
-                x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
+                x: SystemUtils.isRTL()
+                  ? Constants.SHARE_CONTACTS_GROUP_OFFSET_X_RTL : Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
                 y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y
               })
               .onClick(() => {
