@@ -39,6 +39,7 @@ import {
   getOsAccountInfo,
   checkNetworkStatus
 } from '../common/utils';
+import { SystemUtils } from '../common/systemUtils';
 import FontSizeScale from '../common/FontSizeScale';
 
 const TAG = 'Share';
@@ -130,6 +131,7 @@ struct encryptedSharing {
         })
         .width(Constants.CONTACTS_PICKER_WIDTH)
         .height(Constants.CONTACTS_PICKER_HEIGHT)
+        .hitTestBehavior(HitTestMode.Block)
     }
     .width(Constants.CONTACTS_PICKER_WIDTH)
     .height(Constants.CONTACTS_PICKER_HEIGHT)
@@ -203,28 +205,25 @@ struct encryptedSharing {
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
     let inputUri: string = parameters['ability.params.stream'][0];
-    let inputFileName: string = this.getFileName(parameters);
-    let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
-    if (inputFileName === undefined) {
-      inputFileName = srcFileMsg.fileName + srcFileMsg.fileType;
-    };
-    let filePatch = decodeURIComponent(inputFileName) + '.dlp';
+    let inputFileName: string = this.getFileName(parameters, inputUri);
+    let dlpFileName = decodeURIComponent(inputFileName) + '.dlp';
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
-    AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
-    let filePath = getContext(this).filesDir + '/' + filePatch;
+    let filePath = getContext(this).filesDir + `/Share/${new Date().getTime()}/`;
+    await fs.mkdir(filePath, true);
+    let newFilePath = filePath + dlpFileName;
     let file: fs.File | undefined;
-    let filePathUri = getFileUriByPath(filePath);
+    let filePathUri = getFileUriByPath(newFilePath);
     try {
-      file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+      file = fs.openSync(newFilePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
       await dlpPermission.generateDLPFile(inFileFd, file.fd, this.dlpProperty);
       this.showToast($r('app.string.Share_File_Encrypted_Success'));
       let dstFileSize: number = await getFileSizeByUri(filePathUri);
       AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
       AppStorage.setOrCreate('hiCode', 201);
       sendDlpFileCreateProperties(dlpPermission.AccountType.CLOUD_ACCOUNT); // 201: DLP_2C_FILE_CREATE_EVENT
-      this.backToPages(filePathUri, filePatch);
+      this.backToPages(filePathUri, dlpFileName);
       HiLog.info(TAG, `beginToGenerateDLPFile success`);
     } catch (err) {
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
@@ -244,12 +243,17 @@ struct encryptedSharing {
     }
   }
 
-  getFileName(parameters: Record<string, Array<string>>): string {
+  getFileName(parameters: Record<string, Array<string>>, inputUri: string): string {
     let abilityPickerRecords = parameters['ability.picker.records'];
+    let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
+    AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
     let res: string = '';
     Object.keys(abilityPickerRecords).forEach(key => {
       res = abilityPickerRecords[key][0]?.['4'];
     });
+    if (res === undefined) {
+      res = srcFileMsg.fileName + srcFileMsg.fileType;
+    };
     return res;
   }
 
@@ -355,6 +359,7 @@ struct encryptedSharing {
         if (accountInfo.distributedInfo.id !== this.recordHashUid) {
           this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
           this.commandGetAccountInfoFlag = true;
+          this.recordHashUid = accountInfo.distributedInfo.id;
           return;
         } else {
           this.changeAccountInfo();
@@ -438,14 +443,29 @@ struct encryptedSharing {
     }
   }
 
+  clearHistoryDLPFile() {
+    let pathDir = getContext(this).filesDir + '/Share';
+    fs.listFile(pathDir).then((filenames: Array<string>) => {
+      HiLog.info(TAG, `listFile succeed`);
+      let filenamesLists = filenames.sort((a, b) => Number(a) - Number(b));
+      if (filenamesLists.length > Constants.SHARE_TEMP_SAVE_FILE_NUMBER) {
+        let deleteArray = filenamesLists.slice(0, filenamesLists.length - Constants.SHARE_TEMP_SAVE_FILE_NUMBER);
+        deleteArray.forEach((item) => {
+          fs.rmdirSync(pathDir + `/${item}`);
+        })
+      }
+    }).catch ((err: BusinessError) => {
+      HiLog.error(TAG, `list file failed with error message: ${JSON.stringify(err)}`);
+    });
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtensionForAccountLogin}`);
     this.getAccountInfo();
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
     this.checkContacts();
-    let pathDir = getContext(this).filesDir;
-    fs.rmdirSync(pathDir);
+    this.clearHistoryDLPFile();
     this.getUIContext().setKeyboardAvoidMode(1);
     this.subscribeLanguageChange();
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
@@ -516,7 +536,8 @@ struct encryptedSharing {
               .accessibilityText(this.contactPerson)
               .enabled(this.enabledFocus)
               .offset({
-                x: Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
+                x: SystemUtils.isRTL()
+                  ? Constants.SHARE_CONTACTS_GROUP_OFFSET_X_RTL : Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
                 y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y
               })
               .onClick(() => {
