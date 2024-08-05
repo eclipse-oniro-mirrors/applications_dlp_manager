@@ -534,8 +534,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
       let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
       this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + this.appIndex +
-        '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
-        secondarySuffix + '.dlp.link';
+        '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.dlp.link.' +
+        secondarySuffix;
         resolve(secondarySuffix);
     });
   }
