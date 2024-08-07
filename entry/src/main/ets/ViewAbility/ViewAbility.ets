@@ -303,7 +303,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     };
     try {
       await this.context.startAbility(accountWant);
-    } catch(err) {
+    } catch (err) {
       HiLog.info(TAG, `Failed to invoke startAbility, ${JSON.stringify(err)}`)
       return;
     }

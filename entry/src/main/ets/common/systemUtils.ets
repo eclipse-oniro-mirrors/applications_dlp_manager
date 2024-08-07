@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,18 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-{
-  "app": {
-    "bundleName": "com.ohos.dlpmanager",
-    "vendor": "example",
-    "versionCode": 1000103,
-    "versionName": "1.0.1.03",
-    "icon": "$media:app_icon",
-    "label": "$string:app_name",
-    "minAPIVersion": 12,
-    "targetAPIVersion": 12,
-    "distributedNotificationEnabled": true,
-    "apiReleaseType" : "Beta5",
-    "configuration": "$profile:configuration"
+
+import I18n from '@ohos.i18n';
+
+const TAG = 'systemUtils';
+
+export class SystemUtils {
+  public static isRTL(): boolean {
+    return I18n.isRTL(I18n.System.getSystemLocale());
   }
 }
