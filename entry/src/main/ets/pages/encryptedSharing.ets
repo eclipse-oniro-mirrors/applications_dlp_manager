@@ -90,7 +90,6 @@ struct encryptedSharing {
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
   @State showUIExtensionForAccountLogin: boolean = false;
-  @State cloudAccountLogin: boolean = false;
   @State actionWant: Want | undefined = storage.get<Want>('actionWant');
   @State inputValue: string = '';
   @State phoneFormatTips: boolean = false;
@@ -149,35 +148,29 @@ struct encryptedSharing {
     HiLog.info(TAG, `changeAccountInfo start`);
     if (!this.checkCloudPhone(this.inputValue) || !this.commandGetAccountInfo) {
       return;
-    }
-    let cloudAccountLoginFlag = this.cloudAccountLoginFlag();
-    HiLog.info(TAG, `cloudAccountLoginFlag: ${cloudAccountLoginFlag}`);
-    if (cloudAccountLoginFlag) {
+    };
+    let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
+    HiLog.info(TAG, `commandGetAccountInfo Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
+    let res = commandGetAccountInfoCallBack.result as Record<string, string>;
+    if (Number(commandGetAccountInfoCallBack.errorCode) === Constants.ERR_CODE_SUCCESS && res.uid) {
+      this.ownerAccount = res.uid;
+      this.ownerAccountID = res.uid;
       this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
     } else {
-      this.showUIExtensionForAccountLogin = true;
-    }
-  }
-
-  cloudAccountLoginFlag(): boolean {
-    if (this.commandGetAccountInfoFlag) {
-      let info = this.commandGetAccountInfo;
-      if (info === undefined) {
-        HiLog.error(TAG, `command get account info undefined`);
-        this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-        return false;
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = true;
+      this.recordHashUid = '';
+      storage.setOrCreate('commandGetAccountInfo', '');
+      if ([
+        Constants.ERR_CODE_NETWORK_ERROR,
+        Constants.ERR_CODE_CONNECTION_FAIL,
+        Constants.ERR_CODE_CONNECTION_TIME_OUT
+      ].includes(Number(commandGetAccountInfoCallBack.errorCode))) {
+        this.showToast($r('app.string.network_invalid'));
+        return;
       };
-      if (info) {
-        let resultVal = JSON.parse(info) as Record<string, object>;
-        if (Number(resultVal.errorCode) === Constants.ERR_CODE_SUCCESS) {
-          let res = resultVal.result as Record<string, string>;
-          this.ownerAccount = res.uid;
-          this.ownerAccountID = res.uid;
-        };
-        return true;
-      }
-    };
-    return this.cloudAccountLogin;
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+    }
   }
 
   checkCloudPhone(phone: string): boolean {
@@ -211,7 +204,11 @@ struct encryptedSharing {
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
     let filePath = getContext(this).filesDir + `/Share/${new Date().getTime()}/`;
-    await fs.mkdir(filePath, true);
+    try {
+      await fs.mkdir(filePath, true);
+    } catch (error) {
+      HiLog.error(TAG, `mkdir failed: ${JSON.stringify(error)}`);
+    };
     let newFilePath = filePath + dlpFileName;
     let file: fs.File | undefined;
     let filePathUri = getFileUriByPath(newFilePath);
@@ -264,15 +261,15 @@ struct encryptedSharing {
     });
   }
 
-  backToPages(filePathUri: string, filePatch: string) {
-    HiLog.info(TAG, `backToPages start`);
+  backToPages(filePathUri: string, dlpFileName: string) {
+    HiLog.info(TAG, `backToPages start: ${dlpFileName}`);
     if (this.actionWant && this.actionWant.parameters) {
       this.actionWant.parameters['ability.params.stream'] = [filePathUri];
       let arr: Test[] = [
         {
           '0': 0,
           '1': 0,
-          '4': filePatch
+          '4': dlpFileName
         }
       ];
       let generalFile: Record<string, Test[]> = {
@@ -357,6 +354,7 @@ struct encryptedSharing {
           return;
         };
         if (accountInfo.distributedInfo.id !== this.recordHashUid) {
+          HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
           this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
           this.commandGetAccountInfoFlag = true;
           this.recordHashUid = accountInfo.distributedInfo.id;
@@ -454,7 +452,7 @@ struct encryptedSharing {
           fs.rmdirSync(pathDir + `/${item}`);
         })
       }
-    }).catch ((err: BusinessError) => {
+    }).catch((err: BusinessError) => {
       HiLog.error(TAG, `list file failed with error message: ${JSON.stringify(err)}`);
     });
   }
@@ -512,10 +510,16 @@ struct encryptedSharing {
         Column() {
           Row() {
             TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
-              .padding({ right: Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT})
+              .padding({
+                left: SystemUtils.isRTL() ?
+                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
+                right: SystemUtils.isRTL() ?
+                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
+              })
               .enabled(this.enabledFocus)
               .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
               .defaultFocus(true)
+              .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
               .type(InputType.PhoneNumber)
               .contentType(ContentType.PHONE_COUNTRY_CODE)
               .enterKeyType(EnterKeyType.NEW_LINE)
@@ -604,11 +608,11 @@ struct encryptedSharing {
           }
         })
           .onReceive((data) => {
+            HiLog.info(TAG, `data.status: ${JSON.stringify(data.status)}`);
             let res = data.result as Record<string, string>;
-            this.ownerAccount = res.uid;
-            this.ownerAccountID = res.uid;
             if (data.status) {
-              this.cloudAccountLogin = true;
+              this.ownerAccount = res.uid;
+              this.ownerAccountID = res.uid;
               let checkCloudPhone = this.checkCloudPhone(this.inputValue);
               HiLog.info(TAG, `checkCloudPhone: ${checkCloudPhone}`);
               if (checkCloudPhone) {
@@ -617,7 +621,6 @@ struct encryptedSharing {
                 this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
               }
             } else {
-              this.cloudAccountLogin = false;
               this.enabledFocus = true;
               this.isConfirmButtonEnabled = this.inputValue.length > 0;
               if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
