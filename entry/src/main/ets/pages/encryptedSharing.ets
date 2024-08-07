@@ -184,14 +184,17 @@ struct encryptedSharing {
     if (!phone) {
       return false;
     }
-    if (!(/^[1][3,4,5,6,7,8,9][0-9]{9}$/.test(phone))) {
+    let reg = /^(?:(?:\+|00)86)?1[3456789]\d{9}$/;
+    if (!(reg.test(phone))) {
       HiLog.info(TAG, `Please enter the phone.`);
       this.phoneFormatTips = true;
       this.credentialCallBackMsg = $r('app.string.Share_Tips_Phone_Format');
       HiLog.info(TAG, `phoneFormatTips: ${this.phoneFormatTips}`);
       return false;
     };
-    let cloudPhone = `${Constants.INTERNATIONAL_DIALING_CODE}${this.inputValue}`;
+    reg = /^(0086|\+86)/;
+    let formatPhone = this.inputValue.replace(reg, '');
+    let cloudPhone = `${Constants.INTERNATIONAL_DIALING_CODE}${formatPhone}`;
     AppStorage.setOrCreate('cloudPhone', cloudPhone);
     return true;
   }
