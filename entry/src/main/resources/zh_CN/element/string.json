@@ -346,7 +346,7 @@
     },
     {
       "name": "This_File_is_Open_By_Other_App",
-      "value": "该加密文件已被其他应用打开"
+      "value": "该加密文件已被其他应用打开。"
     }
   ]
 }
