@@ -137,6 +137,7 @@ struct encryptedSharing {
   }
 
   private async beginShareEncrypt() {
+    HiLog.info(TAG, `begin Share Encrypt start`);
     if (this.checkCloudPhone(this.inputValue)) {
       this.enabledFocus = false;
       this.isConfirmButtonEnabled = false;
@@ -369,13 +370,13 @@ struct encryptedSharing {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
         this.showToast($r('app.string.Share_File_Encrypted_Failed'));
         this.enabledFocus = true;
-        this.isConfirmButtonEnabled = true;
+        this.isConfirmButtonEnabled = this.inputValue.length > 0;
         return;
       }
     } catch {
       this.showToast($r('app.string.network_invalid'));
       this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
+      this.isConfirmButtonEnabled = this.inputValue.length > 0;
     }
   }
 
@@ -613,6 +614,7 @@ struct encryptedSharing {
           .onReceive((data) => {
             HiLog.info(TAG, `data.status: ${JSON.stringify(data.status)}`);
             let res = data.result as Record<string, string>;
+            HiLog.info(TAG, `res.code: ${JSON.stringify(res.code)}`);
             if (data.status) {
               this.ownerAccount = res.uid;
               this.ownerAccountID = res.uid;
