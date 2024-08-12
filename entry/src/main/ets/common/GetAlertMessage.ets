@@ -220,6 +220,8 @@ export class GetAlertMessage {
         return $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED');
       case Constants.ERR_JS_APP_CANNOT_OPEN:
         return $r('app.string.THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION');
+      case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
+        return $r('app.string.This_File_is_Open_By_Other_App');
       default:
         return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
     }
