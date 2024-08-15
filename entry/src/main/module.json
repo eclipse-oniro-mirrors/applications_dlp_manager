@@ -25,7 +25,7 @@
         "description": "$string:MainAbility_desc",
         "icon": "$media:app_icon",
         "label": "$string:MainAbility_label",
-        "startWindowIcon": "$media:icon",
+        "startWindowIcon": "$media:icon_lock",
         "startWindowBackground": "$color:white",
         "excludeFromMissions": true,
         "exported": true,
