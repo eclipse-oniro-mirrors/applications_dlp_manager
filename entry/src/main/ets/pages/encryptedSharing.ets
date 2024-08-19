@@ -121,11 +121,10 @@ struct encryptedSharing {
         .onResult((data) => {
         })
         .onReceive((data) => {
-          let want = data.want as Record<string, Object>;
-          let parameters = want.parameters as Record<string, string>;
-          let contactObjects = parameters.contactObjects;
-          let contactInfo: object[] = JSON.parse(contactObjects);
-          this.inputValue = (contactInfo[0] as Record<string, string>).telephone;
+          let params: [] = JSON.parse((data.want as Want)?.parameters?.contactObjects as string);
+          for (let i = 0; i < params.length; i++) {
+            this.inputValue = (params[i] as Record<string, string>)?.telephone;
+          }
           this.isShowSheet = false;
         })
         .width(Constants.CONTACTS_PICKER_WIDTH)
