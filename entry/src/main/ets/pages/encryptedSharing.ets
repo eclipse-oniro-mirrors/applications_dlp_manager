@@ -488,6 +488,7 @@ struct encryptedSharing {
             {
               value: $r('sys.media.ohos_ic_public_cancel'),
               isEnabled: true,
+              label: $r('app.string.ban'),
               action: () => {
                 if (this.session !== undefined) {
                   this.session.terminateSelfWithResult({
