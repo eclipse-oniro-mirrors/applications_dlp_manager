@@ -555,7 +555,7 @@ struct encryptedSharing {
                 height: SheetSize.LARGE,
                 dragBar: false,
                 showClose: true,
-                onDisappear: () => {
+                onWillDisappear: () => {
                   this.isShowSheet = false;
                 },
                 backgroundColor: Color.Transparent,
