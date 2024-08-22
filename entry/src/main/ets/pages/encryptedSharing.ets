@@ -146,15 +146,20 @@ struct encryptedSharing {
 
   changeAccountInfo() {
     HiLog.info(TAG, `changeAccountInfo start`);
-    if (!this.checkCloudPhone(this.inputValue) || !this.commandGetAccountInfo) {
+    if (!this.checkCloudPhone(this.inputValue)) {
       return;
+    };
+    if (!this.commandGetAccountInfo) {
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = true;
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
     };
     let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
     HiLog.info(TAG, `commandGetAccountInfo Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
     let res = commandGetAccountInfoCallBack.result as Record<string, string>;
-    if (Number(commandGetAccountInfoCallBack.errorCode) === Constants.ERR_CODE_SUCCESS && res.uid) {
-      this.ownerAccount = res.uid;
-      this.ownerAccountID = res.uid;
+    if (Number(commandGetAccountInfoCallBack.errorCode) === Constants.ERR_CODE_SUCCESS && res?.uid) {
+      this.ownerAccount = res?.uid;
+      this.ownerAccountID = res?.uid;
       this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
     } else {
       this.enabledFocus = true;
@@ -616,8 +621,8 @@ struct encryptedSharing {
             let res = data.result as Record<string, string>;
             HiLog.info(TAG, `res.code: ${JSON.stringify(res.code)}`);
             if (data.status) {
-              this.ownerAccount = res.uid;
-              this.ownerAccountID = res.uid;
+              this.ownerAccount = res?.uid;
+              this.ownerAccountID = res?.uid;
               let checkCloudPhone = this.checkCloudPhone(this.inputValue);
               HiLog.info(TAG, `checkCloudPhone: ${checkCloudPhone}`);
               if (checkCloudPhone) {
