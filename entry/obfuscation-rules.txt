@@ -3,3 +3,9 @@
 -compact
 -remove-log
 -enable-export-obfuscation
+
+-keep-property-name
+userIdCipher
+telephone
+contactObjects
+isTextContent
