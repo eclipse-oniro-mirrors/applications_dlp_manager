@@ -630,8 +630,8 @@ export default class SaveAsAbility extends UIAbility {
         date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getMilliseconds()).getTime();
 
       this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + appId +
-        '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.' +
-      this.suffix + '.dlp.link';
+        '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.dlp.link.' +
+      this.suffix;
 
       try {
         await this.newDlpFile.addDLPLinkFile(this.linkFileName);
