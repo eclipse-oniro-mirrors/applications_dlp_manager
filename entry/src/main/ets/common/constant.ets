@@ -14,17 +14,13 @@
  */
 
 export default class Constants {
-  public static FOOTER_HEIGHT = 40;
-  public static FOOTER_BUTTON_HEIGHT = 40;
   public static FOOTER_ROW_WIDTH = '100%';
   public static FOOTER_ROW_MARGIN = 8;
   public static FOOTER_ROW_PAD_LEFT = 16;
   public static FOOTER_ROW_PAD_RIGHT = 16;
-  public static HEADER_TEXT_LINE_HEIGHT = 28;
   public static HEADER_TEXT_WIDTH = '100%';
   public static HEADER_COLUMN_WIDTH = '100%';
   public static HEADER_COLUMN_HEIGHT = 56;
-  public static HEADER_COLUMN_HEIGHT_READONLY = 40;
   public static HEADER_COLUMN_PADDING_LEFT = 24;
   public static HEADER_COLUMN_PADDING_RIGHT = 24;
   public static HEADER_COLUMN_PADDING_BOTTOM = 24;
@@ -34,15 +30,12 @@ export default class Constants {
   public static ENCRYPTION_SUCCESS_ICON = 40;
   public static HEADER_COLUMN_MESSAGE_TIPS = 400;
   public static ENCRYPTION_SUCCESS_TRANSLATE = 180;
-  public static ENCRYPTION_SUCCESS_TRANSLATE_WIDTH = 180;
   public static ENCRYPTION_SUCCESS_CHANGE_TOP = 32;
-  public static ENCRYPTION_ADD_STAFF_WIDTH = 110;
   public static ENCRYPTION_LOADING_HEIGHT = 340;
   public static ENCRYPTION_LOADING_ICON_HEIGHT = 72;
   public static ENCRYPTION_LOADING_CONTENT_HEIGHT = '65%';
   public static HEADER_ROW_FONT_SIZE = 16;
   public static ENCRYPTION_STAFF_BORDER_RADIUS = 999;
-  public static ENCRYPTION_STAFF_MAX_WIDTH = 82;
   public static ENCRYPTION_STAFF_WIDTH_NAME = 82;
   public static ENCRYPTION_STAFF_PAD = 8;
   public static ENCRYPTION_PERMISSION_STATUS_WIDTH = '70%';
@@ -50,12 +43,11 @@ export default class Constants {
   public static PP_IMAGE_WIDTH = 24;
   public static PP_IMAGE_HEIGHT = 24;
   public static PP_IMAGE_PAD = 2;
-  public static PP_TEXT_FONT_SIZE2 = 12;
   public static PP_TEXT_LINE_HEIGHT2 = 17;
   public static PP_BUTTON_PAD = 0;
   public static PP_ROW_RADIUS = 0;
   public static AP_TEXT_PAD_RIGHT = 4;
-  public static AP_MARGIN_TOP = 19;
+  public static AP_TEXT_PAD_LEFT = 0;
   public static DU_WIDTH_FULL = '100%';
   public static DU_LINE_WIDTH = 0.5;
   public static DU_LINE_MARGIN_TOP2 = 8;
@@ -69,13 +61,13 @@ export default class Constants {
   public static FILE_OPEN_HISTORY_TWO = 2;
   public static FILE_OPEN_HISTORY_THREE = 3;
   public static ADD_STAFF_ITEM_MARGIN_RIGHT = 4;
+  public static ADD_STAFF_ITEM_MARGIN_LEFT = 0;
   public static CHANGE_MAX_HEIGHT = '70%';
   public static ENCRYPTION_SUCCESS_MAX_HEIGHT = '70%';
   public static ENCRYPTION_SUCCESS_ROTATE_MARGIN_BOTTOM = 16;
   public static ENCRYPTION_SUCCESS_IMAGE_MARGIN_TOP = 16;
   public static ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP = 12;
   public static ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM = 16;
-  public static ENCRYPTION_READ_ONLY_EDIT_HEIGHT = 19;
   public static ENCRYPTION_CHANGE_TIPS_MARGIN_BOTTOM = 16;
   public static ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM = 8;
   public static ENCRYPTION_BUTTON_PADDING_TOP = 16;
@@ -93,7 +85,6 @@ export default class Constants {
   public static ENCRYPTION_PROTECTION_TIME_MENU_PADDING_RIGHT = 12;
   public static ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_LEFT = 2;
   public static ENCRYPTION_PROTECTION_TIME_MENU_MARGIN_RIGHT = 2;
-  public static ENCRYPTION_PROTECTION_TIME_MENU_WIDTH = 32;
   public static ENCRYPTION_ADD_STAFF_FLEX_GROW = 1;
   public static ENCRYPTION_ADD_STAFF_MARGIN_RIGHT = 8;
   public static ENCRYPTION_ADD_STAFF_MARGIN_BOTTOM = 8;
@@ -188,7 +179,7 @@ export default class Constants {
 
   public static DLP_ZIP_MAGIC = 0x04034b50;
 
-  public static VALIDITY_IMAGE_WIDTH = 10;
+  public static VALIDITY_IMAGE_WIDTH = 15;
   public static VALIDITY_IMAGE_HEIGHT = 40;
   public static VALIDITY_IMAGE_PADDING_RIGHT = 12;
   public static VALIDITY_IMAGE_PADDING_LEFT = 8;
@@ -208,6 +199,7 @@ export default class Constants {
   public static RICH_EDITOR_FIRST = 1;
   public static POPUP_OFFSET_X = -20;
   public static SUB_HEADER_HEIGHT = 40;
+  public static SUB_HEADER_WIDTH = '65%';
   public static STAFF_FONT_SIZE = 10;
   public static STAFF_FONT_PADDING = 1;
 

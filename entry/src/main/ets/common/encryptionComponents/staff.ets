@@ -21,6 +21,7 @@ import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 import { GetAlertMessage } from '../GetAlertMessage';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 import { HiLog } from '../HiLog';
+import { SystemUtils } from '../systemUtils';
 
 const TAG = 'staff';
 
@@ -148,7 +149,8 @@ struct staffItem {
           .padding({ bottom: Constants.STAFF_FONT_PADDING });
       }
       .margin({
-        right: Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
+        left: SystemUtils.isRTL() ? Constants.ADD_STAFF_ITEM_MARGIN_RIGHT : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+        right: SystemUtils.isRTL() ? Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ADD_STAFF_ITEM_MARGIN_RIGHT,
       });
       Text(this.splitContent())
         .textOverflow({

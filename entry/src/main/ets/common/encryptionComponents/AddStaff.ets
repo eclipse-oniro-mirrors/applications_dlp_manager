@@ -199,6 +199,11 @@ struct AddStaff {
         wrap: FlexWrap.Wrap,
       }) {
         RichEditor(this.options)
+          .onReady(() => {
+            this.controller.setTypingStyle({
+              fontSize: $r('sys.float.ohos_id_text_size_body1')
+            })
+          })
           .placeholder(!this.staffArray.length ? ($r('app.string.enter_a_complete_work_ID')) : '',
             {
               font: { size: $r('sys.float.ohos_id_text_size_body1') },

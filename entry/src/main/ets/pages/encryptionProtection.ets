@@ -53,6 +53,7 @@ import HomeFeature from '../feature/HomeFeature';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import FileUtils, { FileMsg } from '../common/FileUtils';
+import { SystemUtils } from '../common/systemUtils';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {
@@ -661,7 +662,6 @@ struct DlpDialog {
               .fontFamily($r('app.string.typeface'))
               .fontColor($r('sys.color.ohos_id_color_text_primary'))
               .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
-              .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
               .width(Constants.HEADER_TEXT_WIDTH)
               .align(Alignment.Start)
           }
@@ -684,17 +684,20 @@ struct DlpDialog {
                   .align(Alignment.Start)
               }
               .width(Constants.HEADER_COLUMN_WIDTH)
+              .margin({ bottom: Constants.ENCRYPTION_CHANGE_TIPS_MARGIN_BOTTOM })
 
               Row() {
                 Text($r('app.string.header_title_readonly'))
                   .fontWeight(FontWeight.Medium)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                Image($r('app.media.ic_public_detail'))
-                  .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                  .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                  .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                  .fillColor($r('sys.color.icon_secondary'))
+                SymbolGlyph($r('sys.symbol.info_circle'))
+                  .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                  .fontColor([$r('sys.color.icon_secondary')])
+                  .margin({
+                    right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                    left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                  })
                   .onClick(() => {
                     this.handlePopupReadOnly = !this.handlePopupReadOnly
                   })
@@ -720,8 +723,10 @@ struct DlpDialog {
                 })
               }
               .width(Constants.FOOTER_ROW_WIDTH)
-              .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
-              .margin({ top: Constants.FOOTER_ROW_MARGIN })
+              .margin({
+                top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+              })
 
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeReadOnly?.data ?? '')) {
@@ -739,11 +744,13 @@ struct DlpDialog {
                   .fontWeight(FontWeight.Medium)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
-                Image($r('app.media.ic_public_detail'))
-                  .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                  .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                  .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                  .fillColor($r('sys.color.icon_secondary'))
+                SymbolGlyph($r('sys.symbol.info_circle'))
+                  .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                  .fontColor([$r('sys.color.icon_secondary')])
+                  .margin({
+                    right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                    left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                  })
                   .onClick(() => {
                     this.handlePopupEdit = !this.handlePopupEdit
                   })
@@ -769,7 +776,10 @@ struct DlpDialog {
                 })
               }
               .width(Constants.FOOTER_ROW_WIDTH)
-              .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+              .margin({
+                top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+              })
 
               Row() {
                 if (!['all', 'self'].includes(this.selectedPermissionTypeEdit?.data ?? '')) {
@@ -794,9 +804,9 @@ struct DlpDialog {
                       this.validity = value;
                     })
                   Row() {
-                    Image($r('app.media.rectangle'))
-                      .width(Constants.VALIDITY_IMAGE_WIDTH)
-                      .fillColor($r('sys.color.ohos_id_color_tertiary'))
+                    SymbolGlyph($r('sys.symbol.arrowtriangle_down_fill'))
+                      .fontSize(`${Constants.VALIDITY_IMAGE_WIDTH}vp`)
+                      .fontColor([$r('sys.color.ohos_id_color_tertiary')])
                   }
                   .height(Constants.VALIDITY_IMAGE_HEIGHT)
                   .padding({
@@ -812,7 +822,10 @@ struct DlpDialog {
                 }
               }
               .width(Constants.FOOTER_ROW_WIDTH)
-              .height(Constants.HEADER_COLUMN_HEIGHT_READONLY)
+              .margin({
+                top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
+                bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
+              })
             }
           }.constraintSize({
             maxHeight: this.directionStatus ===
@@ -829,7 +842,7 @@ struct DlpDialog {
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(true)
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-              .height(Constants.FOOTER_HEIGHT)
+              .controlSize(ControlSize.NORMAL)
               .onClick(async (event) => {
                 if (this.isDlpFile && !(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                   this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
@@ -853,10 +866,13 @@ struct DlpDialog {
                   (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
                 }
               })
-              .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
-            Button($r('app.string.sure'), {
-              type: ButtonType.Capsule, stateEffect: true
-            })
+              .margin({
+                right: SystemUtils.isRTL() ?
+                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                left: SystemUtils.isRTL() ?
+                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+              })
+            Button($r('app.string.sure'), { type: ButtonType.Capsule, stateEffect: true })
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(true)
@@ -868,7 +884,7 @@ struct DlpDialog {
                 ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') ||
                 ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? ''))
               )
-              .height(Constants.FOOTER_BUTTON_HEIGHT)
+              .controlSize(ControlSize.NORMAL)
               .onClick(async (event) => {
                 AppStorage.setOrCreate('hiValidDate', false);
                 if (this.selectedIndex === 1) {
@@ -892,7 +908,12 @@ struct DlpDialog {
                   await this.beginEncrypt();
                 }
               })
-              .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+              .margin({
+                right: SystemUtils.isRTL() ?
+                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                left: SystemUtils.isRTL() ?
+                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+              })
           }
           .margin({
             left: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,
