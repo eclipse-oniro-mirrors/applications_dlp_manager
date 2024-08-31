@@ -42,6 +42,7 @@ import { AccountTipsConfig } from '../common/AccountTipsConfig';
 import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
+import { SystemUtils } from '../common/systemUtils';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 
 const TAG = 'ModEnc';
@@ -476,7 +477,6 @@ struct changeEncryption {
                     .fontFamily($r('app.string.typeface'))
                     .fontColor($r('sys.color.ohos_id_color_text_primary'))
                     .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
-                    .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .align(Alignment.Start)
                 }
@@ -518,11 +518,13 @@ struct changeEncryption {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.ic_public_detail'))
-                            .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.icon_secondary'))
+                          SymbolGlyph($r('sys.symbol.info_circle'))
+                            .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                            .fontColor([$r('sys.color.icon_secondary')])
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                            })
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
@@ -541,7 +543,6 @@ struct changeEncryption {
                             })
                         }
                         .width(Constants.FOOTER_ROW_WIDTH)
-                        .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
                         .margin({
                           top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                           bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
@@ -558,11 +559,13 @@ struct changeEncryption {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.ic_public_detail'))
-                              .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.icon_secondary'))
+                            SymbolGlyph($r('sys.symbol.info_circle'))
+                              .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                              .fontColor([$r('sys.color.icon_secondary')])
+                              .margin({
+                                right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                                left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                              })
                               .onClick(() => {
                                 this.handlePopupReadOnly = !this.handlePopupReadOnly
                               })
@@ -581,7 +584,6 @@ struct changeEncryption {
                               })
                           }
                           .width(Constants.FOOTER_ROW_WIDTH)
-                          .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
                           .margin({ top: Constants.FOOTER_ROW_MARGIN })
 
                           Flex({
@@ -610,12 +612,9 @@ struct changeEncryption {
                                     }
                                     .customizeText()
                                   }
-                                  Image($r('app.media.icon_change'))
-                                    .draggable(false)
-                                    .width(Constants.PP_IMAGE_HEIGHT)
-                                    .height(Constants.PP_TEXT_FONT_SIZE2)
-                                    .objectFit(ImageFit.Contain)
-                                    .fillColor($r('sys.color.ohos_id_color_secondary'))
+                                  SymbolGlyph($r('sys.symbol.chevron_down'))
+                                    .fontSize(`${Constants.PP_IMAGE_HEIGHT}vp`)
+                                    .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.readOnlyFlag ?
                                         Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
@@ -663,16 +662,19 @@ struct changeEncryption {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Text(this.selectedPermissionTypeEdit.data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
+                          Text(this.selectedPermissionTypeEdit.data === 'all' ?
+                            $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.ic_public_detail'))
-                            .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.icon_secondary'))
+                          SymbolGlyph($r('sys.symbol.info_circle'))
+                            .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                            .fontColor([$r('sys.color.icon_secondary')])
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                            })
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
@@ -692,7 +694,6 @@ struct changeEncryption {
                         }
                         .justifyContent(FlexAlign.Start)
                         .width(Constants.FOOTER_ROW_WIDTH)
-                        .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
                         .margin({
                           top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                           bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
@@ -709,11 +710,13 @@ struct changeEncryption {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.ic_public_detail'))
-                              .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.icon_secondary'))
+                            SymbolGlyph($r('sys.symbol.info_circle'))
+                              .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                              .fontColor([$r('sys.color.icon_secondary')])
+                              .margin({
+                                right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                                left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                              })
                               .onClick(() => {
                                 this.handlePopupEdit = !this.handlePopupEdit
                               })
@@ -733,7 +736,6 @@ struct changeEncryption {
                           }
                           .justifyContent(FlexAlign.Start)
                           .width(Constants.FOOTER_ROW_WIDTH)
-                          .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
 
                           Flex({
                             direction: FlexDirection.Row,
@@ -761,12 +763,9 @@ struct changeEncryption {
                                     }
                                     .customizeText()
                                   }
-                                  Image($r('app.media.icon_change'))
-                                    .draggable(false)
-                                    .width(Constants.PP_IMAGE_HEIGHT)
-                                    .height(Constants.PP_TEXT_FONT_SIZE2)
-                                    .objectFit(ImageFit.Contain)
-                                    .fillColor($r('sys.color.ohos_id_color_secondary'))
+                                  SymbolGlyph($r('sys.symbol.chevron_down'))
+                                    .fontSize(`${Constants.PP_IMAGE_HEIGHT}vp`)
+                                    .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.editFlag ?
                                         Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
@@ -810,21 +809,27 @@ struct changeEncryption {
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontWeight(FontWeight.Medium)
                             .textAlign(TextAlign.Start)
-                          Text(' : ')
+                          Text(' :')
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                            })
                           Text(getTime())
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
                             .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                             .fontWeight(FontWeight.Regular)
                             .width(Constants.HEADER_COLUMN_WIDTH)
                             .textAlign(TextAlign.Start)
-                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                            })
                         }
                         .width(Constants.HEADER_COLUMN_WIDTH)
-                        .height(Constants.AP_MARGIN_TOP)
                       }
                       .padding({
                         bottom: Constants.ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM
@@ -839,12 +844,11 @@ struct changeEncryption {
                   left: Constants.HEADER_COLUMN_PADDING_LEFT,
                   right: Constants.HEADER_COLUMN_PADDING_RIGHT
                 })
-                .margin({ bottom: Constants.ENCRYPTION_CHANGE_VALID_UNTIL_MARGIN_BOTTOM });
                 Flex({ direction: FlexDirection.Row }) {
                   Button($r('app.string.unencrypted'), { type: ButtonType.Capsule, stateEffect: true })
                     .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .width(Constants.HEADER_TEXT_WIDTH)
-                    .height(Constants.FOOTER_HEIGHT)
+                    .controlSize(ControlSize.NORMAL)
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .onClick(async (event) => {
                       AppStorage.setOrCreate('hiOperation', 'Delete_policy');
@@ -856,19 +860,29 @@ struct changeEncryption {
                       this.unEncrypt();
                       sendDlpManagerFileConfiguration();
                     })
-                    .margin({ right: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+                    .margin({
+                      right: SystemUtils.isRTL() ?
+                        Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                      left: SystemUtils.isRTL() ?
+                        Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                    })
                   Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })
                     .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-                    .height(Constants.FOOTER_HEIGHT)
+                    .controlSize(ControlSize.NORMAL)
                     .onClick(async (event) => {
                       router.replaceUrl({
                         url: 'pages/encryptionProtection',
                         params: this.routerData
                       })
                     })
-                    .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+                    .margin({
+                      right: SystemUtils.isRTL() ?
+                        Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                      left: SystemUtils.isRTL() ?
+                        Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                    })
                 }
                 .margin({
                   left: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH,

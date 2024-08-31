@@ -40,7 +40,6 @@ struct EncryptingPanel {
                 .fontFamily($r('app.string.typeface'))
                 .fontColor($r('sys.color.ohos_id_color_text_primary'))
                 .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
-                .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                 .width(Constants.HEADER_TEXT_WIDTH)
                 .align(Alignment.Start)
             }

@@ -211,7 +211,6 @@ struct PermissionStatus {
                   .fontWeight(FontWeight.Bold)
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
-                  .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                   .width(Constants.HEADER_TEXT_WIDTH)
                   .align(Alignment.Start)
               }
@@ -246,7 +245,7 @@ struct PermissionStatus {
                             Column() {
                               Row() {
                                 Text(item.label)
-                                  .constraintSize({ minHeight: Constants.SUB_HEADER_HEIGHT })
+                                  .constraintSize({ minHeight: Constants.SUB_HEADER_HEIGHT, maxWidth: Constants.SUB_HEADER_WIDTH })
                                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
                                   .textAlign(TextAlign.Start)
                                   .fontWeight(FontWeight.Medium)
@@ -259,10 +258,9 @@ struct PermissionStatus {
                                     .fontWeight(FontWeight.Regular)
                                     .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
                                 } else {
-                                  Image(item.value ? $r('app.media.ok') : $r('app.media.cancel'))
-                                    .width(Constants.PP_IMAGE_WIDTH)
-                                    .height(Constants.PP_IMAGE_HEIGHT)
-                                    .fillColor($r('sys.color.ohos_id_color_text_primary'))
+                                  SymbolGlyph(item.value ? $r('sys.symbol.checkmark') : $r('sys.symbol.multiply'))
+                                    .fontSize(`${Constants.PP_IMAGE_WIDTH}vp`)
+                                    .fontColor([$r('sys.color.ohos_id_color_text_primary')])
                                     .opacity(Constants.ENCRYPTION_STATUS_VALUE_COLOR)
                                 }
                               }
@@ -307,7 +305,7 @@ struct PermissionStatus {
                   .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
-                  .height(Constants.FOOTER_BUTTON_HEIGHT)
+                  .controlSize(ControlSize.NORMAL)
                   .onClick(() => {
                     if (this.session !== undefined) {
                       this.session.terminateSelfWithResult({

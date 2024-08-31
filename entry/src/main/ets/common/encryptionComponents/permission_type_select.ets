@@ -99,9 +99,9 @@ struct permissionTypeSelect {
       .fontWeight(FontWeight.Medium)
       .fontColor($r('sys.color.ohos_id_color_text_secondary'));
 
-      Image($r('app.media.rectangle'))
-        .width(Constants.VALIDITY_IMAGE_WIDTH)
-        .fillColor($r('sys.color.ohos_id_color_tertiary'))
+      SymbolGlyph($r('sys.symbol.arrowtriangle_down_fill'))
+        .fontSize(`${Constants.VALIDITY_IMAGE_WIDTH}vp`)
+        .fontColor([$r('sys.color.ohos_id_color_tertiary')])
         .margin({
           left: Constants.VALIDITY_IMAGE_PADDING_LEFT,
           right: Constants.VALIDITY_IMAGE_PADDING_RIGHT
@@ -157,9 +157,9 @@ struct validDateTypeMenu {
         .fontWeight(FontWeight.Medium)
         .fontColor($r('sys.color.ohos_id_color_text_secondary'));
 
-      Image($r('app.media.rectangle'))
-        .width(Constants.VALIDITY_IMAGE_WIDTH)
-        .fillColor($r('sys.color.ohos_id_color_tertiary'))
+      SymbolGlyph($r('sys.symbol.arrowtriangle_down_fill'))
+        .fontSize(`${Constants.VALIDITY_IMAGE_WIDTH}vp`)
+        .fontColor([$r('sys.color.ohos_id_color_tertiary')])
         .margin({
           left: Constants.VALIDITY_IMAGE_PADDING_LEFT,
           right: Constants.VALIDITY_IMAGE_PADDING_RIGHT

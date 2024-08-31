@@ -15,6 +15,7 @@
 
 import Constants from '../constant';
 import common from '@ohos.app.ability.common';
+import { SystemUtils } from '../systemUtils';
 
 const TAG = '[DLPManager_dialog]';
 
@@ -67,7 +68,7 @@ struct DlpAlertDialog {
           .width(this.ok ? Constants.HEADER_TEXT_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_BUTTON)
           .focusable(false)
           .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
-          .height(Constants.FOOTER_HEIGHT)
+          .controlSize(ControlSize.NORMAL)
           .onClick(async (event) => {
             this.controller?.close()
             if (this.action != null) {
@@ -77,18 +78,26 @@ struct DlpAlertDialog {
             }
           })
           .margin({
-            right: this.ok ? Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ENCRYPTION_ADD_STAFF_NO_MARGIN
+            right: !this.ok && SystemUtils.isRTL() ?
+              Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+            left: this.ok && SystemUtils.isRTL() ?
+              Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
           });
         if (this.ok) {
           Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
             .width(Constants.HEADER_TEXT_WIDTH)
             .focusable(false)
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
-            .height(Constants.FOOTER_BUTTON_HEIGHT)
+            .controlSize(ControlSize.NORMAL)
             .onClick(async (event) => {
               (getContext(this) as common.UIAbilityContext).terminateSelf();
             })
-            .margin({ left: Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN })
+            .margin({
+              right: SystemUtils.isRTL() ?
+                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+              left: SystemUtils.isRTL() ?
+                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+            });
         }
       }
       .margin({

@@ -30,6 +30,7 @@ import {
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
 import { HiLog } from '../common/HiLog';
+import { SystemUtils } from '../common/systemUtils';
 
 const TAG = 'EncSucc';
 let abilityResult: ability.AbilityResult = {
@@ -148,7 +149,6 @@ struct encryptionSuccess {
                   .fontFamily($r('app.string.typeface'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary'))
                   .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
-                  .lineHeight(Constants.HEADER_TEXT_LINE_HEIGHT)
                   .width(Constants.HEADER_TEXT_WIDTH)
                   .align(Alignment.Start)
               }
@@ -165,11 +165,9 @@ struct encryptionSuccess {
                   Stack() {
                     Circle({ width: Constants.ENCRYPTION_SUCCESS_CIRCLE, height: Constants.ENCRYPTION_SUCCESS_CIRCLE })
                       .fill($r('sys.color.multi_color_04'));
-                    Image($r('app.media.ic_public_ok'))
-                      .draggable(false)
-                      .fillColor($r('sys.color.icon_on_primary'))
-                      .width(Constants.ENCRYPTION_SUCCESS_ICON)
-                      .height(Constants.ENCRYPTION_SUCCESS_ICON)
+                    SymbolGlyph($r('sys.symbol.checkmark'))
+                      .fontSize(`${Constants.ENCRYPTION_SUCCESS_ICON}vp`)
+                      .fontColor([$r('sys.color.icon_on_primary')])
                   }
                   .margin({ top: Constants.ENCRYPTION_SUCCESS_IMAGE_MARGIN_TOP });
                   Column() {
@@ -205,20 +203,15 @@ struct encryptionSuccess {
                       .fontColor($r('sys.color.ohos_id_color_secondary'))
                       .fontWeight(FontWeight.Regular)
                       .textAlign(TextAlign.Center)
-                    Image($r('app.media.icon_change'))
-                      .draggable(false)
-                      .fillColor($r('sys.color.ohos_id_color_tertiary'))
-                      .width(Constants.PP_IMAGE_HEIGHT)
-                      .height(Constants.PP_TEXT_FONT_SIZE2)
-                      .objectFit(ImageFit.Contain)
+                    SymbolGlyph($r('sys.symbol.chevron_down'))
+                      .fontSize(`${Constants.PP_IMAGE_HEIGHT}vp`)
+                      .fontColor([$r('sys.color.ohos_id_color_tertiary')])
                       .rotate({
                         angle: !this.flag ? Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                       })
                       .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                   }
                   .onClick(() => this.onFlagChange())
-                  .width(Constants.ENCRYPTION_SUCCESS_TRANSLATE_WIDTH)
-                  .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
                   .justifyContent(FlexAlign.Center)
                   .margin({ bottom: Constants.ENCRYPTION_SUCCESS_ROTATE_MARGIN_BOTTOM })
 
@@ -240,11 +233,13 @@ struct encryptionSuccess {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.ic_public_detail'))
-                            .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.icon_secondary'))
+                          SymbolGlyph($r('sys.symbol.info_circle'))
+                            .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                            .fontColor([$r('sys.color.icon_secondary')])
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                            })
                             .onClick(() => {
                               this.handlePopupReadOnly = !this.handlePopupReadOnly
                             })
@@ -263,7 +258,6 @@ struct encryptionSuccess {
                             })
                         }
                         .width(Constants.FOOTER_ROW_WIDTH)
-                        .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
                         .margin({
                           top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                           bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
@@ -280,11 +274,13 @@ struct encryptionSuccess {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.ic_public_detail'))
-                              .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.icon_secondary'))
+                            SymbolGlyph($r('sys.symbol.info_circle'))
+                              .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                              .fontColor([$r('sys.color.icon_secondary')])
+                              .margin({
+                                right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                                left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                              })
                               .onClick(() => {
                                 this.handlePopupReadOnly = !this.handlePopupReadOnly
                               })
@@ -303,7 +299,6 @@ struct encryptionSuccess {
                               })
                           }
                           .width(Constants.FOOTER_ROW_WIDTH)
-                          .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
 
                           Flex({
                             direction: FlexDirection.Row,
@@ -331,12 +326,9 @@ struct encryptionSuccess {
                                     }
                                     .customizeText()
                                   }
-                                  Image($r('app.media.icon_change'))
-                                    .draggable(false)
-                                    .width(Constants.PP_IMAGE_HEIGHT)
-                                    .height(Constants.PP_TEXT_FONT_SIZE2)
-                                    .objectFit(ImageFit.Contain)
-                                    .fillColor($r('sys.color.ohos_id_color_secondary'))
+                                  SymbolGlyph($r('sys.symbol.chevron_down'))
+                                    .fontSize(`${Constants.PP_IMAGE_HEIGHT}vp`)
+                                    .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.readOnlyFlag ?
                                         Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
@@ -375,7 +367,8 @@ struct encryptionSuccess {
                         }
                       }
 
-                      if (['all', 'self'].includes((this.routerParams.selectedPermissionTypeEdit as PermissionType).data)) {
+                      if (['all', 'self']
+                        .includes((this.routerParams.selectedPermissionTypeEdit as PermissionType).data)) {
                         Row() {
                           Text($r('app.string.header_title_edit'))
                             .fontWeight(FontWeight.Medium)
@@ -386,16 +379,19 @@ struct encryptionSuccess {
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Text((this.routerParams.selectedPermissionTypeEdit as PermissionType).data === 'all' ? $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
+                          Text((this.routerParams.selectedPermissionTypeEdit as PermissionType).data === 'all' ?
+                            $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                          Image($r('app.media.ic_public_detail'))
-                            .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                            .fillColor($r('sys.color.icon_secondary'))
+                          SymbolGlyph($r('sys.symbol.info_circle'))
+                            .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                            .fontColor([$r('sys.color.icon_secondary')])
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                            })
                             .onClick(() => {
                               this.handlePopupEdit = !this.handlePopupEdit
                             })
@@ -415,7 +411,6 @@ struct encryptionSuccess {
                         }
                         .justifyContent(FlexAlign.Start)
                         .width(Constants.FOOTER_ROW_WIDTH)
-                        .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
                         .margin({
                           top: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_TOP,
                           bottom: Constants.ENCRYPTION_SUCCESS_ADD_STAFF_MARGIN_BOTTOM
@@ -432,11 +427,13 @@ struct encryptionSuccess {
                               .fontWeight(FontWeight.Regular)
                               .fontColor($r('sys.color.ohos_id_color_text_primary'))
                               .fontSize($r('sys.float.ohos_id_text_size_body2'))
-                            Image($r('app.media.ic_public_detail'))
-                              .width(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .height(Constants.FOOTER_ROW_PAD_RIGHT)
-                              .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
-                              .fillColor($r('sys.color.icon_secondary'))
+                            SymbolGlyph($r('sys.symbol.info_circle'))
+                              .fontSize(`${Constants.FOOTER_ROW_PAD_RIGHT}vp`)
+                              .fontColor([$r('sys.color.icon_secondary')])
+                              .margin({
+                                right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                                left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                              })
                               .onClick(() => {
                                 this.handlePopupEdit = !this.handlePopupEdit
                               })
@@ -456,7 +453,6 @@ struct encryptionSuccess {
                           }
                           .justifyContent(FlexAlign.Start)
                           .width(Constants.FOOTER_ROW_WIDTH)
-                          .height(Constants.ENCRYPTION_READ_ONLY_EDIT_HEIGHT)
 
                           Flex({
                             direction: FlexDirection.Row,
@@ -484,12 +480,9 @@ struct encryptionSuccess {
                                     }
                                       .customizeText()
                                   }
-                                  Image($r('app.media.icon_change'))
-                                    .draggable(false)
-                                    .width(Constants.PP_IMAGE_HEIGHT)
-                                    .height(Constants.PP_TEXT_FONT_SIZE2)
-                                    .objectFit(ImageFit.Contain)
-                                    .fillColor($r('sys.color.ohos_id_color_secondary'))
+                                  SymbolGlyph($r('sys.symbol.chevron_down'))
+                                    .fontSize(`${Constants.PP_IMAGE_HEIGHT}vp`)
+                                    .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.editFlag ?
                                         Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
@@ -535,18 +528,25 @@ struct encryptionSuccess {
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontWeight(FontWeight.Medium)
                             .textAlign(TextAlign.Start)
-                          Text(' : ')
+                          Text(' :')
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                            })
                           Text(getTime())
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
                             .fontColor($r('sys.color.ohos_id_color_text_secondary'))
                             .fontWeight(FontWeight.Regular)
                             .width(Constants.HEADER_COLUMN_WIDTH)
                             .textAlign(TextAlign.Start)
-                            .margin({ left: Constants.AP_TEXT_PAD_RIGHT })
+                            .margin({
+                              right: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_RIGHT : Constants.AP_TEXT_PAD_LEFT,
+                              left: SystemUtils.isRTL() ? Constants.AP_TEXT_PAD_LEFT : Constants.AP_TEXT_PAD_RIGHT,
+                            })
                         }
                         .width(Constants.HEADER_COLUMN_WIDTH)
 
@@ -585,7 +585,7 @@ struct encryptionSuccess {
                   .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .fontWeight(FontWeight.Medium)
                   .width(Constants.FOOTER_WIDTH_BUTTON)
-                  .height(Constants.FOOTER_HEIGHT)
+                  .controlSize(ControlSize.NORMAL)
                   .onClick(async (event) => {
                     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                       let dlpFileName: string = GlobalContext.load('dlpFileName') as string;
@@ -613,7 +613,8 @@ struct encryptionSuccess {
                       });
                     } else {
                       if (GlobalContext.load('fileOpenHistoryFromMain')) {
-                        (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+                        (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>)
+                          .delete(GlobalContext.load('uri') as string)
                       }
                       abilityResult.resultCode = 0;
                       (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
