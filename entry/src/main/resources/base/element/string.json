@@ -110,7 +110,7 @@
     },
     {
       "name": "permanently",
-      "value": "Permanent"
+      "value": "Never expires"
     },
     {
       "name": "change_encryption",
