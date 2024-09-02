@@ -49,37 +49,45 @@ export default class AlertAbility extends UIAbility {
     } catch (exception) {
       HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
     }
-    let mainWindow: window.Window | undefined = undefined;
+    try {
+      let mainWindow: window.Window | undefined = undefined;
 
-    windowStage.getMainWindow((err, data) => {
-      if (err && err.code) {
-        HiLog.error(TAG, `Failed to obtain the main window. Cause: ${JSON.stringify(err)}`);
-        return;
-      }
-      mainWindow = data;
-      try {
-        mainWindow.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-      } catch (exception) {
-        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
-      }
-      let windowLimits = mainWindow.getWindowLimits();
-      mainWindow.resize(windowLimits.minWidth, windowLimits.minHeight);
-      let xNumber = windowLimits.minWidth ? windowLimits.minWidth : Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH;
-      let yNumber = windowLimits.minHeight ? windowLimits.minHeight :
-        Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT;
-      mainWindow.moveWindowTo(
-        Math.floor((dis.width - xNumber) * Constants.RATIO_HALF),
-        Math.floor((dis.height - yNumber) * Constants.RATIO_HALF)
-      );
-      let enabled = false;
-      mainWindow.setResizeByDragEnabled(enabled, (err: BusinessError) => {
+      windowStage.getMainWindow((err, data) => {
         if (err && err.code) {
-          HiLog.error(TAG, `Failed to set the function of disabling the resize by dragg window. Cause: ${err.code}`);
+          HiLog.error(TAG, `Failed to obtain the main window. Cause: ${JSON.stringify(err)}`);
           return;
         }
-        HiLog.info(TAG, `Succeeded in setting the function of disabling the resize by dragg window.`);
-      });
-    })
+        mainWindow = data;
+        try {
+          mainWindow.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
+        } catch (exception) {
+          HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+        }
+        try {
+          let windowLimits = mainWindow.getWindowLimits();
+          mainWindow.resize(windowLimits.minWidth, windowLimits.minHeight);
+          let xNumber =
+            windowLimits.minWidth ? windowLimits.minWidth : Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH;
+          let yNumber = windowLimits.minHeight ? windowLimits.minHeight :
+            Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT;
+          mainWindow.moveWindowTo(
+            Math.floor((dis.width - xNumber) * Constants.RATIO_HALF),
+            Math.floor((dis.height - yNumber) * Constants.RATIO_HALF)
+          );
+        } catch (exception) {
+          HiLog.error(TAG, `Failed to obtain the window limits of window. Cause: ${JSON.stringify(exception)}`);
+        }
+        mainWindow.setResizeByDragEnabled(false, (err: BusinessError) => {
+          if (err && err.code) {
+            HiLog.error(TAG, `Failed to set the function of disabling the resize by dragg window. Cause: ${err.code}`);
+            return;
+          }
+          HiLog.info(TAG, `Succeeded in setting the function of disabling the resize by dragg window.`);
+        });
+      })
+    } catch (exception) {
+      HiLog.error(TAG, `Failed to obtain the main window. Cause: ${JSON.stringify(exception)}`);
+    };
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
