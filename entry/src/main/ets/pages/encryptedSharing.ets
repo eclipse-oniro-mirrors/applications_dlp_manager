@@ -17,7 +17,6 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import ConnectService from '../common/share/ConnectService';
-import { KeyboardAvoidMode } from '@ohos.arkui.UIContext';
 import { LengthMetrics } from '@ohos.arkui.node';
 import dlpPermission from '@ohos.dlpPermission';
 import promptAction from '@ohos.promptAction';
@@ -472,7 +471,6 @@ struct encryptedSharing {
     sendDlpManagerAccountLogin(-1);
     this.checkContacts();
     this.clearHistoryDLPFile();
-    this.getUIContext().setKeyboardAvoidMode(1);
     this.subscribeLanguageChange();
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
     this.placeHolderStr = str.length > 0 ? str : '';
