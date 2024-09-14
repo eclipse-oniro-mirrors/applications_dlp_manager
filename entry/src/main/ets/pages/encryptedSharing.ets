@@ -65,13 +65,6 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   everyoneAccessList: []
 };
 
-@Extend(TextArea)
-function inputMessageText() {
-  .fontSize($r('sys.float.ohos_id_text_size_body3'))
-  .fontWeight(FontWeight.Regular)
-  .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
-}
-
 let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
@@ -481,7 +474,7 @@ struct encryptedSharing {
 
   build() {
     Stack() {
-      Column() {
+      Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.Start }) {
         EditableTitleBar({
           leftIconStyle: EditableLeftIconType.Back,
           title: $r('app.string.Share_Add_Viewable_Users'),
@@ -509,79 +502,84 @@ struct encryptedSharing {
             }
           },
         })
-          .height(Constants.SHARE_TITLE_HEAD_HEIGHT)
+          .constraintSize({ minHeight: Constants.SHARE_TITLE_HEAD_HEIGHT })
           .margin({
             top: Constants.SHARE_TITLE_HEAD_MARGIN_TOP,
-            bottom: Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM,
           })
-        Column() {
-          Row() {
-            TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
-              .padding({
-                left: SystemUtils.isRTL() ?
-                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
-                right: SystemUtils.isRTL() ?
-                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
-              })
-              .enabled(this.enabledFocus)
-              .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
-              .defaultFocus(true)
-              .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
-              .type(InputType.PhoneNumber)
-              .contentType(ContentType.PHONE_COUNTRY_CODE)
-              .enterKeyType(EnterKeyType.NEW_LINE)
-              .border(this.phoneFormatTips ?
-                { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : { width: 0})
-              .onChange((value: string) => {
-                HiLog.info(TAG, `input length: ${value.length}`);
-                this.inputValue = value;
-                this.phoneFormatTips = false;
-                this.isConfirmButtonEnabled = value.length > 0;
-              })
-            if (this.contactExists) {
-              Column() {
-                SymbolGlyph($r('sys.symbol.person_2'))
-                  .fontSize(`${Constants.SYMBOL_GLYPH_FONT_SIZE}vp`)
-                  .fontColor(this.enabledFocus ? [$r('sys.color.icon_primary')] : [$r('sys.color.icon_tertiary')])
+        Scroll() {
+          Column() {
+            Row() {
+              TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
+                .padding({
+                  left: SystemUtils.isRTL() ?
+                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
+                  right: SystemUtils.isRTL() ?
+                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
+                })
+                .enabled(this.enabledFocus)
+                .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
+                .defaultFocus(true)
+                .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
+                .type(InputType.PhoneNumber)
+                .contentType(ContentType.PHONE_COUNTRY_CODE)
+                .enterKeyType(EnterKeyType.NEW_LINE)
+                .border(this.phoneFormatTips ?
+                  { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : { width: 0 })
+                .onChange((value: string) => {
+                  HiLog.info(TAG, `input length: ${value.length}`);
+                  this.inputValue = value;
+                  this.phoneFormatTips = false;
+                  this.isConfirmButtonEnabled = value.length > 0;
+                })
+              if (this.contactExists) {
+                Column() {
+                  SymbolGlyph($r('sys.symbol.person_2'))
+                    .fontSize(`${Constants.SYMBOL_GLYPH_FONT_SIZE}vp`)
+                    .fontColor(this.enabledFocus ? [$r('sys.color.icon_primary')] : [$r('sys.color.icon_tertiary')])
+                }
+                .accessibilityText(this.contactPerson)
+                .enabled(this.enabledFocus)
+                .offset({
+                  x: SystemUtils.isRTL()
+                    ? Constants.SHARE_CONTACTS_GROUP_OFFSET_X_RTL : Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
+                  y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y
+                })
+                .onClick(() => {
+                  this.isShowSheet = !this.isShowSheet;
+                })
+                .bindSheet(this.isShowSheet, this.contactsPicker(), {
+                  height: SheetSize.LARGE,
+                  dragBar: false,
+                  showClose: true,
+                  onWillDisappear: () => {
+                    this.isShowSheet = false;
+                  },
+                  backgroundColor: Color.Transparent,
+                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
+                })
               }
-              .accessibilityText(this.contactPerson)
-              .enabled(this.enabledFocus)
-              .offset({
-                x: SystemUtils.isRTL()
-                  ? Constants.SHARE_CONTACTS_GROUP_OFFSET_X_RTL : Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
-                y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y
-              })
-              .onClick(() => {
-                this.isShowSheet = !this.isShowSheet;
-              })
-              .bindSheet(this.isShowSheet, this.contactsPicker(), {
-                height: SheetSize.LARGE,
-                dragBar: false,
-                showClose: true,
-                onWillDisappear: () => {
-                  this.isShowSheet = false;
-                },
-                backgroundColor: Color.Transparent,
-                blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
-              })
             }
-          }
 
-          TextArea({text: this.phoneFormatTips ?
-            this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion)})
-            .fontColor(this.phoneFormatTips ?
-             $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
-            .inputMessageText()
-            .constraintSize({
-              maxHeight: `${Constants.SHARE_TEXTAREA_MAX_HEIGHT}vp`
-            })
-            .backgroundColor(Color.Transparent)
-            .focusable(false)
-            .barState(BarState.Off)
-            .width(Constants.CONTACTS_PICKER_WIDTH)
-            .padding({ left: Constants.SHARE_TITLE_HEAD_PADDING_LEFT })
+            Text(this.phoneFormatTips ?
+              this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
+              .fontColor(this.phoneFormatTips ?
+              $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
+              .fontSize($r('sys.float.ohos_id_text_size_body3'))
+              .fontWeight(FontWeight.Regular)
+              .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
+              .backgroundColor(Color.Transparent)
+              .width(Constants.CONTACTS_PICKER_WIDTH)
+              .padding({ left: Constants.SHARE_TITLE_HEAD_PADDING_LEFT })
+          }
+          .margin({ left: Constants.SHARE_TEXT_INPUT_MARGIN_LEFT, right: Constants.SHARE_TEXT_INPUT_MARGIN_RIGHT })
         }
-        .margin({ left: Constants.SHARE_TEXT_INPUT_MARGIN_LEFT, right: Constants.SHARE_TEXT_INPUT_MARGIN_RIGHT })
+        .align(Alignment.TopStart)
+        .constraintSize({
+          minHeight: `${Constants.SHARE_TEXTAREA_MAX_HEIGHT}vp`
+        })
+        .padding({
+          top: Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM
+        })
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
             .enabled(this.isConfirmButtonEnabled)
@@ -597,10 +595,6 @@ struct encryptedSharing {
           top: Constants.SHARE_BUTTON_MARGIN_TOP,
           left: Constants.SHARE_BUTTON_MARGIN_LEFT,
           right: Constants.SHARE_BUTTON_MARGIN_RIGHT,
-          bottom: Constants.SHARE_BUTTON_PADDING_BOTTOM
-        })
-        .padding({
-          top: Constants.SHARE_BUTTON_MARGIN_TOP,
           bottom: Constants.SHARE_BUTTON_PADDING_BOTTOM
         })
       }
