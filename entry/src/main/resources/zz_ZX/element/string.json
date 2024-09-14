@@ -166,7 +166,7 @@
         },
         {
             "name":"permanently",
-            "value":"[TS_850728]_Permanent"
+            "value":"[TS_850728]_Never expires"
         },
         {
             "name":"TITLE_APP_ERROR",
@@ -294,7 +294,7 @@
         },
         {
             "name":"sure",
-            "value":"[TS_850776]_Ok"
+            "value":"[TS_850776]_OK"
         },
         {
             "name":"permission_status_title",
