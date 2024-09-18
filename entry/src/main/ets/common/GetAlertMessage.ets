@@ -246,4 +246,37 @@ export class GetAlertMessage {
       }
     })
   }
+
+  public static async requestModalUIExtension(
+    context: common.UIAbilityContext | common.ServiceExtensionContext, error: BusinessError
+  ){
+    if (deviceInfo.deviceType !== '2in1') {
+      GetAlertMessage.phoneHandle(context, error);
+      return;
+    };
+    let uiExtWant: Want = {
+      bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
+      abilityName: 'DialogUIExtAbility',
+      moduleName: 'entry',
+      parameters: {
+        'bundleName': AppStorage.get('paramCallerBundleName') ?? '',
+        'ability.want.params.uiExtensionType': 'sys/commonUI',
+        'error': error,
+        'accountType': GlobalContext.load('accountType')
+      }
+    };
+    try {
+      context.requestModalUIExtension(uiExtWant)
+        .then(() => {
+          HiLog.info(TAG, 'requestModalUIExtension succeed');
+        })
+        .catch((err: BusinessError) => {
+          HiLog.error(TAG, `requestModalUIExtension failed. Cause: ${JSON.stringify(err)}`);
+        })
+    } catch (err) {
+      let code = (err as BusinessError).code;
+      let message = (err as BusinessError).message;
+      HiLog.error(TAG, `requestModalUIExtension failed. Cause: ${JSON.stringify(err)}`);
+    }
+  }
 }

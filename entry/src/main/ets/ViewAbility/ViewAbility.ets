@@ -149,7 +149,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         if (err.code === Constants.ERR_JS_APP_NOT_EXIST) {
           await this.deleteData(true, false);
         }
-        await GetAlertMessage.startAlertAbility(this.context,
+        await GetAlertMessage.requestModalUIExtension(this.context,
           {code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, this.sandboxBundleName, this.appIndex,
           undefined); // 105: DLP_START_SANDBOX_ERROR
@@ -297,7 +297,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     try {
       await checkNetworkStatus();
     } catch {
-      GetAlertMessage.startAlertAbility(this.context, {
+      GetAlertMessage.requestModalUIExtension(this.context, {
         code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
       return;
     };
@@ -323,7 +323,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         hiTraceMeter.finishTrace('DlpGetOsAccountJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject(err);
@@ -346,7 +346,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (codeMessage) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: codeMessage } as BusinessError);
         fileio.closeSync(this.dlpFd);
         reject();
@@ -357,8 +357,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   }
 
   async callAlertAbility(errCode: BusinessError): Promise<void> {
-      await GetAlertMessage.startAlertAbility(this.context, errCode);
-      return;
+    await GetAlertMessage.requestModalUIExtension(this.context, errCode);
   }
 
   async getOpenedDLPFile(startId: number): Promise<void> {
@@ -378,7 +377,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         this.dlpFile = await dlpPermission.openDLPFile(this.dlpFd, callerAppId);
         this.accountType = this.dlpFile.dlpProperty.ownerAccountType;
       } catch (err) {
-        HiLog.error(TAG, `openDLPFile: ${this.fileName}, failed: ${JSON.stringify(err)}`);
+        HiLog.error(TAG, `openDLPFile: ${decodeURIComponent(this.fileName)}, failed: ${JSON.stringify(err)}`);
         hiTraceMeter.finishTrace('DlpOpenDlpFileJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
@@ -422,7 +421,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
         this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
         opening = false;
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -501,7 +500,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await this.sendDlpFileOpenFault(
           Constants.DLP_INSTALL_SANDBOX_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
         ); // 104:DLP_INSTALL_SANDBOX_ERROR
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject();
@@ -526,7 +525,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (splitNames.length <= SUFFIX_INDEX) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         await this.closeFile();
         reject('');
@@ -602,7 +601,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           HiLog.error(TAG, `closeDLPFile failed: ${JSON.stringify(err)}`);
         }
         opening = false;
-        await GetAlertMessage.startAlertAbility(this.context, error);
+        await GetAlertMessage.requestModalUIExtension(this.context, error);
         hiTraceMeter.finishTrace('DlpAddLinkFileJs', startId);
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         await this.closeFile();
@@ -620,7 +619,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       } catch (error) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR } as BusinessError);
         await this.closeFile();
         HiLog.error(TAG, `open: ${this.uri}, failed: ${JSON.stringify(error)}`);
@@ -651,11 +650,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.callerBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
       AppStorage.setOrCreate('hiSandboxPkgName', this.callerBundleName);
       if ((AppStorage.get('dlpFileMap') as Map<string, (string | number)[]>)?.has(want.uri ?? '')) {
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_APP_ENCRYPTION_REJECTED } as BusinessError);
         reject();
         return;
       }
+      this.uri = want.uri as string;
       if (opening) {
         HiLog.info(TAG, `file is opening: ${this.uri}`);
         reject();
@@ -664,7 +664,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = true;
         HiLog.info(TAG, `file is opened: ${this.uri}`);
       }
-      this.uri = want.uri as string;
       if (!isValidPath(this.uri)) {
         opening = false;
         HiLog.error(TAG, `invalid uri in want.uri`);
@@ -704,6 +703,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.debug(TAG, `enter onRequest`);
+    let paramCallerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
+    AppStorage.setOrCreate('paramCallerBundleName', paramCallerBundleName);
     try {
       await this.dlpFileMapHistory(want);
       this.accountType = await getAccountType(this.context, this.dlpFd);
@@ -733,7 +734,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (this.sandboxBundleName !== value[Constants.FILE_OPEN_HISTORY_ZERO] as string) {
         HiLog.error(TAG, `other app is opening this file`);
         opening = false;
-        await GetAlertMessage.startAlertAbility(this.context, {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_OTHER_APP_OPEN_FILE } as BusinessError);
         return;
       }

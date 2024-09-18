@@ -57,6 +57,14 @@
     ],
     "extensionAbilities": [
       {
+        "name": "DialogUIExtAbility",
+        "icon": "$media:icon",
+        "description": "DialogUIExtAbility",
+        "type": "sys/commonUI",
+        "exported": true,
+        "srcEntry": "./ets/DialogUIExtAbility/DialogUIExtAbility.ets"
+      },
+      {
         "name": "MainAbilityEx",
         "icon": "$media:icon",
         "description": "MainAbilityEx",

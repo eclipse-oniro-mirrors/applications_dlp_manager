@@ -387,9 +387,6 @@ struct changeEncryption {
           return Promise.resolve();
         }
       } catch (err) {
-        let session: UIExtensionContentSession = GlobalContext.load('session') as UIExtensionContentSession;
-        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIExtensionContext,
-          err as BusinessError, session);
         return Promise.reject();
       }
     }
@@ -404,9 +401,6 @@ struct changeEncryption {
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
-      } else {
-        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIExtensionContext,
-          { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
@@ -416,9 +410,6 @@ struct changeEncryption {
         let errorInfo = GetAlertMessage.getAlertMessage(
           { code: codeMessage } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
-      } else {
-        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIExtensionContext,
-          { code: codeMessage } as BusinessError);
       }
       return;
     }
