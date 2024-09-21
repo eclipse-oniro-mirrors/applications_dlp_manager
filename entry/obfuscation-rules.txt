@@ -9,3 +9,4 @@ userIdCipher
 telephone
 contactObjects
 isTextContent
+descriptionEn
