@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { CustomContentDialog, ButtonOptions } from '@ohos.arkui.advanced.Dialog';
 import GlobalContext from '../common/GlobalContext';
 import { GetAlertMessage } from '../common/GetAlertMessage';
@@ -36,7 +37,9 @@ let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct Index {
-  @State alertWant: Want | undefined = GlobalContext.load('alertWant');
+  @State dialogUIExtWant: Want | undefined = GlobalContext.load('dialogUIExtWant');
+  @State session: UIExtensionContentSession | undefined =
+    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State title: ResourceStr = '';
   @State message: ResourceStr = '';
   @State cancel: ResourceStr = '';
@@ -51,8 +54,8 @@ struct Index {
       },
       buttons: this.buttonOptions
     }),
-    showInSubWindow: true,
-    isModal: true,
+    autoCancel: false,
+    maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
   });
 
   async authWithPop(): Promise<void> {
@@ -90,48 +93,61 @@ struct Index {
     }
   }
 
+  getErrInfo(messageCode: number, errorMsg: BusinessError, accountType: number){
+    let errInfo: Record<string, Resource> = {};
+    if ([
+      Constants.ERR_JS_APP_PARAM_ERROR,
+      Constants.ERR_JS_APP_OPEN_REJECTED,
+      Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
+      Constants.ERR_JS_APP_ENCRYPTING,
+      Constants.ERR_JS_FILE_EXPIRATION,
+      Constants.ERR_JS_DLP_FILE_READ_ONLY,
+      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
+    ].includes(messageCode)) {
+      errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
+    } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED].includes(messageCode)) {
+      errInfo = GetAlertMessage.getAlertButtonMessage(errorMsg);
+    } else if ([Constants.ERR_JS_USER_NO_PERMISSION].includes(messageCode)) {
+      errInfo = accountType === dlpPermission.AccountType.CLOUD_ACCOUNT ?
+      GetAlertMessage.getAlertMessage(errorMsg) : GetAlertMessage.getAlertTitleMessage(errorMsg);
+    } else {
+      errInfo = GetAlertMessage.getAlertMessage(errorMsg);
+    }
+    this.title = errInfo.title;
+    this.message = errInfo.msg;
+    this.cancel = errInfo.cancel;
+    this.actionButton = errInfo.ok;
+    this.buttonOptions = [{
+      value: this.cancel ? this.cancel : $r('app.string.da_button'),
+      background: $r('sys.color.ohos_id_color_button_normal'), action: () => {
+        abilityResult.resultCode = 0;
+        (getContext(this) as common.UIExtensionContext).terminateSelfWithResult(abilityResult);
+      }}];
+    if (errInfo.ok) {
+      this.buttonOptions.push({ value: this.actionButton, background: $r('sys.color.ohos_id_color_text_primary_activated'),
+        fontColor: $r('sys.color.font_on_primary'), action: () => {
+          this.authWithPop();
+        }});
+    }
+    this.dialogControllerButton?.open();
+  }
+
   async aboutToAppear() {
     HiLog.info(TAG, `alert aboutToAppear start`);
     try {
-      let messageCode = (this.alertWant?.parameters?.error as BusinessError).code;
-      let errorMsg = this.alertWant?.parameters?.error as BusinessError;
-      let accountType = this.alertWant?.parameters?.accountType as number;
-      let errInfo: Record<string, Resource> = {};
-      if ([
-        Constants.ERR_JS_APP_PARAM_ERROR,
-        Constants.ERR_JS_APP_OPEN_REJECTED,
-        Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
-        Constants.ERR_JS_APP_ENCRYPTING,
-        Constants.ERR_JS_FILE_EXPIRATION,
-        Constants.ERR_JS_DLP_FILE_READ_ONLY,
-        Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
-      ].includes(messageCode)) {
-        errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
-      } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED].includes(messageCode)) {
-        errInfo = GetAlertMessage.getAlertButtonMessage(errorMsg);
-      } else if ([Constants.ERR_JS_USER_NO_PERMISSION].includes(messageCode)) {
-        errInfo = accountType === dlpPermission.AccountType.CLOUD_ACCOUNT ?
-        GetAlertMessage.getAlertMessage(errorMsg) : GetAlertMessage.getAlertTitleMessage(errorMsg);
+      let messageCode = -1;
+      let errorMsg = {} as BusinessError;
+      let accountType = -1;
+      if (this.session === undefined) {
+        errorMsg = this.dialogUIExtWant?.parameters?.error as BusinessError;
+        messageCode = errorMsg.code;
+        accountType = this.dialogUIExtWant?.parameters?.accountType as number;
       } else {
-        errInfo = GetAlertMessage.getAlertMessage(errorMsg);
+        errorMsg = storage.get('error') as BusinessError;
+        messageCode = errorMsg.code;
+        accountType = dlpPermission.AccountType.DOMAIN_ACCOUNT;
       }
-      this.title = errInfo.title;
-      this.message = errInfo.msg;
-      this.cancel = errInfo.cancel;
-      this.actionButton = errInfo.ok;
-      this.buttonOptions = [{
-        value: this.cancel ? this.cancel : $r('app.string.da_button'),
-        background: $r('sys.color.ohos_id_color_button_normal'), action: () => {
-          abilityResult.resultCode = 0;
-          (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
-      }}];
-      if (errInfo.ok) {
-        this.buttonOptions.push({ value: this.actionButton, background: $r('sys.color.ohos_id_color_text_primary_activated'),
-          fontColor: $r('sys.color.font_on_primary'), action: () => {
-            this.authWithPop();
-          }});
-      }
-      this.dialogControllerButton?.open();
+      this.getErrInfo(messageCode, errorMsg, accountType);
     } catch (err) {
       HiLog.error(TAG, `showErrorDialog failed: ${JSON.stringify(err)}`);
     }

@@ -55,10 +55,9 @@ export default class MainAbility extends UIExtensionAbility {
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `onSessionCreate start`);
     if (GlobalContext.load('session')) {
-      await GetAlertMessage.startAlertAbility(this.context as common.UIExtensionContext,
-        { code: Constants.ERR_JS_APP_ENCRYPTING,
+      this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_ENCRYPTING,
           data: GlobalContext.load('abilityWant').parameters?.displayName
-        } as BusinessError, session);
+        } as BusinessError);
       return;
     }
     GlobalContext.store('session', session);
@@ -117,8 +116,7 @@ export default class MainAbility extends UIExtensionAbility {
     AppStorage.setOrCreate('validity', GlobalContext.load('dlpProperty').expireTime)
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
       this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      await GetAlertMessage.startAlertAbility(this.context,
-        { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError, session);
+      this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
@@ -209,7 +207,7 @@ export default class MainAbility extends UIExtensionAbility {
           resolve();
         })
         .catch(async (error: BusinessError) => {
-          await GetAlertMessage.startAlertAbility(this.context, error, session);
+          this.gotoAlertPage(session, error);
           reject();
           return;
         })
@@ -219,8 +217,7 @@ export default class MainAbility extends UIExtensionAbility {
   async checkValidWantAndAccount(session: UIExtensionContentSession, want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       if (!this.checkValidWant(want)) {
-        await GetAlertMessage.startAlertAbility(this.context,
-          { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError, session);
+        this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_PARAM_ERROR } as BusinessError);
         reject();
         return;
       }
@@ -232,8 +229,7 @@ export default class MainAbility extends UIExtensionAbility {
         resolve();
       } catch (err) {
         HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
-        await GetAlertMessage.startAlertAbility(this.context,
-          { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError, session);
+        this.gotoAlertPage(session, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         reject();
         return;
       }
@@ -250,8 +246,7 @@ export default class MainAbility extends UIExtensionAbility {
     let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
     sendDlpManagerAccountLogin(0);
     if (codeMessage) {
-      await GetAlertMessage.startAlertAbility(this.context,
-        { code: codeMessage } as BusinessError, session);
+      this.gotoAlertPage(session, { code: codeMessage } as BusinessError);
       return;
     }
     let requestIsFromSandBox: boolean = await judgeIsSandBox(want);
@@ -290,8 +285,7 @@ export default class MainAbility extends UIExtensionAbility {
     try {
       isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'));
     } catch {
-      await GetAlertMessage.startAlertAbility(this.context,
-        { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError, session);
+      this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
     HiLog.info(TAG, `isDlpSuffix: ${isDlpSuffix}`);
@@ -357,11 +351,10 @@ export default class MainAbility extends UIExtensionAbility {
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
         if (!accountFlag) {
-          await GetAlertMessage.startAlertAbility(this.context, {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+          this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
           return;
         }
-        await GetAlertMessage.startAlertAbility(this.context, ansErr as BusinessError, session);
+        this.gotoAlertPage(session, ansErr as BusinessError);
         return;
       } else {
         this.getOwnerAccountTypeInfo(data, session);
@@ -378,8 +371,7 @@ export default class MainAbility extends UIExtensionAbility {
     if (data.ownerAccountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
       this.gotoPage(session);
     } else {
-      await GetAlertMessage.startAlertAbility(this.context, {
-        code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+      this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
     }
   }
 
@@ -387,13 +379,25 @@ export default class MainAbility extends UIExtensionAbility {
     return new Promise<void>((resolve, reject) => {
       this.homeFeature.fileOpenHistoryHome(uri, async (err: number) => {
         if (err === 0) {
-          await GetAlertMessage.startAlertAbility(this.context,
-            { code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError, session);
+          this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
           reject();
         }
         resolve();
       })
     })
+  }
+
+  gotoAlertPage(session: UIExtensionContentSession, error: BusinessError){
+    let storage: LocalStorage = new LocalStorage({
+      'session': session,
+      'error': error
+    } as Record<string, UIExtensionContentSession | string | object>);
+    try {
+      session.loadContent('pages/alert', storage);
+      session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
+    } catch (exception) {
+      HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+    }
   }
 
   onWindowStageDestroy(): void {

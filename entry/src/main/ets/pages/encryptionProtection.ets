@@ -576,9 +576,6 @@ struct DlpDialog {
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
-      } else {
-        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIAbilityContext,
-          { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
       }
       return;
     }
@@ -588,9 +585,6 @@ struct DlpDialog {
         let errorInfo = GetAlertMessage.getAlertMessage(
           { code: codeMessage } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
-      } else {
-        await GetAlertMessage.startAlertAbility(getContext(this) as common.UIAbilityContext,
-          { code: codeMessage } as BusinessError);
       }
       return;
     }
