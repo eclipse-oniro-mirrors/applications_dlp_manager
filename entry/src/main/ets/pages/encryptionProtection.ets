@@ -363,7 +363,7 @@ struct DlpDialog {
       AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
       let documentSaveOptions = new picker.DocumentSaveOptions();
       displayName = displayName + '.dlp';
-      documentSaveOptions.newFileNames = [decodeURI(srcFileMsg.fileName)];
+      documentSaveOptions.newFileNames = [decodeURIComponent(srcFileMsg.fileName)];
       documentSaveOptions.fileSuffixChoices = [srcFileMsg.fileType + '.dlp'];
       documentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
         srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length);

@@ -50,7 +50,7 @@
         },
         {
             "name":"screenshot",
-            "value":"螢幕擷取畫面"
+            "value":"螢幕截圖"
         },
         {
             "name":"duplicate",
@@ -58,7 +58,7 @@
         },
         {
             "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"無法開啟此檔案。請檢查後重試。"
+            "value":"無法開啟此檔案。請檢查檔案，然後重試。"
         },
         {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
@@ -74,7 +74,7 @@
         },
         {
             "name":"loading_title",
-            "value":"正在載入…"
+            "value":"載入中…"
         },
         {
             "name":"header_title_list",

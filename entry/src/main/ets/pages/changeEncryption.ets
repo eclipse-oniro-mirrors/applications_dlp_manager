@@ -215,7 +215,7 @@ struct changeEncryption {
       let srcFileUri: string = GlobalContext.load('uri');
       let srcFileMsg: FileMsg = FileUtils.getAllSuffixByUri(srcFileUri);
       let documentSaveOptions = new picker.DocumentSaveOptions();
-      documentSaveOptions.newFileNames = [plaintextFile];
+      documentSaveOptions.newFileNames = [decodeURIComponent(plaintextFile)];
       documentSaveOptions.fileSuffixChoices = [`.${srcFileMsg.fileType}`];
       documentSaveOptions.defaultFilePathUri = srcFileUri.substring(0,
         srcFileUri.length - srcFileMsg.fileType.length - srcFileMsg.fileName.length - 5);
