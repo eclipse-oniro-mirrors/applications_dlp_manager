@@ -245,7 +245,10 @@ struct PermissionStatus {
                             Column() {
                               Row() {
                                 Text(item.label)
-                                  .constraintSize({ minHeight: Constants.SUB_HEADER_HEIGHT, maxWidth: Constants.SUB_HEADER_WIDTH })
+                                  .constraintSize({
+                                    minHeight: Constants.SUB_HEADER_HEIGHT,
+                                    maxWidth: Constants.SUB_HEADER_WIDTH
+                                  })
                                   .fontSize($r('sys.float.ohos_id_text_size_body1'))
                                   .textAlign(TextAlign.Start)
                                   .fontWeight(FontWeight.Medium)
