@@ -58,7 +58,7 @@
     },
     {
       "name": "sure",
-      "value": "Ok"
+      "value": "OK"
     },
     {
       "name": "header_title",
@@ -110,7 +110,7 @@
     },
     {
       "name": "permanently",
-      "value": "Permanent"
+      "value": "Never expires"
     },
     {
       "name": "change_encryption",
