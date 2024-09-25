@@ -93,7 +93,7 @@ struct Index {
     }
   }
 
-  getErrInfo(messageCode: number, errorMsg: BusinessError, accountType: number){
+  getErrInfo(messageCode: number, errorMsg: BusinessError, accountType: number) {
     let errInfo: Record<string, Resource> = {};
     if ([
       Constants.ERR_JS_APP_PARAM_ERROR,

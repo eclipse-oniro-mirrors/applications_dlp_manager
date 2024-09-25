@@ -387,7 +387,7 @@ export default class MainAbility extends UIExtensionAbility {
     })
   }
 
-  gotoAlertPage(session: UIExtensionContentSession, error: BusinessError){
+  gotoAlertPage(session: UIExtensionContentSession, error: BusinessError) {
     let storage: LocalStorage = new LocalStorage({
       'session': session,
       'error': error

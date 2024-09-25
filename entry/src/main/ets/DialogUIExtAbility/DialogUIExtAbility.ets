@@ -23,7 +23,7 @@ const TAG = 'DialogUIExt';
 
 export default class DialogUIExtAbility extends UIExtensionAbility {
 
-  async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void>{
+  async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `onSessionCreate start`);
     GlobalContext.store('dialogUIExtWant', want);
     try {
@@ -34,19 +34,19 @@ export default class DialogUIExtAbility extends UIExtensionAbility {
     }
   }
 
-  onSessionDestroy(session: UIExtensionContentSession): void{
+  onSessionDestroy(session: UIExtensionContentSession): void {
     HiLog.info(TAG, `onSessionDestroy`);
   }
 
-  onWindowStageDestroy(): void{
+  onWindowStageDestroy(): void {
     HiLog.info(TAG, `onWindowStageDestroy`);
   }
 
-  onForeground(): void{
+  onForeground(): void {
     HiLog.info(TAG, `onForeground`);
   }
 
-  onBackground(){
+  onBackground() {
     HiLog.info(TAG, `onBackground`);
   }
 };
