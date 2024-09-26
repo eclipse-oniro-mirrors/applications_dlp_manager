@@ -2,331 +2,577 @@
     "string":[
         {
             "name":"save",
-            "value":"ساقلاش"
+            "value":"ساقلاش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
-            "value":"بۇ ئەپ بۇ ھۆججەتنى ئاچالمايدۇ."
+            "value":"بۇ ئەپ بۇ ھۆججەتنى ئاچالمايدۇ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_APP_PARAM_ERROR",
-            "value":"كەچۈرۈڭ، DLP ئەپ قوزغالمىدى، ئۆلچەملەرنى تەكشۈرۈپ قايتا سىناڭ."
+            "value":"كەچۈرۈڭ، DLP ئەپ قوزغالمىدى، ئۆلچەملەرنى تەكشۈرۈپ قايتا سىناڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"encryption_loading_title",
-            "value":"ھۆججەت مەخپىيلەشتۈرۈلۈۋاتىدۇ..."
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلۈۋاتىدۇ...",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Timeout_is_not_supported",
-            "value":"قەرەل ئۆتكەن ۋاقىتقا بېكىتىلمەيدۇ، قايتا بېكىتىڭ."
+            "value":"قەرەل ئۆتكەن ۋاقىتقا بېكىتىلمەيدۇ، قايتا بېكىتىڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_SELF",
-            "value":"ئۆزۈم"
+            "value":"ئۆزۈم",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
-            "value":"بەلگىلەنگەن ئىشلەتكۈچى"
+            "value":"بەلگىلەنگەن ئىشلەتكۈچى",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Network_not_connected_description",
-            "value":"بۇ ھۆججەت ئۈچۈن قەرەل بېكىتىلگەن، تورغا ئۇلاپ ھۆججەت ئىجازىتىنى جەزملەڭ."
+            "value":"بۇ ھۆججەت ئۈچۈن قەرەل بېكىتىلگەن، تورغا ئۇلاپ ھۆججەت ئىجازىتىنى جەزملەڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_DLP_OPEN_REJECT",
-            "value":"ھۆججەت ئوچۇق، ئېتىپ ئاندىن مەخپىيلەشتۈرۈڭ."
+            "value":"ھۆججەت ئوچۇق، ئېتىپ ئاندىن مەخپىيلەشتۈرۈڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-            "value":"بۇ ھۆججەتنى كۆرۈش ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ."
+            "value":"بۇ ھۆججەتنى كۆرۈش ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"incorrect_work_ID",
-            "value":"خىزمەتچى نومۇرى خاتا، قايتا كىرگۈزۈڭ."
+            "value":"خىزمەتچى نومۇرى خاتا، قايتا كىرگۈزۈڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"permission_status_readOnly",
-            "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ئىجازىتى بار."
+            "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ئىجازىتى بار.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"screenshot",
-            "value":"ئېكران تۇتۇش"
+            "value":"ئېكران تۇتۇش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"duplicate",
-            "value":"كۆچۈرۈش"
+            "value":"كۆچۈرۈش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"ھۆججەت ئېچىلمىدى، تەكشۈرۈپ قايتا سىناڭ."
+            "value":"ھۆججەت ئېچىلمىدى، تەكشۈرۈپ قايتا سىناڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
-            "value":"تىزىملاپ كىرىش ئۇچۇرى ئېنىقلانمىدى، بۇ ئىقتىدارنى ئىشلىتىش ئۈچۈن كارخانا ھېسابى ئارقىلىق تىزىملاپ كىرىڭ."
+            "value":"تىزىملاپ كىرىش ئۇچۇرى ئېنىقلانمىدى، بۇ ئىقتىدارنى ئىشلىتىش ئۈچۈن كارخانا ھېسابى ئارقىلىق تىزىملاپ كىرىڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
-            "value":"ھېسابات ئۇچۇرى ئوقۇلمىدى، كېيىنرەك قايتا سىناڭ."
+            "value":"ھېسابات ئۇچۇرى ئوقۇلمىدى، كېيىنرەك قايتا سىناڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_DLP_ENCRYPTION",
-            "value":"نۆۋەتتە «%s» مەخپىيلەشتۈرۈلۈۋاتىدۇ. كېيىنرەك قايتا سىناڭ."
+            "value":"نۆۋەتتە «%s» مەخپىيلەشتۈرۈلۈۋاتىدۇ. كېيىنرەك قايتا سىناڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"loading_title",
-            "value":"يۈكلەۋاتىدۇ..."
+            "value":"يۈكلەۋاتىدۇ...",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"header_title_list",
-            "value":"ئىشلەتكۈچى ئىجازەتلەش ھەمدە تەھرىرلەش ۋە كۆچۈرۈش قاتارلىق مەشغۇلاتلارنى چەكلەشكە بولىدۇ."
+            "value":"ئىشلەتكۈچى ئىجازەتلەش ھەمدە تەھرىرلەش ۋە كۆچۈرۈش قاتارلىق مەشغۇلاتلارنى چەكلەشكە بولىدۇ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"Document_valid",
-            "value":"ھۆججەت قەرەلى"
+            "value":"ھۆججەت قەرەلى",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"header_title_readonly_tips",
-            "value":"ئوقۇش ئىجازىتى بار كىشىلەر ھۆججەتنى كۆرەلەيدۇ، ئەمما تەھرىرلىيەلمەيدۇ، كۆچۈرەلمەيدۇ ۋە باسالمايدۇ."
+            "value":"ئوقۇش ئىجازىتى بار كىشىلەر ھۆججەتنى كۆرەلەيدۇ، ئەمما تەھرىرلىيەلمەيدۇ، كۆچۈرەلمەيدۇ ۋە باسالمايدۇ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
-            "value":"ھەممەيلەن"
+            "value":"ھەممەيلەن",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_DLP_READ_ONLY",
-            "value":"«باشقا ساقلاش» ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ."
+            "value":"«باشقا ساقلاش» ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"encrypt_employee_id",
-            "value":"خىزمەتچى نومۇرى: %s"
+            "value":"خىزمەتچى نومۇرى: %s",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"apply_for_the_permission",
-            "value":"ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ."
+            "value":"ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"Appointed_day",
-            "value":"بېكىتكەن كۈن"
+            "value":"بېكىتكەن كۈن",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"change_encryption",
-            "value":"ئۆزگەرتىش"
+            "value":"ئۆزگەرتىش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"print",
-            "value":"بېسىش"
+            "value":"بېسىش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"enter_a_complete_work_ID",
-            "value":"خىزمەتچى نومۇرىنى كىرگۈزۈپ Enter نى بېسىڭ، مىسال: a00123456"
+            "value":"خىزمەتچى نومۇرىنى كىرگۈزۈپ Enter نى بېسىڭ، مىسال: a00123456",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"perm_list_title_read_only",
-            "value":"پەقەت ئوقۇش"
+            "value":"پەقەت ئوقۇش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"permanently",
-            "value":"مەڭگۈ"
+            "value":"مەڭگۈ",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"TITLE_APP_ERROR",
-            "value":"ئەپ خاتالىقى"
+            "value":"ئەپ خاتالىقى",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
-            "value":"ھۆججەت مەخپىيلەشتۈرۈلۈۋاتىدۇ. مەخپىيلەشتۈرۈپ بولغاندا ئېچىڭ."
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلۈۋاتىدۇ. مەخپىيلەشتۈرۈپ بولغاندا ئېچىڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
-            "value":"تىزىملاپ كىرىش"
+            "value":"تىزىملاپ كىرىش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"network_invalid",
-            "value":"توردا خاتالىق كۆرۈلدى، كېيىنرەك قايتا سىناڭ."
+            "value":"توردا خاتالىق كۆرۈلدى، كېيىنرەك قايتا سىناڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"header_title_edit",
-            "value":"تەھرىرلەش"
+            "value":"تەھرىرلەش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"permissions_are_restricted",
-            "value":"بۇ ھۆججەت قوغدالغان، بەلگىلەنگەن ئىشلەتكۈچىلا زىيارەت قىلالايدۇ."
+            "value":"بۇ ھۆججەت قوغدالغان، بەلگىلەنگەن ئىشلەتكۈچىلا زىيارەت قىلالايدۇ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"header_title_edit_content",
-            "value":"تەھرىرلەش"
+            "value":"تەھرىرلەش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Permission_has_expired_description",
-            "value":"ئىجازەت قەرەلى ئۆتكەن، بۇ ھۆججەتنى يەنە كۆرمەكچى بولسىڭىز، %s بىلەن ئالاقىلىشىڭ."
+            "value":"ئىجازەت قەرەلى ئۆتكەن، بۇ ھۆججەتنى يەنە كۆرمەكچى بولسىڭىز، %s بىلەن ئالاقىلىشىڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"file_encrypted",
-            "value":"ھۆججەت مەخپىيلەشتۈرۈلدى"
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلدى",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_RECOVER_DLP_ERROR",
-            "value":"مەخپىيلەشتۈرۈش ئۆزگەرمىدى. كېيىنرەك قايتا سىناڭ."
+            "value":"مەخپىيلەشتۈرۈش ئۆزگەرمىدى. كېيىنرەك قايتا سىناڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"header_title",
-            "value":"مەخپىيلەشتۈرۈپ قوغداش"
+            "value":"مەخپىيلەشتۈرۈپ قوغداش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"enter_a_complete_account",
-            "value":"ھېسابات كىرگۈزۈڭ"
+            "value":"ھېسابات كىرگۈزۈڭ",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"header_title_readonly",
-            "value":"پەقەت ئوقۇش"
+            "value":"پەقەت ئوقۇش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"مەشغۇلات يۈرمىدى، كېيىنرەك قايتا سىناڭ."
+            "value":"مەشغۇلات يۈرمىدى، كېيىنرەك قايتا سىناڭ.",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"save_as",
-            "value":"باشقا ساقلاش"
+            "value":"باشقا ساقلاش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"TITLE_APP_VISIT_FILE_ERROR",
-            "value":"ئىجازەت يوق"
+            "value":"ئىجازەت يوق",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Network_not_connected",
-            "value":"تور يوق"
+            "value":"تور يوق",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
-            "value":"ھېساباتقا تىزىملاپ كىرىپ قايتا سىناڭ."
+            "value":"ھېساباتقا تىزىملاپ كىرىپ قايتا سىناڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Go_setting",
-            "value":"تەڭشەك"
+            "value":"تەڭشەك",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"Permission_has_expired",
-            "value":"ئىجازەت ۋاقتى ئۆتكەن"
+            "value":"ئىجازەت ۋاقتى ئۆتكەن",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"screen_recording",
-            "value":"ئېكران خاتىرىلەش"
+            "value":"ئېكران خاتىرىلەش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"finished",
-            "value":"پۈتتى"
+            "value":"پۈتتى",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"incorrect_account",
-            "value":"ھېسابات خاتا، قايتا كىرگۈزۈڭ."
+            "value":"ھېسابات خاتا، قايتا كىرگۈزۈڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
-            "value":"نەشرى يۇقىرى سىستېمىدا مەخپىيلەشتۈرۈلگەن ھۆججەت ئېچىلمايدۇ، سىستېما نەشرىنى يېڭىلاپ قايتا سىناڭ."
+            "value":"نەشرى يۇقىرى سىستېمىدا مەخپىيلەشتۈرۈلگەن ھۆججەت ئېچىلمايدۇ، سىستېما نەشرىنى يېڭىلاپ قايتا سىناڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"stow_away",
-            "value":"يىغىش"
+            "value":"يىغىش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"viewing_encryption_details",
-            "value":"تەپسىلات"
+            "value":"تەپسىلات",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"sure",
-            "value":"جەزملەش"
+            "value":"جەزملەش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"permission_status_title",
-            "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ۋە «تەھرىرلەش» ئىجازىتى بار."
+            "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ۋە «تەھرىرلەش» ئىجازىتى بار.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"da_button",
-            "value":"بىلدىم"
+            "value":"بىلدىم",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
-            "value":"ھۆججەت ئىجازىتى ئالغىلى بولمىدى، كېيىنرەك قايتا سىناڭ."
+            "value":"ھۆججەت ئىجازىتى ئالغىلى بولمىدى، كېيىنرەك قايتا سىناڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Document_valid_until",
-            "value":"ھۆججەت قەرەلى"
+            "value":"ھۆججەت قەرەلى",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"share_the_screen",
-            "value":"ئېكران ئورتاقلىشىش"
+            "value":"ئېكران ئورتاقلىشىش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"unencrypted",
-            "value":"يېشىش"
+            "value":"يېشىش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"ban",
-            "value":"بىكار قىلىش"
+            "value":"بىكار قىلىش",
+            "attr":{
+                "priority":"LT"
+            }
         },
         {
             "name":"header_title_edit_tips",
-            "value":"تەھرىرلەش ئىجازىتى بار ئىشلەتكۈچى ھۆججەتنى كۆرەلەيدۇ، تەھرىرلىيەلەيدۇ، كۆچۈرەلەيدۇ، ئېكران تۇتالايدۇ، ساقلىيالايدۇ ۋە بېسىپ چىقىرالايدۇ."
+            "value":"تەھرىرلەش ئىجازىتى بار ئىشلەتكۈچى ھۆججەتنى كۆرەلەيدۇ، تەھرىرلىيەلەيدۇ، كۆچۈرەلەيدۇ، ئېكران تۇتالايدۇ، ساقلىيالايدۇ ۋە بېسىپ چىقىرالايدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"delete_account",
-            "value":"ئۆچۈرۈش"
+            "value":"ئۆچۈرۈش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"TITLE_APP_VERSION_LOWER",
-            "value":"سىستېما نەشرى تۆۋەن"
+            "value":"سىستېما نەشرى تۆۋەن",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"apply_for_the_subject",
-            "value":"كونكرېت ئىجازەت ئەپكە قاراپ ئوخشىمايدۇ."
+            "value":"كونكرېت ئىجازەت ئەپكە قاراپ ئوخشىمايدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"EncryptedSharing",
-            "value":"مەخپىي ئورتاقلىشىش"
+            "value":"مەخپىي ئورتاقلىشىش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM",
-            "value":"بۇ ھۆججەتنى كۆرۈش ئىجازىتىڭىز يوق."
+            "value":"بۇ ھۆججەتنى كۆرۈش ئىجازىتىڭىز يوق.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_File_Encrypted_Success",
-            "value":"ھۆججەت مەخپىيلەشتۈرۈلدى."
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلدى.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_Enter_Mobile_Number",
-            "value":"پەقەت يانفون نومۇرى كىرگۈزۈڭ. مەخپىيلەشتۈرۈلگەن ھۆججەت پەقەت %s ياكى يۇقىرى نەشرىدىكى ئۈسكۈنىدە ئېچىلىدۇ."
+            "value":"پەقەت يانفون نومۇرى كىرگۈزۈڭ. مەخپىيلەشتۈرۈلگەن ھۆججەت پەقەت %s ياكى يۇقىرى نەشرىدىكى ئۈسكۈنىدە ئېچىلىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_Add_Viewable_Users",
-            "value":"ئىشلەتكۈچى قوشۇش"
+            "value":"ئىشلەتكۈچى قوشۇش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_File_Encrypted_Failed",
-            "value":"ھۆججەت مەخپىيلەشتۈرۈلمىدى."
+            "value":"ھۆججەت مەخپىيلەشتۈرۈلمىدى.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_Confirms",
-            "value":"جەزملەش"
+            "value":"جەزملەش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_Tips_Phone_Format",
-            "value":"يانفون نومۇرىنى توغرا كىرگۈزۈڭ."
+            "value":"يانفون نومۇرىنى توغرا كىرگۈزۈڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_Contact_Person",
-            "value":"ئالاقىداش"
+            "value":"ئالاقىداش",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
-            "value":"بۇ ھۆججەت مەخپىيلەشتۈرۈپ قوغداشنى قوللىمايدۇ."
+            "value":"بۇ ھۆججەت مەخپىيلەشتۈرۈپ قوغداشنى قوللىمايدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"Share_File_Name_Too_Long",
-            "value":"مەخپىيلەشتۈرۈلمىدى، ھۆججەت نامى بەك ئۇزۇن."
+            "value":"مەخپىيلەشتۈرۈلمىدى، ھۆججەت نامى بەك ئۇزۇن.",
+            "attr":{
+                "priority":"translate"
+            }
         },
         {
             "name":"This_File_is_Open_By_Other_App",
-            "value":"بۇ مەخپىيلەشتۈرۈلگەن ھۆججەت باشقا ئەپتە ئوچۇق."
+            "value":"بۇ مەخپىيلەشتۈرۈلگەن ھۆججەت باشقا ئەپتە ئوچۇق.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

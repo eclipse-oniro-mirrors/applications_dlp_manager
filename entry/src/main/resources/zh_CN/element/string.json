@@ -1,352 +1,598 @@
 {
-  "string": [
-    {
-      "name": "entry_desc",
-      "value": "description"
-    },
-    {
-      "name": "MainAbility_desc",
-      "value": "DLPManager"
-    },
-    {
-      "name": "MainAbility_label",
-      "value": "DLPManager"
-    },
-    {
-      "name": "ViewAbility_desc",
-      "value": "DLPViewer"
-    },
-    {
-      "name": "EncryptedSharing",
-      "value": "加密分享"
-    },
-    {
-      "name": "ban",
-      "value": "取消"
-    },
-    {
-      "name": "typeface",
-      "value": "HarmonyHeiTi"
-    },
-    {
-      "name": "save",
-      "value": "保存"
-    },
-    {
-      "name": "save_as",
-      "value": "另存为"
-    },
-    {
-      "name": "screenshot",
-      "value": "截屏"
-    },
-    {
-      "name": "share_the_screen",
-      "value": "共享屏幕"
-    },
-    {
-      "name": "screen_recording",
-      "value": "录屏"
-    },
-    {
-      "name": "duplicate",
-      "value": "复制"
-    },
-    {
-      "name": "print",
-      "value": "打印"
-    },
-    {
-      "name": "sure",
-      "value": "确定"
-    },
-    {
-      "name": "header_title",
-      "value": "加密保护"
-    },
-    {
-      "name": "perm_list_title_read_only",
-      "value": "只读"
-    },
-    {
-      "name": "da_button",
-      "value": "知道了"
-    },
-    {
-      "name": "header_title_list",
-      "value": "授权指定用户访问权限，同时限制其编辑、复制等操作。"
-    },
-    {
-      "name": "header_title_readonly",
-      "value": "只读"
-    },
-    {
-      "name": "header_title_edit",
-      "value": "编辑"
-    },
-    {
-      "name": "header_title_edit_content",
-      "value": "编辑"
-    },
-    {
-      "name": "header_title_readonly_tips",
-      "value": "拥有只读权限的用户可查看，不可编辑、复制和打印文件。"
-    },
-    {
-      "name": "header_title_edit_tips",
-      "value": "拥有编辑权限的用户可查看、编辑、复制、录屏、保存和打印文件。"
-    },
-    {
-      "name": "file_encrypted",
-      "value": "文件已加密"
-    },
-    {
-      "name": "viewing_encryption_details",
-      "value": "查看加密详情"
-    },
-    {
-      "name": "stow_away",
-      "value": "收起"
-    },
-    {
-      "name": "permanently",
-      "value": "永久"
-    },
-    {
-      "name": "change_encryption",
-      "value": "更改加密"
-    },
-    {
-      "name": "finished",
-      "value": "完成"
-    },
-    {
-      "name": "permissions_are_restricted",
-      "value": "权限已做限制，只有指定用户才可访问此文件。"
-    },
-    {
-      "name": "unencrypted",
-      "value": "解除加密"
-    },
-    {
-      "name": "enter_a_complete_work_ID",
-      "value": "请输入完整工号后按回车键。示例：a00123456"
-    },
-    {
-      "name": "incorrect_work_ID",
-      "value": "工号错误，请输入有效的工号。"
-    },
-    {
-      "name": "network_invalid",
-      "value": "网络异常，请稍后再试"
-    },
-    {
-      "name": "enter_a_complete_account",
-      "value": "请输入用户账号"
-    },
-    {
-      "name": "incorrect_account",
-      "value": "账号错误，请输入有效的账号"
-    },
-    {
-      "name": "encryption_loading_title",
-      "value": "文件加密中…"
-    },
-    {
-      "name": "PERMISSION_TYPE_SELECT_TARGET",
-      "value": "指定用户"
-    },
-    {
-      "name": "PERMISSION_TYPE_SELECT_ALL",
-      "value": "所有人"
-    },
-    {
-      "name": "PERMISSION_TYPE_SELECT_SELF",
-      "value": "仅自己"
-    },
-    {
-      "name": "TITLE_APP_ERROR",
-      "value": "应用异常"
-    },
-    {
-      "name": "MESSAGE_APP_GET_FILE_ASSET_ERROR",
-      "value": "文档权限获取失败。请稍后再试。"
-    },
-    {
-      "name": "MESSAGE_APP_PARAM_ERROR",
-      "value": "拉起 DLP 应用失败，请检查参数后重试。"
-    },
-    {
-      "name": "MESSAGE_APP_GET_ACCOUNT_ERROR",
-      "value": "账号信息获取失败，请稍后重试。"
-    },
-    {
-      "name": "MESSAGE_APP_NO_ACCOUNT_ERROR",
-      "value": "账号未登录，请登录账号后重试。"
-    },
-    {
-      "name": "MESSAGE_SERVICE_INSIDE_ERROR",
-      "value": "当前无法操作，请稍后重试。"
-    },
-    {
-      "name": "MESSAGE_NOT_AUTHORIZED_APPLICATION",
-      "value": "该应用无法打开此文件。"
-    },
-    {
-      "name": "MESSAGE_RECOVER_DLP_ERROR",
-      "value": "更改加密失败，请稍后重试。"
-    },
-    {
-      "name": "TITLE_APP_VISIT_FILE_ERROR",
-      "value": "没有权限"
-    },
-    {
-      "name": "MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-      "value": "您没有权限查看此文件。如需申请权限，请联系：%s"
-    },
-    {
-      "name": "MESSAGE_APP_NOT_HAVE_PERM",
-      "value": "您没有权限查看此文件。"
-    },
-    {
-      "name": "THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
-      "value": "此文件不支持加密保护"
-    },
-    {
-      "name": "MESSAGE_APP_FILE_PARAM_ERROR",
-      "value": "无法打开此文件。请检查后重试。"
-    },
-    {
-      "name": "MESSAGE_DLP_READ_ONLY",
-      "value": "您没有“另存为”权限，无法使用此功能。如需申请权限，请联系 %s。"
-    },
-    {
-      "name": "permission_status_readOnly",
-      "value": "权限已做限制，您拥有“只读”权限。"
-    },
-    {
-      "name": "permission_status_title",
-      "value": "权限已做限制，您拥有“只读”和“编辑”权限。"
-    },
-    {
-      "name": "apply_for_the_permission",
-      "value": "如需申请权限，请联系 %s"
-    },
-    {
-      "name": "apply_for_the_subject",
-      "value": "具体权限以应用实际功能为准。"
-    },
-    {
-      "name": "delete_account",
-      "value": "删除"
-    },
-    {
-      "name": "MESSAGE_DLP_OPEN_REJECT",
-      "value": "文件已被打开，请先关闭后再进行加密。"
-    },
-    {
-      "name": "MESSAGE_DLP_ENCRYPTION_REJECTED",
-      "value": "文件正在加密，请加密完成后再打开。"
-    },
-    {
-      "name": "MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
-      "value": "无法打开使用高版本系统加密的文件，请升级系统后再试。"
-    },
-    {
-      "name": "encrypt_employee_id",
-      "value": "工号：%s"
-    },
-    {
-      "name": "SYSTEM_IS_AUTHENTICATED_LOGIN",
-      "value": "登录"
-    },
-    {
-      "name": "MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
-      "value": "未识别到您的登录信息，此功能仅支持企业用户使用，请先登录企业账号。"
-    },
-    {
-      "name": "MESSAGE_DLP_ENCRYPTION",
-      "value": "“%s”正在加密，请稍后再试。"
-    },
-    {
-      "name": "Document_valid",
-      "value": "文件有效期"
-    },
-    {
-      "name": "Document_valid_until",
-      "value": "文件有效期至"
-    },
-    {
-      "name": "Appointed_day",
-      "value": "指定日期"
-    },
-    {
-      "name": "Permission_has_expired",
-      "value": "权限已过期"
-    },
-    {
-      "name": "Permission_has_expired_description",
-      "value": "该文件权限已过期，如需继续查看，请联系 %s。"
-    },
-    {
-      "name": "Network_not_connected",
-      "value": "网络未连接"
-    },
-    {
-      "name": "Network_not_connected_description",
-      "value": "该文件已设置有效期，请先联网确认文件权限。"
-    },
-    {
-      "name": "Go_setting",
-      "value": "前往设置"
-    },
-    {
-      "name": "Timeout_is_not_supported",
-      "value": "不支持设置为已经过去的日期，请重新设置。"
-    },
-    {
-      "name": "loading_title",
-      "value": "正在加载…"
-    },
-    {
-      "name": "TITLE_APP_VERSION_LOWER",
-      "value": "系统版本过低"
-    },
-    {
-      "name": "Share_Add_Viewable_Users",
-      "value": "添加用户"
-    },
-    {
-      "name": "Share_Enter_Mobile_Number",
-      "value": "仅支持输入手机号。加密后的文件仅可在 %s 或更高版本的设备上查看。"
-    },
-    {
-      "name": "Share_Tips_Phone_Format",
-      "value": "请输入正确格式的手机号"
-    },
-    {
-      "name": "Share_Confirms",
-      "value": "确认"
-    },
-    {
-      "name": "Share_File_Encrypted_Success",
-      "value": "文件加密成功"
-    },
-    {
-      "name": "Share_File_Encrypted_Failed",
-      "value": "文件加密失败"
-    },
-    {
-      "name": "Share_File_Name_Too_Long",
-      "value": "文件名过长，加密失败"
-    },
-    {
-      "name": "Share_Contact_Person",
-      "value": "联系人"
-    },
-    {
-      "name": "This_File_is_Open_By_Other_App",
-      "value": "该加密文件已被其他应用打开。"
-    }
+  "string":[
+      {
+          "name":"entry_desc",
+          "value":"description"
+      },
+      {
+          "name":"MainAbility_desc",
+          "value":"DLPManager"
+      },
+      {
+          "name":"MainAbility_label",
+          "value":"DLPManager"
+      },
+      {
+          "name":"ViewAbility_desc",
+          "value":"DLPViewer"
+      },
+      {
+          "name":"EncryptedSharing",
+          "value":"加密分享",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"ban",
+          "value":"取消",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"typeface",
+          "value":"HarmonyHeiTi"
+      },
+      {
+          "name":"save",
+          "value":"保存",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"save_as",
+          "value":"另存为",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"screenshot",
+          "value":"截屏",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"share_the_screen",
+          "value":"共享屏幕",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"screen_recording",
+          "value":"录屏",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"duplicate",
+          "value":"复制",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"print",
+          "value":"打印",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"sure",
+          "value":"确定",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"header_title",
+          "value":"加密保护",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"perm_list_title_read_only",
+          "value":"只读",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"da_button",
+          "value":"知道了",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"header_title_list",
+          "value":"授权指定用户访问权限，同时限制其编辑、复制等操作。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"header_title_readonly",
+          "value":"只读",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"header_title_edit",
+          "value":"编辑",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"header_title_edit_content",
+          "value":"编辑",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"header_title_readonly_tips",
+          "value":"拥有只读权限的用户可查看，不可编辑、复制和打印文件。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"header_title_edit_tips",
+          "value":"拥有编辑权限的用户可查看、编辑、复制、录屏、保存和打印文件。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"file_encrypted",
+          "value":"文件已加密",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"viewing_encryption_details",
+          "value":"查看加密详情",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"stow_away",
+          "value":"收起",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"permanently",
+          "value":"永久",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"change_encryption",
+          "value":"更改加密",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"finished",
+          "value":"完成",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"permissions_are_restricted",
+          "value":"权限已做限制，只有指定用户才可访问此文件。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"unencrypted",
+          "value":"解除加密",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"enter_a_complete_work_ID",
+          "value":"请输入完整工号后按回车键。示例：a00123456",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"incorrect_work_ID",
+          "value":"工号错误，请输入有效的工号。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"network_invalid",
+          "value":"网络异常，请稍后再试",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"enter_a_complete_account",
+          "value":"请输入用户账号",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"incorrect_account",
+          "value":"账号错误，请输入有效的账号",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"encryption_loading_title",
+          "value":"文件加密中…",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"PERMISSION_TYPE_SELECT_TARGET",
+          "value":"指定用户",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"PERMISSION_TYPE_SELECT_ALL",
+          "value":"所有人",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"PERMISSION_TYPE_SELECT_SELF",
+          "value":"仅自己",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"TITLE_APP_ERROR",
+          "value":"应用异常",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+          "value":"文档权限获取失败。请稍后再试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_APP_PARAM_ERROR",
+          "value":"拉起 DLP 应用失败，请检查参数后重试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+          "value":"账号信息获取失败，请稍后重试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+          "value":"账号未登录，请登录账号后重试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+          "value":"当前无法操作，请稍后重试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+          "value":"该应用无法打开此文件。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_RECOVER_DLP_ERROR",
+          "value":"更改加密失败，请稍后重试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"TITLE_APP_VISIT_FILE_ERROR",
+          "value":"没有权限",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+          "value":"您没有权限查看此文件。如需申请权限，请联系：%s",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_APP_NOT_HAVE_PERM",
+          "value":"您没有权限查看此文件。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+          "value":"此文件不支持加密保护",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_APP_FILE_PARAM_ERROR",
+          "value":"无法打开此文件。请检查后重试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_DLP_READ_ONLY",
+          "value":"您没有“另存为”权限，无法使用此功能。如需申请权限，请联系 %s。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"permission_status_readOnly",
+          "value":"权限已做限制，您拥有“只读”权限。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"permission_status_title",
+          "value":"权限已做限制，您拥有“只读”和“编辑”权限。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"apply_for_the_permission",
+          "value":"如需申请权限，请联系 %s",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"apply_for_the_subject",
+          "value":"具体权限以应用实际功能为准。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"delete_account",
+          "value":"删除",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_DLP_OPEN_REJECT",
+          "value":"文件已被打开，请先关闭后再进行加密。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+          "value":"文件正在加密，请加密完成后再打开。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+          "value":"无法打开使用高版本系统加密的文件，请升级系统后再试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"encrypt_employee_id",
+          "value":"工号：%s",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+          "value":"登录",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+          "value":"未识别到您的登录信息，此功能仅支持企业用户使用，请先登录企业账号。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"MESSAGE_DLP_ENCRYPTION",
+          "value":"“%s”正在加密，请稍后再试。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Document_valid",
+          "value":"文件有效期",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Document_valid_until",
+          "value":"文件有效期至",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Appointed_day",
+          "value":"指定日期",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Permission_has_expired",
+          "value":"权限已过期",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Permission_has_expired_description",
+          "value":"该文件权限已过期，如需继续查看，请联系 %s。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Network_not_connected",
+          "value":"网络未连接",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Network_not_connected_description",
+          "value":"该文件已设置有效期，请先联网确认文件权限。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Go_setting",
+          "value":"前往设置",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Timeout_is_not_supported",
+          "value":"不支持设置为已经过去的日期，请重新设置。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"loading_title",
+          "value":"正在加载…",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"TITLE_APP_VERSION_LOWER",
+          "value":"系统版本过低",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_Add_Viewable_Users",
+          "value":"添加用户",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_Enter_Mobile_Number",
+          "value":"仅支持输入手机号。加密后的文件仅可在 %s 或更高版本的设备上查看。",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_Tips_Phone_Format",
+          "value":"请输入正确格式的手机号",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_Confirms",
+          "value":"确认",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_File_Encrypted_Success",
+          "value":"文件加密成功",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_File_Encrypted_Failed",
+          "value":"文件加密失败",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_File_Name_Too_Long",
+          "value":"文件名过长，加密失败",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Share_Contact_Person",
+          "value":"联系人",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"This_File_is_Open_By_Other_App",
+          "value":"该加密文件已被其他应用打开。",
+          "attr":{
+              "priority":"translate"
+          }
+      }
   ]
 }
