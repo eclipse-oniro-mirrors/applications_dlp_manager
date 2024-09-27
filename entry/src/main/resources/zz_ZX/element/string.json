@@ -254,7 +254,7 @@
         },
         {
             "name":"Go_setting",
-            "value":"[TS_872901]_Settings"
+            "value":"[TS_872901]_Go to Settings"
         },
         {
             "name":"Permission_has_expired",
@@ -343,6 +343,10 @@
         {
             "name":"delete_account",
             "value":"[TS_850735]_Delete"
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"[TS_952906]_Contacts"
         }
     ]
 }
