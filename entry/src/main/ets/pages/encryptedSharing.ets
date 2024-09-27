@@ -608,6 +608,15 @@ struct encryptedSharing {
             'ability.want.params.uiExtensionType': 'sys/commonUI'
           }
         })
+          .id('cloudAccountLoginUI')
+          .onRemoteReady(() => {
+            try {
+              HiLog.info(TAG, `requestFocus start`);
+              this.getUIContext().getFocusController().requestFocus('cloudAccountLoginUI');
+            } catch (error) {
+              HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`)
+            }
+          })
           .onReceive((data) => {
             HiLog.info(TAG, `data.status: ${JSON.stringify(data.status)}`);
             let res = data.result as Record<string, string>;
