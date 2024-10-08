@@ -95,6 +95,7 @@ struct encryptedSharing {
   @State contactPerson: string = '';
   @State recordHashUid: string = '';
   @State osVersion: ResourceStr = '';
+  @State textBoxIsFocused: boolean = false;
 
   @Builder
   contactsPicker() {
@@ -353,6 +354,7 @@ struct encryptedSharing {
           this.showUIExtensionForAccountLogin = true;
           return;
         };
+        this.textBoxIsFocused = true;
         if (accountInfo.distributedInfo.id !== this.recordHashUid) {
           HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
           this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
@@ -510,6 +512,19 @@ struct encryptedSharing {
           Column() {
             Row() {
               TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
+                .id('phoneInput')
+                .onAppear(() => {
+                  if (this.textBoxIsFocused) {
+                    setTimeout(() => {
+                      try {
+                        HiLog.info(TAG, `delay requestFocus start`);
+                        this.getUIContext().getFocusController().requestFocus('phoneInput');
+                      } catch (error) {
+                        HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
+                      }
+                    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
+                  }
+                })
                 .padding({
                   left: SystemUtils.isRTL() ?
                     Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
@@ -518,7 +533,7 @@ struct encryptedSharing {
                 })
                 .enabled(this.enabledFocus)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
-                .defaultFocus(true)
+                .focusable(this.textBoxIsFocused)
                 .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
                 .type(InputType.PhoneNumber)
                 .contentType(ContentType.PHONE_COUNTRY_CODE)
@@ -611,7 +626,7 @@ struct encryptedSharing {
           .id('cloudAccountLoginUI')
           .onRemoteReady(() => {
             try {
-              HiLog.info(TAG, `requestFocus start`);
+              HiLog.info(TAG, `cloudAccountLoginUI requestFocus start`);
               this.getUIContext().getFocusController().requestFocus('cloudAccountLoginUI');
             } catch (error) {
               HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`)
@@ -638,6 +653,15 @@ struct encryptedSharing {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
+            this.textBoxIsFocused = true;
+            setTimeout(() => {
+              try {
+                HiLog.info(TAG, `delay requestFocus start`);
+                this.getUIContext().getFocusController().requestFocus('phoneInput');
+              } catch (error) {
+                HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
+              }
+            }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
             this.showUIExtensionForAccountLogin = false;
           })
           .size({
