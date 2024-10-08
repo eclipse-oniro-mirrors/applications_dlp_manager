@@ -698,8 +698,8 @@ struct DlpDialog {
                   .draggable(false)
                   .bindPopup(this.handlePopupReadOnly, {
                     builder: this.popupBuilderReadOnly,
-                    placement: Placement.BottomLeft,
-                    offset: { x: Constants.POPUP_OFFSET_X },
+                    placement: SystemUtils.isRTL() ? Placement.BottomRight : Placement.BottomLeft,
+                    offset: { x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X },
                     enableArrow: true,
                     showInSubWindow: false,
                     onStateChange: (e) => {
@@ -751,8 +751,8 @@ struct DlpDialog {
                   .draggable(false)
                   .bindPopup(this.handlePopupEdit, {
                     builder: this.popupBuilderEdit,
-                    placement: Placement.BottomLeft,
-                    offset: { x: Constants.POPUP_OFFSET_X },
+                    placement: SystemUtils.isRTL() ? Placement.BottomRight : Placement.BottomLeft,
+                    offset: { x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X },
                     enableArrow: true,
                     showInSubWindow: false,
                     onStateChange: (e) => {

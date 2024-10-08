@@ -183,7 +183,7 @@ struct staffItem {
     .hitTestBehavior(HitTestMode.Block)
     .bindPopup(this.handlePopupTips, {
       builder: this.popupBuilderTips,
-      placement: Placement.BottomLeft,
+      placement: SystemUtils.isRTL() ? Placement.BottomRight : Placement.BottomLeft,
       enableArrow: true,
       showInSubWindow: false,
       onStateChange: (e) => {
