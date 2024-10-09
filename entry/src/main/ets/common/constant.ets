@@ -198,6 +198,7 @@ export default class Constants {
   public static RICH_EDITOR_MIN_HEIGHT = 48;
   public static RICH_EDITOR_FIRST = 1;
   public static POPUP_OFFSET_X = -20;
+  public static POPUP_OFFSET_RTL_X = 20;
   public static SUB_HEADER_HEIGHT = 40;
   public static SUB_HEADER_WIDTH = '65%';
   public static STAFF_FONT_SIZE = 10;
