@@ -36,14 +36,14 @@ export default class DataAbility extends ServiceExtensionAbility {
   private isSubscriber = false;
 
   async sandbox2linkFile(key: string) {
-    try {
-      await deleteSandbox2linkFileData(key, true);
-    } catch (err) {
-      HiLog.error(TAG, `deleteSandbox2linkFileData error`);
-    }
     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
       GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
     if (sandbox2linkFile.has(key)) {
+      try {
+        await deleteSandbox2linkFileData(key, true);
+      } catch (err) {
+        HiLog.error(TAG, `deleteSandbox2linkFileData error`);
+      }
       let fileOpenHistory:Map<string, (number | string)[]> =
         GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
       for (let item of Array.from<(string | (number | string)[])[]>(fileOpenHistory)) {
