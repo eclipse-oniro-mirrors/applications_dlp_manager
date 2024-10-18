@@ -93,7 +93,7 @@ export default class CredConnection {
       return;
     }
     let currentTime = new Date().getTime();
-    while (!this.remoteProxy && currentTime < new Date().getTime() + CredConnection.CONNECT_TIME_OUT) {
+    while (!this.remoteProxy && new Date().getTime() < currentTime + CredConnection.CONNECT_TIME_OUT) {
       continue;
     }
   }
