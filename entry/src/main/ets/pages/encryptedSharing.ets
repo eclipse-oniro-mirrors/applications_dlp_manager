@@ -96,6 +96,7 @@ struct encryptedSharing {
   @State recordHashUid: string = '';
   @State osVersion: ResourceStr = '';
   @State textBoxIsFocused: boolean = false;
+  @State generalType: string = 'general.file';
 
   @Builder
   contactsPicker() {
@@ -247,6 +248,7 @@ struct encryptedSharing {
     AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
     let res: string = '';
     Object.keys(abilityPickerRecords).forEach(key => {
+      this.generalType = key;
       res = abilityPickerRecords[key][0]?.['4'];
     });
     if (res === undefined) {
@@ -273,9 +275,8 @@ struct encryptedSharing {
           '4': dlpFileName
         }
       ];
-      let generalFile: Record<string, Test[]> = {
-        'general.file': arr,
-      }
+      let generalFile: Record<string, Test[]> = {};
+      generalFile[this.generalType] = arr;
       this.actionWant.parameters['ability.picker.records'] = generalFile;
       setTimeout(() => {
         this.session!.terminateSelfWithResult({
