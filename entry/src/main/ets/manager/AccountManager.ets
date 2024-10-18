@@ -93,6 +93,4 @@ export default class AccountManager {
     });
     AppStorage.setOrCreate(AppStorageConstant.DOMAIN_ACCOUNT_MAP, domainAccountMap);
   }
-
-
 }
