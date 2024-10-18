@@ -38,7 +38,8 @@ export default class AccountManager {
   }
 
   public static async getDomainAccountByAccountName(search: string): Promise<DomainAccountInfo> {
-    let domainAccountMap: Map<string, DomainAccountInfo> | undefined = AppStorage.get(AppStorageConstant.DOMAIN_ACCOUNT_MAP);
+    let domainAccountMap: Map<string, DomainAccountInfo> | undefined =
+      AppStorage.get(AppStorageConstant.DOMAIN_ACCOUNT_MAP);
     let domainAccount: DomainAccountInfo | undefined = domainAccountMap?.get(search);
     if (domainAccount) {
       return domainAccount;
