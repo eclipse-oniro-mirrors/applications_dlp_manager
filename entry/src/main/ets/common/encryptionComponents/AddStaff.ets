@@ -123,7 +123,8 @@ struct AddStaff {
         break;
       }
       let searchArray: string[] = this.inputArray.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
-      let accountResponse: DomainAccountResponse | undefined = await AccountManager.getDomainAccountByAccountNames(searchArray);
+      let accountResponse: DomainAccountResponse | undefined =
+        await AccountManager.getDomainAccountByAccountNames(searchArray);
       this.dealAccountResponse(searchArray, accountResponse, startOffset, endOffset);
 
       startLine = (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
@@ -179,8 +180,8 @@ struct AddStaff {
     this.staffArray.push(staff);
   }
 
-  private batchDealError(AccountNameArray: string[], code: number, startOffset: number[], endOffset: number[]) {
-    AccountNameArray.forEach(accountName =>{
+  private batchDealError(accountNameArray: string[], code: number, startOffset: number[], endOffset: number[]) {
+    accountNameArray.forEach(accountName =>{
       this.showErrInput(accountName, code, startOffset, endOffset);
     })
   }

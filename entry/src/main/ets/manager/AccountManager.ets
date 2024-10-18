@@ -12,15 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainAccountInfo from "../bean/data/DomainAccountInfo";
-import DomainAccountResponse from "../bean/response/DomainAccountResponse";
-import CredConnection from "../common/connection/CredConnection";
-import AppStorageConstant from "../common/constant/AppStorageConstant";
-import { HiLog } from "../common/HiLog";
-import { getOsAccountInfo } from "../common/utils";
-import DomainAccountConvertor from "../convertor/DomainAccountConvertor";
+import DomainAccountInfo from '../bean/data/DomainAccountInfo';
+import DomainAccountResponse from '../bean/response/DomainAccountResponse';
+import CredConnection from '../common/connection/CredConnection';
+import AppStorageConstant from '../common/constant/AppStorageConstant';
+import { HiLog } from '../common/HiLog';
+import { getOsAccountInfo } from '../common/utils';
+import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import account_osAccount from '@ohos.account.osAccount';
-import CommonUtil from "../common/CommonUtil";
+import CommonUtil from '../common/CommonUtil';
 
 const TAG = 'AccountManager';
 
@@ -43,14 +43,16 @@ export default class AccountManager {
     if (domainAccount) {
       return domainAccount;
     }
-    let domainResponse: DomainAccountResponse | undefined = await AccountManager.getDomainAccountByAccountNames([search]);
+    let domainResponse: DomainAccountResponse | undefined =
+      await AccountManager.getDomainAccountByAccountNames([search]);
     if (domainResponse && domainResponse.getData() && domainResponse.getData().length > 0) {
       return domainResponse.getData()[0];
     }
     return new DomainAccountInfo();
   }
 
-  public static async getDomainAccountByAccountNames(searchArray: string[]): Promise<DomainAccountResponse | undefined> {
+  public static async getDomainAccountByAccountNames(searchArray: string[]):
+    Promise<DomainAccountResponse | undefined> {
     let accountInfo = await AccountManager.getAccountInfo();
     if (!accountInfo) {
       return undefined;
@@ -84,7 +86,8 @@ export default class AccountManager {
     if (!dataArray) {
       return;
     }
-    let domainAccountMap: Map<string, DomainAccountInfo> | undefined = AppStorage.get(AppStorageConstant.DOMAIN_ACCOUNT_MAP);
+    let domainAccountMap: Map<string, DomainAccountInfo> | undefined =
+      AppStorage.get(AppStorageConstant.DOMAIN_ACCOUNT_MAP);
     if (!domainAccountMap) {
       domainAccountMap = new Map<string, DomainAccountInfo>();
     }

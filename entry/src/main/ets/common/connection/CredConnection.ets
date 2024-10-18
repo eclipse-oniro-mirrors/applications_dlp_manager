@@ -114,7 +114,8 @@ export default class CredConnection {
         HiLog.error(TAG, `onConnect remote is null.`);
         return result;
       }
-      let sendResult = await this.remoteProxy.sendMessageRequest(Constants.COMMAND_GET_DOMAIN_ACCOUNT_INFO, data, reply, option);
+      let sendResult = await this.remoteProxy.sendMessageRequest(
+        Constants.COMMAND_GET_DOMAIN_ACCOUNT_INFO, data, reply, option);
       let code = sendResult.reply.readInt();
       if (code !== Constants.INTERFACE_SUCCESS) {
         HiLog.info(TAG, `getDomainAccountInfo sendMessageRequest is error, code: ${code}`);
