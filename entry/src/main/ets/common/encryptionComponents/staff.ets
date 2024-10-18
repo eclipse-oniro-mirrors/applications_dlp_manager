@@ -22,6 +22,9 @@ import { GetAlertMessage } from '../GetAlertMessage';
 import { DlpAlertDialog } from '../components/dlp_alert_dialog';
 import { HiLog } from '../HiLog';
 import { SystemUtils } from '../systemUtils';
+import AccountManager from '../../manager/AccountManager';
+import accountManager from '@ohos.enterprise.accountManager';
+import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
 
 const TAG = 'staff';
 
@@ -129,7 +132,9 @@ struct staffItem {
     }
   }
 
-  async aboutToAppear() {}
+  async aboutToAppear() {
+    AccountManager.connectAbility(getContext(this) as common.UIAbilityContext);
+  }
 
   build() {
     Row() {
@@ -160,24 +165,16 @@ struct staffItem {
         .fontSize($r('sys.float.ohos_id_text_size_button3'))
         .height(Constants.HEADER_ROW_FONT_SIZE);
     }
-    .onClick(() => {
+    .onClick(async () => {
       try {
-        AccountTipsConfig.getAccountInfo(this.authAccount)
-          .then(async (result: account_osAccount.DomainAccountInfo) => {
-            this.accountTipsArray = await AccountTipsConfig.getConfigTips();
-            this.handlePopupTips = !this.handlePopupTips;
-            this.accountTipsArray?.forEach((item: AccountTips) => {
-              let value: string = result[item.key];
-              item.value = value;
-            })
-          })
-          .catch((err: BusinessError) => {
-            HiLog.error(TAG, `getAccountInfo error: ${JSON.stringify(err)}`);
-            let errInfo = GetAlertMessage.getAlertMessage(err);
-            this.showErrorDialog(errInfo.title, errInfo.msg);
-          })
-      } catch (err) {
-        HiLog.error(TAG, `getAccountInfo exception: ${JSON.stringify(err)}`);
+        let accountInfo: DomainAccountInfo = await AccountManager.getDomainAccountByAccountName(this.authAccount);
+        this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+        this.handlePopupTips = !this.handlePopupTips;
+        this.accountTipsArray?.forEach((item: AccountTips) => {
+          item.value = accountInfo[item.key];
+        })
+      } catch (error) {
+        HiLog.error(TAG, `getFontWeight callback getNumber failed: ${JSON.stringify(error)}.`);
       }
     })
     .hitTestBehavior(HitTestMode.Block)

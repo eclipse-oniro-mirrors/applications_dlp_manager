@@ -25,6 +25,8 @@ import GlobalContext from './GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
 import promptAction from '@ohos.promptAction';
 import { HiLog } from '../common/HiLog';
+import AccountManager from '../manager/AccountManager';
+import CommonUtil from './CommonUtil';
 
 const TAG = 'AlertMessage';
 
@@ -227,24 +229,10 @@ export class GetAlertMessage {
     }
   }
 
-  public static checkAccountInfo(accountName: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      let accountDomain = AppStorage.get('accountDomain') as string;
-      let domainAccountInfo: osAccount.DomainAccountInfo = {
-        domain: accountDomain,
-        accountName: accountName
-      };
-      try {
-        account_osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo)
-          .then((result: account_osAccount.DomainAccountInfo) => {
-            resolve(true);
-          }).catch((err: BusinessError) => {
-            resolve(false);
-          })
-      } catch (err) {
-        resolve(false);
-      }
-    })
+  public static async checkAccountInfo(accountName: string): Promise<boolean> {
+
+    let domainAccount = await AccountManager.getDomainAccountByAccountName(accountName);
+    return CommonUtil.isEmptyStr(domainAccount.accountName);
   }
 
   public static async requestModalUIExtension(

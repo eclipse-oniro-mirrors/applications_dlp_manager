@@ -14,6 +14,7 @@
  */
 
 export default class Constants {
+
   public static FOOTER_ROW_WIDTH = '100%';
   public static FOOTER_ROW_MARGIN = 8;
   public static FOOTER_ROW_PAD_LEFT = 16;
@@ -243,9 +244,13 @@ export default class Constants {
   public static readonly ERR_CODE_SUCCESS: number = 0;
   public static readonly COMMAND_SEARCH_USER_INFO = 1;
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
+  public static readonly COMMAND_GET_DOMAIN_ACCOUNT_INFO = 3;
+
   public static readonly GET_SETTING_ITEM_XXL1 = 8;
   public static readonly GET_SETTING_ITEM_XXL2 = 18;
   public static readonly GET_SETTING_ITEM_XXL3 = 48;
   public static readonly GET_SETTING_ITEM_DEFAULT = 0;
   public static readonly SYMBOL_GLYPH_FONT_SIZE = 24;
+
+  public static readonly INTERFACE_SUCCESS = 0;
 }
