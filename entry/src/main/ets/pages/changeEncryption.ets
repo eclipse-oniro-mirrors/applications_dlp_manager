@@ -535,7 +535,9 @@ struct changeEncryption {
                             .bindPopup(this.handlePopupReadOnly, {
                               builder: this.popupBuilderReadOnly,
                               placement: SystemUtils.isRTL() ? Placement.BottomRight : Placement.BottomLeft,
-                              offset: { x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X },
+                              offset: {
+                                x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X
+                              },
                               enableArrow: true,
                               showInSubWindow: false,
                               onStateChange: (e) => {
@@ -576,7 +578,9 @@ struct changeEncryption {
                               .bindPopup(this.handlePopupReadOnly, {
                                 builder: this.popupBuilderReadOnly,
                                 placement: SystemUtils.isRTL() ? Placement.BottomRight : Placement.BottomLeft,
-                                offset: { x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X },
+                                offset: {
+                                  x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X
+                                },
                                 enableArrow: true,
                                 showInSubWindow: false,
                                 onStateChange: (e) => {
@@ -685,7 +689,9 @@ struct changeEncryption {
                             .bindPopup(this.handlePopupEdit, {
                               builder: this.popupBuilderEdit,
                               placement: SystemUtils.isRTL() ? Placement.BottomRight : Placement.BottomLeft,
-                              offset: { x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X },
+                              offset: {
+                                x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X
+                              },
                               enableArrow: true,
                               showInSubWindow: false,
                               onStateChange: (e) => {
@@ -727,7 +733,9 @@ struct changeEncryption {
                               .bindPopup(this.handlePopupEdit, {
                                 builder: this.popupBuilderEdit,
                                 placement: SystemUtils.isRTL() ? Placement.BottomRight : Placement.BottomLeft,
-                                offset: { x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X },
+                                offset: {
+                                  x: SystemUtils.isRTL() ? Constants.POPUP_OFFSET_RTL_X : Constants.POPUP_OFFSET_X
+                                },
                                 enableArrow: true,
                                 showInSubWindow: false,
                                 onStateChange: (e) => {
