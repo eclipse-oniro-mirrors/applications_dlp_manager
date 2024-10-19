@@ -89,7 +89,7 @@ export default class ConnectService {
   searchUserInfo(remote: rpc.IRemoteObject) {
     let cloudPhone: string | undefined = AppStorage.get('cloudPhone');
     HiLog.info(TAG, `searchUserInfo start`);
-    let option = new rpc.MessageOption();
+    let option = new rpc.MessageOption(Constants.TF_SYNC);
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
     data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
@@ -109,7 +109,7 @@ export default class ConnectService {
 
   getAccountInfo(remote: rpc.IRemoteObject) {
     HiLog.info(TAG, `getAccountInfo start`);
-    let option = new rpc.MessageOption();
+    let option = new rpc.MessageOption(Constants.TF_SYNC);
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
     data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');

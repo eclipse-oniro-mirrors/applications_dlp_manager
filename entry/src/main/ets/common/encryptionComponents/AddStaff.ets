@@ -18,6 +18,12 @@ import { staffItem } from './staff';
 import Constants from '../constant';
 import { AccountTipsConfig } from '../AccountTipsConfig';
 import { HiLog } from '../HiLog';
+import CommonUtil from '../CommonUtil';
+import AccountManager from '../../manager/AccountManager';
+import DomainAccountResponse from '../../bean/response/DomainAccountResponse';
+import AppStorageConstant from '../constant/AppStorageConstant';
+import { common } from '@kit.AbilityKit';
+import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
 
 interface Staff {
   authAccount: string;
@@ -55,6 +61,8 @@ struct AddStaff {
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
 
+  private shardingCount: number = 0;
+
   @Builder
   StaffItemBuilder(authAccount: string, textContent: string, index: number) {
     Column() {
@@ -90,16 +98,9 @@ struct AddStaff {
     if (this.inputArray.length > Constants.RICH_EDITOR_FIRST) {
       this.deleteBuildSpan(startOffset, endOffset);
     }
-    for (let i = 0; i < this.inputArray.length; i++) {
-      if (!this.inputArray[i]) {
-        continue;
-      }
-      if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
-        this.errInput = [];
-        break;
-      }
-      await this.createStaffByDomain(i, startOffset, endOffset);
-    }
+
+    await this.dealAccount(startOffset, endOffset);
+
     this.isAccountCheckSuccess = true;
     if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
       this.controller.addTextSpan(this.errInput.join(';'));
@@ -109,27 +110,80 @@ struct AddStaff {
     }
   }
 
-  private createStaffByDomain(i: number, startOffset: number[], endOffset: number[]) {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        let result = await AccountTipsConfig.getAccountInfo(this.inputArray[i]);
-        let o1: Staff = {
-          authAccount: result.accountName,
-          textContent: result[this.textContent] as string
-        };
-        this.staffArray.push(o1);
+  private async dealAccount(startOffset: number[], endOffset: number[]) {
+    HiLog.info(TAG, 'dealAccount start');
+    this.inputArray.filter(item =>{
+      return !CommonUtil.isEmptyStr(item);
+    });
+    this.shardingCount = this.inputArray.length / Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
+    let startLine: number = 0;
+    for (let i = 0; i < this.shardingCount; i++) {
+      if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
+        this.errInput = [];
+        break;
+      }
+      let searchArray: string[] = this.inputArray.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
+      let accountResponse: DomainAccountResponse | undefined =
+        await AccountManager.getDomainAccountByAccountNames(searchArray);
+      this.dealAccountResponse(searchArray, accountResponse, startOffset, endOffset);
+
+      startLine = (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
+    }
+    HiLog.info(TAG, 'dealAccount end');
+  }
+
+  private dealAccountResponse(searchArray: string[], accountResponse: DomainAccountResponse | undefined,
+    startOffset: number[], endOffset: number[]) {
+    let businessCode = this.getBusinessCode(accountResponse);
+    if (businessCode !== Constants.INTERFACE_SUCCESS) {
+      this.batchDealError(searchArray, businessCode, startOffset, endOffset);
+      return;
+    }
+    let dataArray: Array<DomainAccountInfo> | undefined = accountResponse?.getData();
+    searchArray.forEach(accountName =>{
+      let matchAccount = dataArray?.find(data => data.accountName === accountName);
+      if (matchAccount) {
+        this.addStaff(matchAccount);
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
           this.deleteBuildSpan(startOffset, endOffset);
         }
-        this.succ = AppStorage.get('hiAccountVerifySucc') as number + 1;
-        AppStorage.setOrCreate('hiAccountVerifySucc', this.succ);
-        this.addBuildSpan(i, result[this.textContent]);
-      } catch (error) {
-        HiLog.info(TAG, `getAccountInfo fail: ${JSON.stringify(error)}`);
-        this.showErrInput(i, error, startOffset, endOffset);
+        this.succ = CommonUtil.increaseByAppStorageKey(AppStorageConstant.ACCOUNT_VERIFY_SUCCESS_COUNT, 1);
+        this.addBuildSpan(accountName, matchAccount[this.textContent]);
+      } else {
+        // case: not found
+        this.showErrInput(accountName, Constants.ERR_JS_ACCOUNT_NOT_FOUND, startOffset, endOffset);
       }
-      resolve();
-    });
+    })
+  }
+
+  private getBusinessCode(accountResponse: DomainAccountResponse | undefined): number {
+    if (accountResponse === undefined) {
+      // case: ipc error
+      return Constants.ERR_JS_NETWORK_INVALID;
+    }
+    if (accountResponse.getErrorCode() != Constants.INTERFACE_SUCCESS) {
+      // case: ipc success, but return error code
+      return accountResponse.getErrorCode();
+    }
+    if (CommonUtil.isEmptyArray(accountResponse.getData())) {
+      // case: ipc success, but no data
+      return Constants.ERR_JS_ACCOUNT_NOT_FOUND;
+    }
+    return Constants.INTERFACE_SUCCESS;
+  }
+
+  private addStaff(matchAccount: DomainAccountInfo): void {
+    let staff: Staff = {
+      authAccount: matchAccount.accountName,
+      textContent: matchAccount[this.textContent] as string
+    };
+    this.staffArray.push(staff);
+  }
+
+  private batchDealError(accountNameArray: string[], code: number, startOffset: number[], endOffset: number[]) {
+    accountNameArray.forEach(accountName =>{
+      this.showErrInput(accountName, code, startOffset, endOffset);
+    })
   }
 
   private deleteBuildSpan(startOffset: number[], endOffset: number[]) {
@@ -138,25 +192,24 @@ struct AddStaff {
     }
   }
 
-  private addBuildSpan(i: number, textContent: string) {
+  private addBuildSpan(staffName: string, textContent: string) {
     let index: number = this.controller.getCaretOffset();
     let staffBuilder: CustomBuilder = () => {
-      this.StaffItemBuilder(this.inputArray[i], textContent, index);
+      this.StaffItemBuilder(staffName, textContent, index);
     };
     this.controller.addBuilderSpan(staffBuilder);
   }
 
-  private showErrInput(i: number, error: BusinessError, startOffset: number[], endOffset: number[]) {
+  private showErrInput(staffName: string, errorCode: number, startOffset: number[], endOffset: number[]) {
     if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
       this.deleteBuildSpan(startOffset, endOffset);
     }
-    this.errInput.push(this.inputArray[i]);
-    this.fail = AppStorage.get('hiAccountVerifyFail') as number + 1;
-    AppStorage.setOrCreate('hiAccountVerifyFail', this.fail);
+    this.errInput.push(staffName);
+    this.fail = CommonUtil.increaseByAppStorageKey(AppStorageConstant.ACCOUNT_VERIFY_FAIL_COUNT, 1);
     if ([
       Constants.ERR_JS_INVALID_PARAMETER,
       Constants.ERR_JS_ACCOUNT_NOT_FOUND
-    ].includes(error.code)) {
+    ].includes(errorCode)) {
       this.isInputInvalidFlag = true;
     } else {
       this.isNetworkInvalid = true;
@@ -183,6 +236,7 @@ struct AddStaff {
   }
 
   async aboutToAppear() {
+    AccountManager.connectAbility(getContext(this) as common.UIAbilityContext);
     await AccountTipsConfig.getConfigTips();
     this.textContent = AccountTipsConfig.showContentKey;
     if (this.staffArray.length) {

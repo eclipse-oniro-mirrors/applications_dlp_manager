@@ -44,6 +44,8 @@ import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import { SystemUtils } from '../common/systemUtils';
 import FileUtils, { FileMsg } from '../common/FileUtils';
+import AccountManager from '../manager/AccountManager';
+import CommonUtil from '../common/CommonUtil';
 
 const TAG = 'ModEnc';
 
@@ -376,23 +378,33 @@ struct changeEncryption {
   }
 
   async getTextContent(): Promise<void> {
-    let tempStaffDataArray = [...this.staffDataArrayReadOnly, ...this.staffDataArrayEdit];
-    for (let index = 0; index < tempStaffDataArray['length']; index++) {
-      try {
-        let result: osAccount.DomainAccountInfo = await AccountTipsConfig
-          .getAccountInfo(tempStaffDataArray[index].authAccount);
-        tempStaffDataArray[index].textContent = result[AccountTipsConfig.showContentKey];
+    await this.dealStaffData(this.staffDataArrayReadOnly);
+    await this.dealStaffData(this.staffDataArrayEdit);
+  }
 
-        if (index === tempStaffDataArray['length'] - 1) {
-          return Promise.resolve();
-        }
-      } catch (err) {
-        return Promise.reject();
-      }
+  async dealStaffData(dataArray: AuthAccount[]): Promise<void> {
+    let searchReq = dataArray.map(item =>{
+      return item.authAccount;
+    });
+    if (searchReq.length < 1) {
+      return;
     }
+    let result = await AccountManager.getDomainAccountWithRetry(searchReq);
+    if (!result || CommonUtil.isEmptyArray(result.getData())) {
+      return;
+    }
+    dataArray.forEach(data =>{
+      let accountName = data.authAccount;
+      let match = result?.getData().find(item => accountName === item.accountName);
+      if (match) {
+        data.textContent = match[AccountTipsConfig.showContentKey];
+      }
+    });
   }
 
   async aboutToAppear() {
+    AccountManager.connectAbility(getContext(this) as common.UIAbilityContext);
+
     this.prepareData = true;
     try {
       GlobalContext.store('accountInfo', await getOsAccountInfo());
