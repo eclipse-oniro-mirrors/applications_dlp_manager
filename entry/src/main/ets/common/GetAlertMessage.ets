@@ -232,7 +232,7 @@ export class GetAlertMessage {
   public static async checkAccountInfo(accountName: string): Promise<boolean> {
 
     let domainAccount = await AccountManager.getDomainAccountByAccountName(accountName);
-    return CommonUtil.isEmptyStr(domainAccount.accountName);
+    return !CommonUtil.isEmptyStr(domainAccount.accountName);
   }
 
   public static async requestModalUIExtension(
