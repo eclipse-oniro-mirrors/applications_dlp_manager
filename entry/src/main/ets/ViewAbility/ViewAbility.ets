@@ -708,6 +708,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       case dlpPermission.AccountType.DOMAIN_ACCOUNT: {
         try {
           this.accountInfo = await getOsAccountInfo();
+          this.userId = await getUserId();
         } catch (err) {
           HiLog.error(TAG, 'getOsAccountInfo failed: ${JSON.stringify(err)}');
           return true;
