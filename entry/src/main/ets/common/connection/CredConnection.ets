@@ -33,7 +33,6 @@ export default class CredConnection {
   private static readonly CRED_CALLBACK_STUB = 'CredCallbackStub';
   private static readonly CRED_INTERFACE_TOKEN = 'OHOS.HapDlpCredAbilityServiceStub';
   private static readonly REQUEST_TIME_OUT: number = 10;
-  private static readonly TF_SYNC: number = 0;
   private static readonly CONNECT_TIME_OUT: number = 1000;
 
   private context: ESObject;
@@ -101,7 +100,7 @@ export default class CredConnection {
   async getDomainAccountInfo(req: DomainAccountRequest): Promise<DomainAccountResponse | undefined> {
     HiLog.info(TAG, `getDomainAccountInfo start`);
     let result: DomainAccountResponse | undefined;
-    let option = new rpc.MessageOption(CredConnection.TF_SYNC, CredConnection.REQUEST_TIME_OUT);
+    let option = new rpc.MessageOption(Constants.TF_SYNC, CredConnection.REQUEST_TIME_OUT);
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
     try {

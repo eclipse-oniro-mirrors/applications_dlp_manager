@@ -253,4 +253,6 @@ export default class Constants {
   public static readonly SYMBOL_GLYPH_FONT_SIZE = 24;
 
   public static readonly INTERFACE_SUCCESS = 0;
+  public static readonly TF_SYNC: number = 0;
+  public static readonly TF_ASYNC: number = 1;
 }
