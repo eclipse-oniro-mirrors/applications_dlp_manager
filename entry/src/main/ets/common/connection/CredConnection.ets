@@ -120,7 +120,7 @@ export default class CredConnection {
         HiLog.info(TAG, `getDomainAccountInfo sendMessageRequest is error, code: ${code}`);
         return result;
       }
-      result =  DomainAccountConvertor.convertToDomainAccountResp(sendResult.reply.readString());
+      result = DomainAccountConvertor.convertToDomainAccountResp(sendResult.reply.readString());
     } catch (error) {
       HiLog.error(TAG, `getDomainAccountInfo result: ${error}`);
     } finally {

@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { buffer } from "@kit.ArkTS";
-import { HiLog } from "./HiLog";
+import { buffer } from '@kit.ArkTS';
+import { HiLog } from './HiLog';
 
 const TAG = 'CommonUtil';
 

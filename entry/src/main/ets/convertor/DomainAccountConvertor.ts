@@ -12,16 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainAccountRequest from "../bean/request/DomainAccountRequest";
-import DomainAccountResponse from "../bean/response/DomainAccountResponse";
-import CommonUtil from "../common/CommonUtil";
-import { HiLog } from "../common/HiLog";
+import DomainAccountRequest from '../bean/request/DomainAccountRequest';
+import DomainAccountResponse from '../bean/response/DomainAccountResponse';
+import CommonUtil from '../common/CommonUtil';
+import { HiLog } from '../common/HiLog';
 
 const TAG = 'DomainAccountConvertor';
 
 export default class DomainAccountConvertor {
 
-  private static readonly DOMAIN_ACCOUNT_TYPE_IDAAS =2;
+  private static readonly DOMAIN_ACCOUNT_TYPE_IDAAS = 2;
 
   public static convertBatchToDomainAccountReq(searchArray: string[], accountName: string, accountId: string):
     DomainAccountRequest {
@@ -29,7 +29,7 @@ export default class DomainAccountConvertor {
     result.setAccountName(CommonUtil.encodeByBase64(accountName));
     result.setAccountId(CommonUtil.encodeByBase64(accountId));
     result.setAccountType(this.DOMAIN_ACCOUNT_TYPE_IDAAS);
-    result.setKeywordsList(searchArray)
+    result.setKeywordsList(searchArray);
     return result;
   }
 

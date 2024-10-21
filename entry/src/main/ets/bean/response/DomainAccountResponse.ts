@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import BaseResponse from "../base/BaseResponse";
-import DomainAccountInfo from "../data/DomainAccountInfo";
+import BaseResponse from '../base/BaseResponse';
+import DomainAccountInfo from '../data/DomainAccountInfo';
 
 export default class DomainAccountResponse extends BaseResponse {
 

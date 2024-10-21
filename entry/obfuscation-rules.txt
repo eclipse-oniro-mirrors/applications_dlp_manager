@@ -10,3 +10,4 @@ telephone
 contactObjects
 isTextContent
 descriptionEn
+keywordsList
