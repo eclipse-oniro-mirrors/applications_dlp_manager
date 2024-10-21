@@ -27,7 +27,7 @@ const TAG = 'AccountManager';
 export default class AccountManager {
 
   public static connectAbility(context: ESObject): void {
-    let connection: CredConnection | undefined =  AppStorage.get<CredConnection>(AppStorageConstant.CRED_CONNECTION);
+    let connection: CredConnection | undefined = AppStorage.get<CredConnection>(AppStorageConstant.CRED_CONNECTION);
     if (!connection) {
       connection = new CredConnection(context);
     }
@@ -60,7 +60,7 @@ export default class AccountManager {
     }
     let searchReq = DomainAccountConvertor.convertBatchToDomainAccountReq(
       searchArray, accountInfo.domainInfo?.accountName, accountInfo.domainInfo?.accountId);
-    let connection: CredConnection | undefined =  AppStorage.get<CredConnection>(AppStorageConstant.CRED_CONNECTION);
+    let connection: CredConnection | undefined = AppStorage.get<CredConnection>(AppStorageConstant.CRED_CONNECTION);
     let response: DomainAccountResponse | undefined = await connection?.getDomainAccountInfo(searchReq);
     AccountManager.dealDomainAccountMapCache(response?.getData());
     return response;
