@@ -23,7 +23,6 @@ import promptAction from '@ohos.promptAction';
 import { BusinessError } from '@ohos.base';
 import Want from '@ohos.app.ability.Want';
 import fs from '@ohos.file.fs';
-import systemParameterEnhance from '@ohos.systemParameterEnhance';
 import emitter from '@ohos.events.emitter';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
@@ -39,9 +38,9 @@ import {
   checkNetworkStatus
 } from '../common/utils';
 import { SystemUtils } from '../common/systemUtils';
-import FontSizeScale from '../common/FontSizeScale';
 
 const TAG = 'Share';
+
 class Test {
   public '0': number = 0;
   public '1': number = 0;
@@ -66,6 +65,7 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 };
 
 let storage = LocalStorage.getShared();
+
 @Entry(storage)
 @Component
 struct encryptedSharing {
@@ -95,7 +95,7 @@ struct encryptedSharing {
   @State contactPerson: string = '';
   @State recordHashUid: string = '';
   @State osVersion: ResourceStr = '';
-  @State textBoxIsFocused: boolean = false;
+  @State isTextInputFocus: boolean = false;
   @State generalType: string = 'general.file';
 
   @Builder
@@ -142,12 +142,12 @@ struct encryptedSharing {
     HiLog.info(TAG, `changeAccountInfo start`);
     if (!this.checkCloudPhone(this.inputValue)) {
       return;
-    };
+    }
     if (!this.commandGetAccountInfo) {
       this.enabledFocus = true;
       this.isConfirmButtonEnabled = true;
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-    };
+    }
     let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
     HiLog.info(TAG, `commandGetAccountInfo Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
     let res = commandGetAccountInfoCallBack.result as Record<string, string>;
@@ -167,7 +167,7 @@ struct encryptedSharing {
       ].includes(Number(commandGetAccountInfoCallBack.errorCode))) {
         this.showToast($r('app.string.network_invalid'));
         return;
-      };
+      }
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
     }
   }
@@ -183,7 +183,7 @@ struct encryptedSharing {
       this.credentialCallBackMsg = $r('app.string.Share_Tips_Phone_Format');
       HiLog.info(TAG, `phoneFormatTips: ${this.phoneFormatTips}`);
       return false;
-    };
+    }
     reg = /^(0086|\+86)/;
     let formatPhone = this.inputValue.replace(reg, '');
     let cloudPhone = `${Constants.INTERNATIONAL_DIALING_CODE}${formatPhone}`;
@@ -196,6 +196,7 @@ struct encryptedSharing {
     if (!this.isInputValid()) {
       this.enabledFocus = true;
       this.isConfirmButtonEnabled = true;
+      this.textInputGetFocus();
       return;
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
@@ -210,7 +211,7 @@ struct encryptedSharing {
       await fs.mkdir(filePath, true);
     } catch (error) {
       HiLog.error(TAG, `mkdir failed: ${JSON.stringify(error)}`);
-    };
+    }
     let newFilePath = filePath + dlpFileName;
     let file: fs.File | undefined;
     let filePathUri = getFileUriByPath(newFilePath);
@@ -231,7 +232,7 @@ struct encryptedSharing {
       if (err.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
         this.showToast($r('app.string.Share_File_Name_Too_Long'));
         return;
-      };
+      }
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enabledFocus = true;
       this.isConfirmButtonEnabled = true;
@@ -253,7 +254,7 @@ struct encryptedSharing {
     });
     if (res === undefined) {
       res = srcFileMsg.fileName + srcFileMsg.fileType;
-    };
+    }
     return res;
   }
 
@@ -290,7 +291,7 @@ struct encryptedSharing {
   isInputValid(): boolean {
     if (!this.isInputInvalid) {
       return false;
-    };
+    }
     let credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
     HiLog.info(TAG, `credential Call Back errorCode: ${credentialCallBack.errorCode}`);
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
@@ -344,38 +345,64 @@ struct encryptedSharing {
     }
   }
 
-  async getAccountInfo() {
+  async getLoginStatus() {
+    HiLog.info(TAG, `get login status start.`);
     try {
       await checkNetworkStatus();
-      HiLog.info(TAG, `get Account Info start`);
-      try {
-        let accountInfo = await getOsAccountInfo();
-        if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
-          accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-          this.showUIExtensionForAccountLogin = true;
-          return;
-        };
-        this.textBoxIsFocused = true;
-        if (accountInfo.distributedInfo.id !== this.recordHashUid) {
-          HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
-          this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
-          this.commandGetAccountInfoFlag = true;
-          this.recordHashUid = accountInfo.distributedInfo.id;
-          return;
-        } else {
-          this.changeAccountInfo();
-        }
-      } catch (err) {
-        HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
-        this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-        this.enabledFocus = true;
-        this.isConfirmButtonEnabled = this.inputValue.length > 0;
-        return;
-      }
     } catch {
       this.showToast($r('app.string.network_invalid'));
       this.enabledFocus = true;
-      this.textBoxIsFocused = true;
+      this.isConfirmButtonEnabled = this.inputValue.length > 0;
+      this.isTextInputFocus = true;
+      this.textInputGetFocus();
+      return
+    }
+    try {
+      let accountInfo = await getOsAccountInfo();
+      if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+        accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+        this.showUIExtensionForAccountLogin = true;
+      } else {
+        this.isTextInputFocus = true;
+        this.textInputGetFocus();
+      }
+    } catch (err) {
+      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+    }
+  }
+
+  async getAccountInfo() {
+    HiLog.info(TAG, `get Account Info start`);
+    try {
+      await checkNetworkStatus();
+    } catch {
+      this.showToast($r('app.string.network_invalid'));
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = this.inputValue.length > 0;
+      this.isTextInputFocus = true;
+      this.textInputGetFocus();
+      return;
+    }
+    try {
+      let accountInfo = await getOsAccountInfo();
+      if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+        accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+        this.showUIExtensionForAccountLogin = true;
+        return;
+      }
+      if (accountInfo.distributedInfo.id !== this.recordHashUid) {
+        HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
+        this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
+        this.commandGetAccountInfoFlag = true;
+        this.recordHashUid = accountInfo.distributedInfo.id;
+        return;
+      } else {
+        this.changeAccountInfo();
+      }
+    } catch (err) {
+      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      this.enabledFocus = true;
       this.isConfirmButtonEnabled = this.inputValue.length > 0;
     }
   }
@@ -424,24 +451,9 @@ struct encryptedSharing {
           } else {
             HiLog.error(TAG, `error is ${JSON.stringify(error)}`);
           }
-      });
+        });
     } catch (error) {
       HiLog.error(TAG, `callback getStringValue failed, error ${JSON.stringify(error)}`);
-    }
-  }
-
-  private getSettingItemPadding(): number {
-    const FONT_SIZE_SCALE_PARAM = 'persist.sys.font_scale_for_user0';
-    let fontSizeScale = Number.parseFloat(systemParameterEnhance.getSync(FONT_SIZE_SCALE_PARAM, '1'));
-    switch (fontSizeScale) {
-      case FontSizeScale.XXL1:
-        return Constants.GET_SETTING_ITEM_XXL1;
-      case FontSizeScale.XXL2:
-        return Constants.GET_SETTING_ITEM_XXL2;
-      case FontSizeScale.XXL3:
-        return Constants.GET_SETTING_ITEM_XXL3;
-      default:
-        return Constants.GET_SETTING_ITEM_DEFAULT;
     }
   }
 
@@ -461,9 +473,20 @@ struct encryptedSharing {
     });
   }
 
+  textInputGetFocus() {
+    setTimeout(() => {
+      try {
+        HiLog.info(TAG, `delay requestFocus start`);
+        this.getUIContext().getFocusController().requestFocus('phoneInput');
+      } catch (error) {
+        HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
+      }
+    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtensionForAccountLogin}`);
-    this.getAccountInfo();
+    this.getLoginStatus();
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
     this.checkContacts();
@@ -515,27 +538,16 @@ struct encryptedSharing {
             Row() {
               TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
                 .id('phoneInput')
-                .onAppear(() => {
-                  if (this.textBoxIsFocused) {
-                    setTimeout(() => {
-                      try {
-                        HiLog.info(TAG, `delay requestFocus start`);
-                        this.getUIContext().getFocusController().requestFocus('phoneInput');
-                      } catch (error) {
-                        HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
-                      }
-                    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
-                  }
-                })
                 .padding({
                   left: SystemUtils.isRTL() ?
-                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
+                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
                   right: SystemUtils.isRTL() ?
-                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
+                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
                 })
                 .enabled(this.enabledFocus)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
-                .focusable(this.textBoxIsFocused)
+                .focusable(this.isTextInputFocus)
+                .defaultFocus(false)
                 .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
                 .type(InputType.PhoneNumber)
                 .contentType(ContentType.PHONE_COUNTRY_CODE)
@@ -578,7 +590,7 @@ struct encryptedSharing {
             }
 
             Text(this.phoneFormatTips ?
-              this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
+            this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
               .fontColor(this.phoneFormatTips ?
               $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
               .fontSize($r('sys.float.ohos_id_text_size_body3'))
@@ -597,6 +609,7 @@ struct encryptedSharing {
         .padding({
           top: Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM
         })
+
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
             .enabled(this.isConfirmButtonEnabled)
@@ -617,6 +630,7 @@ struct encryptedSharing {
       }
       .width(Constants.SHARE_PAGES_COLUMN_WIDTH)
       .height(Constants.SHARE_PAGES_COLUMN_HEIGHT)
+
       if (this.showUIExtensionForAccountLogin) {
         UIExtensionComponent({
           bundleName: 'com.huawei.hmos.dlpcredmgr',
@@ -655,15 +669,8 @@ struct encryptedSharing {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
-            this.textBoxIsFocused = true;
-            setTimeout(() => {
-              try {
-                HiLog.info(TAG, `delay requestFocus start`);
-                this.getUIContext().getFocusController().requestFocus('phoneInput');
-              } catch (error) {
-                HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
-              }
-            }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
+            this.isTextInputFocus = true;
+            this.textInputGetFocus();
             this.showUIExtensionForAccountLogin = false;
           })
           .size({
