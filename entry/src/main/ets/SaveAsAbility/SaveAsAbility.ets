@@ -88,7 +88,7 @@ export default class SaveAsAbility extends UIAbility {
   private fileName: string = '';
   private suffix: string = '';
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
-  private isOK: boolean = true; // use with startAlertAbility
+  private isOK: boolean = true; // use with requestModalUIExtension
   private zipFlag: boolean = false;
   private random: string = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
   private filePath: string = '';
@@ -182,11 +182,11 @@ export default class SaveAsAbility extends UIAbility {
         AppStorage.setOrCreate('contactAccount', contactAccount);
         let accountFlag = await GetAlertMessage.checkAccountInfo(contactAccount);
         if (!accountFlag) {
-          await GetAlertMessage.startAlertAbility(this.context, {
+          await GetAlertMessage.requestModalUIExtension(this.context, {
             code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
           reject();
         }
-        await GetAlertMessage.startAlertAbility(this.context,
+        await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_DLP_FILE_READ_ONLY } as BusinessError);
         reject();
       }
@@ -514,7 +514,7 @@ export default class SaveAsAbility extends UIAbility {
         HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
       }
       this.isOK = false;
-      await GetAlertMessage.startAlertAbility(this.context,
+      await GetAlertMessage.requestModalUIExtension(this.context,
         { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
@@ -541,7 +541,7 @@ export default class SaveAsAbility extends UIAbility {
         }
         fs.closeSync(this.srcFdPicker);
         this.isOK = false;
-        await GetAlertMessage.startAlertAbility(this.context,
+        await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         reject();
       }
@@ -587,7 +587,7 @@ export default class SaveAsAbility extends UIAbility {
           HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
         }
         this.isOK = false;
-        await GetAlertMessage.startAlertAbility(this.context,
+        await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         reject();
       }
@@ -609,7 +609,7 @@ export default class SaveAsAbility extends UIAbility {
         this.newDlpFile = await dlpPermission.openDLPFile(this.dstFdPicker, callerAppId);
       } catch (err) {
         HiLog.error(TAG, `generateDlpFile: ${this.dstFdPicker}, failed: ${JSON.stringify(err)}`);
-        await GetAlertMessage.startAlertAbility(this.context, err);
+        await GetAlertMessage.requestModalUIExtension(this.context, err);
         try {
           await fs.close(this.file);
           await this.deleteUri(uri);
@@ -650,7 +650,7 @@ export default class SaveAsAbility extends UIAbility {
         }
         fs.closeSync(this.srcFdPicker);
         this.isOK = false;
-        await GetAlertMessage.startAlertAbility(this.context,
+        await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
         reject();
       }
