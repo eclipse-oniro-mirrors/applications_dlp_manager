@@ -395,6 +395,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
         await this.sendDlpFileOpenFault(
           Constants.DLP_FILE_PARSE_ERROR, this.sandboxBundleName, -1, (err as BusinessError<string>).data
         ); // 103:DLP_FILE_PARSE_ERROR
+
+        if (err.code === Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION ) {
+          await this.callAlertAbility({code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION} as BusinessError);
+          return;
+        }
         let accountFlag: boolean = true;
         if (this.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT &&
           err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
