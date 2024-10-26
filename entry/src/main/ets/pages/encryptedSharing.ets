@@ -550,7 +550,6 @@ struct encryptedSharing {
                 .defaultFocus(false)
                 .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
                 .type(InputType.PhoneNumber)
-                .contentType(ContentType.PHONE_COUNTRY_CODE)
                 .enterKeyType(EnterKeyType.NEW_LINE)
                 .border(this.phoneFormatTips ?
                   { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : { width: 0 })
