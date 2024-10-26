@@ -59,6 +59,8 @@ import AccountManager from '../manager/AccountManager';
 
 const TAG = 'View';
 const SUFFIX_INDEX = 2;
+const APPID_FOR_HOPE: string = '5765880207854533797';
+const BUNDLE_NAME_FOR_HOPE: string = 'com.huawei.it.welink';
 
 interface DlpConnectionPluginIdObj {
   id: string
@@ -407,7 +409,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
         if (!accountFlag) {
-          await this.callAlertAbility({code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+          await this.callAlertAbility({code: Constants.ERR_JS_USER_NO_PERMISSION } as BusinessError);
           return;
         }
         await this.callAlertAbility(err.code === Constants.ERR_JS_APP_PERMISSION_DENY ?
@@ -742,15 +744,31 @@ export default class ViewAbility extends ServiceExtensionAbility {
     });
   }
 
-  async onRequest(want: Want, startId: number): Promise<void> {
-    HiLog.debug(TAG, `enter onRequest`);
+  async checkPermissionWithPluginId(want: Want): Promise<boolean> {
+
     let paramCallerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
     AppStorage.setOrCreate('paramCallerBundleName', paramCallerBundleName);
 
     let pluginId: string = (want.parameters?.['DlpConnectionPluginId'] as DlpConnectionPluginIdObj)?.id;
+    if (pluginId === null || pluginId === undefined) {
+      return true;
+    }
 
-    if (pluginId !== null && pluginId !== undefined && paramCallerBundleName !== 'com.huawei.it.welink') {
-      HiLog.debug(TAG, 'call bundle name is: ${JSON.stringify(paramCallerBundleName)}');
+    let callerAppId = want.parameters?.['ohos.aafwk.param.callerAppIdentifier'] as string;
+    if (callerAppId !== APPID_FOR_HOPE || paramCallerBundleName !== BUNDLE_NAME_FOR_HOPE) {
+      HiLog.error(TAG, `callerAppId or callerBundleNameis error.`);
+      await this.callAlertAbility({code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION } as BusinessError);
+      return false;
+    }
+
+    this.needCallAccount = await this.checkNeedCallAccount();
+    return true;
+  }
+
+  async onRequest(want: Want, startId: number): Promise<void> {
+    HiLog.debug(TAG, `enter onRequest`);
+
+    if (!this.checkPermissionWithPluginId(want)) {
       return;
     }
     try {
@@ -764,7 +782,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.sandboxBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
     this.sandboxAbilityName = want.parameters?.['ohos.dlp.params.abilityName'] as string;
     this.sandboxModuleName = want.parameters?.['ohos.dlp.params.moduleName'] as string;
-    this.needCallAccount = await this.checkNeedCallAccount();
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
       this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
