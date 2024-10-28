@@ -31,55 +31,6 @@ import CommonUtil from './CommonUtil';
 const TAG = 'AlertMessage';
 
 export class GetAlertMessage {
-
-  public static async startAlertAbility(
-    context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
-    error: BusinessError,
-    session?: UIExtensionContentSession
-  ) {
-    if (deviceInfo.deviceType !== '2in1') {
-      GetAlertMessage.phoneHandle(context, error);
-      return;
-    }
-    let dis = display.getDefaultDisplaySync();
-    let xNumber = Math.floor(
-      (dis.width - Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH) * Constants.RATIO_HALF
-    );
-    let yNumber = Math.floor(
-      (dis.height - Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT) * Constants.RATIO_HALF
-    );
-    let options: StartOptions = {
-      withAnimation: true,
-      windowLeft: xNumber,
-      windowTop: yNumber,
-      windowWidth: Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH,
-      windowHeight: Constants.START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT
-    };
-    HiLog.info(TAG, `set options: ${JSON.stringify(options)}`);
-    context.startAbility({
-      bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
-      abilityName: 'AlertAbility',
-      parameters: {
-        error: error,
-        accountType: GlobalContext.load('accountType')
-      }
-    }, options, async (err: BusinessError) => {
-      if (err && err.code !== 0) {
-        HiLog.error(TAG, `start AlertAbility failed: ${JSON.stringify(err)}`);
-      }
-      if (session) {
-        session.terminateSelfWithResult({
-          'resultCode': 0,
-          'want': {
-            'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-          },
-        });
-      } else {
-        context.terminateSelf();
-      }
-    })
-  }
-
   public static async phoneHandle(
     context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
     error: BusinessError
