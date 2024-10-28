@@ -749,7 +749,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     let paramCallerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
     AppStorage.setOrCreate('paramCallerBundleName', paramCallerBundleName);
 
-    let pluginId: string = (want.parameters?.['DlpConnectionPluginId'] as DlpConnectionPluginIdObj)?.id;
+    let pluginId: string = (want.parameters?.['dlpConnectionPluginId'] as DlpConnectionPluginIdObj)?.id;
     if (pluginId === null || pluginId === undefined) {
       return true;
     }
