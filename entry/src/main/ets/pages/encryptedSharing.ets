@@ -375,6 +375,7 @@ struct encryptedSharing {
     } catch {
       this.showToast($r('app.string.network_invalid'));
       this.enabledFocus = true;
+      this.textBoxIsFocused = true;
       this.isConfirmButtonEnabled = this.inputValue.length > 0;
     }
   }
