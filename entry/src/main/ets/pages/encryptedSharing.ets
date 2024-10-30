@@ -148,27 +148,34 @@ struct encryptedSharing {
       this.isConfirmButtonEnabled = true;
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
     }
-    let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
-    HiLog.info(TAG, `commandGetAccountInfo Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
-    let res = commandGetAccountInfoCallBack.result as Record<string, string>;
-    if (Number(commandGetAccountInfoCallBack.errorCode) === Constants.ERR_CODE_SUCCESS && res?.uid) {
-      this.ownerAccount = res?.uid;
-      this.ownerAccountID = res?.uid;
-      this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
-    } else {
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
-      this.recordHashUid = '';
-      storage.setOrCreate('commandGetAccountInfo', '');
-      if ([
-        Constants.ERR_CODE_NETWORK_ERROR,
-        Constants.ERR_CODE_CONNECTION_FAIL,
-        Constants.ERR_CODE_CONNECTION_TIME_OUT
-      ].includes(Number(commandGetAccountInfoCallBack.errorCode))) {
-        this.showToast($r('app.string.network_invalid'));
-        return;
+    try {
+      let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
+      HiLog.info(TAG, `commandGetAccountInfo Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
+      let res = commandGetAccountInfoCallBack.result as Record<string, string>;
+      if (Number(commandGetAccountInfoCallBack.errorCode) === Constants.ERR_CODE_SUCCESS && res?.uid) {
+        this.ownerAccount = res?.uid;
+        this.ownerAccountID = res?.uid;
+        this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
+      } else {
+        this.enabledFocus = true;
+        this.isConfirmButtonEnabled = true;
+        this.recordHashUid = '';
+        storage.setOrCreate('commandGetAccountInfo', '');
+        if ([
+          Constants.ERR_CODE_NETWORK_ERROR,
+          Constants.ERR_CODE_CONNECTION_FAIL,
+          Constants.ERR_CODE_CONNECTION_TIME_OUT
+        ].includes(Number(commandGetAccountInfoCallBack.errorCode))) {
+          this.showToast($r('app.string.network_invalid'));
+          return;
+        }
+        this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       }
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+    } catch (error) {
+      HiLog.error(TAG, `get account info failed: ${JSON.stringify(error)}`);
+      this.showToast($r('app.string.network_invalid'));
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = this.inputValue.length > 0;
     }
   }
 
