@@ -113,6 +113,7 @@ export class GetAlertMessage {
           'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED')
         } as Record<string, Resource>;
       case Constants.ERR_JS_APP_ENCRYPTING:
+        // not available in dialog, only in Session error.
         return {
           'title': $r('app.string.header_title'),
           'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION', err.data)
@@ -193,6 +194,9 @@ export class GetAlertMessage {
       GetAlertMessage.phoneHandle(context, error);
       return;
     };
+    // system dialog with UIExtension window, only support one depth want param.
+    let code = error.code;
+    let message = error.message;
     let uiExtWant: Want = {
       bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
       abilityName: 'DialogUIExtAbility',
@@ -200,22 +204,18 @@ export class GetAlertMessage {
       parameters: {
         'bundleName': AppStorage.get('paramCallerBundleName') ?? '',
         'ability.want.params.uiExtensionType': 'sys/commonUI',
-        'error': error,
+        'errorCode': code,
+        'errorMessage': message,
         'accountType': GlobalContext.load('accountType')
       }
     };
     try {
-      context.requestModalUIExtension(uiExtWant)
-        .then(() => {
-          HiLog.info(TAG, 'requestModalUIExtension succeed');
-        })
-        .catch((err: BusinessError) => {
-          HiLog.error(TAG, `requestModalUIExtension failed. Cause: ${JSON.stringify(err)}`);
-        })
+      await context.requestModalUIExtension(uiExtWant);
+      HiLog.info(TAG, 'requestModalUIExtension succeed');
     } catch (err) {
       let code = (err as BusinessError).code;
       let message = (err as BusinessError).message;
-      HiLog.error(TAG, `requestModalUIExtension failed. Cause: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `requestModalUIExtension failed. Cause: error code: ${code},error messagae:${message}`);
     }
   }
 }

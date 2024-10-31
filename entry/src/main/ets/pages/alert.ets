@@ -139,10 +139,15 @@ struct Index {
       let errorMsg = {} as BusinessError;
       let accountType = -1;
       if (this.session === undefined) {
-        errorMsg = this.dialogUIExtWant?.parameters?.error as BusinessError;
-        messageCode = errorMsg.code;
+        // use dialog error
+        let errorCode = this.dialogUIExtWant?.parameters?.errorCode as number;
+        let errorMessage = this.dialogUIExtWant?.parameters?.errorMessage as string;
+        errorMsg.code = errorCode;
+        errorMsg.message = errorMessage;
+        messageCode = errorCode;
         accountType = this.dialogUIExtWant?.parameters?.accountType as number;
       } else {
+        // use session error
         errorMsg = storage.get('error') as BusinessError;
         messageCode = errorMsg.code;
         accountType = dlpPermission.AccountType.DOMAIN_ACCOUNT;
