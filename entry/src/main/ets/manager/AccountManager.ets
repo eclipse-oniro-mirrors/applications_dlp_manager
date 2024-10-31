@@ -40,7 +40,7 @@ export default class AccountManager {
   public static async getDomainAccountByAccountName(search: string): Promise<DomainAccountInfo> {
     let domainAccountMap: Map<string, DomainAccountInfo> | undefined =
       AppStorage.get(AppStorageConstant.DOMAIN_ACCOUNT_MAP);
-    let domainAccount: DomainAccountInfo | undefined = domainAccountMap?.get(search);
+    let domainAccount: DomainAccountInfo | undefined = domainAccountMap?.get(search.toLocaleUpperCase());
     if (domainAccount) {
       return domainAccount;
     }
@@ -93,7 +93,7 @@ export default class AccountManager {
       domainAccountMap = new Map<string, DomainAccountInfo>();
     }
     dataArray.forEach(data =>{
-      domainAccountMap?.set(data.accountName, data);
+      domainAccountMap?.set(data.accountName.toLocaleUpperCase(), data);
     });
     AppStorage.setOrCreate(AppStorageConstant.DOMAIN_ACCOUNT_MAP, domainAccountMap);
   }
