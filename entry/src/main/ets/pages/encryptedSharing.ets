@@ -95,7 +95,7 @@ struct encryptedSharing {
   @State contactPerson: string = '';
   @State recordHashUid: string = '';
   @State osVersion: ResourceStr = '';
-  @State textBoxIsFocused: boolean = false;
+  @State isTextInputFocus: boolean = false;
   @State generalType: string = 'general.file';
 
   @Builder
@@ -344,38 +344,64 @@ struct encryptedSharing {
     }
   }
 
-  async getAccountInfo() {
+  async getLoginStatus() {
+    HiLog.info(TAG, `get login status start.`);
     try {
       await checkNetworkStatus();
-      HiLog.info(TAG, `get Account Info start`);
-      try {
-        let accountInfo = await getOsAccountInfo();
-        if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
-          accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-          this.showUIExtensionForAccountLogin = true;
-          return;
-        };
-        this.textBoxIsFocused = true;
-        if (accountInfo.distributedInfo.id !== this.recordHashUid) {
-          HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
-          this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
-          this.commandGetAccountInfoFlag = true;
-          this.recordHashUid = accountInfo.distributedInfo.id;
-          return;
-        } else {
-          this.changeAccountInfo();
-        }
-      } catch (err) {
-        HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
-        this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-        this.enabledFocus = true;
-        this.isConfirmButtonEnabled = this.inputValue.length > 0;
-        return;
-      }
     } catch {
       this.showToast($r('app.string.network_invalid'));
       this.enabledFocus = true;
-      this.textBoxIsFocused = true;
+      this.isConfirmButtonEnabled = this.inputValue.length > 0;
+      this.isTextInputFocus = true;
+      this.textInputGetFocus();
+      return
+    }
+    try {
+      let accountInfo = await getOsAccountInfo();
+      if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+        accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+        this.showUIExtensionForAccountLogin = true;
+      } else {
+        this.isTextInputFocus = true;
+        this.textInputGetFocus();
+      }
+    } catch (err) {
+      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+    }
+  }
+
+  async getAccountInfo() {
+    HiLog.info(TAG, `get Account Info start`);
+    try {
+      await checkNetworkStatus();
+    } catch {
+      this.showToast($r('app.string.network_invalid'));
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = this.inputValue.length > 0;
+      this.isTextInputFocus = true;
+      this.textInputGetFocus();
+      return;
+    }
+    try {
+      let accountInfo = await getOsAccountInfo();
+      if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+        accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
+        this.showUIExtensionForAccountLogin = true;
+        return;
+      }
+      if (accountInfo.distributedInfo.id !== this.recordHashUid) {
+        HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
+        this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
+        this.commandGetAccountInfoFlag = true;
+        this.recordHashUid = accountInfo.distributedInfo.id;
+        return;
+      } else {
+        this.changeAccountInfo();
+      }
+    } catch (err) {
+      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      this.enabledFocus = true;
       this.isConfirmButtonEnabled = this.inputValue.length > 0;
     }
   }
@@ -461,9 +487,20 @@ struct encryptedSharing {
     });
   }
 
+  textInputGetFocus() {
+    setTimeout(() => {
+      try {
+        HiLog.info(TAG, `delay requestFocus start`);
+        this.getUIContext().getFocusController().requestFocus('phoneInput');
+      } catch (error) {
+        HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
+      }
+    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtensionForAccountLogin}`);
-    this.getAccountInfo();
+    this.getLoginStatus();
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
     this.checkContacts();
@@ -515,18 +552,6 @@ struct encryptedSharing {
             Row() {
               TextInput({ placeholder: this.placeHolderStr, text: this.inputValue })
                 .id('phoneInput')
-                .onAppear(() => {
-                  if (this.textBoxIsFocused) {
-                    setTimeout(() => {
-                      try {
-                        HiLog.info(TAG, `delay requestFocus start`);
-                        this.getUIContext().getFocusController().requestFocus('phoneInput');
-                      } catch (error) {
-                        HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
-                      }
-                    }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
-                  }
-                })
                 .padding({
                   left: SystemUtils.isRTL() ?
                     Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
@@ -535,7 +560,7 @@ struct encryptedSharing {
                 })
                 .enabled(this.enabledFocus)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
-                .focusable(this.textBoxIsFocused)
+                .focusable(this.isTextInputFocus)
                 .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
                 .type(InputType.PhoneNumber)
                 .contentType(ContentType.PHONE_COUNTRY_CODE)
@@ -655,15 +680,8 @@ struct encryptedSharing {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
-            this.textBoxIsFocused = true;
-            setTimeout(() => {
-              try {
-                HiLog.info(TAG, `delay requestFocus start`);
-                this.getUIContext().getFocusController().requestFocus('phoneInput');
-              } catch (error) {
-                HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
-              }
-            }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
+            this.isTextInputFocus = true;
+            this.textInputGetFocus();
             this.showUIExtensionForAccountLogin = false;
           })
           .size({
