@@ -141,7 +141,8 @@ struct AddStaff {
     }
     let dataArray: Array<DomainAccountInfo> | undefined = accountResponse?.getData();
     searchArray.forEach(accountName =>{
-      let matchAccount = dataArray?.find(data => data.accountName === accountName);
+      let matchAccount = dataArray?.find(
+        data => data.accountName.toLocaleUpperCase() === accountName.toLocaleUpperCase());
       if (matchAccount) {
         this.addStaff(matchAccount);
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {

@@ -395,7 +395,8 @@ struct changeEncryption {
     }
     dataArray.forEach(data =>{
       let accountName = data.authAccount;
-      let match = result?.getData().find(item => accountName === item.accountName);
+      let match = result?.getData().find(
+        item => accountName.toLocaleUpperCase() === item.accountName.toLocaleUpperCase());
       if (match) {
         data.textContent = match[AccountTipsConfig.showContentKey];
       }
