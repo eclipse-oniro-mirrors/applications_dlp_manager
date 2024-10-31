@@ -147,6 +147,7 @@ struct encryptedSharing {
       this.enabledFocus = true;
       this.isConfirmButtonEnabled = true;
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      return;
     }
     try {
       let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
@@ -160,7 +161,6 @@ struct encryptedSharing {
         this.enabledFocus = true;
         this.isConfirmButtonEnabled = true;
         this.recordHashUid = '';
-        storage.setOrCreate('commandGetAccountInfo', '');
         if ([
           Constants.ERR_CODE_NETWORK_ERROR,
           Constants.ERR_CODE_CONNECTION_FAIL,
@@ -173,7 +173,7 @@ struct encryptedSharing {
       }
     } catch (error) {
       HiLog.error(TAG, `get account info failed: ${JSON.stringify(error)}`);
-      this.showToast($r('app.string.network_invalid'));
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enabledFocus = true;
       this.isConfirmButtonEnabled = this.inputValue.length > 0;
     }
