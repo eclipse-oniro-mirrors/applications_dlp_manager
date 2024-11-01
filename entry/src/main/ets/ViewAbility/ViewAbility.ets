@@ -235,7 +235,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           'name': this.linkFileWriteable
         },
         'fileName': {
-          'name': this.fileName
+          'name': decodeURIComponent(this.fileName)
         },
         'ohos.dlp.params.index': this.appIndex,
         'ohos.dlp.params.moduleName': this.sandboxModuleName,
