@@ -35,7 +35,7 @@ import {
   sendDlpManagerAccountLogin,
   getAppId,
   getOsAccountInfo,
-  checkNetworkStatus
+  getConnectionStatus
 } from '../common/utils';
 import { SystemUtils } from '../common/systemUtils';
 
@@ -69,6 +69,7 @@ let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct encryptedSharing {
+  static readonly GET_ACCOUNT_INFO_RESET = 'clear';
   private connectService: ConnectService = new ConnectService(getContext(this));
   @State titlebarMargin: LocalizedMargin = {
     start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
@@ -76,7 +77,6 @@ struct encryptedSharing {
   };
   @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
   @LocalStorageLink('commandGetAccountInfo') @Watch('changeAccountInfo') commandGetAccountInfo: string = '';
-  @State commandGetAccountInfoFlag: boolean = false;
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
   @State enabledFocus: boolean = true;
   @State isConfirmButtonEnabled: boolean = false;
@@ -93,7 +93,7 @@ struct encryptedSharing {
     storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State placeHolderStr: ResourceStr = '';
   @State contactPerson: string = '';
-  @State recordHashUid: string = '';
+  @State recordSuccessUid: string = '';
   @State osVersion: ResourceStr = '';
   @State isTextInputFocus: boolean = false;
   @State generalType: string = 'general.file';
@@ -139,16 +139,10 @@ struct encryptedSharing {
   }
 
   changeAccountInfo() {
+    if (this.commandGetAccountInfo == encryptedSharing.GET_ACCOUNT_INFO_RESET) {
+      return;
+    }
     HiLog.info(TAG, `changeAccountInfo start`);
-    if (!this.checkCloudPhone(this.inputValue)) {
-      return;
-    }
-    if (!this.commandGetAccountInfo) {
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      return;
-    }
     try {
       let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
       HiLog.info(TAG, `commandGetAccountInfo Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
@@ -157,25 +151,31 @@ struct encryptedSharing {
         this.ownerAccount = res?.uid;
         this.ownerAccountID = res?.uid;
         this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
+        return;
       } else {
         this.enabledFocus = true;
         this.isConfirmButtonEnabled = true;
-        this.recordHashUid = '';
+        this.recordSuccessUid = '';
+        this.commandGetAccountInfo = encryptedSharing.GET_ACCOUNT_INFO_RESET;
         if ([
           Constants.ERR_CODE_NETWORK_ERROR,
           Constants.ERR_CODE_CONNECTION_FAIL,
           Constants.ERR_CODE_CONNECTION_TIME_OUT
         ].includes(Number(commandGetAccountInfoCallBack.errorCode))) {
           this.showToast($r('app.string.network_invalid'));
-          return;
+        } else {
+          this.showToast($r('app.string.Share_File_Encrypted_Failed'));
         }
-        this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+        return;
       }
     } catch (error) {
       HiLog.error(TAG, `get account info failed: ${JSON.stringify(error)}`);
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enabledFocus = true;
-      this.isConfirmButtonEnabled = this.inputValue.length > 0;
+      this.isConfirmButtonEnabled = true;
+      this.recordSuccessUid = '';
+      this.commandGetAccountInfo = encryptedSharing.GET_ACCOUNT_INFO_RESET;
+      return;
     }
   }
 
@@ -304,7 +304,7 @@ struct encryptedSharing {
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
       HiLog.info(TAG, `credentialCallBack msg`);
       let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'no_user');
-      this.credentialCallBackMsg = str.length > 0 ? str : credentialCallBack.msg;
+      this.credentialCallBackMsg = str.length > 0 ? str : credentialCallBack.errorMsg;
       this.phoneFormatTips = true;
       storage.setOrCreate('commandSearchUserInfo', '');
       return false;
@@ -354,15 +354,13 @@ struct encryptedSharing {
 
   async getLoginStatus() {
     HiLog.info(TAG, `get login status start.`);
-    try {
-      await checkNetworkStatus();
-    } catch {
+    if (await getConnectionStatus() === false) {
       this.showToast($r('app.string.network_invalid'));
       this.enabledFocus = true;
       this.isConfirmButtonEnabled = this.inputValue.length > 0;
       this.isTextInputFocus = true;
       this.textInputGetFocus();
-      return
+      return;
     }
     try {
       let accountInfo = await getOsAccountInfo();
@@ -380,9 +378,7 @@ struct encryptedSharing {
 
   async getAccountInfo() {
     HiLog.info(TAG, `get Account Info start`);
-    try {
-      await checkNetworkStatus();
-    } catch {
+    if (await getConnectionStatus() === false) {
       this.showToast($r('app.string.network_invalid'));
       this.enabledFocus = true;
       this.isConfirmButtonEnabled = this.inputValue.length > 0;
@@ -397,14 +393,13 @@ struct encryptedSharing {
         this.showUIExtensionForAccountLogin = true;
         return;
       }
-      if (accountInfo.distributedInfo.id !== this.recordHashUid) {
+      if (accountInfo.distributedInfo.id !== this.recordSuccessUid) {
         HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
         this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
-        this.commandGetAccountInfoFlag = true;
-        this.recordHashUid = accountInfo.distributedInfo.id;
+        this.recordSuccessUid = accountInfo.distributedInfo.id;
         return;
       } else {
-        this.changeAccountInfo();
+        this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
       }
     } catch (err) {
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
