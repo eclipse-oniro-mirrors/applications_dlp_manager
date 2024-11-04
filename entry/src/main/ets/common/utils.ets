@@ -28,17 +28,40 @@ import { BusinessError, Callback } from '@ohos.base'
 import Want from '@ohos.app.ability.Want';
 import common from '@ohos.app.ability.common';
 import connection from '@ohos.net.connection';
-import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Constants from '../common/constant';
 import GlobalContext from './GlobalContext';
 import hiSysEvent from '@ohos.hiSysEvent';
 import { HiLog } from '../common/HiLog';
+import { systemDateTime } from '@kit.BasicServicesKit';
 
 const TAG = 'Utils';
 const HEAD_LENGTH_IN_BYTE = 28;
 const HEAD_LENGTH_IN_U32 = 7;
 const CERT_OFFSET = 5;
 const CERT_SIZE = 6;
+
+const NET_CAPABILITY_INTERNET: number = 12;
+const NET_CAPABILITY_VALIDATED: number = 16;
+const NET_CAPABILITY_CHECKING_CONNECTIVITY: number = 31;
+const TIME_OUT_SECONDS: number = 3;
+const SLEEP_MILLISECONDS: number = 200;
+
+const DAY_TO_MILLISECOND: number = 1000 * 60 * 60 * 24;
+const MINUTE_TO_MILLISECOND: number = 1000 * 60;
+const SECOND_TO_MILLISECOND: number = 1000;
+
+const enum UnitType {
+  DAY_UNIT = 1,
+  MINUTE_UNIT = 2,
+  SECOND_UNIT = 3,
+}
+
+const UNIT_MAP = new Map<number, number>([
+  [UnitType.DAY_UNIT, DAY_TO_MILLISECOND],
+  [UnitType.MINUTE_UNIT, MINUTE_TO_MILLISECOND],
+  [UnitType.SECOND_UNIT, SECOND_TO_MILLISECOND],
+]);
+
 class ChangeOption {
   public offset: number = 0
   public length: number = 0
@@ -488,6 +511,64 @@ function removeDir(file: string) {
   }
 }
 
+function getCurrentTime(isNano: boolean = false): number {
+  return systemDateTime.getTime(isNano);
+}
+
+function isExpire(timestamp: number, diff: number, unit: number): boolean {
+  if (isNaN(timestamp) || diff <= 0) {
+    return true;
+  }
+  let multipleMill = UNIT_MAP.get(unit);
+  if (!multipleMill) {
+    HiLog.error(TAG, 'Invalid unit');
+    return false;
+  }
+
+  let currentTime = getCurrentTime();
+  const diffMilliSecond = Number(currentTime) - Number(timestamp);
+  const compareDiffSec = diff * multipleMill;
+  return diffMilliSecond > compareDiffSec;
+}
+
+async function sleep(milliSeconds: number): Promise<void> {
+  return new Promise<void>(resolve => setTimeout(resolve, milliSeconds));
+}
+
+async function getConnectionStatus(exactly: boolean = true): Promise<boolean> {
+  HiLog.info(TAG, `Enter getConnectionStatus, exactly mode: ${exactly}}`);
+  try {
+    const startTime = getCurrentTime();
+    let net: connection.NetHandle = await connection.getDefaultNet();
+    let capabilities: connection.NetCapabilities = await connection.getNetCapabilities(net);
+    HiLog.info(TAG, `Succeeded to get net capabilities, ${JSON.stringify(capabilities)}`);
+    let networkCap = capabilities.networkCap;
+    while (exactly && networkCap?.includes(NET_CAPABILITY_CHECKING_CONNECTIVITY)) {
+      HiLog.info(TAG, `Checking connectivity...`);
+      if (isExpire(startTime, TIME_OUT_SECONDS, UnitType.SECOND_UNIT)) {
+        HiLog.error(TAG, `Network connection check failed.`);
+        return false;
+      }
+      await sleep(SLEEP_MILLISECONDS);
+      net = await connection.getDefaultNet();
+      capabilities = await connection.getNetCapabilities(net);
+      networkCap = capabilities.networkCap;
+    }
+
+    let internetExists = networkCap?.includes(NET_CAPABILITY_INTERNET);
+    let validatedExists = networkCap?.includes(NET_CAPABILITY_VALIDATED);
+    if (internetExists && validatedExists) {
+      HiLog.debug(TAG, 'Net connection is valid.');
+      return true;
+    } else {
+      HiLog.error(TAG, 'Net connection is invalid.');
+    }
+  } catch (error) {
+    HiLog.error(TAG, `GetConnectionStatus failed: ${JSON.stringify(error)}`);
+  }
+  return false;
+}
+
 function checkNetworkStatus(): Promise<void> {
   return new Promise((resolve, reject) => {
     let netHandle = connection.getDefaultNetSync();
@@ -536,5 +617,6 @@ export {
   isValidPath,
   defaultDlpFile,
   getAccountType,
-  checkNetworkStatus
+  checkNetworkStatus,
+  getConnectionStatus
 };

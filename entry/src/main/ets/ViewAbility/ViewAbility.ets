@@ -39,7 +39,7 @@ import {
   isValidPath,
   defaultDlpFile,
   getAccountType,
-  checkNetworkStatus
+  getConnectionStatus
 } from '../common/utils';
 import {
   DlpFileInfo,
@@ -76,7 +76,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private needCallAccount: boolean = true;
-  private needCheckAccountType: boolean = false;
   private sandboxBundleName: string = '';
   private sandboxAbilityName: string = '';
   private sandboxModuleName: string = '';
@@ -308,13 +307,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
       bundleName: 'com.huawei.hmos.dlpcredmgr',
       abilityName: 'DlpCredLoginAbility'
     };
-    try {
-      await checkNetworkStatus();
-    } catch {
+    if (await getConnectionStatus() === false) {
       GetAlertMessage.requestModalUIExtension(this.context, {
         code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
       return;
-    };
+    }
     try {
       await this.context.startAbility(accountWant);
     } catch (err) {
@@ -746,7 +743,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
   }
 
   async checkPermissionWithPluginId(want: Want): Promise<boolean> {
-
     let paramCallerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
     AppStorage.setOrCreate('paramCallerBundleName', paramCallerBundleName);
 
@@ -762,13 +758,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return false;
     }
 
-    this.needCheckAccountType = true;
+    this.needCallAccount = await this.checkNeedCallAccount();
     return true;
   }
 
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.debug(TAG, `enter onRequest`);
-
     if (!this.checkPermissionWithPluginId(want)) {
       return;
     }
@@ -783,9 +778,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.sandboxBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
     this.sandboxAbilityName = want.parameters?.['ohos.dlp.params.abilityName'] as string;
     this.sandboxModuleName = want.parameters?.['ohos.dlp.params.moduleName'] as string;
-    if (this.needCheckAccountType) {
-      this.needCallAccount = await this.checkNeedCallAccount();
-    }
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
       this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
