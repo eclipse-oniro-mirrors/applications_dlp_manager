@@ -177,17 +177,28 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
       }
     }
   };
-  (getContext() as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+  try {
+    (getContext() as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+  } catch (error) {
+    HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+  }
 }
 
 function judgeIsSandBox(want: Want) {
   return new Promise<boolean>(async resolve => {
     let callerToken: number = want.parameters?.['ohos.aafwk.param.callerToken'] as number;
     let callerBundleName: string = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
-    let applicationInfo = await bundleManager.getApplicationInfo(
-      callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
-    if (callerToken === applicationInfo.accessTokenId) {
+    try {
+      let applicationInfo = await bundleManager.getApplicationInfo(
+        callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
+      if (callerToken === applicationInfo.accessTokenId) {
+        resolve(false);
+        return;
+      }
+    } catch (error) {
+      HiLog.error(TAG, `getApplicationInfo exception, error is ${JSON.stringify(error)}`);
       resolve(false);
+      return;
     }
     resolve(true);
   })
@@ -433,7 +444,13 @@ function getAccountType(
   return new Promise(async (resolve, reject) => {
     let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
     let option: ChangeOption = { offset: 0, length: HEAD_LENGTH_IN_BYTE };
-    let num = fs.readSync(fd, z, option);
+    try {
+      fs.readSync(fd, z, option);
+    } catch (error) {
+      HiLog.error(TAG, `readSync exception, error is ${JSON.stringify(error)}`);
+      reject();
+      return;
+    }
     let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
     if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
       let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
@@ -463,8 +480,8 @@ function getAccountType(
     } else {
       let cert = new ArrayBuffer(buf[CERT_SIZE]);
       option = { offset: buf[CERT_OFFSET], length: buf[CERT_SIZE] };
-      num = fs.readSync(fd, cert, option);
       try {
+        fs.readSync(fd, cert, option);
         let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
         let fdString: string = textDecoder.decodeWithStream(new Uint8Array(cert), { stream: false });
         let infoArray = fdString.split('accountType');
@@ -571,22 +588,26 @@ async function getConnectionStatus(exactly: boolean = true): Promise<boolean> {
 
 function checkNetworkStatus(): Promise<void> {
   return new Promise((resolve, reject) => {
-    let netHandle = connection.getDefaultNetSync();
-    connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
-      if (error) {
-        HiLog.error(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
+    try {
+      let netHandle = connection.getDefaultNetSync();
+      connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
+        if (error) {
+          HiLog.error(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
+          reject();
+          return;
+        }
+        HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
+        const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
+          .every(element => data.networkCap?.includes(element));
+        if (result) {
+          resolve();
+          return;
+        }
         reject();
-        return;
-      };
-      HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
-      const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
-        .every(element => data.networkCap?.includes(element));
-      if (result) {
-        resolve();
-        return;
-      }
+      })
+    } catch (error) {
       reject();
-    })
+    }
   })
 }
 

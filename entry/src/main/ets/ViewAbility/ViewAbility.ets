@@ -119,7 +119,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
       GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       HiLog.debug(TAG, `sandbox2linkFile size: ${sandbox2linkFile.size}`);
       if (sandbox2linkFile.size === 0) {
-        this.context.terminateSelf();
+        try {
+          this.context.terminateSelf();
+        } catch (error) {
+          HiLog.error(TAG, `terminateSelf exception, error is ${JSON.stringify(error)}`);
+        }
       }
       reject();
       return;

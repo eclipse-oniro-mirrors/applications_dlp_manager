@@ -14,6 +14,7 @@
  */
 
 import rpc from '@ohos.rpc';
+import { HiLog } from '../../common/HiLog';
 
 const TAG = 'dlpClass';
 const ARRAY_LENGTH_MAX = 100;
@@ -39,18 +40,28 @@ export class IAuthUser extends rpc.MessageSequence {
   }
 
   marshalling(dataOut: rpc.MessageSequence): boolean {
-    dataOut.writeString(this.authAccount);
-    dataOut.writeInt(this.authAccountType);
-    dataOut.writeInt(this.dlpFileAccess);
-    dataOut.writeLong(this.permExpiryTime);
+    try {
+      dataOut.writeString(this.authAccount);
+      dataOut.writeInt(this.authAccountType);
+      dataOut.writeInt(this.dlpFileAccess);
+      dataOut.writeLong(this.permExpiryTime);
+    } catch (error) {
+      HiLog.error(TAG, `marshalling exception, error is ${JSON.stringify(error)}`);
+      return false;
+    }
     return true;
   }
 
   unmarshalling(dataIn: rpc.MessageSequence): boolean {
-    this.authAccount = dataIn.readString();
-    this.authAccountType = dataIn.readInt();
-    this.dlpFileAccess = dataIn.readInt();
-    this.permExpiryTime = dataIn.readLong();
+    try {
+      this.authAccount = dataIn.readString();
+      this.authAccountType = dataIn.readInt();
+      this.dlpFileAccess = dataIn.readInt();
+      this.permExpiryTime = dataIn.readLong();
+    } catch (error) {
+      HiLog.error(TAG, `unmarshalling exception, error is ${JSON.stringify(error)}`);
+      return false;
+    }
     return true;
   }
 }
@@ -87,34 +98,44 @@ export default class IDLDLPProperty extends rpc.MessageSequence {
   }
 
   marshalling(dataOut: rpc.MessageSequence): boolean {
-    dataOut.writeString(this.ownerAccount);
-    dataOut.writeString(this.ownerAccountID);
-    dataOut.writeInt(this.ownerAccountType);
-    dataOut.writeInt(this.authUserList.length);
-    dataOut.writeParcelableArray(this.authUserList);
-    dataOut.writeString(this.contactAccount);
-    dataOut.writeBoolean(this.offlineAccess);
-    dataOut.writeIntArray(this.everyoneAccessList);
-    dataOut.writeLong(this.expireTime);
+    try {
+      dataOut.writeString(this.ownerAccount);
+      dataOut.writeString(this.ownerAccountID);
+      dataOut.writeInt(this.ownerAccountType);
+      dataOut.writeInt(this.authUserList.length);
+      dataOut.writeParcelableArray(this.authUserList);
+      dataOut.writeString(this.contactAccount);
+      dataOut.writeBoolean(this.offlineAccess);
+      dataOut.writeIntArray(this.everyoneAccessList);
+      dataOut.writeLong(this.expireTime);
+    } catch (error) {
+      HiLog.error(TAG, `marshalling exception, error is ${JSON.stringify(error)}`);
+      return false;
+    }
     return true;
   }
 
   unmarshalling(dataIn: rpc.MessageSequence): boolean {
-    this.ownerAccount = dataIn.readString();
-    this.ownerAccountID = dataIn.readString();
-    this.ownerAccountType = dataIn.readInt();
-    let arrayLength:number = dataIn.readInt();
-    if (arrayLength < ARRAY_LENGTH_MIN || arrayLength > ARRAY_LENGTH_MAX) {
+    try {
+      this.ownerAccount = dataIn.readString();
+      this.ownerAccountID = dataIn.readString();
+      this.ownerAccountType = dataIn.readInt();
+      let arrayLength:number = dataIn.readInt();
+      if (arrayLength < ARRAY_LENGTH_MIN || arrayLength > ARRAY_LENGTH_MAX) {
+        return false;
+      }
+      for (let i = 0; i < arrayLength; i++) {
+        this.authUserList.push(new IAuthUser('', 0, 0, 0));
+      }
+      dataIn.readParcelableArray(this.authUserList);
+      this.contactAccount = dataIn.readString();
+      this.offlineAccess = dataIn.readBoolean();
+      this.everyoneAccessList = dataIn.readIntArray();
+      this.expireTime = dataIn.readLong();
+    } catch (error) {
+      HiLog.error(TAG, `unmarshalling exception, error is ${JSON.stringify(error)}`);
       return false;
     }
-    for (let i = 0; i < arrayLength; i++) {
-      this.authUserList.push(new IAuthUser('', 0, 0, 0));
-    }
-    dataIn.readParcelableArray(this.authUserList);
-    this.contactAccount = dataIn.readString();
-    this.offlineAccess = dataIn.readBoolean();
-    this.everyoneAccessList = dataIn.readIntArray();
-    this.expireTime = dataIn.readLong();
     return true;
   }
 }

@@ -87,17 +87,22 @@ export default class ConnectService {
   }
 
   searchUserInfo(remote: rpc.IRemoteObject) {
+    if (remote === null) {
+      HiLog.info(TAG, `onConnect remote is null.`);
+      return;
+    }
     let cloudPhone: string | undefined = AppStorage.get('cloudPhone');
     HiLog.info(TAG, `searchUserInfo start`);
     let option = new rpc.MessageOption(Constants.TF_ASYNC);
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
-    data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
-    let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
-    data.writeRemoteObject(callback.asObject());
-    data.writeString(JSON.stringify({'phone': cloudPhone}));
-    if (remote === null) {
-      HiLog.info(TAG, `onConnect remote is null.`);
+    try {
+      data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
+      let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
+      data.writeRemoteObject(callback.asObject());
+      data.writeString(JSON.stringify({'phone': cloudPhone}));
+    } catch (error) {
+      HiLog.error(TAG, `prepare data exception, error is ${JSON.stringify(error)}`);
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_SEARCH_USER_INFO, data, reply, option).then((result) => {
@@ -109,14 +114,19 @@ export default class ConnectService {
 
   getAccountInfo(remote: rpc.IRemoteObject) {
     HiLog.info(TAG, `getAccountInfo start`);
+    if (remote === null) {
+      HiLog.info(TAG, `onConnect remote is null.`);
+      return;
+    }
     let option = new rpc.MessageOption(Constants.TF_ASYNC);
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
-    data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
-    let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
-    data.writeRemoteObject(callback.asObject());
-    if (remote === null) {
-      HiLog.info(TAG, `onConnect remote is null.`);
+    try {
+      data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
+      let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
+      data.writeRemoteObject(callback.asObject());
+    } catch (error) {
+      HiLog.error(TAG, `prepare data exception, error is ${JSON.stringify(error)}`);
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_GET_ACCOUNT_INFO, data, reply, option).then((result) => {

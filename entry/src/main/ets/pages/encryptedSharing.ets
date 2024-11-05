@@ -115,11 +115,15 @@ struct encryptedSharing {
         .onResult((data) => {
         })
         .onReceive((data) => {
-          let params: [] = JSON.parse((data.want as Want)?.parameters?.contactObjects as string);
-          for (let i = 0; i < params.length; i++) {
-            this.inputValue = (params[i] as Record<string, string>)?.telephone;
+          try {
+            let params: [] = JSON.parse((data.want as Want)?.parameters?.contactObjects as string);
+            for (let i = 0; i < params.length; i++) {
+              this.inputValue = (params[i] as Record<string, string>)?.telephone;
+            }
+            this.isShowSheet = false;
+          } catch (error) {
+            HiLog.error(TAG, `json parse exception, error is ${JSON.stringify(error)}`);
           }
-          this.isShowSheet = false;
         })
         .width(Constants.CONTACTS_PICKER_WIDTH)
         .height(Constants.CONTACTS_PICKER_HEIGHT)
@@ -287,10 +291,14 @@ struct encryptedSharing {
       generalFile[this.generalType] = arr;
       this.actionWant.parameters['ability.picker.records'] = generalFile;
       setTimeout(() => {
-        this.session!.terminateSelfWithResult({
-          resultCode: 2,
-          want: this.actionWant
-        });
+        try {
+          this.session!.terminateSelfWithResult({
+            resultCode: 2,
+            want: this.actionWant
+          });
+        } catch (error) {
+          HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+        }
       }, Constants.SHARE_SET_TIMEOUT)
     }
   }
@@ -299,7 +307,13 @@ struct encryptedSharing {
     if (!this.isInputInvalid) {
       return false;
     }
-    let credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
+    let credentialCallBack:Record<string, string> = {};
+    try {
+      credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
+    } catch (error) {
+      HiLog.error(TAG, `json parse exception, error is ${JSON.stringify(error)}`);
+      return false;
+    }
     HiLog.info(TAG, `credential Call Back errorCode: ${credentialCallBack.errorCode}`);
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
       HiLog.info(TAG, `credentialCallBack msg`);
@@ -515,9 +529,13 @@ struct encryptedSharing {
               label: $r('app.string.ban'),
               action: () => {
                 if (this.session !== undefined) {
-                  this.session.terminateSelfWithResult({
-                    'resultCode': 1,
-                  });
+                  try {
+                    this.session.terminateSelfWithResult({
+                      'resultCode': 1,
+                    });
+                  } catch (error) {
+                    HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+                  }
                 }
               }
             }
@@ -525,9 +543,13 @@ struct encryptedSharing {
           isSaveIconRequired: false,
           onCancel: () => {
             if (this.session !== undefined) {
-              this.session.terminateSelfWithResult({
-                'resultCode': 0,
-              });
+              try {
+                this.session.terminateSelfWithResult({
+                  'resultCode': 0,
+                });
+              } catch (error) {
+                HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+              }
             }
           },
         })

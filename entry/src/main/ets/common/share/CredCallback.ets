@@ -34,15 +34,26 @@ export default class CredCallbackStub extends rpc.RemoteObject {
 
   async onRemoteMessageRequest(code: number, data: rpc.MessageSequence): Promise<boolean> {
     HiLog.info(TAG, `onRemoteMessageRequest called, code = ${code}`);
-    if (data.readInterfaceToken() !== CredCallbackStub.DESCRIPTOR) {
-      HiLog.info(TAG, `DESCRIPTOR unmatched.`);
+    try {
+      if (data.readInterfaceToken() !== CredCallbackStub.DESCRIPTOR) {
+        HiLog.info(TAG, `DESCRIPTOR unmatched.`);
+        return false;
+      }
+    } catch (error) {
+      HiLog.error(TAG, `read data exception, error is ${JSON.stringify(error)}`);
       return false;
     }
     switch (code) {
       case Constants.COMMAND_SEARCH_USER_INFO: {
         let storage = LocalStorage.getShared();
         HiLog.info(TAG, `onRemoteMessageRequest command search user info`);
-        let resultVar = data.readString();
+        let resultVar = '';
+        try {
+          resultVar = data.readString();
+        } catch (error) {
+          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          return false;
+        }
         storage.setOrCreate('commandSearchUserInfo', resultVar);
         this.connectService.disconnectServiceShareAbility();
         return true;
@@ -50,7 +61,13 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       case Constants.COMMAND_GET_ACCOUNT_INFO: {
         let storage = LocalStorage.getShared();
         HiLog.info(TAG, `onRemoteMessageRequest command get account info`);
-        let resultVar = data.readString();
+        let resultVar = '';
+        try {
+          resultVar = data.readString();
+        } catch (error) {
+          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          return false;
+        }
         storage.setOrCreate('commandGetAccountInfo', resultVar);
         this.connectService.disconnectServiceShareAbility();
         return true;
