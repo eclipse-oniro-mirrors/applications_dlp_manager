@@ -24,7 +24,7 @@ import fs from '@ohos.file.fs';
 import osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
-import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
+import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import {
   PermissionType,
@@ -44,8 +44,8 @@ import {
   permissionTypeSelect,
   validDateTypeMenu,
   validDateTypeMenuItem
-} from '../common/encryptionComponents/permission_type_select';
-import { AddStaff } from '../common/encryptionComponents/AddStaff';
+} from '../component/encryptionComponents/permission_type_select';
+import { AddStaff } from '../component/encryptionComponents/AddStaff';
 import GlobalContext from '../common/GlobalContext';
 import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
 import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';

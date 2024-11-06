@@ -14,7 +14,7 @@
  */
 import DomainAccountInfo from '../bean/data/DomainAccountInfo';
 import DomainAccountResponse from '../bean/response/DomainAccountResponse';
-import CredConnection from '../common/connection/CredConnection';
+import CredConnection from '../rpc/CredConnection';
 import AppStorageConstant from '../common/constant/AppStorageConstant';
 import { HiLog } from '../common/HiLog';
 import { getOsAccountInfo } from '../common/utils';

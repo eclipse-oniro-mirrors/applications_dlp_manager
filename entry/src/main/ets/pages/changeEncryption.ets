@@ -23,7 +23,7 @@ import fileUri from '@ohos.file.fileuri';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import common from '@ohos.app.ability.common';
-import { staffItem } from '../common/encryptionComponents/staff';
+import { staffItem } from '../component/encryptionComponents/staff';
 import Constants from '../common/constant';
 import {
   AuthAccount,
@@ -38,8 +38,8 @@ import {
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
-import { AccountTipsConfig } from '../common/AccountTipsConfig';
-import { EncryptingPanel } from '../common/encryptionComponents/encrypting';
+import { AccountTipsConfig } from '../component/AccountTipsConfig';
+import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import { SystemUtils } from '../common/systemUtils';

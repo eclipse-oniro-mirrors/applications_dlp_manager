@@ -19,7 +19,7 @@ import resourceManager from '@ohos.resourceManager';
 import util from '@ohos.util';
 import osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
-import GlobalContext from './GlobalContext';
+import GlobalContext from '../common/GlobalContext';
 import I18n from '@ohos.i18n';
 import { HiLog } from '../common/HiLog';
 

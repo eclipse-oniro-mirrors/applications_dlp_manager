@@ -17,13 +17,13 @@ import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import rpc from '@ohos.rpc';
-import DomainAccountRequest from '../../bean/request/DomainAccountRequest';
-import DomainAccountResponse from '../../bean/response/DomainAccountResponse';
-import DomainAccountConvertor from '../../convertor/DomainAccountConvertor';
-import Constants from '../constant';
-import AppStorageConstant from '../constant/AppStorageConstant';
-import { HiLog } from '../HiLog';
-import CredCallbackStub from '../share/CredCallback';
+import DomainAccountRequest from '../bean/request/DomainAccountRequest';
+import DomainAccountResponse from '../bean/response/DomainAccountResponse';
+import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
+import Constants from '../common/constant';
+import AppStorageConstant from '../common/constant/AppStorageConstant';
+import { HiLog } from '../common/HiLog';
+import CredCallbackStub from './CredCallback';
 
 const TAG = 'CredConnection';
 
