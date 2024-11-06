@@ -16,7 +16,7 @@
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
-import { staffItem } from '../common/encryptionComponents/staff';
+import { staffItem } from '../component/encryptionComponents/staff';
 import Constants from '../common/constant';
 import ability from '@ohos.ability.ability';
 import {

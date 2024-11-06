@@ -13,77 +13,71 @@
  * limitations under the License.
  */
 
-import common from '@ohos.app.ability.common';
-import Want from '@ohos.app.ability.Want';
-import { BusinessError } from '@ohos.base';
 import rpc from '@ohos.rpc';
-import CredCallbackStub from './CredCallback';
-import Constants from '../constant';
-import { HiLog } from '../HiLog';
+import { HiLog } from '../common/HiLog';
+import Constants from '../common/constant';
+import { common } from '@kit.AbilityKit';
 
-const TAG = 'ConnectService';
+const TAG = 'CredCallbackStub';
 
-export default class ConnectService {
-  private context: ESObject;
-  private connection = -1;
-  private optionsSearchUser: common.ConnectOptions;
-  private optionsGetAccount: common.ConnectOptions;
+export default class CredCallbackStub extends rpc.RemoteObject {
+  private static readonly DESCRIPTOR: string = 'OHOS.HapDlpCredAbilityServiceStub';
 
-  constructor(context: ESObject) {
-    let that = this;
-    this.context = context;
-    this.optionsSearchUser = {
-      onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success search account ${JSON.stringify(elementName)}`);
-        that.searchUserInfo(remote);
-      },
-      onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect`);
-      },
-      onFailed: () => {
-        HiLog.info(TAG, `onFailed`);
-      }
-    }
-    this.optionsGetAccount = {
-      onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success get account ${JSON.stringify(elementName)}`);
-        that.getAccountInfo(remote);
-      },
-      onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect`);
-      },
-      onFailed: () => {
-        HiLog.info(TAG, `onFailed`);
-      }
-    }
+  constructor(des: string) {
+    super(des);
   }
 
-  connectServiceShareAbility(code: number) {
-    HiLog.info(TAG, `connectServiceShareAbility start`);
-    let want: Want = {
-      bundleName: 'com.huawei.hmos.dlpcredmgr',
-      abilityName: 'DlpCredDataExtAbility',
-    };
+  asObject(): rpc.IRemoteObject {
+    return this;
+  }
+
+  async onRemoteMessageRequest(code: number, data: rpc.MessageSequence): Promise<boolean> {
+    HiLog.info(TAG, `onRemoteMessageRequest called, code = ${code}`);
     try {
-      switch (code) {
-        case Constants.COMMAND_SEARCH_USER_INFO: {
-          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsSearchUser);
-          AppStorage.setOrCreate('connection', this.connection);
-          break;
-        }
-        case Constants.COMMAND_GET_ACCOUNT_INFO: {
-          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
-          AppStorage.setOrCreate('connection', this.connection);
-          break;
-        }
-        default: {
-          HiLog.error(TAG, `code is not exist ${code}`);
-        }
+      if (data.readInterfaceToken() !== CredCallbackStub.DESCRIPTOR) {
+        HiLog.info(TAG, `DESCRIPTOR unmatched.`);
+        return false;
       }
-    } catch (err) {
-      HiLog.error(TAG, `connectServiceExtAbility failed: ${JSON.stringify(err)}`);
+    } catch (error) {
+      HiLog.error(TAG, `read data exception, error is ${JSON.stringify(error)}`);
+      return false;
     }
-    HiLog.info(TAG, `connectServiceExtAbility result: ${this.connection}`);
+    switch (code) {
+      case Constants.COMMAND_SEARCH_USER_INFO: {
+        let storage = LocalStorage.getShared();
+        HiLog.info(TAG, `onRemoteMessageRequest command search user info`);
+        let resultVar = '';
+        try {
+          resultVar = data.readString();
+        } catch (error) {
+          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          return false;
+        }
+        storage.setOrCreate('commandSearchUserInfo', resultVar);
+        this.disconnectServiceShareAbility();
+        return true;
+      }
+      case Constants.COMMAND_GET_ACCOUNT_INFO: {
+        let storage = LocalStorage.getShared();
+        HiLog.info(TAG, `onRemoteMessageRequest command get account info`);
+        let resultVar = '';
+        try {
+          resultVar = data.readString();
+        } catch (error) {
+          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          return false;
+        }
+        storage.setOrCreate('commandGetAccountInfo', resultVar);
+        this.disconnectServiceShareAbility();
+        return true;
+      }
+      default: {
+        HiLog.error(TAG, `invalid request code: ${code}`);
+        this.disconnectServiceShareAbility();
+        break;
+      }
+    }
+    return false;
   }
 
   searchUserInfo(remote: rpc.IRemoteObject) {
@@ -139,10 +133,12 @@ export default class ConnectService {
   disconnectServiceShareAbility() {
     HiLog.info(TAG, `disconnectServiceShareAbility: ${AppStorage.get('connection')}`);
     let connectionNum: number | undefined = AppStorage.get('connection');
-    this.context.disconnectAbility(connectionNum).then(() => {
-      HiLog.info(TAG, `disconnectAbility success.`);
-    }).catch((error: BusinessError) => {
-      HiLog.error(TAG, `disconnectAbility failed. Error: ${JSON.stringify(error)}`);
-    })
+    let context: common.UIAbilityContext = getContext(this) as common.UIAbilityContext;
+    try {
+      context.disconnectServiceExtensionAbility(connectionNum);
+      HiLog.info(TAG, `disconnectServiceExtensionAbility success.`);
+    } catch (error) {
+      HiLog.error(TAG, `disconnectServiceExtensionAbility failed. Error: ${JSON.stringify(error)}`);
+    }
   };
 }

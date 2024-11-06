@@ -37,7 +37,7 @@ import {
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
-import { AccountTipsConfig } from '../common/AccountTipsConfig';
+import { AccountTipsConfig } from '../component/AccountTipsConfig';
 import common from '@ohos.app.ability.common';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';

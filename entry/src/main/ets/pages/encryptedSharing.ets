@@ -16,7 +16,7 @@
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
-import ConnectService from '../common/share/ConnectService';
+import ConnectService from '../rpc/ConnectService';
 import { LengthMetrics } from '@ohos.arkui.node';
 import dlpPermission from '@ohos.dlpPermission';
 import promptAction from '@ohos.promptAction';

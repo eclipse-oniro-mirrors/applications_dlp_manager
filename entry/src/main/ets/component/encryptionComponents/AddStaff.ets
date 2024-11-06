@@ -15,13 +15,13 @@
 
 import { BusinessError } from '@ohos.base';
 import { staffItem } from './staff';
-import Constants from '../constant';
+import Constants from '../../common/constant';
 import { AccountTipsConfig } from '../AccountTipsConfig';
-import { HiLog } from '../HiLog';
-import CommonUtil from '../CommonUtil';
+import { HiLog } from '../../common/HiLog';
+import CommonUtil from '../../common/CommonUtil';
 import AccountManager from '../../manager/AccountManager';
 import DomainAccountResponse from '../../bean/response/DomainAccountResponse';
-import AppStorageConstant from '../constant/AppStorageConstant';
+import AppStorageConstant from '../../common/constant/AppStorageConstant';
 import { common } from '@kit.AbilityKit';
 import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
 
