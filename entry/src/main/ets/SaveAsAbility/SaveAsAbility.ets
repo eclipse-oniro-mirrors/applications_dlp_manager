@@ -273,7 +273,12 @@ export default class SaveAsAbility extends UIAbility {
         offset: 0,
         length: HEAD_LENGTH_IN_BYTE
       };
-      let num = fs.readSync(srcFd, z, option);
+      try {
+        fs.readSync(srcFd, z, option);
+      } catch (error) {
+        HiLog.error(TAG, `readSync exception, error is ${JSON.stringify(error)}`);
+        return;
+      }
       let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
       let magic = buf[0];
 
@@ -284,12 +289,17 @@ export default class SaveAsAbility extends UIAbility {
           offset: 0,
           length: txtOffset
         };
-        num = fs.readSync(srcFd, head, option);
-        let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
-        buf2[SIZE_OFFSET] = 0;
-        num = fs.writeSync(dstFd, head, option);
-        resolve(true);
-        return;
+        try {
+          fs.readSync(srcFd, head, option);
+          let buf2 = new Uint32Array(head, 0, HEAD_LENGTH_IN_U32);
+          buf2[SIZE_OFFSET] = 0;
+          fs.writeSync(dstFd, head, option);
+          resolve(true);
+          return;
+        } catch (error) {
+          HiLog.error(TAG, `readSync or writeSync exception, error is ${JSON.stringify(error)}`);
+          return;
+        }
       }
 
       try {
@@ -324,10 +334,10 @@ export default class SaveAsAbility extends UIAbility {
     if (uri == undefined) {
       return true;
     }
-    let uriObj = new fileUri.FileUri(uri);
-    let dirUri = uriObj.getFullDirectoryUri(); // get directory path of a uri
     let file: fs.File | undefined = undefined;
     try {
+      let uriObj = new fileUri.FileUri(uri);
+      let dirUri = uriObj.getFullDirectoryUri(); // get directory path of a uri
       file = fs.openSync(dirUri, fs.OpenMode.READ_ONLY);
       let stat = fs.statSync(file.fd);
       let isDir = stat.isDirectory();

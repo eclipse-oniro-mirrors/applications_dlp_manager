@@ -318,7 +318,11 @@ struct DlpDialog {
     this.homeFeature.genDlpFileHome(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
       if (err !== 0) {
         HiLog.error(TAG, `generateDLPFile failed: ${err}`);
-        fs.unlinkSync(filePath);
+        try {
+          fs.unlinkSync(filePath);
+        } catch (error) {
+          HiLog.error(TAG, `unlinkSync exception, error is ${JSON.stringify(error)}`);
+        }
         let errorInfo =
           {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -331,7 +335,11 @@ struct DlpDialog {
             }
           });
         }
-        fs.unlinkSync(filePath);
+        try {
+          fs.unlinkSync(filePath);
+        } catch (error) {
+          HiLog.error(TAG, `unlinkSync exception, error is ${JSON.stringify(error)}`);
+        }
         await this.catchProcess();
         this.processing = false;
         GlobalContext.store('dlpFileName', this.srcFileName);
@@ -535,8 +543,12 @@ struct DlpDialog {
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
     let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
     this.permissionDict.forEach(async (item, index) => {
-      this.permissionDict[index].value =
-        $r(await getContext(this).resourceManager.getStringValue(item.value.id))
+      try {
+        this.permissionDict[index].value =
+          $r(await getContext(this).resourceManager.getStringValue(item.value.id));
+      } catch (error) {
+        HiLog.error(TAG, `getStringValue exception, error is ${JSON.stringify(error)}`);
+      }
     })
     let readOnlyData: dlpPermission.AuthUser[] =
       defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {

@@ -16,6 +16,7 @@
 import Constants from '../constant';
 import common from '@ohos.app.ability.common';
 import { SystemUtils } from '../systemUtils';
+import { HiLog } from '../HiLog';
 
 const TAG = '[DLPManager_dialog]';
 
@@ -74,7 +75,11 @@ struct DlpAlertDialog {
             if (this.action != null) {
               this.action()
             } else {
-              (getContext(this) as common.UIAbilityContext).terminateSelf();
+              try {
+                (getContext(this) as common.UIAbilityContext).terminateSelf();
+              } catch (error) {
+                HiLog.error(TAG, `terminateSelf exception, error is ${JSON.stringify(error)}`);
+              }
             }
           })
           .margin({
@@ -90,7 +95,11 @@ struct DlpAlertDialog {
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .controlSize(ControlSize.NORMAL)
             .onClick(async (event) => {
-              (getContext(this) as common.UIAbilityContext).terminateSelf();
+              try {
+                (getContext(this) as common.UIAbilityContext).terminateSelf();
+              } catch (error) {
+                HiLog.error(TAG, `terminateSelf exception, error is ${JSON.stringify(error)}`);
+              }
             })
             .margin({
               right: SystemUtils.isRTL() ?
