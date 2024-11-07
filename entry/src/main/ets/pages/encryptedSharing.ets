@@ -115,9 +115,13 @@ struct encryptedSharing {
         .onResult((data) => {
         })
         .onReceive((data) => {
-          let params: [] = JSON.parse((data.want as Want)?.parameters?.contactObjects as string);
-          for (let i = 0; i < params.length; i++) {
-            this.inputValue = (params[i] as Record<string, string>)?.telephone;
+          try {
+            let params: [] = JSON.parse((data.want as Want)?.parameters?.contactObjects as string);
+            for (let i = 0; i < params.length; i++) {
+              this.inputValue = (params[i] as Record<string, string>)?.telephone;
+            }
+          } catch (error) {
+            HiLog.error(TAG, `JSON parse exception, error is ${JSON.stringify(error)}`);
           }
           this.isShowSheet = false;
         })
