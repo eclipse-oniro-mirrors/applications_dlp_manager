@@ -421,8 +421,7 @@ struct DlpDialog {
           HiLog.info(TAG, `unlink fail: ${JSON.stringify(err)}`);
         }
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        let errorInfo =
-          {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
+        let errorInfo = GetAlertMessage.getAlertMessage({ code: err } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         this.processing = false;
         return;
