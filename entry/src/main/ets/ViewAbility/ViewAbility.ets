@@ -39,7 +39,7 @@ import {
   isValidPath,
   defaultDlpFile,
   getAccountType,
-  checkNetworkStatus
+  getConnectionStatus
 } from '../common/utils';
 import {
   DlpFileInfo,
@@ -294,13 +294,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
       bundleName: 'com.huawei.hmos.dlpcredmgr',
       abilityName: 'DlpCredLoginAbility'
     };
-    try {
-      await checkNetworkStatus();
-    } catch {
+    if (await getConnectionStatus() === false) {
       GetAlertMessage.startAlertAbility(this.context, {
         code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
       return;
-    };
+    }
     try {
       await this.context.startAbility(accountWant);
     } catch (err) {
