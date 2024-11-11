@@ -763,7 +763,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return false;
     }
 
-    this.needCallAccount = await this.checkNeedCallAccount();
+    this.needCheckAccountType = true;
     return true;
   }
 
