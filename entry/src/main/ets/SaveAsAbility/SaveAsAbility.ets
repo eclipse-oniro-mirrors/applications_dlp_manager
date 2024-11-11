@@ -31,6 +31,7 @@ import zlib from '@ohos.zlib';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import dialogRequest from '@ohos.app.ability.dialogRequest';
+import AccountManager from '../manager/AccountManager';
 
 const TAG = 'SaveAs';
 
@@ -180,7 +181,7 @@ export default class SaveAsAbility extends UIAbility {
         HiLog.error(TAG, `invalid authPerm: ${this.authPerm}`);
         this.isOK = false;
         AppStorage.setOrCreate('contactAccount', contactAccount);
-        let accountFlag = await GetAlertMessage.checkAccountInfo(contactAccount);
+        let accountFlag = await AccountManager.checkAccountInfo(contactAccount);
         if (!accountFlag) {
           await GetAlertMessage.requestModalUIExtension(this.context, {
             code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);

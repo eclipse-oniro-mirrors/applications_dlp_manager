@@ -37,8 +37,6 @@ import {
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import HomeFeature from '../feature/HomeFeature';
-import { AccountTipsConfig } from '../component/AccountTipsConfig';
-import common from '@ohos.app.ability.common';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import FileUtils from '../common/FileUtils';
@@ -123,9 +121,10 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
-      try {
-        await this.checkValidEnterpriseAndAccount(session);
-      } catch {
+      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
+      let checkFlag = await AccountManager.checkAccountInfo(accountInfo?.domainInfo?.accountName);
+      if (!checkFlag) {
+        this.gotoAlertPage(session, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         return;
       }
 
@@ -200,21 +199,6 @@ export default class MainAbility extends UIExtensionAbility {
       return false;
     }
     return true;
-  }
-
-  async checkValidEnterpriseAndAccount(session: UIExtensionContentSession): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
-      AccountTipsConfig.getAccountInfo(accountInfo.domainInfo.accountName)
-        .then(() => {
-          resolve();
-        })
-        .catch(async (error: BusinessError) => {
-          this.gotoAlertPage(session, error);
-          reject();
-          return;
-        })
-    })
   }
 
   async checkValidWantAndAccount(session: UIExtensionContentSession, want: Want): Promise<void> {
@@ -351,7 +335,7 @@ export default class MainAbility extends UIExtensionAbility {
         let accountFlag: boolean = true;
         if (err === Constants.ERR_JS_USER_NO_PERMISSION) {
           let accountName: string = msg.split(', contact:')?.[1];
-          accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
+          accountFlag = await AccountManager.checkAccountInfo(accountName);
         }
         if (!accountFlag) {
           this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);

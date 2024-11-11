@@ -408,7 +408,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         if (this.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT &&
           err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
           let accountName: string = err.message.split(', contact:')?.[1];
-          accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
+          accountFlag = await AccountManager.checkAccountInfo(accountName);
         }
         if (!accountFlag) {
           await this.callAlertAbility({code: Constants.ERR_JS_USER_NO_PERMISSION } as BusinessError);
