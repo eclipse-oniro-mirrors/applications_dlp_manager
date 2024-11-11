@@ -52,6 +52,11 @@ export default class AccountManager {
     return new DomainAccountInfo();
   }
 
+  public static async checkAccountInfo(accountName: string): Promise<boolean> {
+    let domainAccount = await AccountManager.getDomainAccountByAccountName(accountName);
+    return !CommonUtil.isEmptyStr(domainAccount.accountName);
+  }
+
   public static async getDomainAccountByAccountNames(searchArray: string[]):
     Promise<DomainAccountResponse | undefined> {
     let accountInfo = await AccountManager.getAccountInfo();

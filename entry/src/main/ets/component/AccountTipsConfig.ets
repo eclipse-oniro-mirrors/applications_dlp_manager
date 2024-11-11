@@ -17,9 +17,7 @@ import fs from '@ohos.file.fs'
 import common from '@ohos.app.ability.common';
 import resourceManager from '@ohos.resourceManager';
 import util from '@ohos.util';
-import osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
-import GlobalContext from '../common/GlobalContext';
 import I18n from '@ohos.i18n';
 import { HiLog } from '../common/HiLog';
 
@@ -66,28 +64,6 @@ export class AccountTipsConfig {
   public static isSysLanguage(): boolean {
     let systemLanguage: string = I18n.System.getSystemLanguage();
     return systemLanguage.indexOf(SYS_LANGUAGE) > -1;
-  }
-
-  public static getAccountInfo(authAccount: string): Promise<osAccount.DomainAccountInfo> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (!authAccount) {
-          HiLog.error(TAG, `getAccount failed, authAccount is null.`);
-          reject();
-          return;
-        }
-        let accountDomain = AppStorage.get('accountDomain') as string;
-        let domainAccountInfo: osAccount.GetDomainAccountInfoOptions = {
-          domain: accountDomain,
-          accountName: authAccount.toLocaleLowerCase().trim()
-        };
-        let result = await osAccount.DomainAccountManager.getAccountInfo(domainAccountInfo);
-        resolve(result);
-      } catch (error) {
-        HiLog.error(TAG, `getAccountInfo error: ${JSON.stringify(error)}`);
-        reject(error);
-      }
-    });
   }
 
   private static loadCcmConfigs(): Promise<Array<AccountTips>> {
