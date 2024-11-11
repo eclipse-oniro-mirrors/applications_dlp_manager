@@ -76,6 +76,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private needCallAccount: boolean = true;
+  private needCheckAccountType: boolean = false;
   private sandboxBundleName: string = '';
   private sandboxAbilityName: string = '';
   private sandboxModuleName: string = '';
@@ -762,7 +763,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return false;
     }
 
-    this.needCallAccount = await this.checkNeedCallAccount();
+    this.needCheckAccountType = true;
     return true;
   }
 
@@ -782,6 +783,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.sandboxBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
     this.sandboxAbilityName = want.parameters?.['ohos.dlp.params.abilityName'] as string;
     this.sandboxModuleName = want.parameters?.['ohos.dlp.params.moduleName'] as string;
+    if (this.needCheckAccountType) {
+      this.needCallAccount = await this.checkNeedCallAccount();
+    }
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
       this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
