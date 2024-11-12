@@ -14,12 +14,19 @@
  */
 
 import { BusinessError } from '@ohos.base';
+import display from '@ohos.display'
+import StartOptions from '@ohos.app.ability.StartOptions';
 import common from '@ohos.app.ability.common';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import osAccount from '@ohos.account.osAccount';
+import account_osAccount from '@ohos.account.osAccount';
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
 import promptAction from '@ohos.promptAction';
 import { HiLog } from '../common/HiLog';
+import AccountManager from '../manager/AccountManager';
+import CommonUtil from './CommonUtil';
 
 const TAG = 'AlertMessage';
 
@@ -174,13 +181,18 @@ export class GetAlertMessage {
     }
   }
 
-  public static async requestModalUIExtension(
-    context: common.UIAbilityContext | common.ServiceExtensionContext, error: BusinessError
-  ){
+  public static async checkAccountInfo(accountName: string): Promise<boolean> {
+
+    let domainAccount = await AccountManager.getDomainAccountByAccountName(accountName);
+    return !CommonUtil.isEmptyStr(domainAccount.accountName);
+  }
+
+  public static async requestModalUIExtension(context: common.UIAbilityContext | common.ServiceExtensionContext,
+    error: BusinessError) {
     if (deviceInfo.deviceType !== '2in1') {
       GetAlertMessage.phoneHandle(context, error);
       return;
-    };
+    }
     // system dialog with UIExtension window, only support one depth want param.
     let code = error.code;
     let message = error.message;
