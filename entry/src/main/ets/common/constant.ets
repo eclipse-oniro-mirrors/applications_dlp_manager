@@ -228,10 +228,10 @@ export default class Constants {
   public static SHARE_TEXT_INPUT_MARGIN_LEFT = 16;
   public static SHARE_TEXT_INPUT_COLUMN_HEIGHT = 120;
   public static SHARE_BUTTON_WIDTH = '100%';
-  public static SHARE_BUTTON_MARGIN_TOP = 16;
   public static SHARE_BUTTON_MARGIN_LEFT = 16;
   public static SHARE_BUTTON_MARGIN_RIGHT = 16;
-  public static SHARE_BUTTON_PADDING_BOTTOM = 24;
+  public static SHARE_BUTTON_PADDING_BOTTOM = 16;
+  public static SHARE_BUTTON_COLUMN_BOTTOM = 56;
   public static SHARE_PAGES_COLUMN_WIDTH = '100%';
   public static SHARE_PAGES_COLUMN_HEIGHT = '100%';
   public static SHARE_SET_TIMEOUT = 1500;
