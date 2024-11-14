@@ -503,8 +503,8 @@ struct encryptedSharing {
 
   getScrollHeight(newValue: SizeOptions) {
     const height = newValue.height as number;
-    this.scrollHeight = height - Constants.SHARE_BUTTON_COLUMN_BOTTOM - Constants.SHARE_TITLE_HEAD_HEIGHT
-      - Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
+    this.scrollHeight = height - Constants.SHARE_BUTTON_COLUMN_BOTTOM - Constants.SHARE_TITLE_HEAD_HEIGHT -
+      Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
     if (this.scrollHeight > Constants.SHARE_TEXTAREA_MAX_HEIGHT) {
       this.scrollHeight = Constants.SHARE_TEXTAREA_MAX_HEIGHT;
     }
