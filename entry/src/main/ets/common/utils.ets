@@ -433,7 +433,7 @@ function sendDlpFileOpenProperties() {
 }
 
 function isValidPath(path: string): Boolean {
-  if (path.indexOf('/./') !== -1 || path.indexOf('/../') !== -1) {
+  if (path.indexOf('./') !== -1 || path.indexOf('../') !== -1) {
     return false;
   }
   return true;
