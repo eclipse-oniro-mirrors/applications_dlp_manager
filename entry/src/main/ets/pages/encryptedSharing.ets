@@ -99,6 +99,7 @@ struct encryptedSharing {
   @State osVersion: ResourceStr = '';
   @State isTextInputFocus: boolean = false;
   @State generalType: string = 'general.file';
+  @State scrollHeight: number = 188;
 
   @Builder
   contactsPicker() {
@@ -506,6 +507,15 @@ struct encryptedSharing {
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
   }
 
+  getScrollHeight(newValue: SizeOptions) {
+    const height = newValue.height as number;
+    this.scrollHeight = height - Constants.SHARE_BUTTON_COLUMN_BOTTOM - Constants.SHARE_TITLE_HEAD_HEIGHT -
+      Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
+    if (this.scrollHeight > Constants.SHARE_TEXTAREA_MAX_HEIGHT) {
+      this.scrollHeight = Constants.SHARE_TEXTAREA_MAX_HEIGHT;
+    }
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtensionForAccountLogin}`);
     this.getLoginStatus();
@@ -624,7 +634,7 @@ struct encryptedSharing {
         }
         .align(Alignment.TopStart)
         .constraintSize({
-          minHeight: `${Constants.SHARE_TEXTAREA_MAX_HEIGHT}vp`
+          minHeight: `${this.scrollHeight}vp`
         })
         .padding({
           top: Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM
@@ -642,10 +652,12 @@ struct encryptedSharing {
         }
         .justifyContent(FlexAlign.Center)
         .margin({
-          top: Constants.SHARE_BUTTON_MARGIN_TOP,
           left: Constants.SHARE_BUTTON_MARGIN_LEFT,
           right: Constants.SHARE_BUTTON_MARGIN_RIGHT,
           bottom: Constants.SHARE_BUTTON_PADDING_BOTTOM
+        })
+        .constraintSize({
+          minHeight: `${Constants.SHARE_BUTTON_COLUMN_BOTTOM}vp`
         })
       }
       .width(Constants.SHARE_PAGES_COLUMN_WIDTH)
@@ -698,5 +710,13 @@ struct encryptedSharing {
           })
       }
     }
+    .onSizeChange((oldValue: SizeOptions, newValue: SizeOptions) => {
+      const newHeight = newValue.height as number;
+      const oldHeight = oldValue.height as number;
+      if (newHeight === oldHeight) {
+        return;
+      }
+      this.getScrollHeight(newValue);
+    })
   }
 }
