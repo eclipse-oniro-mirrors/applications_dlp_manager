@@ -116,8 +116,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async terminateCall(): Promise<void> {
     return new Promise((resolve, reject) => {
-     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
-      GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
+      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
+        GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       HiLog.debug(TAG, `sandbox2linkFile size: ${sandbox2linkFile.size}`);
       if (sandbox2linkFile.size === 0) {
         try {
@@ -183,7 +183,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
             this.uri, [this.sandboxBundleName, this.appIndex, this.linkFileName, this.linkUri, this.distributedInfoId]
           );
           (GlobalContext.load('token2File') as Map<number, (number | string | dlpPermission.DLPFile |
-            dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId,
+          dlpPermission.DLPFileAccess | null)[]>).set(this.tokenId,
             [this.dlpFile, this.sandboxBundleName, this.appIndex, this.authPerm, this.uri, null, -1]);
           (GlobalContext.load('linkSet') as Set<string>).add(this.linkUri);
         }
@@ -221,7 +221,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     want.moduleName = this.sandboxModuleName;
     want.uri = this.linkUri;
     want.flags = this.linkFileWriteable ?
-        wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+    wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
     let dlpWant: Want = {
       parameters: {
         'linkFileName': {
@@ -245,7 +245,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         'ohos.dlp.params.index': this.appIndex,
         'ohos.dlp.params.moduleName': this.sandboxModuleName,
         'ohos.dlp.params.securityFlag': this.authPerm ===
-          dlpPermission.DLPFileAccess.READ_ONLY ? true : false
+        dlpPermission.DLPFileAccess.READ_ONLY ? true : false
       }
     };
     ObjectUtil.Assign(want.parameters, dlpWant.parameters);
@@ -556,7 +556,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + this.appIndex +
         '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.dlp.link.' +
         secondarySuffix;
-        resolve(secondarySuffix);
+      resolve(secondarySuffix);
     });
   }
 
@@ -731,16 +731,16 @@ export default class ViewAbility extends ServiceExtensionAbility {
           return false;
         }
       }
-      defalut: {
-        break;
-      }
+        defalut: {
+          break;
+        }
     }
     return true;
   }
 
   grandUriPermission() {
     let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
-      wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
+    wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
     let targetBundleName = this.sandboxBundleName;
     uriPermissionManager.grantUriPermission(this.uri, flag, targetBundleName, (result) => {
       HiLog.info(TAG, `grandUriPermission result: ${JSON.stringify(result)}`);
@@ -759,7 +759,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     let callerAppId = want.parameters?.['ohos.aafwk.param.callerAppIdentifier'] as string;
     if (callerAppId !== APPID_FOR_HOPE || paramCallerBundleName !== BUNDLE_NAME_FOR_HOPE) {
       HiLog.error(TAG, `callerAppId or callerBundleNameis error.`);
-      await this.callAlertAbility({code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION } as BusinessError);
+      await this.callAlertAbility({code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION} as BusinessError);
       return false;
     }
 
@@ -798,7 +798,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
     }
     let fileOpenHistory: Map<string, (number | string)[]> =
-        GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
+      GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>;
     if (fileOpenHistory.has(this.uri)) {
       let value: (number | string)[] = fileOpenHistory.get(this.uri) as (number | string)[];
       if (this.sandboxBundleName !== value[Constants.FILE_OPEN_HISTORY_ZERO] as string) {

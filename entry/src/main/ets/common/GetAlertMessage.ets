@@ -14,19 +14,12 @@
  */
 
 import { BusinessError } from '@ohos.base';
-import display from '@ohos.display'
-import StartOptions from '@ohos.app.ability.StartOptions';
 import common from '@ohos.app.ability.common';
-import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
-import osAccount from '@ohos.account.osAccount';
-import account_osAccount from '@ohos.account.osAccount';
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
 import promptAction from '@ohos.promptAction';
 import { HiLog } from '../common/HiLog';
-import AccountManager from '../manager/AccountManager';
-import CommonUtil from './CommonUtil';
 
 const TAG = 'AlertMessage';
 
@@ -179,12 +172,6 @@ export class GetAlertMessage {
       default:
         return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
     }
-  }
-
-  public static async checkAccountInfo(accountName: string): Promise<boolean> {
-
-    let domainAccount = await AccountManager.getDomainAccountByAccountName(accountName);
-    return !CommonUtil.isEmptyStr(domainAccount.accountName);
   }
 
   public static async requestModalUIExtension(context: common.UIAbilityContext | common.ServiceExtensionContext,
