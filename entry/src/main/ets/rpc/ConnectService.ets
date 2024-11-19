@@ -24,7 +24,6 @@ const TAG = 'ConnectService';
 export default class ConnectService {
   private service: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
   private context: ESObject;
-  private connection = -1;
   private optionsSearchUser: common.ConnectOptions;
   private optionsGetAccount: common.ConnectOptions;
 
@@ -36,10 +35,10 @@ export default class ConnectService {
         this.service.searchUserInfo(remote);
       },
       onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect`);
+        HiLog.info(TAG, `onDisconnect: SearchUser`);
       },
       onFailed: () => {
-        HiLog.info(TAG, `onFailed`);
+        HiLog.info(TAG, `onFailed: SearchUser`);
       }
     }
     this.optionsGetAccount = {
@@ -48,10 +47,10 @@ export default class ConnectService {
         this.service.getAccountInfo(remote);
       },
       onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect`);
+        HiLog.info(TAG, `onDisconnect: GetAccount`);
       },
       onFailed: () => {
-        HiLog.info(TAG, `onFailed`);
+        HiLog.info(TAG, `onFailed: GetAccount`);
       }
     }
   }
@@ -62,25 +61,28 @@ export default class ConnectService {
       bundleName: 'com.huawei.hmos.dlpcredmgr',
       abilityName: 'DlpCredDataExtAbility',
     };
+    let connectionId: number | undefined;
     try {
       switch (code) {
         case Constants.COMMAND_SEARCH_USER_INFO: {
-          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsSearchUser);
-          AppStorage.setOrCreate('connection', this.connection);
+          connectionId = this.context.connectServiceExtensionAbility(want, this.optionsSearchUser);
+          AppStorage.setOrCreate(`connection_${Constants.COMMAND_SEARCH_USER_INFO}`, connectionId);
           break;
         }
         case Constants.COMMAND_GET_ACCOUNT_INFO: {
-          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
-          AppStorage.setOrCreate('connection', this.connection);
+          connectionId = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
+          AppStorage.setOrCreate(`connection_${Constants.COMMAND_GET_ACCOUNT_INFO}`, connectionId);
           break;
         }
         default: {
           HiLog.error(TAG, `code is not exist ${code}`);
         }
       }
+      if (connectionId !== undefined) {
+        HiLog.info(TAG, `connectServiceExtAbility result: ${connectionId}`);
+      }
     } catch (err) {
       HiLog.error(TAG, `connectServiceExtAbility failed: ${JSON.stringify(err)}`);
     }
-    HiLog.info(TAG, `connectServiceExtAbility result: ${this.connection}`);
   }
 }
