@@ -54,7 +54,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
           return false;
         }
         storage.setOrCreate('commandSearchUserInfo', resultVar);
-        this.disconnectServiceShareAbility();
+        this.disconnectServiceShareAbility(`connection_${Constants.COMMAND_SEARCH_USER_INFO}`);
         return true;
       }
       case Constants.COMMAND_GET_ACCOUNT_INFO: {
@@ -68,12 +68,11 @@ export default class CredCallbackStub extends rpc.RemoteObject {
           return false;
         }
         storage.setOrCreate('commandGetAccountInfo', resultVar);
-        this.disconnectServiceShareAbility();
+        this.disconnectServiceShareAbility(`connection_${Constants.COMMAND_GET_ACCOUNT_INFO}`);
         return true;
       }
       default: {
         HiLog.error(TAG, `invalid request code: ${code}`);
-        this.disconnectServiceShareAbility();
         break;
       }
     }
@@ -130,12 +129,12 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     });
   }
 
-  disconnectServiceShareAbility() {
-    HiLog.info(TAG, `disconnectServiceShareAbility: ${AppStorage.get('connection')}`);
-    let connectionNum: number | undefined = AppStorage.get('connection');
+  disconnectServiceShareAbility(connectionKey: string) {
+    let connectionId: number | undefined = AppStorage.get(connectionKey);
+    HiLog.info(TAG, `disconnectServiceShareAbility: ${connectionId}`);
     let context: common.UIAbilityContext = getContext(this) as common.UIAbilityContext;
     try {
-      context.disconnectServiceExtensionAbility(connectionNum);
+      context.disconnectServiceExtensionAbility(connectionId);
       HiLog.info(TAG, `disconnectServiceExtensionAbility success.`);
     } catch (error) {
       HiLog.error(TAG, `disconnectServiceExtensionAbility failed. Error: ${JSON.stringify(error)}`);
