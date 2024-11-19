@@ -553,12 +553,12 @@ async function sleep(milliSeconds: number): Promise<void> {
 }
 
 async function getConnectionStatus(exactly: boolean = true): Promise<boolean> {
-  HiLog.info(TAG, `Enter getConnectionStatus, exactly mode: ${exactly}}.`);
+  HiLog.info(TAG, `Enter getConnectionStatus, exactly mode: ${exactly}.`);
   try {
     const startTime = getCurrentTime();
     let net: connection.NetHandle = await connection.getDefaultNet();
-    let capabilities: connection.NetCapabilities = await connection.getNetCapabilities(net);
 
+    let capabilities: connection.NetCapabilities = await connection.getNetCapabilities(net);
     HiLog.info(TAG, `Succeeded to get net capabilities, ${JSON.stringify(capabilities)}.`);
     let networkCap = capabilities.networkCap;
 

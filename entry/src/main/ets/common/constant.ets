@@ -14,7 +14,6 @@
  */
 
 export default class Constants {
-
   public static FOOTER_ROW_WIDTH = '100%';
   public static FOOTER_ROW_MARGIN = 8;
   public static FOOTER_ROW_PAD_LEFT = 16;
