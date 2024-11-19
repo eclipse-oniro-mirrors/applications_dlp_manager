@@ -27,8 +27,6 @@ export default class ConnectService {
   private optionsSearchUser: common.ConnectOptions;
   private optionsGetAccount: common.ConnectOptions;
 
-  static connections = new Array<number>();
-
   constructor(context: ESObject) {
     this.context = context;
     this.optionsSearchUser = {
