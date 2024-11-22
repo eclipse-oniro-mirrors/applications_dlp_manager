@@ -44,7 +44,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
         HiLog.info(TAG, `onRemoteMessageRequest command search user info`);
         let resultVar = data.readString();
         storage.setOrCreate('commandSearchUserInfo', resultVar);
-        this.connectService.disconnectServiceShareAbility();
+        this.connectService.disconnectServiceShareAbility(`connection_${Constants.COMMAND_SEARCH_USER_INFO}`);
         return true;
       }
       case Constants.COMMAND_GET_ACCOUNT_INFO: {
@@ -52,12 +52,11 @@ export default class CredCallbackStub extends rpc.RemoteObject {
         HiLog.info(TAG, `onRemoteMessageRequest command get account info`);
         let resultVar = data.readString();
         storage.setOrCreate('commandGetAccountInfo', resultVar);
-        this.connectService.disconnectServiceShareAbility();
+        this.connectService.disconnectServiceShareAbility(`connection_${Constants.COMMAND_GET_ACCOUNT_INFO}`);
         return true;
       }
       default: {
         HiLog.error(TAG, `invalid request code: ${code}`);
-        this.connectService.disconnectServiceShareAbility();
         break;
       }
     }
