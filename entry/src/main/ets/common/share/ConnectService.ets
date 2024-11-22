@@ -25,7 +25,6 @@ const TAG = 'ConnectService';
 
 export default class ConnectService {
   private context: ESObject;
-  private connection = -1;
   private optionsSearchUser: common.ConnectOptions;
   private optionsGetAccount: common.ConnectOptions;
 
@@ -38,10 +37,10 @@ export default class ConnectService {
         that.searchUserInfo(remote);
       },
       onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect`);
+        HiLog.info(TAG, `onDisconnect: SearchUser`);
       },
       onFailed: () => {
-        HiLog.info(TAG, `onFailed`);
+        HiLog.info(TAG, `onFailed: SearchUser`);
       }
     }
     this.optionsGetAccount = {
@@ -50,10 +49,10 @@ export default class ConnectService {
         that.getAccountInfo(remote);
       },
       onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect`);
+        HiLog.info(TAG, `onDisconnect: GetAccount`);
       },
       onFailed: () => {
-        HiLog.info(TAG, `onFailed`);
+        HiLog.info(TAG, `onFailed: GetAccount`);
       }
     }
   }
@@ -64,26 +63,29 @@ export default class ConnectService {
       bundleName: 'com.huawei.hmos.dlpcredmgr',
       abilityName: 'DlpCredDataExtAbility',
     };
+    let connectionId: number | undefined;
     try {
       switch (code) {
         case Constants.COMMAND_SEARCH_USER_INFO: {
-          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsSearchUser);
-          AppStorage.setOrCreate('connection', this.connection);
+          connectionId = this.context.connectServiceExtensionAbility(want, this.optionsSearchUser);
+          AppStorage.setOrCreate(`connection_${Constants.COMMAND_SEARCH_USER_INFO}`, connectionId);
           break;
         }
         case Constants.COMMAND_GET_ACCOUNT_INFO: {
-          this.connection = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
-          AppStorage.setOrCreate('connection', this.connection);
+          connectionId = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
+          AppStorage.setOrCreate(`connection_${Constants.COMMAND_GET_ACCOUNT_INFO}`, connectionId);
           break;
         }
         default: {
           HiLog.error(TAG, `code is not exist ${code}`);
         }
       }
+      if (connectionId !== undefined) {
+        HiLog.info(TAG, `connectServiceExtAbility result: ${connectionId}`);
+      }
     } catch (err) {
       HiLog.error(TAG, `connectServiceExtAbility failed: ${JSON.stringify(err)}`);
     }
-    HiLog.info(TAG, `connectServiceExtAbility result: ${this.connection}`);
   }
 
   searchUserInfo(remote: rpc.IRemoteObject) {
@@ -126,13 +128,14 @@ export default class ConnectService {
     });
   }
 
-  disconnectServiceShareAbility() {
-    HiLog.info(TAG, `disconnectServiceShareAbility: ${AppStorage.get('connection')}`);
-    let connectionNum: number | undefined = AppStorage.get('connection');
-    this.context.disconnectAbility(connectionNum).then(() => {
-      HiLog.info(TAG, `disconnectAbility success.`);
-    }).catch((error: BusinessError) => {
-      HiLog.error(TAG, `disconnectAbility failed. Error: ${JSON.stringify(error)}`);
-    })
+  disconnectServiceShareAbility(connectionKey: string) {
+    let connectionId: number | undefined = AppStorage.get(connectionKey);
+    HiLog.info(TAG, `disconnectServiceShareAbility: ${connectionId}`);
+    try {
+      this.context.disconnectServiceExtensionAbility(connectionId);
+      HiLog.info(TAG, `disconnectServiceExtensionAbility success.`);
+    } catch (error) {
+      HiLog.error(TAG, `disconnectServiceExtensionAbility failed. Error: ${JSON.stringify(error)}`);
+    }
   };
 }
