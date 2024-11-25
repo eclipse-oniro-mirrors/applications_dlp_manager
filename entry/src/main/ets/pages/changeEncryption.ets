@@ -33,6 +33,7 @@ import {
   toggleShow,
   directionStatus,
   getTime,
+  isValidPath,
   sendDlpManagerFileConfiguration
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
@@ -213,6 +214,10 @@ struct changeEncryption {
     HiLog.info(TAG, `Decrypt DLP file: ${this.srcFileName}`);
     try {
       let srcFileUri: string = GlobalContext.load('uri');
+      if (!isValidPath(srcFileUri)) {
+        HiLog.error(TAG, `uri is invalid`);
+        return;
+      }
       let srcFileMsg: FileMsg = FileUtils.getAllSuffixByUri(srcFileUri);
       let documentSaveOptions = new picker.DocumentSaveOptions();
       documentSaveOptions.newFileNames = [decodeURIComponent(plaintextFile)];
@@ -242,6 +247,10 @@ struct changeEncryption {
 
   async fileDecryption(saveRes: Array<string>): Promise<void> {
     let plainUri = saveRes[0];
+    if (!isValidPath(plainUri)) {
+      HiLog.error(TAG, `pick save uri is invalid`);
+      return;
+    }
     let uriInfo: fileUri.FileUri | undefined = undefined;
     let file: fs.File | undefined = undefined;
     try {
