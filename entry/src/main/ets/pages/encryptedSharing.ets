@@ -81,7 +81,7 @@ struct encryptedSharing {
   @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
   @LocalStorageLink('commandGetAccountInfo') @Watch('changeAccountInfo') commandGetAccountInfo: string = '';
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
-  @State enabledFocus: boolean = true;
+  @State enabledFocus: boolean = false;
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
   @State showUIExtensionForAccountLogin: boolean = false;
@@ -411,6 +411,7 @@ struct encryptedSharing {
         accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
         this.showUIExtensionForAccountLogin = true;
       } else {
+        this.enabledFocus = true;
         this.isTextInputFocus = true;
         this.textInputGetFocus();
       }
@@ -731,6 +732,7 @@ struct encryptedSharing {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
+            this.enabledFocus = true;
             this.isTextInputFocus = true;
             this.textInputGetFocus();
             this.showUIExtensionForAccountLogin = false;
