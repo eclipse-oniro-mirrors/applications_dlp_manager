@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import fs from '@ohos.file.fs';
+import CommonUtil from '../CommonUtil';
+import { HiLog } from '../HiLog';
+import { fileUri } from '@kit.CoreFileKit';
+
+const TAG = 'FileUtil';
+
+export default class FileUtil {
+
+  public static closeFileSync(file: fs.File | undefined): boolean {
+    if (!file) {
+      HiLog.info(TAG, 'param is invalid.');
+      return false;
+    }
+    return FileUtil.closeSync1(file);
+  }
+
+  public static closeFdSync(file: number): boolean {
+    return FileUtil.closeSync1(file);
+  }
+
+  public static closeSync1(file: fs.File | undefined | number) {
+    try {
+      fs.closeSync(file);
+      HiLog.info(TAG, 'closeSync success.');
+    } catch (e) {
+      HiLog.error(TAG, `closeSync failed: ${JSON.stringify(e)}`);
+      return false;
+    }
+    return true;
+  }
+
+  public static unlinkSync(uri: string) {
+    if (CommonUtil.isEmptyStr(uri)) {
+      HiLog.info(TAG, 'param is invalid.');
+      return false;
+    }
+    let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
+    try {
+      uriInfo = new fileUri.FileUri(uri);
+    } catch (e) {
+      HiLog.error(TAG, `fileUri fail: ${JSON.stringify(e)}`);
+      return false;
+    }
+    try {
+      fs.unlinkSync(uriInfo.path);
+      HiLog.info(TAG, 'unlinkSync success.');
+    } catch (e) {
+      HiLog.error(TAG, `unlinkSync failed: ${JSON.stringify(e)}`);
+      return false;
+    }
+    return true;
+  }
+
+}

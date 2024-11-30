@@ -37,6 +37,7 @@ import { IAuthUser } from './sequenceable/dlpClass';
 import GlobalContext from '../common/GlobalContext';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'service_extability';
 
@@ -116,16 +117,8 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async closeFile(): Promise<void> {
-    try {
-      await fs.close(this.inFile);
-    } catch (err) {
-      HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-    }
-    try {
-      await fs.close(this.outFile);
-    } catch (err) {
-      HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-    }
+    FileUtil.closeFileSync(this.inFile);
+    FileUtil.closeFileSync(this.outFile);
   }
 
   async genDlpFileFd(inputUri: string, outputUri: string): Promise<Record<string, number>> {
@@ -150,12 +143,9 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.outFile = await fs.open(outputUri, fs.OpenMode.READ_WRITE);
         outFileFd = this.outFile.fd;
       } catch (error) {
-        try {
-          await fs.close(this.inFile);
-          await fs.unlink(uriInfo.path);
-        } catch (err) {
-          HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
-        }
+        // todo
+        FileUtil.closeFileSync(this.inFile);
+        FileUtil.unlinkSync(uriInfo.path);
         reject((error as BusinessError).code);
         return;
       }
@@ -207,9 +197,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       callback((err as BusinessError).code, _dlp, (err as BusinessError).message);
     } finally {
-      if (inFile) {
-        fs.closeSync(inFile);
-      }
+      FileUtil.closeFileSync(inFile);
     }
   }
 
@@ -265,9 +253,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         HiLog.error(TAG, `recoverDlpFileInner4: ${JSON.stringify(err)}`);
         callback((err as BusinessError).code);
       } finally {
-        if (inFile) {
-          fs.closeSync(inFile);
-        }
+        FileUtil.closeFileSync(inFile);
       }
     } else {
       HiLog.info(TAG, `recoverDlpFile not find: ${srcUri}`);
