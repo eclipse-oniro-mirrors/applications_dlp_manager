@@ -16,7 +16,6 @@
 import fs from '@ohos.file.fs';
 import CommonUtil from '../CommonUtil';
 import { HiLog } from '../HiLog';
-import { fileUri } from '@kit.CoreFileKit';
 
 const TAG = 'FileUtil';
 
@@ -27,14 +26,14 @@ export default class FileUtil {
       HiLog.info(TAG, 'param is invalid.');
       return false;
     }
-    return FileUtil.closeSync1(file);
+    return FileUtil.closeSync(file);
   }
 
   public static closeFdSync(file: number): boolean {
-    return FileUtil.closeSync1(file);
+    return FileUtil.closeSync(file);
   }
 
-  public static closeSync1(file: fs.File | undefined | number) {
+  public static closeSync(file: fs.File | undefined | number) {
     try {
       fs.closeSync(file);
       HiLog.info(TAG, 'closeSync success.');
@@ -45,20 +44,16 @@ export default class FileUtil {
     return true;
   }
 
-  public static unlinkSync(uri: string) {
+  public static unlinkSync(uri: string): boolean {
     if (CommonUtil.isEmptyStr(uri)) {
       HiLog.info(TAG, 'param is invalid.');
       return false;
     }
-    let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
     try {
-      uriInfo = new fileUri.FileUri(uri);
-    } catch (e) {
-      HiLog.error(TAG, `fileUri fail: ${JSON.stringify(e)}`);
-      return false;
-    }
-    try {
-      fs.unlinkSync(uriInfo.path);
+      const isExist = fs.accessSync(uri);
+      if (isExist) {
+        fs.unlinkSync(uri);
+      }
       HiLog.info(TAG, 'unlinkSync success.');
     } catch (e) {
       HiLog.error(TAG, `unlinkSync failed: ${JSON.stringify(e)}`);
