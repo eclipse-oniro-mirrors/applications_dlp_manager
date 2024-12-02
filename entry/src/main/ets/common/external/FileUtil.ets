@@ -33,7 +33,7 @@ export default class FileUtil {
     return FileUtil.closeSync(file);
   }
 
-  public static closeSync(file: fs.File | undefined | number) {
+  public static closeSync(file: fs.File | undefined | number): boolean {
     try {
       fs.closeSync(file);
       HiLog.info(TAG, 'closeSync success.');
