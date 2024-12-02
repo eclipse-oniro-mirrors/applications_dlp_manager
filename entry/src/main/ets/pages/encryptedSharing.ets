@@ -410,11 +410,14 @@ struct encryptedSharing {
       if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
         accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
         this.showUIExtensionForAccountLogin = true;
+        this.enabledFocus = false;
       } else {
+        this.enabledFocus = true;
         this.isTextInputFocus = true;
         this.textInputGetFocus();
       }
     } catch (err) {
+      this.enabledFocus = true;
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
     }
   }
@@ -723,6 +726,8 @@ struct encryptedSharing {
                 this.enabledFocus = false;
                 this.isConfirmButtonEnabled = false;
                 this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
+              } else {
+                this.enabledFocus = true;
               }
             } else {
               this.enabledFocus = true;
