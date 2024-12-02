@@ -81,7 +81,7 @@ struct encryptedSharing {
   @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
   @LocalStorageLink('commandGetAccountInfo') @Watch('changeAccountInfo') commandGetAccountInfo: string = '';
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
-  @State enabledFocus: boolean = false;
+  @State enabledFocus: boolean = true;
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
   @State showUIExtensionForAccountLogin: boolean = false;
@@ -410,12 +410,14 @@ struct encryptedSharing {
       if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
         accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
         this.showUIExtensionForAccountLogin = true;
+        this.enabledFocus = false;
       } else {
         this.enabledFocus = true;
         this.isTextInputFocus = true;
         this.textInputGetFocus();
       }
     } catch (err) {
+      this.enabledFocus = true;
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
     }
   }
@@ -724,9 +726,10 @@ struct encryptedSharing {
                 this.enabledFocus = false;
                 this.isConfirmButtonEnabled = false;
                 this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
+              } else {
+                this.enabledFocus = true;
               }
             } else {
-              this.enabledFocus = true;
               this.isConfirmButtonEnabled = this.inputValue.length > 0;
               if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
                 this.showToast($r('app.string.network_invalid'));
