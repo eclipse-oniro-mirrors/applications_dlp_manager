@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Constants from "../../common/constant";
-import EncryptProtectionShowCodeEnum from "../../common/enum/EncryptProtectionShowCodeEnum";
+import Constants from '../../common/constant';
+import EncryptProtectionShowCodeEnum from '../../common/enum/EncryptProtectionShowCodeEnum';
 
 export default class EncryptProtectionHelper {
 
