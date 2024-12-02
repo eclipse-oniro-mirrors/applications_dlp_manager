@@ -730,12 +730,12 @@ struct encryptedSharing {
                 this.enabledFocus = true;
               }
             } else {
+              this.enabledFocus = true;
               this.isConfirmButtonEnabled = this.inputValue.length > 0;
               if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
-            this.enabledFocus = true;
             this.isTextInputFocus = true;
             this.textInputGetFocus();
             this.showUIExtensionForAccountLogin = false;
