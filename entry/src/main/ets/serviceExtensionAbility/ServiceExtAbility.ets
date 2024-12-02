@@ -143,7 +143,6 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.outFile = await fs.open(outputUri, fs.OpenMode.READ_WRITE);
         outFileFd = this.outFile.fd;
       } catch (error) {
-        // todo
         FileUtil.closeFileSync(this.inFile);
         FileUtil.unlinkSync(uriInfo.path);
         reject((error as BusinessError).code);
