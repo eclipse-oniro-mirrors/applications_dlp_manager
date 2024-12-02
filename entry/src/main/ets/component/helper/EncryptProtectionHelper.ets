@@ -18,7 +18,6 @@ import EncryptProtectionShowCodeEnum from "../../common/enum/EncryptProtectionSh
 export default class EncryptProtectionHelper {
 
   public static readonly INPUT_MAX_LENGTH = 50 * 20;
-  public static readonly NEW_LINE_MAX_LENGTH = 50;
 
   private static readonly ERROR_SHOW_MAP = new Map<number, Resource>([
     [EncryptProtectionShowCodeEnum.NET_ERROR, $r('app.string.network_invalid')],

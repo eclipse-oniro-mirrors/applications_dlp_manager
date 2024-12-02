@@ -297,9 +297,6 @@ struct AddStaff {
               let inputId: string = '';
               let startOffset: number[] = [];
               let endOffset: number[] = [];
-              if (richEditorSpans.length > EncryptProtectionHelper.NEW_LINE_MAX_LENGTH) {
-
-              }
               for (let index: number = 0; index < richEditorSpans.length; index++) {
                 let buildSpan: RichEditorTextSpanResult = richEditorSpans[index] as RichEditorTextSpanResult;
                 if (buildSpan.textStyle) {
