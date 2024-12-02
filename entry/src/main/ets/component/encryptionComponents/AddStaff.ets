@@ -161,11 +161,11 @@ struct AddStaff {
   }
 
   private getBusinessCode(accountResponse: DomainAccountResponse | undefined): number {
-    if (accountResponse === undefined) {
+    if (accountResponse === undefined || accountResponse.getErrorCode() === Constants.ERR_CODE_NETWORK_ERROR) {
       // case: ipc error
       return Constants.ERR_JS_NETWORK_INVALID;
     }
-    if (accountResponse.getErrorCode() != Constants.INTERFACE_SUCCESS) {
+    if (accountResponse.getErrorCode() !== Constants.INTERFACE_SUCCESS) {
       // case: ipc success, but return error code
       return accountResponse.getErrorCode();
     }
