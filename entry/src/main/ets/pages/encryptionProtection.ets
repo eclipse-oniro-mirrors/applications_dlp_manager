@@ -37,6 +37,7 @@ import {
   getFileUriByPath,
   sendDlpFileCreateProperties,
   sendDlpManagerFileConfiguration,
+  isValidPath,
   getFileSizeByUri
 } from '../common/utils';
 import Constants from '../common/constant';
@@ -357,6 +358,10 @@ struct DlpDialog {
     await this.setUserStat();
     try {
       let srcFileUri: string = GlobalContext.load('uri');
+      if (!isValidPath(srcFileUri)) {
+        HiLog.error(TAG, `uri is invalid`);
+        return;
+      }
       let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(srcFileUri);
       let srcFileSize: number = await getFileSizeByUri(srcFileUri);
       AppStorage.setOrCreate('hiFileSize', srcFileSize);
@@ -376,6 +381,10 @@ struct DlpDialog {
         }
         HiLog.info(TAG, `get uri success`);
         uri = saveRes[0];
+        if (!isValidPath(uri)) {
+          HiLog.error(TAG, `pick save uri is invalid`);
+          return;
+        }
         let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
         try {
           uriInfo = new fileUri.FileUri(uri);
