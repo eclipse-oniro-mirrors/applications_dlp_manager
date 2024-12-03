@@ -56,6 +56,7 @@ import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import { ObjectUtil } from '../common/ObjectUtil';
 import AccountManager from '../manager/AccountManager';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'View';
 const SUFFIX_INDEX = 2;
@@ -197,11 +198,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async deleteData(isNeedCloseFd: boolean, isNeedDeleteLink: boolean): Promise<void> {
     HiLog.info(TAG, `deleteData start`);
     if (isNeedCloseFd) {
-      try {
-        fileio.closeSync(this.dlpFd);
-      } catch (err) {
-        HiLog.error(TAG, `closeSync failed: ${JSON.stringify(err)}`);
-      }
+      FileUtil.closeFdSync(this.dlpFd);
     }
     try {
       await deleteSandbox2linkFileData(this.sandboxBundleName + this.appIndex, isNeedDeleteLink);
@@ -301,7 +298,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async closeFile(): Promise<void> {
     try {
       await this.dlpFile.closeDLPFile();
-      fileio.closeSync(this.dlpFd);
+      FileUtil.closeFdSync(this.dlpFd);
     } catch (err) {
       HiLog.error(TAG, `closeFile failed: ${JSON.stringify(err)}`);
     }
@@ -341,7 +338,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = false;
         await GetAlertMessage.requestModalUIExtension(this.context, {
           code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
-        fileio.closeSync(this.dlpFd);
+        FileUtil.closeFdSync(this.dlpFd);
         reject(err);
         return;
       }
@@ -364,7 +361,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         opening = false;
         await GetAlertMessage.requestModalUIExtension(this.context, {
           code: codeMessage } as BusinessError);
-        fileio.closeSync(this.dlpFd);
+        FileUtil.closeFdSync(this.dlpFd);
         reject();
         return;
       }
@@ -417,7 +414,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         }
         await this.callAlertAbility(err.code === Constants.ERR_JS_APP_PERMISSION_DENY ?
           {code: Constants.ERR_JS_RELEASE_FILE_OPEN } as BusinessError : err);
-        fileio.closeSync(this.dlpFd);
+        FileUtil.closeFdSync(this.dlpFd);
         reject();
         return;
       }
@@ -488,7 +485,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.appIndex = value[Constants.FILE_OPEN_HISTORY_ONE] as number;
           this.linkFileName = value[Constants.FILE_OPEN_HISTORY_TWO] as string;
           this.linkUri = value[Constants.FILE_OPEN_HISTORY_THREE] as string;
-          fs.closeSync(this.dlpFd);
+          FileUtil.closeFdSync(this.dlpFd);
           let dlpFileInfo =
             await getDlpFileInfoFromSandbox2linkFileData(this.sandboxBundleName + this.appIndex, this.uri);
           this.dlpFile = dlpFileInfo.dlpFile;

@@ -24,6 +24,8 @@ import DomainAccountResponse from '../../bean/response/DomainAccountResponse';
 import AppStorageConstant from '../../common/constant/AppStorageConstant';
 import { common } from '@kit.AbilityKit';
 import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
+import EncryptProtectionShowCodeEnum from '../../common/enum/EncryptProtectionShowCodeEnum';
+import EncryptProtectionHelper from '../helper/EncryptProtectionHelper';
 
 interface Staff {
   authAccount: string;
@@ -48,8 +50,6 @@ struct AddStaff {
   @State fail: number = 0;
   @Link isAccountCheckSuccess: boolean;
   @State staffArrayLength: boolean = false;
-  @State @Watch('onErrorStyleChange') isInputInvalid: boolean = false;
-  @State isNetworkInvalid: boolean = false;
   @State textContent: string = '';
   @Link @Watch('onDataChange') staffArray: Staff[];
   @State focusFlag: boolean = false;
@@ -57,11 +57,12 @@ struct AddStaff {
   @State isInitDataStatus: boolean = false;
   @State errInput: string[] = [];
   @State inputArray: string[] = [];
-  @State isInputInvalidFlag: boolean = false;
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
 
   private shardingCount: number = 0;
+  @State @Watch('onErrorStyleChange') showFlag: boolean = false;
+  @State showCode: number = EncryptProtectionShowCodeEnum.INIT_SUCCESS;
 
   @Builder
   StaffItemBuilder(authAccount: string, textContent: string, index: number) {
@@ -104,8 +105,8 @@ struct AddStaff {
     this.isAccountCheckSuccess = true;
     if (this.staffArray.length < Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
       this.controller.addTextSpan(this.errInput.join(';'));
-      if (this.errInput.length && this.isInputInvalidFlag) {
-        this.isInputInvalid = true;
+      if (this.showCode !== EncryptProtectionShowCodeEnum.INIT_SUCCESS) {
+        this.showFlag = true;
       }
     }
   }
@@ -136,7 +137,8 @@ struct AddStaff {
     startOffset: number[], endOffset: number[]) {
     let businessCode = this.getBusinessCode(accountResponse);
     if (businessCode !== Constants.INTERFACE_SUCCESS) {
-      this.batchDealError(searchArray, businessCode, startOffset, endOffset);
+      this.batchDealError(searchArray, startOffset, endOffset);
+      this.showCode = EncryptProtectionHelper.convertErrorCodeToShowCode(businessCode);
       return;
     }
     let dataArray: Array<DomainAccountInfo> | undefined = accountResponse?.getData();
@@ -152,17 +154,18 @@ struct AddStaff {
         this.addBuildSpan(accountName, matchAccount[this.textContent]);
       } else {
         // case: not found
-        this.showErrInput(accountName, Constants.ERR_JS_ACCOUNT_NOT_FOUND, startOffset, endOffset);
+        this.showErrInput(accountName, startOffset, endOffset);
+        this.showCode = EncryptProtectionShowCodeEnum.INPUT_ERROR;
       }
     })
   }
 
   private getBusinessCode(accountResponse: DomainAccountResponse | undefined): number {
-    if (accountResponse === undefined) {
+    if (accountResponse === undefined || accountResponse.getErrorCode() === Constants.ERR_CODE_NETWORK_ERROR) {
       // case: ipc error
       return Constants.ERR_JS_NETWORK_INVALID;
     }
-    if (accountResponse.getErrorCode() != Constants.INTERFACE_SUCCESS) {
+    if (accountResponse.getErrorCode() !== Constants.INTERFACE_SUCCESS) {
       // case: ipc success, but return error code
       return accountResponse.getErrorCode();
     }
@@ -181,9 +184,9 @@ struct AddStaff {
     this.staffArray.push(staff);
   }
 
-  private batchDealError(accountNameArray: string[], code: number, startOffset: number[], endOffset: number[]) {
+  private batchDealError(accountNameArray: string[], startOffset: number[], endOffset: number[]) {
     accountNameArray.forEach(accountName =>{
-      this.showErrInput(accountName, code, startOffset, endOffset);
+      this.showErrInput(accountName, startOffset, endOffset);
     })
   }
 
@@ -201,20 +204,12 @@ struct AddStaff {
     this.controller.addBuilderSpan(staffBuilder);
   }
 
-  private showErrInput(staffName: string, errorCode: number, startOffset: number[], endOffset: number[]) {
+  private showErrInput(staffName: string, startOffset: number[], endOffset: number[]) {
     if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
       this.deleteBuildSpan(startOffset, endOffset);
     }
     this.errInput.push(staffName);
     this.fail = CommonUtil.increaseByAppStorageKey(AppStorageConstant.ACCOUNT_VERIFY_FAIL_COUNT, 1);
-    if ([
-      Constants.ERR_JS_INVALID_PARAMETER,
-      Constants.ERR_JS_ACCOUNT_NOT_FOUND
-    ].includes(errorCode)) {
-      this.isInputInvalidFlag = true;
-    } else {
-      this.isNetworkInvalid = true;
-    }
   }
 
   private onDataChange() {
@@ -230,10 +225,25 @@ struct AddStaff {
     this.controller.updateSpanStyle({
       textStyle: {
         fontSize: $r('sys.float.ohos_id_text_size_body1'),
-        fontColor: this.isInputInvalid ?
+        fontColor: this.showFlag ?
         $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_primary')
       }
     });
+  }
+
+  private initShowCode() {
+    this.isInitDataStatus = true;
+    this.showCode = EncryptProtectionShowCodeEnum.INIT_SUCCESS;
+    this.showFlag = false;
+  }
+
+  private dealError(inputId: string, startOffset: number[], endOffset: number[]) {
+    this.errInput = [];
+    this.deleteBuildSpan(startOffset, endOffset);
+    this.showErrInput(inputId, startOffset, endOffset);
+    this.controller.addTextSpan(this.errInput.join(';'));
+    this.showCode = EncryptProtectionShowCodeEnum.DEFAULT_ERROR;
+    this.showFlag = true;
   }
 
   async aboutToAppear() {
@@ -280,10 +290,7 @@ struct AddStaff {
           })
           .aboutToIMEInput((value: RichEditorInsertValue) => {
             this.isInitDataStatus = true;
-            if (this.isInputInvalid || this.isNetworkInvalid) {
-              this.isInputInvalid = false;
-              this.isNetworkInvalid = false;
-            }
+            this.initShowCode();
             if (value.insertValue === Constants.ENTER_KEY_VALUE) {
               let richEditorSpans: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
               this.controller.getSpans();
@@ -296,11 +303,15 @@ struct AddStaff {
                   inputId += buildSpan.value;
                   startOffset.push(buildSpan.spanPosition.spanRange[0]);
                   endOffset.push(buildSpan.spanPosition.spanRange[1]);
+                  if (inputId.length > EncryptProtectionHelper.INPUT_MAX_LENGTH) {
+                    this.dealError(inputId, startOffset, endOffset);
+                    return true;
+                  }
                 }
               }
               if (this.isAccountCheckSuccess) {
                 this.onSubmitMock(inputId, startOffset, endOffset);
-              };
+              }
               return false;
             }
             return true;
@@ -309,15 +320,9 @@ struct AddStaff {
             if (!value.richEditorDeleteSpans.length) {
               return false;
             };
-            this.isInitDataStatus = true;
-            if (this.isInputInvalid || this.isNetworkInvalid) {
-              this.isInputInvalid = false;
-              this.isNetworkInvalid = false;
-            }
-
+            this.initShowCode();
             let richEditorSpansAll: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
               this.controller.getSpans();
-
             let richEditorDeleteSpans: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
             value.richEditorDeleteSpans;
             let len = richEditorDeleteSpans[richEditorDeleteSpans.length - 1].spanPosition.spanIndex;
@@ -351,18 +356,14 @@ struct AddStaff {
       Divider()
         .strokeWidth(this.focusFlag ?
         px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER2) : px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER))
-        .color((this.isInputInvalid || this.staffArrayLength || this.isNetworkInvalid)
+        .color((EncryptProtectionHelper.isShowErr(this.showCode, this.staffArrayLength))
           ? $r('sys.color.ohos_id_color_handup') :
           this.focusFlag ? $r('sys.color.ohos_id_color_primary') : $r('sys.color.ohos_id_color_list_separator'))
         .opacity(this.focusFlag ? Constants.FOOTER_OPACITY_SEPC : Constants.FOOTER_OPACITY_ONE);
 
       Flex({ direction: FlexDirection.Row }) {
-        if (this.isInputInvalid && !this.isNetworkInvalid) {
-          Text($r('app.string.incorrect_work_ID'))
-            .inputMessageText()
-        }
-        if (this.isNetworkInvalid) {
-          Text($r('app.string.network_invalid'))
+        if (EncryptProtectionHelper.getShowErr(this.showCode)) {
+          Text(EncryptProtectionHelper.getShowErr(this.showCode))
             .inputMessageText()
         }
         Blank()

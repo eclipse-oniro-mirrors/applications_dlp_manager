@@ -32,6 +32,7 @@ import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import dialogRequest from '@ohos.app.ability.dialogRequest';
 import AccountManager from '../manager/AccountManager';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'SaveAs';
 
@@ -96,8 +97,6 @@ export default class SaveAsAbility extends UIAbility {
   private dirPath: string = '';
   private encFile: string = '';
   private zipPath: string = '';
-  private ff: fs.File | undefined = undefined;
-  private zf2: fs.File | undefined = undefined;
   private zipName: string = '';
   private file: fs.File | undefined = undefined;
   private dstFdPicker: number = -1;
@@ -248,12 +247,6 @@ export default class SaveAsAbility extends UIAbility {
         resolve(success);
       } catch (err) {
         HiLog.error(TAG, `copyDlpHead: ${JSON.stringify(err)}, message: ${JSON.stringify(err.message)}`);
-        try {
-          await fs.close(this.ff);
-          await fs.close(this.zf2);
-        } catch (error) {
-          HiLog.error(TAG, `close: ${JSON.stringify(error)}`);
-        }
         resolve(false);
       }
       if (this.zipFlag) {
@@ -303,10 +296,12 @@ export default class SaveAsAbility extends UIAbility {
         }
       }
 
+      let openFile: fs.File | undefined;
+      let openZipFile: fs.File | undefined;
       try {
         this.zipFlag = true;
-        this.ff = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
-        await fs.copyFile(srcFd, this.ff.fd);
+        openFile = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+        await fs.copyFile(srcFd, openFile.fd);
         await fs.mkdir(this.dirPath);
         let options: zlib.Options = {
           level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
@@ -316,17 +311,15 @@ export default class SaveAsAbility extends UIAbility {
         await zlib.decompressFile(this.filePath, this.dirPath, options);
         await fs.truncate(this.encFile);
         await zlib.compressFile(this.dirPath, this.zipPath, options);
-        this.zf2 = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
-        await fs.copyFile(this.zf2.fd, dstFd);
+        openZipFile = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
+        await fs.copyFile(openZipFile.fd, dstFd);
         resolve(true);
       } catch (err) {
         HiLog.error(TAG, `open failed: ${JSON.stringify(err)}`);
         resolve(false);
       } finally {
-        if (this.ff || this.zf2) {
-          await fs.close(this.ff);
-          await fs.close(this.zf2);
-        }
+        FileUtil.closeFileSync(openFile);
+        FileUtil.closeFileSync(openZipFile);
       }
     })
   }
@@ -352,9 +345,7 @@ export default class SaveAsAbility extends UIAbility {
       }
       return false;
     } finally {
-      if (file != undefined) {
-        fs.closeSync(file.fd);
-      }
+      FileUtil.closeFileSync(file);
     }
   }
   
@@ -516,14 +507,8 @@ export default class SaveAsAbility extends UIAbility {
       }
     } catch (err) {
       HiLog.error(TAG, `DocumentViewPicker failed: ${JSON.stringify(err)}`);
-      try {
-        if (this.file != undefined) {
-          await fs.close(this.file);
-        }
-        await this.deleteUri(uri);
-      } catch (err) {
-        HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-      }
+      FileUtil.closeFileSync(this.file);
+      FileUtil.unlinkSync(uri);
       this.isOK = false;
       await GetAlertMessage.requestModalUIExtension(this.context,
         { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -544,13 +529,9 @@ export default class SaveAsAbility extends UIAbility {
       this.srcFdPicker = getFileFd(srcUri);
       let success = await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
       if (!success) {
-        try {
-          await fs.close(this.file);
-          await this.deleteUri(uri);
-        } catch (err) {
-          HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-        }
-        fs.closeSync(this.srcFdPicker);
+        FileUtil.closeFileSync(this.file);
+        FileUtil.unlinkSync(uri);
+        FileUtil.closeFdSync(this.srcFdPicker);
         this.isOK = false;
         await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -560,6 +541,9 @@ export default class SaveAsAbility extends UIAbility {
         await this.openDLPFile(uri, want);
         await this.addDLPLinkFile(appId, uri);
       } catch {
+        FileUtil.closeFileSync(this.file);
+        FileUtil.unlinkSync(uri);
+        FileUtil.closeFdSync(this.srcFdPicker);
         reject();
       }
       let linkFilePath = Constants.FUSE_PATH + this.linkFileName;
@@ -576,7 +560,7 @@ export default class SaveAsAbility extends UIAbility {
       this.resultUri = getFileUriByPath(linkFilePath);
       (this.result.want?.parameters?.pick_path_return as string[]).push(this.resultUri);
       this.result.resultCode = 0;
-      fs.closeSync(this.srcFdPicker);
+      FileUtil.closeFdSync(this.srcFdPicker);
       resolve();
     })
   }
@@ -589,14 +573,7 @@ export default class SaveAsAbility extends UIAbility {
         resolve();
       } catch (err) {
         HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(err)}`);
-        try {
-          if (this.file != undefined) {
-            await fs.close(this.file);
-          }
-          await this.deleteUri(uri);
-        } catch (err) {
-          HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-        }
+        FileUtil.unlinkSync(uri);
         this.isOK = false;
         await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -621,13 +598,9 @@ export default class SaveAsAbility extends UIAbility {
       } catch (err) {
         HiLog.error(TAG, `generateDlpFile: ${this.dstFdPicker}, failed: ${JSON.stringify(err)}`);
         await GetAlertMessage.requestModalUIExtension(this.context, err);
-        try {
-          await fs.close(this.file);
-          await this.deleteUri(uri);
-        } catch (err) {
-          HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-        }
-        fs.closeSync(this.srcFdPicker);
+        FileUtil.closeFileSync(this.file);
+        FileUtil.unlinkSync(uri);
+        FileUtil.closeFdSync(this.srcFdPicker);
         reject();
       }
       resolve();
@@ -653,35 +626,12 @@ export default class SaveAsAbility extends UIAbility {
         } catch (err) {
           HiLog.error(TAG, `closeDlpFile failed: ${JSON.stringify(err)}`);
         }
-        try {
-          await fs.close(this.file);
-          await this.deleteUri(uri);
-        } catch (err) {
-          HiLog.info(TAG, `close fail: ${JSON.stringify(err)}`);
-        }
-        fs.closeSync(this.srcFdPicker);
+        FileUtil.closeFileSync(this.file);
+        FileUtil.unlinkSync(uri);
+        FileUtil.closeFdSync(this.srcFdPicker);
         this.isOK = false;
         await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
-        reject();
-      }
-      resolve();
-    })
-  }
-
-  deleteUri(uri: string): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
-      try {
-        uriInfo = new fileUri.FileUri(uri);
-      } catch (err) {
-        HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
-        reject();
-      }
-      try {
-        await fs.unlink(uriInfo.path);
-      } catch (err) {
-        HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
         reject();
       }
       resolve();
