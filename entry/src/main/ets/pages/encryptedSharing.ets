@@ -40,6 +40,8 @@ import {
 } from '../common/utils';
 import { SystemUtils } from '../common/systemUtils';
 import FontSizeScale from '../common/FontSizeScale';
+import { contact } from '@kit.ContactsKit';
+import deviceInfo from '@ohos.deviceInfo';
 
 const TAG = 'Share';
 
@@ -73,6 +75,7 @@ let storage = LocalStorage.getShared();
 struct encryptedSharing {
   static readonly GET_ACCOUNT_INFO_RESET = 'clear';
   private connectService: ConnectService = new ConnectService(getContext(this));
+  private isPhoneDevice: boolean = true;
   @State titlebarMargin: LocalizedMargin = {
     start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
     end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
@@ -134,6 +137,31 @@ struct encryptedSharing {
     }
     .width(Constants.CONTACTS_PICKER_WIDTH)
     .height(Constants.CONTACTS_PICKER_HEIGHT)
+  }
+
+  contactsAction = () => {
+    if (this.isPhoneDevice) {
+      contact.selectContacts({ isMultiSelect: false }).then((data) => {
+        HiLog.info(TAG, 'Succeeded in selecting Contacts.');
+        if (!data || !data.length) {
+          HiLog.error(TAG, 'Contacts data is empty.');
+          return;
+        }
+        const phoneNumbers = data[0].phoneNumbers;
+        if (!phoneNumbers || !phoneNumbers.length) {
+          HiLog.error(TAG, 'Contacts phoneNumbers is empty.');
+          return;
+        }
+        const phoneNumber = phoneNumbers[0].phoneNumber;
+        if (phoneNumber) {
+          this.inputValue = phoneNumber;
+        }
+      }).catch((error: BusinessError) => {
+        HiLog.error(TAG, `Failed to select Contacts, Code: ${error.code}, message: ${error.message}`);
+      });
+    } else {
+      this.isShowSheet = !this.isShowSheet;
+    }
   }
 
   private async beginShareEncrypt() {
@@ -518,6 +546,7 @@ struct encryptedSharing {
 
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear enter: ${this.showUIExtensionForAccountLogin}`);
+    this.isPhoneDevice = deviceInfo.deviceType === 'phone';
     this.getLoginStatus();
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
@@ -603,9 +632,7 @@ struct encryptedSharing {
                     ? Constants.SHARE_CONTACTS_GROUP_OFFSET_X_RTL : Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
                   y: Constants.SHARE_CONTACTS_GROUP_OFFSET_Y
                 })
-                .onClick(() => {
-                  this.isShowSheet = !this.isShowSheet;
-                })
+                .onClick(this.contactsAction)
                 .bindSheet(this.isShowSheet, this.contactsPicker(), {
                   height: SheetSize.LARGE,
                   dragBar: false,
