@@ -44,8 +44,8 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     let inputUris = parameters['ability.params.stream'] as Array<Object>;
     let callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
     let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
-    if ((inputUris instanceof Array) && (typeof inputUris[0] === 'string') && (typeof callerToken === 'number')
-     && (typeof callerBundleName === 'string')) {
+    if ((inputUris instanceof Array) && (typeof inputUris[0] === 'string') && (typeof callerToken === 'number') && 
+      (typeof callerBundleName === 'string')) {
       return true;
     }
      HiLog.error(TAG, `want.parameters invalid.`);
