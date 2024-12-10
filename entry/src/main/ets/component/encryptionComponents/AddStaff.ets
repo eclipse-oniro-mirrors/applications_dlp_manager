@@ -178,7 +178,7 @@ struct AddStaff {
 
   private addStaff(matchAccount: DomainAccountInfo): void {
     let staff: Staff = {
-      authAccount: matchAccount.accountName,
+      authAccount: matchAccount.accountName.toLocaleLowerCase(),
       textContent: matchAccount[this.textContent] as string
     };
     this.staffArray.push(staff);
