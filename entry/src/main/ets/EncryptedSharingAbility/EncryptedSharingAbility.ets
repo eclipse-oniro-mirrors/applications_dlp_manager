@@ -39,27 +39,26 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     emitter.emit('onConfigurationUpdate');
   }
 
-  checkValidSharedRecords(want: Want): Promise<void> {
-    return new Promise((resolve, reject) => {
-      let parameters = want.parameters as Record<string, Object>;
-      let callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
-      let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
-      if (callerToken === undefined || callerBundleName === undefined) {
-        HiLog.error(TAG, `need caller info in want.parameters`);
-        reject(); return;
-      }
-      AppStorage.setOrCreate('hiPkgName', callerBundleName);
-      resolve(); return;
-    })
+  checkValidParameters(want: Want): boolean {
+    let parameters = want.parameters as Record<string, Object>;
+    let inputUris = parameters['ability.params.stream'] as Array<Object>;
+    let callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
+    let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
+    if ((inputUris instanceof Array) && (typeof inputUris[0] === 'string') && (typeof callerToken === 'number') && 
+      (typeof callerBundleName === 'string')) {
+      return true;
+    }
+    HiLog.error(TAG, `want.parameters invalid.`);
+    return false;
   }
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `EncryptedSharingAbility onSessionCreate.`);
-    try {
-      await this.checkValidSharedRecords(want);
-    } catch {
+    if (this.checkValidParameters(want) === false) {
       return;
     }
+    let parameters = want.parameters as Record<string, Object>;
+    AppStorage.setOrCreate('hiPkgName', parameters['ohos.aafwk.param.callerBundleName']);
     let dlpInfo: DLPInfo = await getDLPInfo();
     AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
