@@ -48,7 +48,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
       (typeof callerBundleName === 'string')) {
       return true;
     }
-     HiLog.error(TAG, `want.parameters invalid.`);
+    HiLog.error(TAG, `want.parameters invalid.`);
     return false;
   }
 
