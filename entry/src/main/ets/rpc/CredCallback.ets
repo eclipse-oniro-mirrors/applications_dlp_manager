@@ -35,7 +35,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     HiLog.info(TAG, `onRemoteMessageRequest called, code = ${code}`);
     try {
       if (data.readInterfaceToken() !== CredCallbackStub.DESCRIPTOR) {
-        HiLog.info(TAG, `DESCRIPTOR unmatched.`);
+        HiLog.error(TAG, `DESCRIPTOR unmatched.`);
         return false;
       }
     } catch (error) {

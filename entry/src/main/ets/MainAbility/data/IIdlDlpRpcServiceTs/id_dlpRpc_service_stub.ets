@@ -44,7 +44,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
     HiLog.info(TAG, `onRemoteMessageRequest called, code: ${code}`);
     try {
       if (data.readInterfaceToken() !== IdDlpRpcServiceStub.DESCRIPTOR) {
-        HiLog.info(TAG, `DESCRIPTOR unmatched.`);
+        HiLog.error(TAG, `DESCRIPTOR unmatched.`);
         return false;
       }
     } catch (error) {
