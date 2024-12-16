@@ -34,12 +34,23 @@ import { HiLog } from '../../../common/HiLog';
 const TAG = 'service_stub'
 
 export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IIdDlpRpcService {
+  private static readonly DESCRIPTOR: string = 'OHOS.HapDlpMgrAbilityServiceStub';
+
   constructor(des: string) {
     super(des);
   }
 
   async onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<boolean> {
     HiLog.info(TAG, `onRemoteMessageRequest called, code: ${code}`);
+    try {
+      if (data.readInterfaceToken() !== IdDlpRpcServiceStub.DESCRIPTOR) {
+        HiLog.info(TAG, `DESCRIPTOR unmatched.`);
+        return false;
+      }
+    } catch (error) {
+      HiLog.error(TAG, `read data exception, error is ${JSON.stringify(error)}`);
+      return false;
+    }
     switch (code) {
       case IDlpServiceCmdCode.COMMAND_GEN_DLP_FILE: {
         await this.genDlpFileInner(data, reply);

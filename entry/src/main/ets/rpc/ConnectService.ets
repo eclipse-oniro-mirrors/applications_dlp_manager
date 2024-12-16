@@ -26,13 +26,14 @@ export default class ConnectService {
   private context: ESObject;
   private optionsSearchUser: common.ConnectOptions;
   private optionsGetAccount: common.ConnectOptions;
+  private cloudPhone: string = '';
 
   constructor(context: ESObject) {
     this.context = context;
     this.optionsSearchUser = {
       onConnect: (elementName, remote) => {
         HiLog.info(TAG, `onConnect success search account ${JSON.stringify(elementName)}`);
-        this.service.searchUserInfo(remote);
+        this.service.searchUserInfo(remote, this.cloudPhone);
       },
       onDisconnect: () => {
         HiLog.info(TAG, `onDisconnect: SearchUser`);
@@ -53,6 +54,10 @@ export default class ConnectService {
         HiLog.info(TAG, `onFailed: GetAccount`);
       }
     }
+  }
+
+  setCloudPhone(cloudPhone: string) {
+    this.cloudPhone = cloudPhone;
   }
 
   connectServiceShareAbility(code: number) {

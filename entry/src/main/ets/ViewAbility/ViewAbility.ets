@@ -501,7 +501,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
           this.sandboxBundleName, this.authPerm, this.userId, this.uri
         );
         if (this.alreadyOpened && (this.appIndex != appInfo.appIndex || this.tokenId != appInfo.tokenID)) {
-          HiLog.info(TAG, `return:${this.appIndex} ${appInfo.appIndex} ${this.tokenId} ${appInfo.tokenID} `);
           await this.deleteData(false, true);
           this.dlpFd = getFileFd(this.uri, fs.OpenMode.READ_WRITE);
           await this.getOpenedDLPFile(startId);
