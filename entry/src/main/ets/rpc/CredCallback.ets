@@ -35,7 +35,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     HiLog.info(TAG, `onRemoteMessageRequest called, code = ${code}`);
     try {
       if (data.readInterfaceToken() !== CredCallbackStub.DESCRIPTOR) {
-        HiLog.info(TAG, `DESCRIPTOR unmatched.`);
+        HiLog.error(TAG, `DESCRIPTOR unmatched.`);
         return false;
       }
     } catch (error) {
@@ -79,12 +79,11 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     return false;
   }
 
-  searchUserInfo(remote: rpc.IRemoteObject) {
-    if (remote === null) {
-      HiLog.info(TAG, `onConnect remote is null.`);
+  searchUserInfo(remote: rpc.IRemoteObject, cloudPhone: string) {
+    if (remote === null || cloudPhone === '') {
+      HiLog.info(TAG, `onConnect remote or cloudPhone is null.`);
       return;
     }
-    let cloudPhone: string | undefined = AppStorage.get('cloudPhone');
     HiLog.info(TAG, `searchUserInfo start`);
     let option = new rpc.MessageOption(Constants.TF_ASYNC);
     let data = new rpc.MessageSequence();

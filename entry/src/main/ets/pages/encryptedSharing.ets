@@ -227,7 +227,7 @@ struct encryptedSharing {
     reg = /^(0086|\+86)/;
     let formatPhone = this.inputValue.replace(reg, '');
     let cloudPhone = `${Constants.INTERNATIONAL_DIALING_CODE}${formatPhone}`;
-    AppStorage.setOrCreate('cloudPhone', cloudPhone);
+    this.connectService.setCloudPhone(cloudPhone);
     return true;
   }
 
