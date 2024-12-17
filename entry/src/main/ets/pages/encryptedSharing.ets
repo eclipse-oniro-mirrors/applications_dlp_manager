@@ -614,7 +614,8 @@ struct encryptedSharing {
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
                 .focusable(this.isTextInputFocus)
                 .defaultFocus(false)
-                .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
+                .direction(Direction.Ltr)
+                .textAlign(SystemUtils.isRTL() ? TextAlign.End : TextAlign.Start)
                 .type(InputType.PhoneNumber)
                 .enterKeyType(EnterKeyType.NEW_LINE)
                 .border(this.phoneFormatTips ?
