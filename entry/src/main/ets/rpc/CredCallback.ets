@@ -21,7 +21,6 @@ import { common } from '@kit.AbilityKit';
 const TAG = 'CredCallbackStub';
 
 export default class CredCallbackStub extends rpc.RemoteObject {
-  private static readonly DESCRIPTOR: string = 'OHOS.HapDlpCredAbilityServiceStub';
 
   constructor(des: string) {
     super(des);
@@ -34,8 +33,8 @@ export default class CredCallbackStub extends rpc.RemoteObject {
   async onRemoteMessageRequest(code: number, data: rpc.MessageSequence): Promise<boolean> {
     HiLog.info(TAG, `onRemoteMessageRequest called, code = ${code}`);
     try {
-      if (data.readInterfaceToken() !== CredCallbackStub.DESCRIPTOR) {
-        HiLog.error(TAG, `DESCRIPTOR unmatched.`);
+      if (data.readInterfaceToken() !== Constants.DLP_CREDMGR_INTERFACE_TOKEN) {
+        HiLog.error(TAG, `InterfaceToken unmatched.`);
         return false;
       }
     } catch (error) {
@@ -89,7 +88,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
     try {
-      data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
+      data.writeInterfaceToken(Constants.DLP_CREDMGR_INTERFACE_TOKEN);
       let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
       data.writeRemoteObject(callback.asObject());
       data.writeString(JSON.stringify({'phone': cloudPhone}));
@@ -114,7 +113,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
     try {
-      data.writeInterfaceToken('OHOS.HapDlpCredAbilityServiceStub');
+      data.writeInterfaceToken(Constants.DLP_CREDMGR_INTERFACE_TOKEN);
       let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
       data.writeRemoteObject(callback.asObject());
     } catch (error) {

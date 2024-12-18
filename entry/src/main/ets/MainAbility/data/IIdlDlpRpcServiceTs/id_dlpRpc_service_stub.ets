@@ -30,11 +30,11 @@ import {
 import IIdDlpRpcService from './i_id_dlpRpc_service';
 import IDLDLPProperty from '../../../serviceExtensionAbility/sequenceable/dlpClass';
 import { HiLog } from '../../../common/HiLog';
+import Constants from '../../../common/constant';
 
 const TAG = 'service_stub'
 
 export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IIdDlpRpcService {
-  private static readonly DESCRIPTOR: string = 'OHOS.HapDlpMgrAbilityServiceStub';
 
   constructor(des: string) {
     super(des);
@@ -43,8 +43,8 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   async onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<boolean> {
     HiLog.info(TAG, `onRemoteMessageRequest called, code: ${code}`);
     try {
-      if (data.readInterfaceToken() !== IdDlpRpcServiceStub.DESCRIPTOR) {
-        HiLog.error(TAG, `DESCRIPTOR unmatched.`);
+      if (data.readInterfaceToken() !== Constants.DLP_MGR_INTERFACE_TOKEN) {
+        HiLog.error(TAG, `InterfaceToken unmatched.`);
         return false;
       }
     } catch (error) {

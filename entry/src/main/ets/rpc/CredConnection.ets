@@ -31,7 +31,6 @@ export default class CredConnection {
   private static readonly CRED_BUNDLE_NAME = 'com.huawei.hmos.dlpcredmgr';
   private static readonly CRED_ABILITY_NAME = 'DlpCredDataExtAbility';
   private static readonly CRED_CALLBACK_STUB = 'CredCallbackStub';
-  private static readonly CRED_INTERFACE_TOKEN = 'OHOS.HapDlpCredAbilityServiceStub';
   private static readonly REQUEST_TIME_OUT: number = 10;
   private static readonly CONNECT_TIME_OUT: number = 1000;
 
@@ -104,7 +103,7 @@ export default class CredConnection {
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
     try {
-      data.writeInterfaceToken(CredConnection.CRED_INTERFACE_TOKEN);
+      data.writeInterfaceToken(Constants.DLP_CREDMGR_INTERFACE_TOKEN);
       let callback: CredCallbackStub = new CredCallbackStub(CredConnection.CRED_CALLBACK_STUB);
       data.writeRemoteObject(callback.asObject());
       data.writeString(JSON.stringify(req));
