@@ -48,6 +48,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(inputUri);
     _data.writeString(outputUri);
     _data.writeParcelable(dlp);
@@ -69,6 +70,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(srcUri);
     _data.writeString(callerAppId);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_OPEN_DLP_FILE, _data, _reply, _option)
@@ -90,6 +92,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_STOP_FUSE_LINK, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
@@ -108,6 +111,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_RESUME_FUSE_LINK, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
@@ -126,6 +130,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(uri);
     _data.writeString(linkFileName);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_REPLACE_DLP_LINK_FILE, _data, _reply, _option)
@@ -145,6 +150,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(srcUri);
     _data.writeString(pathUri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_RECOVER_DLP_FILE, _data, _reply, _option)
@@ -164,6 +170,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(srcUri);
 
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_CLOSE_DLP_FILE, _data, _reply, _option)
@@ -184,6 +191,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(linkFileName);
     _data.writeLong(callerToken);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_SANDBOX_LINK_FILE, _data, _reply, _option)
@@ -205,6 +213,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_FILE_OPEN_HISTORY, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
@@ -223,6 +232,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
     let _option = new rpc.MessageOption();
     let _data = new rpc.MessageSequence();
     let _reply = new rpc.MessageSequence();
+    _data.writeInterfaceToken(Constants.DLP_MGR_INTERFACE_TOKEN);
     _data.writeString(uri);
     await this.proxy.sendMessageRequest(IDlpServiceCmdCode.COMMAND_FILE_LINK_SET, _data, _reply, _option)
       .then((result: rpc.RequestResult)=>{
