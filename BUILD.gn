@@ -23,7 +23,7 @@ ohos_app("dlp_manager") {
   js_build_mode = "release"
   certificate_profile = "signature/dlpmanager.p7b"
   hap_name = "dlp_manager"
-  part_name = "prebuilt_hap"
+  part_name = "dlp_manager"
   subsystem_name = "applications"
   module_install_dir = "app/com.ohos.dlpmanager"
   sdk_home = "//prebuilts/ohos-sdk/linux"
