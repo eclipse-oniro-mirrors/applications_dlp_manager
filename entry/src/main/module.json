@@ -111,6 +111,12 @@
       },
       {
         "name": "ohos.permission.START_DLP_CRED"
+      },
+      {
+        "name": "ohos.permission.START_SYSTEM_DIALOG"
+      },
+      {
+        "name": "ohos.permission.EXEMPT_PRIVACY_SECURITY_CENTER"
       }
     ]
   }
