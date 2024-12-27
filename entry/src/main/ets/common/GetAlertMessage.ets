@@ -169,6 +169,8 @@ export class GetAlertMessage {
         return $r('app.string.THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION');
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
         return $r('app.string.This_File_is_Open_By_Other_App');
+      case Constants.ERR_JS_FILE_EXPIRATION:
+        return $r('app.string.Permission_has_expired');
       default:
         return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
     }
