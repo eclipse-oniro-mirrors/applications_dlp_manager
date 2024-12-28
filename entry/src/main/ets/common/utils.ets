@@ -537,17 +537,19 @@ async function sleep(milliSeconds: number): Promise<void> {
 }
 
 async function getConnectionStatus(exactly: boolean = true): Promise<boolean> {
-  HiLog.info(TAG, `Enter getConnectionStatus, exactly mode: ${exactly}}`);
+  HiLog.info(TAG, `Enter getConnectionStatus, exactly mode: ${exactly}.`);
   try {
     const startTime = getCurrentTime();
     let net: connection.NetHandle = await connection.getDefaultNet();
+
     let capabilities: connection.NetCapabilities = await connection.getNetCapabilities(net);
-    HiLog.info(TAG, `Succeeded to get net capabilities, ${JSON.stringify(capabilities)}`);
+    HiLog.info(TAG, `Succeeded to get net capabilities, ${JSON.stringify(capabilities)}.`);
     let networkCap = capabilities.networkCap;
+
     while (exactly && networkCap?.includes(NET_CAPABILITY_CHECKING_CONNECTIVITY)) {
       HiLog.info(TAG, `Checking connectivity...`);
       if (isExpire(startTime, TIME_OUT_SECONDS, UnitType.SECOND_UNIT)) {
-        HiLog.error(TAG, `Network connection check failed.`);
+        HiLog.error(TAG, 'Network connection check failed.');
         return false;
       }
       await sleep(SLEEP_MILLISECONDS);

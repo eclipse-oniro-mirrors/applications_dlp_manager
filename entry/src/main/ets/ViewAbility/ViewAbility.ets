@@ -58,6 +58,12 @@ import { ObjectUtil } from '../common/ObjectUtil';
 
 const TAG = 'View';
 const SUFFIX_INDEX = 2;
+const APPID_FOR_HOPE: string = '5765880207854533797';
+const BUNDLE_NAME_FOR_HOPE: string = 'com.huawei.it.welink';
+
+interface DlpConnectionPluginIdObj {
+  id: string
+}
 
 let opening: boolean = false;
 export default class ViewAbility extends ServiceExtensionAbility {
@@ -68,6 +74,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private tokenId: number = -1;
   private dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  private needCallAccount: boolean = true;
+  private needCheckAccountType: boolean = false;
   private sandboxBundleName: string = '';
   private sandboxAbilityName: string = '';
   private sandboxModuleName: string = '';
@@ -395,7 +403,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           accountFlag = await GetAlertMessage.checkAccountInfo(accountName);
         }
         if (!accountFlag) {
-          await this.callAlertAbility({code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+          await this.callAlertAbility({code: Constants.ERR_JS_USER_NO_PERMISSION} as BusinessError);
           return;
         }
         await this.callAlertAbility(err.code === Constants.ERR_JS_APP_PERMISSION_DENY ?
@@ -417,7 +425,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async dlpGetAuthPerm(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      if (this.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+      if (this.needCallAccount && this.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
         this.authPerm = getAuthPerm(this.accountInfo?.domainInfo.accountName ?? '', this.dlpFile.dlpProperty);
       } else {
         this.authPerm = dlpPermission.DLPFileAccess.READ_ONLY;
@@ -696,6 +704,31 @@ export default class ViewAbility extends ServiceExtensionAbility {
     })
   }
 
+  async checkNeedCallAccount(): Promise<boolean> {
+    switch (this.accountType) {
+      case dlpPermission.AccountType.CLOUD_ACCOUNT: {
+        return true;
+      }
+      case dlpPermission.AccountType.DOMAIN_ACCOUNT: {
+        try {
+          this.accountInfo = await getOsAccountInfo();
+          this.userId = await getUserId();
+        } catch (err) {
+          HiLog.error(TAG, 'getOsAccountInfo failed: ${JSON.stringify(err)}');
+          return true;
+        }
+        if (this.accountInfo.domainInfo.accountName === '') {
+          HiLog.debug(TAG, 'not need check call account');
+          return false;
+        }
+      }
+      defalut: {
+        break;
+      }
+    }
+    return true;
+  }
+
   grandUriPermission() {
     let flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
       wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
@@ -705,8 +738,31 @@ export default class ViewAbility extends ServiceExtensionAbility {
     });
   }
 
+  async checkPermissionWithPluginId(want: Want): Promise<boolean> {
+    let paramCallerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
+    AppStorage.setOrCreate('paramCallerBundleName', paramCallerBundleName);
+
+    let pluginId: string = (want.parameters?.['dlpConnectionPluginId'] as DlpConnectionPluginIdObj)?.id;
+    if (pluginId === null || pluginId === undefined) {
+      return true;
+    }
+
+    let callerAppId = want.parameters?.['ohos.aafwk.param.callerAppIdentifier'] as string;
+    if (callerAppId !== APPID_FOR_HOPE || paramCallerBundleName !== BUNDLE_NAME_FOR_HOPE) {
+      HiLog.error(TAG, `callerAppId or callerBundleNameis error.`);
+      await this.callAlertAbility({code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION} as BusinessError);
+      return false;
+    }
+
+    this.needCheckAccountType = true;
+    return true;
+  }
+
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.debug(TAG, `enter onRequest`);
+    if (!this.checkPermissionWithPluginId(want)) {
+      return;
+    }
     try {
       await this.dlpFileMapHistory(want);
       this.accountType = await getAccountType(this.context, this.dlpFd);
@@ -718,6 +774,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
     this.sandboxBundleName = want.parameters?.['ohos.dlp.params.bundleName'] as string;
     this.sandboxAbilityName = want.parameters?.['ohos.dlp.params.abilityName'] as string;
     this.sandboxModuleName = want.parameters?.['ohos.dlp.params.moduleName'] as string;
+    if (this.needCheckAccountType) {
+      this.needCallAccount = await this.checkNeedCallAccount();
+    }
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
       this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
@@ -742,7 +801,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
     }
     try {
-      await this.getAccountAndOpenDLPFile(startId);
+      if (this.needCallAccount) {
+        await this.getAccountAndOpenDLPFile(startId);
+      }
       await this.getPolicyAndInstallSandbox(startId);
       await this.getUriInfo(startId);
     } catch {

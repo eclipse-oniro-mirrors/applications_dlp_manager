@@ -127,7 +127,7 @@ struct encryptedSharing {
               this.inputValue = (params[i] as Record<string, string>)?.telephone;
             }
           } catch (error) {
-            HiLog.error(TAG, `JSON parse exception, error is ${JSON.stringify(error)}`);
+            HiLog.error(TAG, `json parse exception, error is ${JSON.stringify(error)}`);
           }
           this.isShowSheet = false;
         })
@@ -443,6 +443,7 @@ struct encryptedSharing {
     }
   }
 
+
   onLanguageChange() {
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
     if (str.length > 0) {
@@ -487,7 +488,7 @@ struct encryptedSharing {
           } else {
             HiLog.error(TAG, `error is ${JSON.stringify(error)}`);
           }
-        });
+      });
     } catch (error) {
       HiLog.error(TAG, `callback getStringValue failed, error ${JSON.stringify(error)}`);
     }
@@ -538,7 +539,7 @@ struct encryptedSharing {
   getScrollHeight(newValue: SizeOptions) {
     const height = newValue.height as number;
     this.scrollHeight = height - Constants.SHARE_BUTTON_COLUMN_BOTTOM - Constants.SHARE_TITLE_HEAD_HEIGHT -
-      Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
+    Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
     if (this.scrollHeight > Constants.SHARE_TEXTAREA_MAX_HEIGHT) {
       this.scrollHeight = Constants.SHARE_TEXTAREA_MAX_HEIGHT;
     }
@@ -601,15 +602,17 @@ struct encryptedSharing {
                 .id('phoneInput')
                 .padding({
                   left: SystemUtils.isRTL() ?
-                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
+                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
                   right: SystemUtils.isRTL() ?
-                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
+                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
                 })
                 .enabled(this.enabledFocus)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
                 .focusable(this.isTextInputFocus)
+                .defaultFocus(false)
                 .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
                 .type(InputType.PhoneNumber)
+                .contentType(ContentType.PHONE_COUNTRY_CODE)
                 .enterKeyType(EnterKeyType.NEW_LINE)
                 .border(this.phoneFormatTips ?
                   { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : { width: 0 })
@@ -647,7 +650,7 @@ struct encryptedSharing {
             }
 
             Text(this.phoneFormatTips ?
-            this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
+              this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
               .fontColor(this.phoneFormatTips ?
               $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
               .fontSize($r('sys.float.ohos_id_text_size_body3'))
@@ -666,7 +669,6 @@ struct encryptedSharing {
         .padding({
           top: Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM
         })
-
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
             .enabled(this.isConfirmButtonEnabled)
@@ -689,7 +691,6 @@ struct encryptedSharing {
       }
       .width(Constants.SHARE_PAGES_COLUMN_WIDTH)
       .height(Constants.SHARE_PAGES_COLUMN_HEIGHT)
-
       if (this.showUIExtensionForAccountLogin) {
         UIExtensionComponent({
           bundleName: 'com.huawei.hmos.dlpcredmgr',
