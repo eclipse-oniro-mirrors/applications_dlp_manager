@@ -238,6 +238,7 @@ export default class Constants {
   public static SHARE_SET_TIMEOUT = 1500;
   public static SHARE_FILE_NAME_TOO_LONG = 13900030;
   public static SHARE_TEMP_SAVE_FILE_NUMBER = 20;
+  public static CLEAN_DLP_FILE_IN_CACHE_TIMEOUT: number = 60 * 60 * 1000;
 
   public static readonly ERR_CODE_NETWORK_ERROR: number = -4;
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;

@@ -40,6 +40,7 @@ import {
 import { SystemUtils } from '../common/systemUtils';
 import { contact } from '@kit.ContactsKit';
 import deviceInfo from '@ohos.deviceInfo';
+import { systemDateTime } from '@kit.BasicServicesKit'
 
 const TAG = 'Share';
 
@@ -246,7 +247,7 @@ struct encryptedSharing {
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
-    let filePath = getContext(this).filesDir + `/Share/${new Date().getTime()}/`;
+    let filePath = getContext(this).filesDir + `/Share/${systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false)}/`;
     try {
       await fs.mkdir(filePath, true);
     } catch (error) {
@@ -508,7 +509,20 @@ struct encryptedSharing {
   clearHistoryDLPFile() {
     let pathDir = getContext(this).filesDir + '/Share';
     fs.listFile(pathDir).then((filenames: Array<string>) => {
-      HiLog.info(TAG, `listFile succeed`);
+      HiLog.info(TAG, `listFile succeed when judge time`);
+      let realTime = Number(systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false));
+      filenames.forEach((item) => {
+        let fileTime = Number(item);
+        if (realTime < fileTime || realTime - fileTime >= Constants.CLEAN_DLP_FILE_IN_CACHE_TIMEOUT){
+          fs.rmdirSync(pathDir + `/${item}`);
+          return;
+        }
+      })
+    }).catch((err: BusinessError) => {
+      HiLog.error(TAG, `list file failed when judge time with error message: ${JSON.stringify(err)}`);
+    });
+    fs.listFile(pathDir).then((filenames: Array<string>) => {
+      HiLog.info(TAG, `listFile succeed when judge num`);
       let filenamesLists = filenames.sort((a, b) => Number(a) - Number(b));
       if (filenamesLists.length > Constants.SHARE_TEMP_SAVE_FILE_NUMBER) {
         let deleteArray = filenamesLists.slice(0, filenamesLists.length - Constants.SHARE_TEMP_SAVE_FILE_NUMBER);
@@ -517,7 +531,7 @@ struct encryptedSharing {
         })
       }
     }).catch((err: BusinessError) => {
-      HiLog.error(TAG, `list file failed with error message: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `list file failed when judge num with error message: ${JSON.stringify(err)}`);
     });
   }
 
