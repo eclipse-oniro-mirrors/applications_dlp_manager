@@ -98,6 +98,19 @@
         "type": "action",
         "extensionProcessMode": "instance",
         "exported": true
+      },
+      {
+        "name": "CleanDlpCacheFileAbility",
+        "srcEntry": "./ets/cleanDlpCache/cleanDlpFileInCache.ets",
+        "icon": "$media:icon",
+        "label": "$string:EncryptedSharing",
+        "description": "clean dlp file cache",
+        "type": "service",
+        "extensionProcessMode": "instance",
+        "exported": true,
+        "permissions": [
+          "ohos.permission.START_DLP_CRED",
+        ]
       }
     ],
     "requestPermissions": [

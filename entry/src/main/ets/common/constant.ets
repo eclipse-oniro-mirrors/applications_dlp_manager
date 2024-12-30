@@ -110,6 +110,8 @@ export default class Constants {
   public static DLP_CREDMGR_BUNDLE_NAME = 'com.huawei.hmos.dlpcredmgr';
   public static DLP_CREDMGR_INTERFACE_TOKEN = 'OHOS.HapDlpCredAbilityServiceStub';
   public static DLP_MGR_INTERFACE_TOKEN = 'OHOS.HapDlpMgrAbilityServiceStub';
+  public static DLP_PERMISSION_CLEAN_STUB = 'OHOS.HapDlpPermissionAbilityServiceStub';
+  public static SA_INTERFACE_TOKEN = 'OHOS.Security.DlpCredentialAbility';
   public static TRANSPARENT_BACKGROUND_COLOR = '#00000000';
   public static START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH = 400;
   public static START_ABILITY_CUSTOM_CONTENT_DIALOG_HEIGHT = 125;
