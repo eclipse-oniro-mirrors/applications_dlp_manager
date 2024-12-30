@@ -513,11 +513,7 @@ struct encryptedSharing {
       let realTime = Number(systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false));
       filenames.forEach((item) => {
         let fileTime = Number(item);
-        if (realTime < fileTime){
-          fs.rmdirSync(pathDir + `/${item}`);
-          return;
-        }
-        if (realTime - fileTime >= Constants.CLEAN_DLP_FILE_IN_CACHE_TIMEOUT){
+        if (realTime < fileTime || realTime - fileTime >= Constants.CLEAN_DLP_FILE_IN_CACHE_TIMEOUT){
           fs.rmdirSync(pathDir + `/${item}`);
           return;
         }
