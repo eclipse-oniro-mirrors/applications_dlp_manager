@@ -247,7 +247,8 @@ struct encryptedSharing {
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
-    let filePath = getContext(this).filesDir + `/Share/${systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false)}/`;
+    let filePath =
+      getContext(this).filesDir + `/Share/${systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false)}/`;
     try {
       await fs.mkdir(filePath, true);
     } catch (error) {
@@ -337,7 +338,7 @@ struct encryptedSharing {
     if (!this.isInputInvalid) {
       return false;
     }
-    let credentialCallBack:Record<string, string> = {};
+    let credentialCallBack: Record<string, string> = {};
     try {
       credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
     } catch (error) {
@@ -513,7 +514,7 @@ struct encryptedSharing {
       let realTime = Number(systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false));
       filenames.forEach((item) => {
         let fileTime = Number(item);
-        if (realTime < fileTime || realTime - fileTime >= Constants.CLEAN_DLP_FILE_IN_CACHE_TIMEOUT){
+        if (realTime < fileTime || realTime - fileTime >= Constants.CLEAN_DLP_FILE_IN_CACHE_TIMEOUT) {
           fs.rmdirSync(pathDir + `/${item}`);
           return;
         }
@@ -549,7 +550,7 @@ struct encryptedSharing {
   getScrollHeight(newValue: SizeOptions) {
     const height = newValue.height as number;
     this.scrollHeight = height - Constants.SHARE_BUTTON_COLUMN_BOTTOM - Constants.SHARE_TITLE_HEAD_HEIGHT -
-      Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
+    Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
     if (this.scrollHeight > Constants.SHARE_TEXTAREA_MAX_HEIGHT) {
       this.scrollHeight = Constants.SHARE_TEXTAREA_MAX_HEIGHT;
     }
