@@ -39,19 +39,19 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
     });
   }
 
-  public setPathDir(pathDir: string){
+  public setPathDir(pathDir: string) {
     this.pathDir = pathDir;
   }
 
-  private checkCallerIdentity(data: rpc.MessageSequence): boolean{
-    try{
+  private checkCallerIdentity(data: rpc.MessageSequence): boolean {
+    try {
       let token = data.readInterfaceToken();
-      if (token !== Constant.SA_INTERFACE_TOKEN){
+      if (token !== Constant.SA_INTERFACE_TOKEN) {
         HiLog.error(TAG, `Clean Interface token is valid`)
         return false;
       }
       return true;
-    }catch(error){
+    } catch (error) {
       HiLog.error(TAG, `check caller identity faild, error: ${error}`);
     }
     return false
@@ -59,19 +59,19 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
 
   onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence,
     options: rpc.MessageOption): boolean {
-    if (!code|| !data || !reply){
+    if (!code || !data || !reply) {
       HiLog.error(TAG, `Input params is invalid`);
       return false;
     }
-    if (!this.checkCallerIdentity(data)){
+    if (!this.checkCallerIdentity(data)) {
       HiLog.error(TAG, `onRemoteMessageRequest: check clean called failed`);
       reply.writeInt(Constant.INTERFACE_SUCCESS);
       return false;
     }
-    try{
+    try {
       this.clearAllExistDlpFileInCache();
       reply.writeInt(Constant.INTERFACE_SUCCESS);
-    }catch(error){
+    } catch (error) {
       HiLog.error(TAG, `onRemoteMessageRequest clean dlp file failed`);
       reply.writeInt(Constant.INTERFACE_SUCCESS);
     }
