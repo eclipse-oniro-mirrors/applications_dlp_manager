@@ -593,6 +593,13 @@
           "attr":{
               "priority":"translate"
           }
+      },
+      {
+          "name":"MESSAGE_NO_SPACE_ERROR",
+          "value":"No space left on device. Delete unused files to free up space",
+          "attr":{
+              "priority":"translate"
+          }
       }
   ]
 }

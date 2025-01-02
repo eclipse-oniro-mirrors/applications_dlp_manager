@@ -171,6 +171,8 @@ export class GetAlertMessage {
         return $r('app.string.This_File_is_Open_By_Other_App');
       case Constants.ERR_JS_FILE_EXPIRATION:
         return $r('app.string.Permission_has_expired');
+      case Constants.ERR_JS_NO_SPACE:
+        return $r('app.string.MESSAGE_NO_SPACE_ERROR');
       default:
         return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
     }
