@@ -74,6 +74,8 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
       case Constants.ERR_JS_OFFLINE:
         return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
+      case Constants.ERR_JS_NO_SPACE:
+        return { 'msg': $r('app.string.MESSAGE_NO_SPACE_ERROR') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage != undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
