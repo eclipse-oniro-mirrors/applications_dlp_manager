@@ -146,6 +146,7 @@ export default class Constants {
   public static readonly ERR_JS_NOT_AUTHORIZED_APPLICATION = 19100018;
   public static readonly ERR_JS_FILE_EXPIRATION = 19100019;
   public static readonly ERR_JS_OFFLINE = 19100020;
+  public static readonly ERR_JS_NO_SPACE = 19100021;
   public static ERR_JS_INVALID_PARAMETER = 12300002;
   public static ERR_JS_ACCOUNT_NOT_FOUND = 12300003;
   public static ERR_JS_NETWORK_INVALID = 12300013;
@@ -238,6 +239,7 @@ export default class Constants {
   public static SHARE_PAGES_COLUMN_WIDTH = '100%';
   public static SHARE_PAGES_COLUMN_HEIGHT = '100%';
   public static SHARE_SET_TIMEOUT = 1500;
+  public static SHARE_NO_SPACE_LEFT_ON_DEVICE = 13900025;
   public static SHARE_FILE_NAME_TOO_LONG = 13900030;
   public static SHARE_TEMP_SAVE_FILE_NUMBER = 20;
   public static CLEAN_DLP_FILE_IN_CACHE_TIMEOUT: number = 60 * 60 * 1000;

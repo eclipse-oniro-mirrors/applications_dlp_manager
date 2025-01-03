@@ -771,7 +771,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     try {
       await this.dlpFileMapHistory(want);
       this.accountType = await getAccountType(this.context, this.dlpFd);
-    } catch {
+    } catch (err) {
+      if (err.code === Constants.SHARE_NO_SPACE_LEFT_ON_DEVICE) {
+        await GetAlertMessage.requestModalUIExtension(this.context, {
+          code: Constants.ERR_JS_NO_SPACE } as BusinessError);
+      }
       return;
     }
     startId = Number(startId);

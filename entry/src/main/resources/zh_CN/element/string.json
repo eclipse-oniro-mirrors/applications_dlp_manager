@@ -593,6 +593,13 @@
           "attr":{
               "priority":"translate"
           }
+      },
+      {
+          "name":"MESSAGE_NO_SPACE_ERROR",
+          "value":"存储空间不足，请删除不用的文件以释放空间",
+          "attr":{
+              "priority":"translate"
+          }
       }
   ]
 }

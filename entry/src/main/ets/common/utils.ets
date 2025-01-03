@@ -471,7 +471,7 @@ function getAccountType(
         resolve(Number(type));
       } catch (err) {
         HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`);
-        reject();
+        reject(err);
       } finally {
         closeFile(ff);
         deleteFile(filePath);
