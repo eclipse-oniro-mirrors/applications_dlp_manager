@@ -62,6 +62,7 @@ const TAG = 'View';
 const SUFFIX_INDEX = 2;
 const APPID_FOR_HOPE: string = '5765880207854533797';
 const BUNDLE_NAME_FOR_HOPE: string = 'com.huawei.it.welink';
+const DLP_FILE_SUFFIX: string = '.dlp';
 
 interface DlpConnectionPluginIdObj {
   id: string
@@ -763,6 +764,20 @@ export default class ViewAbility extends ServiceExtensionAbility {
     return true;
   }
 
+  CheckSuffixByUri(): Boolean {
+    if (this.uri.length < DLP_FILE_SUFFIX.length) {
+      return false;
+    }
+
+    let fileSuffix: string = this.uri.substring(this.uri.length - DLP_FILE_SUFFIX.length);
+    let lowerFileSuffix: string = fileSuffix.toLowerCase();
+    if (lowerFileSuffix === DLP_FILE_SUFFIX) {
+      return true;
+    }
+
+    return false;
+  }
+
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.debug(TAG, `enter onRequest`);
     if (!this.checkPermissionWithPluginId(want)) {
@@ -788,7 +803,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     if (this.fileName === undefined || this.dlpFd === undefined || this.uri === undefined ||
       this.sandboxBundleName === undefined || this.sandboxAbilityName === undefined ||
-      this.sandboxModuleName === undefined || !this.uri.endsWith('.dlp')) {
+      this.sandboxModuleName === undefined || !this.CheckSuffixByUri()) {
       opening = false;
       HiLog.error(TAG, `get parameters failed`);
       try {
