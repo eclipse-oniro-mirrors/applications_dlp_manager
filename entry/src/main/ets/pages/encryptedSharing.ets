@@ -515,8 +515,11 @@ struct encryptedSharing {
       filenames.forEach((item) => {
         let fileTime = Number(item);
         if (realTime < fileTime || realTime - fileTime >= Constants.CLEAN_DLP_FILE_IN_CACHE_TIMEOUT) {
-          fs.rmdirSync(pathDir + `/${item}`);
-          return;
+          try {
+            fs.rmdirSync(pathDir + `/${item}`);
+          } catch (error) {
+            HiLog.error(TAG, `remove file failed when judge time with error message: ${JSON.stringify(error)}`);
+          }
         }
       })
     }).catch((err: BusinessError) => {
@@ -528,7 +531,11 @@ struct encryptedSharing {
       if (filenamesLists.length > Constants.SHARE_TEMP_SAVE_FILE_NUMBER) {
         let deleteArray = filenamesLists.slice(0, filenamesLists.length - Constants.SHARE_TEMP_SAVE_FILE_NUMBER);
         deleteArray.forEach((item) => {
-          fs.rmdirSync(pathDir + `/${item}`);
+          try {
+            fs.rmdirSync(pathDir + `/${item}`);
+          } catch (error) {
+            HiLog.error(TAG, `remove file failed when judge num with error message: ${JSON.stringify(error)}`);
+          }
         })
       }
     }).catch((err: BusinessError) => {
