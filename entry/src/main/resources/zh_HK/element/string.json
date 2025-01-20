@@ -573,6 +573,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"儲存空間不足。請刪除不使用的檔案以釋放空間",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

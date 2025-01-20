@@ -573,6 +573,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"بوشلۇق يېتەرسىز، ئىشلەتمەيدىغان ھۆججەتلەرنى ئۆچۈرۈڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

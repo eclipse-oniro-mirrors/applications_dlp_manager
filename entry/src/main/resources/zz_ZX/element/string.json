@@ -347,6 +347,10 @@
         {
             "name":"Share_Contact_Person",
             "value":"[TS_952906]_Contacts"
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"[TS_1017669]_Insufficient storage. Delete files you don't need to free up space."
         }
     ]
 }
