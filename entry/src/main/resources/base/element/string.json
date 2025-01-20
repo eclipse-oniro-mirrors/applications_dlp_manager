@@ -596,7 +596,7 @@
       },
       {
           "name":"MESSAGE_NO_SPACE_ERROR",
-            "value":"Insufficient storage. Delete files you don't need to free up space.",
+          "value":"Insufficient storage. Delete files you don't need to free up space.",
           "attr":{
               "priority":"translate"
           }
