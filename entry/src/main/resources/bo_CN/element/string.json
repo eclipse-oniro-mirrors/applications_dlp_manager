@@ -573,6 +573,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"ཉར་གསོག་བར་སྟོང་མི་འདང་བས། སྤྱོད་སྒོ་མེད་པའི་ཡིག་ཆ་བསུབས་ནས་བར་སྟོང་གློད་རོགས།",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
