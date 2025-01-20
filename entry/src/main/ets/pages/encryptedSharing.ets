@@ -247,7 +247,7 @@ struct encryptedSharing {
     try {
       dlpFileName = decodeURIComponent(inputFileName) + '.dlp';
     } catch (err) {
-      HiLog.info(TAG, `generateDLPFile file failed: ${err}`);
+      HiLog.error(TAG, `generateDLPFile file failed: ${err?.message}`);
       storage.setOrCreate('commandSearchUserInfo', '');
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enabledFocus = true;
