@@ -243,7 +243,17 @@ struct encryptedSharing {
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
     let inputUri: string = parameters['ability.params.stream'][0];
     let inputFileName: string = this.getFileName(parameters, inputUri);
-    let dlpFileName = decodeURIComponent(inputFileName) + '.dlp';
+    let dlpFileName: string = '';
+    try {
+      dlpFileName = decodeURIComponent(inputFileName) + '.dlp';
+    } catch (err) {
+      HiLog.error(TAG, `generateDLPFile file failed: ${err?.message}`);
+      storage.setOrCreate('commandSearchUserInfo', '');
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = true;
+      return;
+    }
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
