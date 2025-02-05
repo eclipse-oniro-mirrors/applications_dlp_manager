@@ -243,17 +243,7 @@ struct encryptedSharing {
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
     let inputUri: string = parameters['ability.params.stream'][0];
     let inputFileName: string = this.getFileName(parameters, inputUri);
-    let dlpFileName: string = '';
-    try {
-      dlpFileName = decodeURIComponent(inputFileName) + '.dlp';
-    } catch (err) {
-      HiLog.error(TAG, `generateDLPFile file failed: ${err?.message}`);
-      storage.setOrCreate('commandSearchUserInfo', '');
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
-      return;
-    }
+    let dlpFileName: string = inputFileName + '.dlp';
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
@@ -298,6 +288,7 @@ struct encryptedSharing {
   getFileName(parameters: Record<string, Array<string>>, inputUri: string): string {
     let abilityPickerRecords = parameters['ability.picker.records'];
     let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
+    let srcFileName: string = srcFileMsg.fileName + srcFileMsg.fileType;
     AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
     let res: string = '';
     Object.keys(abilityPickerRecords).forEach(key => {
@@ -305,7 +296,12 @@ struct encryptedSharing {
       res = abilityPickerRecords[key][0]?.['4'];
     });
     if (res === undefined) {
-      res = srcFileMsg.fileName + srcFileMsg.fileType;
+      res = decodeURIComponent(srcFileName);
+    } else {
+      let encodedTitle: string = encodeURIComponent(res);
+      if (encodedTitle !== srcFileName) {
+        res = decodeURIComponent(srcFileName);
+      }
     }
     return res;
   }
