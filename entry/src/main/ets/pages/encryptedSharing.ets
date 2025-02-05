@@ -298,9 +298,9 @@ struct encryptedSharing {
     if (res === undefined) {
       res = decodeURIComponent(srcFileName);
     } else {
-      let encodedTitle: string = encodeURIComponent(res);
-      if (encodedTitle !== srcFileName) {
-        res = decodeURIComponent(srcFileName);
+      let decodedTitle: string = decodeURIComponent(srcFileName);
+      if (res !== decodedTitle) {
+        res = decodedTitle;
       }
     }
     return res;
