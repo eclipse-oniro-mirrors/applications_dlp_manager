@@ -295,13 +295,10 @@ struct encryptedSharing {
       this.generalType = key;
       res = abilityPickerRecords[key][0]?.['4'];
     });
-    if (res === undefined) {
-      res = decodeURIComponent(srcFileName);
-    } else {
-      let decodedTitle: string = decodeURIComponent(srcFileName);
-      if (res !== decodedTitle) {
-        res = decodedTitle;
-      }
+    let decodedTitle: string = decodeURIComponent(srcFileName);
+    if (res !== decodedTitle) {
+      HiLog.info(TAG, 'Get file name from inputUri.');
+      res = decodedTitle;
     }
     return res;
   }
