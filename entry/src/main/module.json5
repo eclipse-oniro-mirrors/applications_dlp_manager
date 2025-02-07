@@ -35,7 +35,7 @@
     "abilities": [
       {
         "name": "SaveAsAbility",
-        "srcEntry": "./ets/SaveAsAbility/SaveAsAbility.ets",
+        "srcEntry": "./ets/Ability/SaveAsAbility.ets",
         "description": "$string:MainAbility_desc",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
@@ -50,7 +50,7 @@
         "description": "DialogUIExtAbility",
         "type": "sys/commonUI",
         "exported": true,
-        "srcEntry": "./ets/DialogUIExtAbility/DialogUIExtAbility.ets"
+        "srcEntry": "./ets/Ability/DialogUIExtAbility.ets"
       },
       {
         "name": "MainAbilityEx",
@@ -58,7 +58,7 @@
         "description": "MainAbilityEx",
         "type": "sys/commonUI",
         "exported": true,
-        "srcEntry": "./ets/MainAbility/MainAbilityEx.ets",
+        "srcEntry": "./ets/Ability/MainAbilityEx.ets",
         "metadata": [
           {
             "name": "ohos.extension.servicetype",
@@ -68,7 +68,7 @@
       },
       {
         "name": "ViewAbility",
-        "srcEntry": "./ets/ViewAbility/ViewAbility.ets",
+        "srcEntry": "./ets/Ability/ViewAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service",
@@ -76,14 +76,14 @@
       },
       {
         "name": "DataAbility",
-        "srcEntry": "./ets/DataAbility/DataAbility.ets",
+        "srcEntry": "./ets/Ability/DataAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
         "type": "service"
       },
       {
-        "name": "ServiceExtAbility",
-        "srcEntry": "./ets/serviceExtensionAbility/ServiceExtAbility.ets",
+        "name": "DlpFileProcessAbility",
+        "srcEntry": "./ets/Ability/DlpFileProcessAbility.ets",
         "icon": "$media:icon",
         "description": "service",
         "type": "service",
@@ -91,7 +91,7 @@
       },
       {
         "name": "EncryptedSharingAbility",
-        "srcEntry": "./ets/EncryptedSharingAbility/EncryptedSharingAbility.ets",
+        "srcEntry": "./ets/Ability/EncryptedSharingAbility.ets",
         "icon": "$media:ic_public_lock",
         "label": "$string:EncryptedSharing",
         "description": "service",
@@ -109,7 +109,7 @@
         "extensionProcessMode": "instance",
         "exported": true,
         "permissions": [
-          "ohos.permission.START_DLP_CRED",
+          "ohos.permission.START_DLP_CRED"
         ]
       }
     ],

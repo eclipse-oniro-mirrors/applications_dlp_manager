@@ -19,11 +19,12 @@ import Constants from '../common/constant';
 import { common } from '@kit.AbilityKit';
 
 const TAG = 'CredCallbackStub';
+const DEFAULT_DES = 'CredCallbackStub';
 
 export default class CredCallbackStub extends rpc.RemoteObject {
 
-  constructor(des: string) {
-    super(des);
+  constructor(des?: string) {
+    super(des ?? DEFAULT_DES);
   }
 
   asObject(): rpc.IRemoteObject {
@@ -80,7 +81,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
 
   searchUserInfo(remote: rpc.IRemoteObject, cloudPhone: string) {
     if (remote === null || cloudPhone === '') {
-      HiLog.info(TAG, `onConnect remote or cloudPhone is null.`);
+      HiLog.error(TAG, `onConnect remote or cloudPhone is null.`);
       return;
     }
     HiLog.info(TAG, `searchUserInfo start`);
@@ -103,8 +104,8 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     });
   }
 
-  getAccountInfo(remote: rpc.IRemoteObject) {
-    HiLog.info(TAG, `getAccountInfo start`);
+  getLocalAccountInfo(remote: rpc.IRemoteObject) {
+    HiLog.info(TAG, `getLocalAccountInfo start`);
     if (remote === null) {
       HiLog.info(TAG, `onConnect remote is null.`);
       return;
@@ -121,9 +122,9 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_GET_ACCOUNT_INFO, data, reply, option).then((result) => {
-      HiLog.info(TAG, `getAccountInfo success.`);
+      HiLog.info(TAG, `getLocalAccountInfo success.`);
     }).catch((e: string) => {
-      HiLog.info(TAG, `getAccountInfo error: ${e}`);
+      HiLog.info(TAG, `getLocalAccountInfo error: ${e}`);
     });
   }
 

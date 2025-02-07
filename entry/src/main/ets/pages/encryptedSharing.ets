@@ -16,7 +16,7 @@
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
-import ConnectService from '../rpc/ConnectService';
+import CredConnectService from '../rpc/CredConnectService';
 import { LengthMetrics } from '@ohos.arkui.node';
 import dlpPermission from '@ohos.dlpPermission';
 import promptAction from '@ohos.promptAction';
@@ -40,9 +40,10 @@ import {
 import { SystemUtils } from '../common/systemUtils';
 import { contact } from '@kit.ContactsKit';
 import deviceInfo from '@ohos.deviceInfo';
-import { systemDateTime } from '@kit.BasicServicesKit'
+import { systemDateTime } from '@kit.BasicServicesKit';
+import { common } from '@kit.AbilityKit';
 
-const TAG = 'Share';
+const TAG = 'encryptedSharing';
 
 class Test {
   public '0': number = 0;
@@ -73,16 +74,16 @@ let storage = LocalStorage.getShared();
 @Component
 struct encryptedSharing {
   static readonly GET_ACCOUNT_INFO_RESET = 'clear';
-  private connectService: ConnectService = new ConnectService(getContext(this));
+  private connectService: CredConnectService = new CredConnectService(getContext(this) as common.UIExtensionContext);
   private isPhoneDevice: boolean = true;
   @State titlebarMargin: LocalizedMargin = {
     start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
     end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
   };
-  @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') isInputInvalid: string = '';
-  @LocalStorageLink('commandGetAccountInfo') @Watch('changeAccountInfo') commandGetAccountInfo: string = '';
+  @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') phoneNumSearchResult: string = '';
+  @LocalStorageLink('commandGetAccountInfo') @Watch('checkGetAccountInfoResult') getAccountInfoResult: string = '';
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
-  @State enabledFocus: boolean = true;
+  @State isTextInputEnabled: boolean = true;
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
   @State showUIExtensionForAccountLogin: boolean = false;
@@ -99,7 +100,6 @@ struct encryptedSharing {
   @State contactPerson: string = '';
   @State recordSuccessUid: string = '';
   @State osVersion: ResourceStr = '';
-  @State isTextInputFocus: boolean = false;
   @State generalType: string = 'general.file';
   @State scrollHeight: number = 188;
 
@@ -138,15 +138,6 @@ struct encryptedSharing {
     .height(Constants.CONTACTS_PICKER_HEIGHT)
   }
 
-  private async beginShareEncrypt() {
-    HiLog.info(TAG, `begin Share Encrypt start`);
-    if (this.checkCloudPhone(this.inputValue)) {
-      this.enabledFocus = false;
-      this.isConfirmButtonEnabled = false;
-      this.getAccountInfo();
-    }
-  }
-
   contactsAction = () => {
     if (this.isPhoneDevice) {
       contact.selectContacts({ isMultiSelect: false }).then((data) => {
@@ -172,14 +163,23 @@ struct encryptedSharing {
     }
   }
 
-  changeAccountInfo() {
-    if (this.commandGetAccountInfo == encryptedSharing.GET_ACCOUNT_INFO_RESET) {
+  private beginShareEncrypt() {
+    HiLog.info(TAG, `begin Share Encrypt start`);
+    if (this.isPhoneNumber(this.inputValue)) {
+      this.isTextInputEnabled = false;
+      this.isConfirmButtonEnabled = false;
+      this.getLocalAccountInfo();
+    }
+  }
+
+  checkGetAccountInfoResult() {
+    if (this.getAccountInfoResult === encryptedSharing.GET_ACCOUNT_INFO_RESET) {
       return;
     }
-    HiLog.info(TAG, `changeAccountInfo start`);
+    HiLog.info(TAG, `checkGetAccountInfoResult start`);
     try {
-      let commandGetAccountInfoCallBack = JSON.parse(this.commandGetAccountInfo) as Record<string, object>;
-      HiLog.info(TAG, `commandGetAccountInfo Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
+      let commandGetAccountInfoCallBack = JSON.parse(this.getAccountInfoResult) as Record<string, object>;
+      HiLog.info(TAG, `getAccountInfoResult Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
       let res = commandGetAccountInfoCallBack.result as Record<string, string>;
       if (Number(commandGetAccountInfoCallBack.errorCode) === Constants.ERR_CODE_SUCCESS && res?.uid) {
         this.ownerAccount = res?.uid;
@@ -187,10 +187,9 @@ struct encryptedSharing {
         this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
         return;
       } else {
-        this.enabledFocus = true;
-        this.isConfirmButtonEnabled = true;
+        this.enableComponents();
         this.recordSuccessUid = '';
-        this.commandGetAccountInfo = encryptedSharing.GET_ACCOUNT_INFO_RESET;
+        this.getAccountInfoResult = encryptedSharing.GET_ACCOUNT_INFO_RESET;
         if ([
           Constants.ERR_CODE_NETWORK_ERROR,
           Constants.ERR_CODE_CONNECTION_FAIL,
@@ -205,21 +204,20 @@ struct encryptedSharing {
     } catch (error) {
       HiLog.error(TAG, `get account info failed: ${JSON.stringify(error)}`);
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
+      this.enableComponents();
       this.recordSuccessUid = '';
-      this.commandGetAccountInfo = encryptedSharing.GET_ACCOUNT_INFO_RESET;
+      this.getAccountInfoResult = encryptedSharing.GET_ACCOUNT_INFO_RESET;
       return;
     }
   }
 
-  checkCloudPhone(phone: string): boolean {
-    if (!phone) {
+  isPhoneNumber(phoneNum: string): boolean {
+    if (!phoneNum) {
       return false;
     }
     let reg = /^(?:(?:\+|00)86)?1[3456789]\d{9}$/;
-    if (!(reg.test(phone))) {
-      HiLog.info(TAG, `Please enter the phone.`);
+    if (!(reg.test(phoneNum))) {
+      HiLog.info(TAG, `Please enter the phoneNum.`);
       this.phoneFormatTips = true;
       this.credentialCallBackMsg = $r('app.string.Share_Tips_Phone_Format');
       HiLog.info(TAG, `phoneFormatTips: ${this.phoneFormatTips}`);
@@ -234,10 +232,8 @@ struct encryptedSharing {
 
   async beginToGenerateDLPFile() {
     HiLog.info(TAG, `beginToGenerateDLPFile start`);
-    if (!this.isInputValid()) {
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
-      this.textInputGetFocus();
+    if (!this.isRegisteredPhoneNum()) {
+      this.enableComponents();
       return;
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
@@ -246,11 +242,9 @@ struct encryptedSharing {
     if (inputFileName === null) {
       storage.setOrCreate('commandSearchUserInfo', '');
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
+      this.enableComponents();
       return;
     }
-    let dlpFileName: string = inputFileName + '.dlp';
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
@@ -283,8 +277,7 @@ struct encryptedSharing {
         return;
       }
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = true;
+      this.enableComponents();
     } finally {
       if (file) {
         fs.closeSync(file);
@@ -346,13 +339,13 @@ struct encryptedSharing {
     }
   }
 
-  isInputValid(): boolean {
-    if (!this.isInputInvalid) {
+  isRegisteredPhoneNum(): boolean {
+    if (!this.phoneNumSearchResult) {
       return false;
     }
     let credentialCallBack: Record<string, string> = {};
     try {
-      credentialCallBack = JSON.parse(this.isInputInvalid) as Record<string, string>;
+      credentialCallBack = JSON.parse(this.phoneNumSearchResult) as Record<string, string>;
     } catch (error) {
       HiLog.error(TAG, `json parse exception, error is ${JSON.stringify(error)}`);
       return false;
@@ -413,10 +406,7 @@ struct encryptedSharing {
     HiLog.info(TAG, `get login status start.`);
     if (await getConnectionStatus() === false) {
       this.showToast($r('app.string.network_invalid'));
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = this.inputValue.length > 0;
-      this.isTextInputFocus = true;
-      this.textInputGetFocus();
+      this.enableComponents();
       return;
     }
     try {
@@ -424,26 +414,19 @@ struct encryptedSharing {
       if (accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
         accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
         this.showUIExtensionForAccountLogin = true;
-        this.enabledFocus = false;
       } else {
-        this.enabledFocus = true;
-        this.isTextInputFocus = true;
         this.textInputGetFocus();
       }
     } catch (err) {
-      this.enabledFocus = true;
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
     }
   }
 
-  async getAccountInfo() {
+  async getLocalAccountInfo() {
     HiLog.info(TAG, `get Account Info start`);
     if (await getConnectionStatus() === false) {
       this.showToast($r('app.string.network_invalid'));
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = this.inputValue.length > 0;
-      this.isTextInputFocus = true;
-      this.textInputGetFocus();
+      this.enableComponents();
       return;
     }
     try {
@@ -464,8 +447,7 @@ struct encryptedSharing {
     } catch (err) {
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
       this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      this.enabledFocus = true;
-      this.isConfirmButtonEnabled = this.inputValue.length > 0;
+      this.enableComponents();
     }
   }
 
@@ -553,6 +535,12 @@ struct encryptedSharing {
     }).catch((err: BusinessError) => {
       HiLog.error(TAG, `list file failed when judge num with error message: ${JSON.stringify(err)}`);
     });
+  }
+
+  enableComponents() {
+    this.isTextInputEnabled = true;
+    this.isConfirmButtonEnabled = this.inputValue.length > 0;
+    this.textInputGetFocus();
   }
 
   textInputGetFocus() {
@@ -644,10 +632,10 @@ struct encryptedSharing {
                   right: SystemUtils.isRTL() ?
                   Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
                 })
-                .enabled(this.enabledFocus)
+                .enabled(this.isTextInputEnabled)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
-                .focusable(this.isTextInputFocus)
-                .defaultFocus(false)
+                .focusable(true)
+                .defaultFocus(true)
                 .direction(Direction.Ltr)
                 .textAlign(SystemUtils.isRTL() ? TextAlign.End : TextAlign.Start)
                 .type(InputType.PhoneNumber)
@@ -664,10 +652,11 @@ struct encryptedSharing {
                 Column() {
                   SymbolGlyph($r('sys.symbol.person_2'))
                     .fontSize(`${Constants.SYMBOL_GLYPH_FONT_SIZE}vp`)
-                    .fontColor(this.enabledFocus ? [$r('sys.color.icon_primary')] : [$r('sys.color.icon_tertiary')])
+                    .fontColor(this.isTextInputEnabled ? [$r('sys.color.icon_primary')] :
+                      [$r('sys.color.icon_tertiary')])
                 }
                 .accessibilityText(this.contactPerson)
-                .enabled(this.enabledFocus)
+                .enabled(this.isTextInputEnabled)
                 .offset({
                   x: SystemUtils.isRTL()
                     ? Constants.SHARE_CONTACTS_GROUP_OFFSET_X_RTL : Constants.SHARE_CONTACTS_GROUP_OFFSET_X,
@@ -714,7 +703,7 @@ struct encryptedSharing {
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .width(Constants.SHARE_BUTTON_WIDTH)
             .controlSize(ControlSize.NORMAL)
-            .onClick(async () => {
+            .onClick(() => {
               this.beginShareEncrypt();
             })
         }
@@ -733,8 +722,8 @@ struct encryptedSharing {
 
       if (this.showUIExtensionForAccountLogin) {
         UIExtensionComponent({
-          bundleName: 'com.huawei.hmos.dlpcredmgr',
-          abilityName: 'DlpCredAccountAbility',
+          bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
+          abilityName: Constants.DLP_CREDMGR_ACCOUNT_ABILITY_NAME,
           parameters: {
             'ability.want.params.uiExtensionType': 'sys/commonUI'
           }
@@ -755,23 +744,19 @@ struct encryptedSharing {
             if (data.status) {
               this.ownerAccount = res?.uid;
               this.ownerAccountID = res?.uid;
-              let checkCloudPhone = this.checkCloudPhone(this.inputValue);
-              HiLog.info(TAG, `checkCloudPhone: ${checkCloudPhone}`);
-              if (checkCloudPhone) {
-                this.enabledFocus = false;
+              let isPhoneNumber = this.isPhoneNumber(this.inputValue);
+              HiLog.info(TAG, `isPhoneNumber: ${isPhoneNumber}`);
+              if (isPhoneNumber) {
+                this.isTextInputEnabled = false;
                 this.isConfirmButtonEnabled = false;
                 this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
-              } else {
-                this.enabledFocus = true;
               }
             } else {
-              this.enabledFocus = true;
-              this.isConfirmButtonEnabled = this.inputValue.length > 0;
+              this.enableComponents();
               if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
-            this.isTextInputFocus = true;
             this.textInputGetFocus();
             this.showUIExtensionForAccountLogin = false;
           })

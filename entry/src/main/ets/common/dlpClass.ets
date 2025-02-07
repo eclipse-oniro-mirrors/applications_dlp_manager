@@ -14,7 +14,7 @@
  */
 
 import rpc from '@ohos.rpc';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from './HiLog';
 
 const TAG = 'dlpClass';
 const ARRAY_LENGTH_MAX = 100;

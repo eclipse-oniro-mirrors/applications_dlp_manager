@@ -108,6 +108,9 @@ export default class Constants {
   public static DLPRPC_SERVICE_PROXY_ERRCODE = 0;
   public static DLP_MANAGER_BUNDLE_NAME = 'com.ohos.dlpmanager';
   public static DLP_CREDMGR_BUNDLE_NAME = 'com.huawei.hmos.dlpcredmgr';
+  public static DLP_CREDMGR_DATA_ABILITY_NAME = 'DlpCredDataExtAbility';
+  public static DLP_CREDMGR_LOGIN_ABILITY_NAME = 'DlpCredLoginAbility';
+  public static DLP_CREDMGR_ACCOUNT_ABILITY_NAME = 'DlpCredAccountAbility';
   public static DLP_CREDMGR_INTERFACE_TOKEN = 'OHOS.HapDlpCredAbilityServiceStub';
   public static DLP_MGR_INTERFACE_TOKEN = 'OHOS.HapDlpMgrAbilityServiceStub';
   public static DLP_PERMISSION_CLEAN_STUB = 'OHOS.HapDlpPermissionAbilityServiceStub';

@@ -38,7 +38,6 @@ import {
 } from '../common/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
-import HomeFeature from '../feature/HomeFeature';
 import { AccountTipsConfig } from '../component/AccountTipsConfig';
 import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/GetAlertMessage';
@@ -47,6 +46,7 @@ import { SystemUtils } from '../common/systemUtils';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import CommonUtil from '../common/CommonUtil';
+import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 
 const TAG = 'ModEnc';
 
@@ -72,12 +72,12 @@ let storage = LocalStorage.getShared();
 @Entry(storage)
 @Component
 struct changeEncryption {
-  private homeFeature: HomeFeature = GlobalContext.load('homeFeature');
   @State session: UIExtensionContentSession | undefined =
     storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   dlpAlertDialog?: CustomDialogController;
   srcFileName: string = '';
   linkFileName: string = '';
+  private dlpRpcProxy?: IdDlpRpcServiceProxy = GlobalContext.load('dlpRpcProxy');
   @State directionStatus: number = 0;
   @State handlePopup: boolean = false;
   @State handlePopupReadOnly: boolean = false;
@@ -167,7 +167,7 @@ struct changeEncryption {
   async catchProcess() {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
-      this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+      this.dlpRpcProxy?.resumeFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
         }
@@ -177,7 +177,7 @@ struct changeEncryption {
 
   stopFuseLinkHome() {
     return new Promise<void>((resolve, reject) => {
-      this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+      this.dlpRpcProxy?.stopFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `stopFuseLink failed: ${err}`);
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource,
@@ -191,7 +191,7 @@ struct changeEncryption {
 
   recoverDLPFileHome(plainUri: string) {
     return new Promise<void>((resolve, reject) => {
-      this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), plainUri, async (err: number) => {
+      this.dlpRpcProxy?.recoverDlpFile(GlobalContext.load('uri'), plainUri, async (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
           let errorInfo =
@@ -287,14 +287,14 @@ struct changeEncryption {
   async terminateSelfWithResult() {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
       HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
-      this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+      this.dlpRpcProxy?.resumeFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
         }
       });
     } else {
       HiLog.info(TAG, `closeDLPFile: ${this.srcFileName}`);
-      this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+      this.dlpRpcProxy?.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `closeDLPFile failed: ${err}`);
         }
@@ -421,7 +421,7 @@ struct changeEncryption {
   }
 
   async aboutToAppear() {
-    AccountManager.connectAbility(getContext(this) as common.UIAbilityContext);
+    AccountManager.connectAbility(getContext(this) as common.UIExtensionContext);
 
     this.prepareData = true;
     try {

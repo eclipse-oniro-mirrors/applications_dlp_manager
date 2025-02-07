@@ -14,27 +14,29 @@
  */
 import DomainAccountInfo from '../bean/data/DomainAccountInfo';
 import DomainAccountResponse from '../bean/response/DomainAccountResponse';
-import CredConnection from '../rpc/CredConnection';
-import AppStorageConstant from '../common/constant/AppStorageConstant';
+import CredConnectServiceDomain from '../rpc/CredConnectServiceDomain';
+import AppStorageConstant from '../common/AppStorageConstant';
 import { HiLog } from '../common/HiLog';
 import { getOsAccountInfo } from '../common/utils';
 import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import account_osAccount from '@ohos.account.osAccount';
 import CommonUtil from '../common/CommonUtil';
+import { common } from '@kit.AbilityKit';
 
 const TAG = 'AccountManager';
 
 export default class AccountManager {
-
-  public static connectAbility(context: ESObject): void {
-    let connection: CredConnection | undefined = AppStorage.get<CredConnection>(AppStorageConstant.CRED_CONNECTION);
+  public static connectAbility(context: common.UIAbilityContext | common.UIExtensionContext |
+  common.ServiceExtensionContext): void {
+    let connection: CredConnectServiceDomain | undefined =
+      AppStorage.get<CredConnectServiceDomain>(AppStorageConstant.CRED_CONNECTION_DOMAIN);
     if (!connection) {
-      connection = new CredConnection(context);
+      connection = new CredConnectServiceDomain(context);
     }
     if (!connection.getRemoteProxy()) {
       connection.connectDomainAccountQueryAbility();
     }
-    AppStorage.setOrCreate(AppStorageConstant.CRED_CONNECTION, connection);
+    AppStorage.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, connection);
   }
 
   public static async getDomainAccountByAccountName(search: string): Promise<DomainAccountInfo> {
@@ -65,7 +67,8 @@ export default class AccountManager {
     }
     let searchReq = DomainAccountConvertor.convertBatchToDomainAccountReq(
       searchArray, accountInfo.domainInfo?.accountName, accountInfo.domainInfo?.accountId);
-    let connection: CredConnection | undefined = AppStorage.get<CredConnection>(AppStorageConstant.CRED_CONNECTION);
+    let connection: CredConnectServiceDomain | undefined =
+      AppStorage.get<CredConnectServiceDomain>(AppStorageConstant.CRED_CONNECTION_DOMAIN);
     let response: DomainAccountResponse | undefined = await connection?.getDomainAccountInfo(searchReq);
     AccountManager.dealDomainAccountMapCache(response?.getData());
     return response;
@@ -97,7 +100,7 @@ export default class AccountManager {
     if (!domainAccountMap) {
       domainAccountMap = new Map<string, DomainAccountInfo>();
     }
-    dataArray.forEach(data =>{
+    dataArray.forEach(data => {
       domainAccountMap?.set(data.accountName.toLocaleUpperCase(), data);
     });
     AppStorage.setOrCreate(AppStorageConstant.DOMAIN_ACCOUNT_MAP, domainAccountMap);

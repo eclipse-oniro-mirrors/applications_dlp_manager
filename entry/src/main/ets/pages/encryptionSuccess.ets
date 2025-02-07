@@ -28,9 +28,9 @@ import {
   getTime,
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
-import HomeFeature from '../feature/HomeFeature';
 import { HiLog } from '../common/HiLog';
 import { SystemUtils } from '../common/systemUtils';
+import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 
 const TAG = 'EncSucc';
 let abilityResult: ability.AbilityResult = {
@@ -599,9 +599,9 @@ struct encryptionSuccess {
                       let dlpFileName: string = GlobalContext.load('dlpFileName') as string;
                       try {
                         HiLog.info(TAG, `closeDLPFile: ${dlpFileName}`);
-                        let hF = GlobalContext.load('homeFeature') as HomeFeature;
+                        let dlpRpcProxy: IdDlpRpcServiceProxy = GlobalContext.load('dlpRpcProxy');
                         await new Promise<void>((resolve, reject) => {
-                          hF.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+                          dlpRpcProxy.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
                             if (err !== 0) {
                               reject();
                             }

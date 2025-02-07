@@ -16,10 +16,10 @@
 import { BusinessError } from '@ohos.base';
 import Want from '@ohos.app.ability.Want';
 import fileUri from '@ohos.file.fileuri';
-import ServiceExtension from '@ohos.app.ability.ServiceExtensionAbility';
+import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import fs from '@ohos.file.fs';
 import dlpPermission from '@ohos.dlpPermission';
-import IdlDlpRpcServiceStub from '../MainAbility/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_stub';
+import IdlDlpRpcServiceStub from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_stub';
 import {
   closeDlpFileCallback,
   sandBoxLinkFileCallback,
@@ -31,15 +31,15 @@ import {
   replaceDlpLinkFileCallback,
   resumeFuseLinkCallback,
   stopFuseLinkCallback
-} from '../MainAbility/data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
-import IDLDLPProperty from './sequenceable/dlpClass';
-import { IAuthUser } from './sequenceable/dlpClass';
+} from './data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
+import IDLDLPProperty from '../common/dlpClass';
+import { IAuthUser } from '../common/dlpClass';
 import GlobalContext from '../common/GlobalContext';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
 import FileUtil from '../common/external/FileUtil';
 
-const TAG = 'service_extability';
+const TAG = 'DlpRpcServiceStub';
 
 class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   private dlpFileMap: Map<string, dlpPermission.DLPFile | null> = new Map<string, dlpPermission.DLPFile | null>();
@@ -340,7 +340,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 }
 
-export default class ServiceExtAbility extends ServiceExtension {
+export default class DlpFileProcessAbility extends ServiceExtensionAbility {
   onCreate(want: Want) {
     HiLog.info(TAG, `onCreate, want: ${want.abilityName}`);
   }
