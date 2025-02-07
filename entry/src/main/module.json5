@@ -109,7 +109,7 @@
         "extensionProcessMode": "instance",
         "exported": true,
         "permissions": [
-          "ohos.permission.START_DLP_CRED"
+          "ohos.permission.START_DLP_CRED",
         ]
       }
     ],

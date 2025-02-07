@@ -245,6 +245,7 @@ struct encryptedSharing {
       this.enableComponents();
       return;
     }
+    let dlpFileName: string = inputFileName + '.dlp';
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
