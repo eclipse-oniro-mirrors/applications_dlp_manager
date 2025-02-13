@@ -23,7 +23,7 @@ export default class FileUtil {
 
   public static closeFileSync(file: fs.File | undefined): boolean {
     if (!file) {
-      HiLog.info(TAG, 'param is invalid.');
+      HiLog.error(TAG, 'param is invalid.');
       return false;
     }
     return FileUtil.closeSync(file);
@@ -46,7 +46,7 @@ export default class FileUtil {
 
   public static unlinkSync(uri: string): boolean {
     if (CommonUtil.isEmptyStr(uri)) {
-      HiLog.info(TAG, 'param is invalid.');
+      HiLog.error(TAG, 'param is invalid.');
       return false;
     }
     try {

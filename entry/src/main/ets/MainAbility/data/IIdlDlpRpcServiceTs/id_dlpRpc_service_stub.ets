@@ -93,7 +93,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         return true;
       }
       default: {
-        HiLog.info(TAG, `invalid request code: ${code}`);
+        HiLog.error(TAG, `invalid request code: ${code}`);
         break;
       }
     }
@@ -111,7 +111,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `genDlpFileInner failed: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `genDlpFileInner failed: ${JSON.stringify(err)}`);
     }
   }
 
@@ -126,7 +126,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeString(_msg);
       });
     } catch (err) {
-      HiLog.info(TAG, `openDlpFileInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `openDlpFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -137,7 +137,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `stopFuseLinkInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `stopFuseLinkInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -148,7 +148,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `resumeFuseLinkInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `resumeFuseLinkInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -160,7 +160,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `replaceDlpLinkFileInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `replaceDlpLinkFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -173,7 +173,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `recoverDlpFileInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `recoverDlpFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -185,7 +185,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `closeDlpFileInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `closeDlpFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -201,7 +201,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeString(_fileUri);
       });
     } catch (err) {
-      HiLog.info(TAG, `sandBoxLinkFileInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `sandBoxLinkFileInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -213,7 +213,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `fileOpenHistoryInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `fileOpenHistoryInner failed: ${JSON.stringify(err)}`)
     }
   }
 
@@ -225,7 +225,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
         reply.writeInt(errCode);
       });
     } catch (err) {
-      HiLog.info(TAG, `linkSetInner failed: ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `linkSetInner failed: ${JSON.stringify(err)}`)
     }
   }
 

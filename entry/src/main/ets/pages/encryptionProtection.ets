@@ -398,7 +398,7 @@ struct DlpDialog {
         try {
           uriInfo = new fileUri.FileUri(uri);
         } catch (err) {
-          HiLog.info(TAG, `fileUri fail: ${JSON.stringify(err)}`);
+          HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
         }
         this.beginToGenDlpFileHome(srcFileUri, uri, uriInfo);
       }).catch((err: BusinessError) => {
@@ -427,7 +427,7 @@ struct DlpDialog {
         try {
           await fs.unlink(uriInfo.path);
         } catch (err) {
-          HiLog.info(TAG, `unlink fail: ${JSON.stringify(err)}`);
+          HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
         }
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
         let errorInfo = GetAlertMessage.getAlertMessage({ code: err } as BusinessError);

@@ -35,7 +35,7 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
         fs.rmdirSync(pathDir + `/${item}`)
       })
     }).catch((err: BusinessError) => {
-      HiLog.error(TAG, `list delete dlp file failed with error mmessage: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `list delete dlp file failed with error: ${JSON.stringify(err)}`);
     });
   }
 
@@ -47,12 +47,12 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
     try {
       let token = data.readInterfaceToken();
       if (token !== Constant.SA_INTERFACE_TOKEN) {
-        HiLog.error(TAG, `Clean Interface token is valid`)
+        HiLog.error(TAG, `Interface token is invalid`);
         return false;
       }
       return true;
     } catch (error) {
-      HiLog.error(TAG, `check caller identity faild, error: ${error}`);
+      HiLog.error(TAG, `check caller identity failed, error: ${error}`);
     }
     return false
   }

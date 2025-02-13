@@ -110,7 +110,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       }
       callback(0);
     } catch (err) {
-      HiLog.info(TAG, `genDlpFile file: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `genDlpFile file: ${JSON.stringify(err)}`);
       await this.closeFile();
       callback((err as BusinessError).code);
     }
@@ -206,7 +206,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     if (dlpFile !== null) {
       await dlpFile.stopFuseLink();
     } else {
-      HiLog.info(TAG, `stopFuseLink not find: ${uri}`);
+      HiLog.error(TAG, `stopFuseLink not find: ${uri}`);
       callback(-1);
     }
   }
@@ -217,7 +217,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     if (dlpFile !== null) {
       await dlpFile.resumeFuseLink();
     } else {
-      HiLog.info(TAG, `resumeFuseLink not find: ${uri}`);
+      HiLog.error(TAG, `resumeFuseLink not find: ${uri}`);
       callback(-1);
     }
   }
@@ -236,7 +236,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       }
       await dlpFile.replaceDLPLinkFile(linkFileName);
     } else {
-      HiLog.info(TAG, `replaceDLPLinkFile not find: ${srcUri}`);
+      HiLog.error(TAG, `replaceDLPLinkFile not find: ${srcUri}`);
       callback(-1);
     }
   }
@@ -255,7 +255,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         FileUtil.closeFileSync(inFile);
       }
     } else {
-      HiLog.info(TAG, `recoverDlpFile not find: ${srcUri}`);
+      HiLog.error(TAG, `recoverDlpFile not find: ${srcUri}`);
       callback(-1);
     }
   }

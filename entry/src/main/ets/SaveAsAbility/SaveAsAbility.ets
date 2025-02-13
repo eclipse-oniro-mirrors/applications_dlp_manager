@@ -450,7 +450,7 @@ export default class SaveAsAbility extends UIAbility {
       config = this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION);
       result = await this.context.startAbilityForResult(config, {windowMode: 0});
     } catch (error) {
-      HiLog.info(TAG, `startAbilityForResult${JSON.stringify(error)}`);
+      HiLog.error(TAG, `startAbilityForResult error: ${JSON.stringify(error)}`);
       return undefined;
     }
     HiLog.info(TAG, `[picker] Save result: ${JSON.stringify(result)}`);
@@ -469,7 +469,7 @@ export default class SaveAsAbility extends UIAbility {
         }
       })
     } catch (resultError) {
-      HiLog.info(TAG, `[picker] Result error: ${resultError}`);
+      HiLog.error(TAG, `[picker] Result error: ${resultError}`);
     }
     return undefined;
   }
@@ -480,7 +480,7 @@ export default class SaveAsAbility extends UIAbility {
     let displayName = '';
     let ret = await this.parseParams(want);
     if (!ret) {
-      HiLog.info(TAG, `parseParams failed`);
+      HiLog.error(TAG, `parseParams failed`);
       return;
     }
     let documentSaveOptions = new picker.DocumentSaveOptions();
@@ -502,7 +502,7 @@ export default class SaveAsAbility extends UIAbility {
         await this.fileOpen(uri);
         await this.pickerDialog(uri, want);
       } catch {
-        HiLog.info(TAG, `fileOpen or pickerDialog start failed`);
+        HiLog.error(TAG, `fileOpen or pickerDialog start failed`);
         return;
       }
     } catch (err) {

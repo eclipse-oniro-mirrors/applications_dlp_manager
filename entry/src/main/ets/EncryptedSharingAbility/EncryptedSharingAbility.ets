@@ -35,7 +35,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
   }
 
   onConfigurationUpdate(newConfig: Configuration): void {
-    HiLog.info(TAG, 'haringAbility onConfigurationUpdate new language: ' + newConfig.language);
+    HiLog.info(TAG, 'EncryptedSharingAbility onConfigurationUpdate new language: ' + newConfig.language);
     emitter.emit('onConfigurationUpdate');
   }
 

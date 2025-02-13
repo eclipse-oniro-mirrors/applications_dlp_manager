@@ -75,7 +75,7 @@ struct Index {
           (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
       }}];
       this.dialogControllerButton?.open();
-      HiLog.info(TAG, `network failed`);
+      HiLog.error(TAG, `network failed`);
       return;
     };
     try {
@@ -89,7 +89,7 @@ struct Index {
       abilityResult.resultCode = 0;
       (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
     } catch (err) {
-      HiLog.info(TAG, `auth exception: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `auth exception: ${JSON.stringify(err)}`);
     }
   }
 
