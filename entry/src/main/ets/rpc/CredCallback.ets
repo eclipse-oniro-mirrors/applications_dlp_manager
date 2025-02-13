@@ -80,7 +80,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
 
   searchUserInfo(remote: rpc.IRemoteObject, cloudPhone: string) {
     if (remote === null || cloudPhone === '') {
-      HiLog.info(TAG, `onConnect remote or cloudPhone is null.`);
+      HiLog.error(TAG, `onConnect remote or cloudPhone is null.`);
       return;
     }
     HiLog.info(TAG, `searchUserInfo start`);
@@ -99,14 +99,14 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     remote.sendMessageRequest(Constants.COMMAND_SEARCH_USER_INFO, data, reply, option).then((result) => {
       HiLog.info(TAG, `searchUserInfo success.`);
     }).catch((e: string) => {
-      HiLog.info(TAG, `searchUserInfo error: ${e}`);
+      HiLog.error(TAG, `searchUserInfo error: ${e}`);
     });
   }
 
   getAccountInfo(remote: rpc.IRemoteObject) {
     HiLog.info(TAG, `getAccountInfo start`);
     if (remote === null) {
-      HiLog.info(TAG, `onConnect remote is null.`);
+      HiLog.error(TAG, `onConnect remote is null.`);
       return;
     }
     let option = new rpc.MessageOption(Constants.TF_ASYNC);
@@ -123,7 +123,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     remote.sendMessageRequest(Constants.COMMAND_GET_ACCOUNT_INFO, data, reply, option).then((result) => {
       HiLog.info(TAG, `getAccountInfo success.`);
     }).catch((e: string) => {
-      HiLog.info(TAG, `getAccountInfo error: ${e}`);
+      HiLog.error(TAG, `getAccountInfo error: ${e}`);
     });
   }
 

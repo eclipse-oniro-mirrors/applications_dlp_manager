@@ -108,7 +108,7 @@ function getFileUriByPath(filePath: string): string {
     let uri = fileUri.getUriFromPath(filePath);
     return uri;
   } catch (err) {
-    HiLog.info(TAG, `getUriFromPath error: ${JSON.stringify(err)}`);
+    HiLog.error(TAG, `getUriFromPath error: ${JSON.stringify(err)}`);
     return '';
   }
 }
@@ -120,7 +120,7 @@ function getFileFd(uri: string, mode?: number): number {
     HiLog.info(TAG, `open: ${uri}, as: ${file.fd}`);
     return file.fd;
   } catch (err) {
-    HiLog.info(TAG, `openSync error: ${JSON.stringify(err)}`);
+    HiLog.error(TAG, `openSync error: ${JSON.stringify(err)}`);
     return -1;
   }
 }
@@ -308,7 +308,7 @@ async function getFileSizeByUri(uri: string): Promise<number> {
     return stat.size;
   } catch (err) {
     HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(err)}`);
-    HiLog.info(TAG, `get file info failed with error message: ${JSON.stringify(err)}`);
+    HiLog.error(TAG, `get file info failed with error message: ${JSON.stringify(err)}`);
     return -1;
   } finally {
     if (inFile) {

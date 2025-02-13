@@ -67,7 +67,7 @@ async function deleteSandbox2linkFileData(sandboxId: string, isNeedDeleteLink: b
       let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
         GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
       if (!sandbox2linkFile.has(sandboxId)) {
-        HiLog.info(TAG, `deleteSandbox2linkFileData not found ${sandboxId}`);
+        HiLog.error(TAG, `deleteSandbox2linkFileData not found ${sandboxId}`);
         resolve();
         return;
       }
@@ -117,7 +117,7 @@ async function getDlpFileInfoFromSandbox2linkFileData(sandboxId: string, dlpFile
     let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
         GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
     if (!sandbox2linkFile.has(sandboxId)) {
-      HiLog.info(TAG, `getDlpFileInfoFromSandbox2linkFileData not found ${sandboxId}, ${dlpFileUri}`);
+      HiLog.error(TAG, `getDlpFileInfoFromSandbox2linkFileData not found ${sandboxId}, ${dlpFileUri}`);
       reject();
       return;
     }
@@ -137,7 +137,7 @@ async function getDlpFileInfoFromSandbox2linkFileData(sandboxId: string, dlpFile
       resolve(result);
       return;
     }
-    HiLog.info(TAG, `getDlpFileInfoFromSandbox2linkFileData not found in linkFile ${sandboxId}, ${dlpFileUri}`);
+    HiLog.error(TAG, `getDlpFileInfoFromSandbox2linkFileData not found in linkFile ${sandboxId}, ${dlpFileUri}`);
     reject();
   });
 }
