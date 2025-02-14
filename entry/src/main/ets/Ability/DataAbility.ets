@@ -60,14 +60,14 @@ export default class DataAbility extends ServiceExtensionAbility {
       }
     }
     if (sandbox2linkFile.size === 0) {
-        HiLog.info(TAG, `sandbox2linkFile empty`);
+        HiLog.error(TAG, `sandbox2linkFile empty`);
         (GlobalContext.load('dataContext') as common.ServiceExtensionContext).terminateSelf();
         (AppStorage.get('viewContext') as common.ServiceExtensionContext).terminateSelf();
     }
   }
 
   createSubscriber(): void {
-    HiLog.info(TAG, `createSubscriber`);
+    HiLog.info(TAG, `createSubscriber start`);
     try {
       dlpPermission.on('uninstallDLPSandbox', (data: dlpPermission.DLPSandboxState) => {
         let bundleName: string = data.bundleName;
@@ -95,7 +95,7 @@ export default class DataAbility extends ServiceExtensionAbility {
       });
       this.isSubscriber = true;
     } catch (err) {
-      HiLog.info(TAG, `createSubscriber uninstallDLPSandbox failed: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `createSubscriber uninstallDLPSandbox failed: ${JSON.stringify(err)}`);
     }
   }
 

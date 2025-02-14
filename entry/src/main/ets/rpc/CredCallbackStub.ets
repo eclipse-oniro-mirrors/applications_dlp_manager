@@ -107,7 +107,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
   getLocalAccountInfo(remote: rpc.IRemoteObject) {
     HiLog.info(TAG, `getLocalAccountInfo start`);
     if (remote === null) {
-      HiLog.info(TAG, `onConnect remote is null.`);
+      HiLog.error(TAG, `onConnect remote is null.`);
       return;
     }
     let option = new rpc.MessageOption(Constants.TF_ASYNC);
@@ -124,7 +124,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     remote.sendMessageRequest(Constants.COMMAND_GET_ACCOUNT_INFO, data, reply, option).then((result) => {
       HiLog.info(TAG, `getLocalAccountInfo success.`);
     }).catch((e: string) => {
-      HiLog.info(TAG, `getLocalAccountInfo error: ${e}`);
+      HiLog.error(TAG, `getLocalAccountInfo error: ${e}`);
     });
   }
 

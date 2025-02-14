@@ -271,7 +271,7 @@ struct encryptedSharing {
       HiLog.info(TAG, `beginToGenerateDLPFile success`);
     } catch (err) {
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
-      HiLog.info(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
       storage.setOrCreate('commandSearchUserInfo', '');
       if (err.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
         this.showToast($r('app.string.Share_File_Name_Too_Long'));

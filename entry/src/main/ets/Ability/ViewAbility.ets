@@ -141,7 +141,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     try {
       await this.context.startAbility(want);
     } catch {
-      HiLog.info(TAG, `startDataAbility failed`);
+      HiLog.error(TAG, `startDataAbility failed`);
     }
   }
 
@@ -318,7 +318,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     try {
       await this.context.startAbility(accountWant);
     } catch (err) {
-      HiLog.info(TAG, `Failed to invoke startAbility, ${JSON.stringify(err)}`)
+      HiLog.error(TAG, `Failed to invoke startAbility, ${JSON.stringify(err)}`)
       return;
     }
     await this.terminateCall();
@@ -347,7 +347,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       if (this.accountType === dlpPermission.AccountType.CLOUD_ACCOUNT) {
         if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
           this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
-          HiLog.info(TAG, 'account not login');
+          HiLog.error(TAG, 'account not login');
           opening = false;
           await this.startLoginAbility();
           reject();
@@ -649,7 +649,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
         AppStorage.setOrCreate('hiFileSize', this.stat.size);
         AppStorage.setOrCreate('hiPolicySizeEnc', this.stat.size);
       } catch (err) {
-        HiLog.info(TAG, `stat fail: ${JSON.stringify(err)}`);
+        HiLog.error(TAG, `stat fail: ${JSON.stringify(err)}`);
       }
       resolve();
     });

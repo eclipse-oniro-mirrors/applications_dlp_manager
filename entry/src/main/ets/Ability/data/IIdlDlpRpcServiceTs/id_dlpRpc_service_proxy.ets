@@ -58,7 +58,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
@@ -81,7 +81,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
         let _msg = result.reply.readString();
         callback(_errCode, _dlp, _msg);
       } else {
-        HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+        HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
         callback(result.errCode, _dlp, result.data.readString());
       }
     })
@@ -100,7 +100,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
@@ -119,7 +119,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
@@ -139,7 +139,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
@@ -159,7 +159,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
@@ -179,7 +179,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
@@ -202,7 +202,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _fileUri = result.reply.readString();
           callback(_errCode, _dlp, _fileUri);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode, _dlp, '');
         }
     })
@@ -221,7 +221,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })
@@ -240,7 +240,7 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           let _errCode = result.reply.readInt();
           callback(_errCode);
         } else {
-          HiLog.info(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
+          HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
     })

@@ -238,7 +238,7 @@ struct changeEncryption {
         try {
           await this.fileDecryption(saveRes);
         } catch {
-          HiLog.info(TAG, `file decryption fail`);
+          HiLog.error(TAG, `file decryption fail`);
         }
       }).catch((err: number) => {
         HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(err)}`);
@@ -259,7 +259,7 @@ struct changeEncryption {
     try {
       uriInfo = new fileUri.FileUri(plainUri);
     } catch (err) {
-      HiLog.info(TAG, `fileUri fail: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
     }
     try {
       file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
@@ -269,7 +269,7 @@ struct changeEncryption {
       try {
         await fs.unlink(uriInfo!.path);
       } catch (err) {
-        HiLog.info(TAG, `unlink fail: ${JSON.stringify(err)}`);
+        HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
       }
       let errorInfo =
         {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;

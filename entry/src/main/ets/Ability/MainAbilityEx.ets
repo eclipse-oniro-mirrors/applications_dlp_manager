@@ -313,7 +313,7 @@ export default class MainAbility extends UIExtensionAbility {
     }
     HiLog.info(TAG, `isDlpSuffix: ${isDlpSuffix}`);
     if (!isDlpSuffix) {
-      HiLog.info(TAG, `${fileName} is not a dlp file`);
+      HiLog.error(TAG, `${fileName} is not a dlp file`);
       GlobalContext.store('originFileName', fileName);
       GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
       let storage: LocalStorage = new LocalStorage({
@@ -357,7 +357,7 @@ export default class MainAbility extends UIExtensionAbility {
       callerAppId = await getAppId(callerBundleName);
       HiLog.info(TAG, `get AppId: ${callerAppId}`);
     } catch {
-      HiLog.info(TAG, `get AppId failed`);
+      HiLog.error(TAG, `get AppId failed`);
       return;
     }
     this.dlpRpcProxy?.openDlpFile(uri, callerAppId,
