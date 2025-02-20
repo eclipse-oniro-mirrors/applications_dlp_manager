@@ -307,8 +307,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async startLoginAbility(): Promise<void> {
     let accountWant: Want = {
-      bundleName: 'com.huawei.hmos.dlpcredmgr',
-      abilityName: 'DlpCredLoginAbility'
+      bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
+      abilityName: Constants.DLP_CREDMGR_LOGIN_ABILITY_NAME,
     };
     if (await getConnectionStatus() === false) {
       GetAlertMessage.requestModalUIExtension(this.context, {

@@ -21,25 +21,20 @@ import DomainAccountRequest from '../bean/request/DomainAccountRequest';
 import DomainAccountResponse from '../bean/response/DomainAccountResponse';
 import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import Constants from '../common/constant';
-import AppStorageConstant from '../common/constant/AppStorageConstant';
+import AppStorageConstant from '../common/AppStorageConstant';
 import { HiLog } from '../common/HiLog';
-import CredCallbackStub from './CredCallback';
 
-const TAG = 'CredConnection';
+const TAG = 'CredConnectServiceDomain';
 
-export default class CredConnection {
-  private static readonly CRED_BUNDLE_NAME = 'com.huawei.hmos.dlpcredmgr';
-  private static readonly CRED_ABILITY_NAME = 'DlpCredDataExtAbility';
-  private static readonly CRED_CALLBACK_STUB = 'CredCallbackStub';
+export default class CredConnectServiceDomain {
   private static readonly REQUEST_TIME_OUT: number = 10;
   private static readonly CONNECT_TIME_OUT: number = 1000;
-
-  private context: ESObject;
+  private context: common.UIAbilityContext | common.UIExtensionContext | common.ServiceExtensionContext;
   private connectionNum = -1;
   private commonOption: common.ConnectOptions;
   private remoteProxy: rpc.IRemoteObject | null = null;
 
-  constructor(context: ESObject) {
+  constructor(context: common.UIAbilityContext | common.UIExtensionContext | common.ServiceExtensionContext) {
     this.context = context;
     this.commonOption = {
       onConnect: (elementName, remote) => {
@@ -66,8 +61,8 @@ export default class CredConnection {
   private connectServiceAbility(code: number) {
     HiLog.info(TAG, `connectServiceAbility start`);
     let want: Want = {
-      bundleName: CredConnection.CRED_BUNDLE_NAME,
-      abilityName: CredConnection.CRED_ABILITY_NAME,
+      bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
+      abilityName: Constants.DLP_CREDMGR_DATA_ABILITY_NAME,
     };
     try {
       switch (code) {
@@ -82,7 +77,7 @@ export default class CredConnection {
     } catch (err) {
       HiLog.error(TAG, `connectServiceAbility failed: ${JSON.stringify(err)}`);
     }
-    AppStorage.setOrCreate(AppStorageConstant.CRED_CONNECTION_NUM, this.connectionNum);
+    AppStorage.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN_NUM, this.connectionNum);
     HiLog.info(TAG, `connectServiceAbility result: ${this.connectionNum}`);
   }
 
@@ -91,7 +86,7 @@ export default class CredConnection {
       return;
     }
     let currentTime = new Date().getTime();
-    while (!this.remoteProxy && new Date().getTime() < currentTime + CredConnection.CONNECT_TIME_OUT) {
+    while (!this.remoteProxy && new Date().getTime() < currentTime + CredConnectServiceDomain.CONNECT_TIME_OUT) {
       continue;
     }
   }
@@ -99,13 +94,12 @@ export default class CredConnection {
   async getDomainAccountInfo(req: DomainAccountRequest): Promise<DomainAccountResponse | undefined> {
     HiLog.info(TAG, `getDomainAccountInfo start`);
     let result: DomainAccountResponse | undefined;
-    let option = new rpc.MessageOption(Constants.TF_SYNC, CredConnection.REQUEST_TIME_OUT);
+    let option = new rpc.MessageOption(Constants.TF_SYNC, CredConnectServiceDomain.REQUEST_TIME_OUT);
     let data = new rpc.MessageSequence();
     let reply = new rpc.MessageSequence();
     try {
       data.writeInterfaceToken(Constants.DLP_CREDMGR_INTERFACE_TOKEN);
-      let callback: CredCallbackStub = new CredCallbackStub(CredConnection.CRED_CALLBACK_STUB);
-      data.writeRemoteObject(callback.asObject());
+      data.writeRemoteObject(new rpc.RemoteObject(''));
       data.writeString(JSON.stringify(req));
       this.waitConnect();
       if (!this.remoteProxy) {
@@ -132,12 +126,12 @@ export default class CredConnection {
 
 
   disconnectServiceAbility() {
-    HiLog.info(TAG, `disconnectServiceAbility: ${AppStorage.get(AppStorageConstant.CRED_CONNECTION_NUM)}`);
-    let connectionNum: number | undefined = AppStorage.get(AppStorageConstant.CRED_CONNECTION_NUM);
+    HiLog.info(TAG, `disconnectServiceAbility: ${AppStorage.get(AppStorageConstant.CRED_CONNECTION_DOMAIN_NUM)}`);
+    let connectionNum: number | undefined = AppStorage.get(AppStorageConstant.CRED_CONNECTION_DOMAIN_NUM);
     if (!connectionNum || connectionNum < 0) {
       return;
     }
-    this.context.disConnectServiceExtensionAbility(connectionNum).then(() => {
+    this.context.disconnectServiceExtensionAbility(connectionNum).then(() => {
       HiLog.info(TAG, `disconnectServiceAbility success.`);
     }).catch((error: BusinessError) => {
       HiLog.error(TAG, `disconnectServiceAbility failed. Error: ${JSON.stringify(error)}`);

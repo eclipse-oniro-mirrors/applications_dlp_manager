@@ -15,20 +15,20 @@
 
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
-import CredCallbackStub from './CredCallback';
+import CredCallbackStub from './CredCallbackStub';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
 
-const TAG = 'ConnectService';
+const TAG = 'CredConnectService';
 
-export default class ConnectService {
-  private service: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
-  private context: ESObject;
+export default class CredConnectService {
+  private service: CredCallbackStub = new CredCallbackStub();
+  private context: common.UIExtensionContext;
   private optionsSearchUser: common.ConnectOptions;
   private optionsGetAccount: common.ConnectOptions;
   private cloudPhone: string = '';
 
-  constructor(context: ESObject) {
+  constructor(context: common.UIExtensionContext) {
     this.context = context;
     this.optionsSearchUser = {
       onConnect: (elementName, remote) => {
@@ -45,7 +45,7 @@ export default class ConnectService {
     this.optionsGetAccount = {
       onConnect: (elementName, remote) => {
         HiLog.info(TAG, `onConnect success get account ${JSON.stringify(elementName)}`);
-        this.service.getAccountInfo(remote);
+        this.service.getLocalAccountInfo(remote);
       },
       onDisconnect: () => {
         HiLog.info(TAG, `onDisconnect: GetAccount`);
@@ -63,8 +63,8 @@ export default class ConnectService {
   connectServiceShareAbility(code: number) {
     HiLog.info(TAG, `connectServiceShareAbility start`);
     let want: Want = {
-      bundleName: 'com.huawei.hmos.dlpcredmgr',
-      abilityName: 'DlpCredDataExtAbility',
+      bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
+      abilityName: Constants.DLP_CREDMGR_DATA_ABILITY_NAME,
     };
     let connectionId: number | undefined;
     try {
@@ -84,10 +84,10 @@ export default class ConnectService {
         }
       }
       if (connectionId !== undefined) {
-        HiLog.info(TAG, `connectServiceExtAbility result: ${connectionId}`);
+        HiLog.info(TAG, `connectServiceShareAbility result: ${connectionId}`);
       }
     } catch (err) {
-      HiLog.error(TAG, `connectServiceExtAbility failed: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `connectServiceShareAbility failed: ${JSON.stringify(err)}`);
     }
   }
 }

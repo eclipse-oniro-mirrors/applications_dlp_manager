@@ -28,7 +28,7 @@ import {
   linkSetCallback
   } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
-import IDLDLPProperty from '../../../serviceExtensionAbility/sequenceable/dlpClass';
+import IDLDLPProperty from '../../../common/dlpClass';
 import Constants from '../../../common/constant';
 import { HiLog } from '../../../common/HiLog';
 

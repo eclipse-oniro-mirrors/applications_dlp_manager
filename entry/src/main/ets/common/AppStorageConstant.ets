@@ -15,8 +15,8 @@
 
 export default class AppStorageConstant {
 
-  public static readonly CRED_CONNECTION: string = 'CRED_CONNECTION';
-  public static readonly CRED_CONNECTION_NUM: string = 'CRED_CONNECTION_NUM';
+  public static readonly CRED_CONNECTION_DOMAIN: string = 'CRED_CONNECTION_DOMAIN';
+  public static readonly CRED_CONNECTION_DOMAIN_NUM: string = 'CRED_CONNECTION_DOMAIN_NUM';
 
   public static readonly DOMAIN_ACCOUNT_MAP: string = 'DOMAIN_ACCOUNT_MAP';
 

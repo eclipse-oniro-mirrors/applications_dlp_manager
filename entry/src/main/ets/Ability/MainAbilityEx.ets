@@ -36,20 +36,61 @@ import {
   getAccountType
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
-import HomeFeature from '../feature/HomeFeature';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import FileUtils from '../common/FileUtils';
 import AccountManager from '../manager/AccountManager';
+import IdDlpRpcServiceProxy from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
+import common from '@ohos.app.ability.common';
 
 const TAG = 'MainEx';
 
 let direction: number = -1;
+const DLP_FILE_PROCESS_ABILITY_NAME = 'DlpFileProcessAbility';
 
 export default class MainAbility extends UIExtensionAbility {
   private authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
   private callerToken: number = 0;
-  private homeFeature!: HomeFeature;
+  private dlpRpcProxy?: IdDlpRpcServiceProxy;
+  private connectionNum: number = -1;
+
+  connectDlpFileProcessAbility(want: Want, session: UIExtensionContentSession) {
+    HiLog.info(TAG, `connectDlpFileProcessAbility`);
+    if (this.dlpRpcProxy !== undefined) {
+      return;
+    }
+
+    let newWant = {
+      'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+      'abilityName': DLP_FILE_PROCESS_ABILITY_NAME
+    } as Record<string, string>;
+
+    let options: common.ConnectOptions = {
+      onConnect: (elementName, proxy) => {
+        HiLog.info(TAG, `${DLP_FILE_PROCESS_ABILITY_NAME}: onConnect success`);
+        this.dlpRpcProxy = new IdDlpRpcServiceProxy(proxy);
+        GlobalContext.store('dlpRpcProxy', this.dlpRpcProxy);
+        HiLog.info(TAG, `DLPManager IDL onConnect success: ${JSON.stringify(this.dlpRpcProxy)}`);
+        this.getNewWantPage(want, session);
+      },
+      onDisconnect: () => {
+        HiLog.info(TAG, `${DLP_FILE_PROCESS_ABILITY_NAME}: onDisconnect`);
+      },
+      onFailed: () => {
+        HiLog.info(TAG, `${DLP_FILE_PROCESS_ABILITY_NAME}: onFailed`);
+      }
+    }
+
+    if (this.dlpRpcProxy === undefined) {
+      HiLog.info(TAG, `try connect`);
+      try {
+        this.connectionNum = this.context.connectServiceExtensionAbility(newWant, options);
+      } catch (err) {
+        HiLog.error(TAG, `connectDlpFileProcessAbility failed: ${JSON.stringify(err)}`);
+      }
+    }
+    HiLog.info(TAG, `connectDlpFileProcessAbility result: ${this.connectionNum}`);
+  }
 
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `onSessionCreate start`);
@@ -67,12 +108,7 @@ export default class MainAbility extends UIExtensionAbility {
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
 
-    this.homeFeature = new HomeFeature(this.context);
-    GlobalContext.store('homeFeature', this.homeFeature);
-
-    this.homeFeature.connectServiceExtAbility(()=>{
-      this.getNewWantPage(want, session);
-    });
+    this.connectDlpFileProcessAbility(want, session);
 
     AccountManager.connectAbility(this.context);
   }
@@ -98,7 +134,7 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
-      this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+      this.dlpRpcProxy?.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `closeDLPFile failed: ${err}`);
         }
@@ -182,7 +218,7 @@ export default class MainAbility extends UIExtensionAbility {
     }
     try {
       await new Promise<void>((resolve, reject) => {
-        this.homeFeature.linkSetHome(uri, (err: number) => {
+        this.dlpRpcProxy?.linkSet(uri, (err: number) => {
           if (err === 0) {
             HiLog.error(TAG, `invalid uri for opened link uri`);
             reject();
@@ -248,7 +284,7 @@ export default class MainAbility extends UIExtensionAbility {
 
   requestIsFromSandBox(session: UIExtensionContentSession, want: Want): void {
     const linkFileName: string = (want.parameters?.linkFileName as Record<string, string>)?.name;
-    this.homeFeature.sandBoxLinkFileHome(linkFileName, this.callerToken,
+    this.dlpRpcProxy?.sandBoxLinkFile(linkFileName, this.callerToken,
       (err: number, data: dlpPermission.DLPProperty, uri: string) => {
       if (err !== 0) {
         return;
@@ -324,7 +360,7 @@ export default class MainAbility extends UIExtensionAbility {
       HiLog.error(TAG, `get AppId failed`);
       return;
     }
-    this.homeFeature.openDlpFileHome(uri, callerAppId,
+    this.dlpRpcProxy?.openDlpFile(uri, callerAppId,
       async (err: number, data: dlpPermission.DLPProperty, msg: string) => {
       if (err !== 0) {
         let ansErr: BusinessError<void> = {
@@ -364,7 +400,7 @@ export default class MainAbility extends UIExtensionAbility {
 
   findFileOpenHistoryHome(uri: string, session: UIExtensionContentSession): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.homeFeature.fileOpenHistoryHome(uri, async (err: number) => {
+      this.dlpRpcProxy?.fileOpenHistory(uri, async (err: number) => {
         if (err === 0) {
           this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
           reject();

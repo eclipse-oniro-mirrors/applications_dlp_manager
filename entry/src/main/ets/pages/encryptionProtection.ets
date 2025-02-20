@@ -48,13 +48,13 @@ import {
 } from '../component/encryptionComponents/permission_type_select';
 import { AddStaff } from '../component/encryptionComponents/AddStaff';
 import GlobalContext from '../common/GlobalContext';
-import IDLDLPProperty from '../serviceExtensionAbility/sequenceable/dlpClass';
-import { IAuthUser } from '../serviceExtensionAbility/sequenceable/dlpClass';
-import HomeFeature from '../feature/HomeFeature';
+import IDLDLPProperty from '../common/dlpClass';
+import { IAuthUser } from '../common/dlpClass';
 import { GetAlertMessage } from '../common/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import { SystemUtils } from '../common/systemUtils';
+import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {
@@ -85,13 +85,13 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 struct DlpDialog {
   @State dlpProperty: dlpDataType =
     GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
-  private homeFeature: HomeFeature = GlobalContext.load('homeFeature');
   @State session: UIExtensionContentSession | undefined =
     storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   srcFileName: string = '';
   isDlpFile: boolean = false;
   linkFileName: string = '';
   dlpAlertDialog?: CustomDialogController;
+  private dlpRpcProxy?: IdDlpRpcServiceProxy = GlobalContext.load('dlpRpcProxy');
   @State directionStatus: number = 0;
   @State authPerm: number = 2;
   @State handlePopupReadOnly: boolean = false;
@@ -230,7 +230,7 @@ struct DlpDialog {
     this.processing = false;
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
-      this.homeFeature.resumeFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+      this.dlpRpcProxy?.resumeFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
         }
@@ -281,7 +281,7 @@ struct DlpDialog {
     let filePathUri = getFileUriByPath(filePath);
     try {
       await new Promise<void>((resolve, reject) => {
-        this.homeFeature.recoverDLPFileHome(GlobalContext.load('uri'), filePathUri, async (err: number) => {
+        this.dlpRpcProxy?.recoverDlpFile(GlobalContext.load('uri'), filePathUri, async (err: number) => {
           if (err !== 0) {
             fs.unlinkSync(filePath);
             HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
@@ -302,7 +302,7 @@ struct DlpDialog {
 
   stopFuseLinkHome() {
     return new Promise<void>((resolve, reject) => {
-      this.homeFeature.stopFuseLinkHome(GlobalContext.load('uri'), (err: number) => {
+      this.dlpRpcProxy?.stopFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `stopFuseLink failed: ${err}`);
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
@@ -316,7 +316,7 @@ struct DlpDialog {
 
   changeToGenDlpFileHome(filePathUri: string, filePath: string) {
     let _dlp = this.tempData();
-    this.homeFeature.genDlpFileHome(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
+    this.dlpRpcProxy?.genDlpFile(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
       if (err !== 0) {
         HiLog.error(TAG, `generateDLPFile failed: ${err}`);
         try {
@@ -330,7 +330,7 @@ struct DlpDialog {
         await this.catchProcess();
       } else {
         if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-          this.homeFeature.replaceDLPLinkFileHome(GlobalContext.load('uri'), this.linkFileName, (err: number) => {
+          this.dlpRpcProxy?.replaceDlpLinkFile(GlobalContext.load('uri'), this.linkFileName, (err: number) => {
             if (err !== 0) {
               HiLog.error(TAG, `replaceDLPLinkFile failed: ${err}`);
             }
@@ -417,7 +417,7 @@ struct DlpDialog {
 
   beginToGenDlpFileHome(srcFileUri: string, uri: string, uriInfo: fileUri.FileUri) {
     let _dlp = this.tempData();
-    this.homeFeature.genDlpFileHome(srcFileUri, uri, _dlp, async (err: number) => {
+    this.dlpRpcProxy?.genDlpFile(srcFileUri, uri, _dlp, async (err: number) => {
       if (err !== 0) {
         if (err === 100) {
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
@@ -859,7 +859,7 @@ struct DlpDialog {
               .controlSize(ControlSize.NORMAL)
               .onClick(async (event) => {
                 if (this.isDlpFile && !(GlobalContext.load('requestIsFromSandBox') as boolean)) {
-                  this.homeFeature.closeDLPFileHome(GlobalContext.load('uri'), (err: number) => {
+                  this.dlpRpcProxy?.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
                     if (err !== 0) {
                       HiLog.error(TAG, `closeDLPFile failed: ${err}`);
                     }

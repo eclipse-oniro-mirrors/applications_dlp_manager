@@ -21,7 +21,7 @@ import { HiLog } from '../../common/HiLog';
 import CommonUtil from '../../common/CommonUtil';
 import AccountManager from '../../manager/AccountManager';
 import DomainAccountResponse from '../../bean/response/DomainAccountResponse';
-import AppStorageConstant from '../../common/constant/AppStorageConstant';
+import AppStorageConstant from '../../common/AppStorageConstant';
 import { common } from '@kit.AbilityKit';
 import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
 import EncryptProtectionShowCodeEnum from '../../common/enum/EncryptProtectionShowCodeEnum';
