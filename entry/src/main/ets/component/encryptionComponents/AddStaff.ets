@@ -181,6 +181,9 @@ struct AddStaff {
       authAccount: matchAccount.accountName.toLocaleLowerCase(),
       textContent: matchAccount[this.textContent] as string
     };
+    if (this.staffArray.length >= Constants.TIPS_STAFF_MAX_WIDTH) {
+      return;
+    }
     this.staffArray.push(staff);
   }
 

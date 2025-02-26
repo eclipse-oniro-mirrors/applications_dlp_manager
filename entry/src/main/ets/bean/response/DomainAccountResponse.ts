@@ -20,7 +20,11 @@ export default class DomainAccountResponse extends BaseResponse {
   private data: Array<DomainAccountInfo>;
 
   public setData(data: Array<DomainAccountInfo>): void {
-    this.data = data;
+    if (data instanceof Array) {
+      this.data = data;
+    } else {
+      this.data = [];
+    }
   }
 
   public getData(): Array<DomainAccountInfo> {
