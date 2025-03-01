@@ -640,7 +640,10 @@ struct encryptedSharing {
                 .direction(Direction.Ltr)
                 .textAlign(SystemUtils.isRTL() ? TextAlign.End : TextAlign.Start)
                 .type(InputType.PhoneNumber)
-                .enterKeyType(EnterKeyType.NEW_LINE)
+                .enterKeyType(EnterKeyType.Next)
+                .onSubmit(() => {
+                  this.beginShareEncrypt();
+                })
                 .border(this.phoneFormatTips ?
                   { width: Constants.DIALOG_MD_OFFSET, color: $r('sys.color.ohos_id_color_warning') } : { width: 0 })
                 .onChange((value: string) => {
