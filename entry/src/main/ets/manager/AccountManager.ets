@@ -22,6 +22,7 @@ import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import account_osAccount from '@ohos.account.osAccount';
 import CommonUtil from '../common/CommonUtil';
 import { common } from '@kit.AbilityKit';
+import Constants from '../common/constant'
 
 const TAG = 'AccountManager';
 
@@ -70,6 +71,9 @@ export default class AccountManager {
     let connection: CredConnectServiceDomain | undefined =
       AppStorage.get<CredConnectServiceDomain>(AppStorageConstant.CRED_CONNECTION_DOMAIN);
     let response: DomainAccountResponse | undefined = await connection?.getDomainAccountInfo(searchReq);
+    if (response?.getErrorCode() !== Constants.ERR_CODE_SUCCESS) {
+      return undefined;
+    }
     AccountManager.dealDomainAccountMapCache(response?.getData());
     return response;
   }
@@ -95,14 +99,18 @@ export default class AccountManager {
     if (!dataArray) {
       return;
     }
-    let domainAccountMap: Map<string, DomainAccountInfo> | undefined =
-      AppStorage.get(AppStorageConstant.DOMAIN_ACCOUNT_MAP);
-    if (!domainAccountMap) {
-      domainAccountMap = new Map<string, DomainAccountInfo>();
+    try {
+      let domainAccountMap: Map<string, DomainAccountInfo> | undefined =
+        AppStorage.get(AppStorageConstant.DOMAIN_ACCOUNT_MAP);
+      if (!domainAccountMap) {
+        domainAccountMap = new Map<string, DomainAccountInfo>();
+      }
+      dataArray.forEach(data => {
+        domainAccountMap?.set(data.accountName.toLocaleUpperCase(), data);
+      });
+      AppStorage.setOrCreate(AppStorageConstant.DOMAIN_ACCOUNT_MAP, domainAccountMap);
+    } catch (error) {
+      HiLog.error(TAG, `dealDomainAccountMapCache error: ${JSON.stringify(error)}`);
     }
-    dataArray.forEach(data => {
-      domainAccountMap?.set(data.accountName.toLocaleUpperCase(), data);
-    });
-    AppStorage.setOrCreate(AppStorageConstant.DOMAIN_ACCOUNT_MAP, domainAccountMap);
   }
 }
