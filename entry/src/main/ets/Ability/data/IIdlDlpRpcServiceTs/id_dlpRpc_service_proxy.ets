@@ -61,7 +61,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
@@ -84,7 +87,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
         HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
         callback(result.errCode, _dlp, result.data.readString());
       }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async stopFuseLink(uri: string, callback: stopFuseLinkCallback): Promise<void> {
@@ -103,7 +109,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async resumeFuseLink(uri: string, callback: resumeFuseLinkCallback): Promise<void> {
@@ -122,7 +131,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async replaceDlpLinkFile(uri: string, linkFileName: string, callback: replaceDlpLinkFileCallback): Promise<void> {
@@ -142,7 +154,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async recoverDlpFile(srcUri: string, pathUri: string, callback: recoverDlpFileCallback): Promise<void> {
@@ -162,7 +177,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
   
   async closeDlpFile(srcUri: string, callback: closeDlpFileCallback): Promise<void> {
@@ -182,7 +200,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async sandBoxLinkFile(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback): Promise<void> {
@@ -205,7 +226,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode, _dlp, '');
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): Promise<void> {
@@ -224,7 +248,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 
   async linkSet(uri: string, callback: linkSetCallback): Promise<void> {
@@ -243,7 +270,10 @@ export default class IdDlpRpcServiceProxy implements IIdDlpRpcService {
           HiLog.error(TAG, `sendMessageRequest failed, errCode: ${result.errCode}`);
           callback(result.errCode);
         }
-    })
+    }).finally(() => {
+      _data.reclaim();
+      _reply.reclaim();
+    });
   }
 }
 
