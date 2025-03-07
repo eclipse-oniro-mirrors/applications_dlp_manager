@@ -101,6 +101,9 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       HiLog.info(TAG, `searchUserInfo success.`);
     }).catch((e: string) => {
       HiLog.info(TAG, `searchUserInfo error: ${e}`);
+    }).finally(() => {
+      data.reclaim();
+      reply.reclaim();
     });
   }
 
@@ -125,6 +128,9 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       HiLog.info(TAG, `getLocalAccountInfo success.`);
     }).catch((e: string) => {
       HiLog.error(TAG, `getLocalAccountInfo error: ${e}`);
+    }).finally(() => {
+      data.reclaim();
+      reply.reclaim();
     });
   }
 
