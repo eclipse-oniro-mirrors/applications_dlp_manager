@@ -195,15 +195,15 @@ struct encryptedSharing {
           Constants.ERR_CODE_CONNECTION_FAIL,
           Constants.ERR_CODE_CONNECTION_TIME_OUT
         ].includes(Number(commandGetAccountInfoCallBack.errorCode))) {
-          this.showToast($r('app.string.network_invalid'), promptAction.ToastShowMode.DEFAULT);
+          this.showToast($r('app.string.network_invalid'));
         } else {
-          this.showToast($r('app.string.Share_File_Encrypted_Failed'), promptAction.ToastShowMode.DEFAULT);
+          this.showToast($r('app.string.Share_File_Encrypted_Failed'));
         }
         return;
       }
     } catch (error) {
       HiLog.error(TAG, `get account info failed: ${JSON.stringify(error)}`);
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'), promptAction.ToastShowMode.SYSTEM_TOP_MOST);
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enableComponents();
       this.recordSuccessUid = '';
       this.getAccountInfoResult = encryptedSharing.GET_ACCOUNT_INFO_RESET;
@@ -241,7 +241,7 @@ struct encryptedSharing {
     let inputFileName: string | null = this.getFileName(parameters, inputUri);
     if (inputFileName === null) {
       storage.setOrCreate('commandSearchUserInfo', '');
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'), promptAction.ToastShowMode.SYSTEM_TOP_MOST);
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enableComponents();
       return;
     }
@@ -262,7 +262,7 @@ struct encryptedSharing {
     try {
       file = fs.openSync(newFilePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
       await dlpPermission.generateDLPFile(inFileFd, file.fd, this.dlpProperty);
-      this.showToast($r('app.string.Share_File_Encrypted_Success'), promptAction.ToastShowMode.DEFAULT);
+      this.showToast($r('app.string.Share_File_Encrypted_Success'));
       let dstFileSize: number = await getFileSizeByUri(filePathUri);
       AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
       AppStorage.setOrCreate('hiCode', 201);
@@ -274,10 +274,10 @@ struct encryptedSharing {
       HiLog.error(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
       storage.setOrCreate('commandSearchUserInfo', '');
       if (err.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
-        this.showToast($r('app.string.Share_File_Name_Too_Long'), promptAction.ToastShowMode.DEFAULT);
+        this.showToast($r('app.string.Share_File_Name_Too_Long'));
         return;
       }
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'), promptAction.ToastShowMode.SYSTEM_TOP_MOST);
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enableComponents();
     } finally {
       if (file) {
@@ -309,8 +309,7 @@ struct encryptedSharing {
   showToast(msg: Resource, showMode: promptAction.ToastShowMode) {
     promptAction.showToast({
       message: msg,
-      duration: Constants.SHARE_SET_TIMEOUT,
-      showMode: showMode
+      duration: Constants.SHARE_SET_TIMEOUT
     });
   }
 
@@ -366,12 +365,12 @@ struct encryptedSharing {
       Constants.ERR_CODE_CONNECTION_FAIL,
       Constants.ERR_CODE_CONNECTION_TIME_OUT
     ].includes(Number(credentialCallBack.errorCode))) {
-      this.showToast($r('app.string.network_invalid'), promptAction.ToastShowMode.DEFAULT);
+      this.showToast($r('app.string.network_invalid'));
       storage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) !== Constants.ERR_CODE_SUCCESS) {
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'), promptAction.ToastShowMode.DEFAULT);
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       storage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
@@ -407,7 +406,7 @@ struct encryptedSharing {
   async getLoginStatus() {
     HiLog.info(TAG, `get login status start.`);
     if (await getConnectionStatus() === false) {
-      this.showToast($r('app.string.network_invalid'), promptAction.ToastShowMode.SYSTEM_TOP_MOST);
+      this.showToast($r('app.string.network_invalid'));
       this.enableComponents();
       return;
     }
@@ -427,7 +426,7 @@ struct encryptedSharing {
   async getLocalAccountInfo() {
     HiLog.info(TAG, `get Account Info start`);
     if (await getConnectionStatus() === false) {
-      this.showToast($r('app.string.network_invalid'), promptAction.ToastShowMode.SYSTEM_TOP_MOST);
+      this.showToast($r('app.string.network_invalid'));
       this.enableComponents();
       return;
     }
@@ -448,7 +447,7 @@ struct encryptedSharing {
       }
     } catch (err) {
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'), promptAction.ToastShowMode.SYSTEM_TOP_MOST);
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
       this.enableComponents();
     }
   }
@@ -759,7 +758,7 @@ struct encryptedSharing {
             } else {
               this.enableComponents();
               if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
-                this.showToast($r('app.string.network_invalid'), promptAction.ToastShowMode.SYSTEM_TOP_MOST);
+                this.showToast($r('app.string.network_invalid'));
               }
             }
             this.textInputGetFocus();
