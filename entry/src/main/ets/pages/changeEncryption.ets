@@ -47,6 +47,7 @@ import FileUtils, { FileMsg } from '../common/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import CommonUtil from '../common/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
+import { promptAction} from '@kit.ArkUI';
 
 const TAG = 'ModEnc';
 
@@ -901,6 +902,13 @@ struct changeEncryption {
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .controlSize(ControlSize.NORMAL)
                     .onClick(async (event) => {
+                      if (this.staffDataArrayReadOnly.length > Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX ||
+                        this.staffDataArrayEdit.length > Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
+                        promptAction.showToast({
+                          message: $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'),
+                          duration: Constants.SHARE_SET_TIMEOUT
+                        });
+                      }
                       router.replaceUrl({
                         url: 'pages/encryptionProtection',
                         params: this.routerData
