@@ -306,7 +306,7 @@ struct encryptedSharing {
     return res;
   }
 
-  showToast(msg: Resource, showMode: promptAction.ToastShowMode) {
+  showToast(msg: Resource) {
     promptAction.showToast({
       message: msg,
       duration: Constants.SHARE_SET_TIMEOUT
