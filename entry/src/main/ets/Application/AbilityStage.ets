@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 import AbilityStage from '@ohos.app.ability.AbilityStage'
+import Constants from '../common/constant';
 
 export default class MyAbilityStage extends AbilityStage {
   onCreate() {
-    console.info('[Demo] MyAbilityStage onCreate');
+    AppStorage.setOrCreate<number>(Constants.FONT_SIZE_SCALE_KEY, this.context.config.fontSizeScale);
   }
 }
