@@ -100,7 +100,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
 
   onDestroy(): void {
     HiLog.info(TAG, `EncryptedSharingAbility onDestroy.`);
-    let  = this.context.getApplicationContext();
+    let applicationContext = this.context.getApplicationContext();
     try {
       applicationContext.off('environment', this.callbackId, (error, data) => {
         if (error && error.code != 0) {
