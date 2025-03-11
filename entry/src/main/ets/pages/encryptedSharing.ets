@@ -275,8 +275,15 @@ struct encryptedSharing {
     }
     let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
     let inputUri: string = parameters['ability.params.stream'][0];
-    let inputFileName: string = this.getFileName(parameters, inputUri);
-    let dlpFileName = decodeURIComponent(inputFileName) + '.dlp';
+    let inputFileName: string | null = this.getFileName(parameters, inputUri);
+    if (inputFileName === null) {
+      storage.setOrCreate('commandSearchUserInfo', '');
+      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      this.enabledFocus = true;
+      this.isConfirmButtonEnabled = true;
+      return;
+    }
+    let dlpFileName: string = inputFileName + '.dlp';
     let inFileFd = getFileFd(inputUri);
     let srcFileSize: number = await getFileSizeByUri(inputUri);
     AppStorage.setOrCreate('hiFileSize', srcFileSize);
@@ -317,7 +324,7 @@ struct encryptedSharing {
     }
   }
 
-  getFileName(parameters: Record<string, Array<string>>, inputUri: string): string {
+  getFileName(parameters: Record<string, Array<string>>, inputUri: string): string | null {
     let abilityPickerRecords = parameters['ability.picker.records'];
     let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
     AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
@@ -327,7 +334,12 @@ struct encryptedSharing {
       res = abilityPickerRecords[key][0]?.['4'];
     });
     if (res === undefined) {
-      res = srcFileMsg.fileName + srcFileMsg.fileType;
+      try {
+        res = decodeURIComponent(srcFileMsg.fileName + srcFileMsg.fileType);
+      } catch (error) {
+        HiLog.error(TAG, `getFileName failed: ${error?.message}`);
+        return null;
+      }
     }
     return res;
   }
@@ -609,8 +621,8 @@ struct encryptedSharing {
                 .enabled(this.enabledFocus)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
                 .focusable(this.isTextInputFocus)
-                .direction(Direction.Ltr)
-                .textAlign(SystemUtils.isRTL() ? TextAlign.End : TextAlign.Start)
+                .defaultFocus(false)
+                .direction(SystemUtils.isRTL() ? Direction.Rtl : Direction.Ltr)
                 .type(InputType.PhoneNumber)
                 .contentType(ContentType.PHONE_COUNTRY_CODE)
                 .enterKeyType(EnterKeyType.NEW_LINE)
