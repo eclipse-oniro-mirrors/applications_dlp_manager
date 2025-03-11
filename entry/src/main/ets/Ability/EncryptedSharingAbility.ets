@@ -21,6 +21,7 @@ import Want from '@ohos.app.ability.Want';
 import { HiLog } from '../common/HiLog';
 import { getDLPInfo, DLPInfo } from '../common/utils';
 import { EnvironmentCallback } from '@kit.AbilityKit';
+import Constants from '../common/constant';
 
 const TAG = 'share';
 const BG_COLOR = '#00000000';
