@@ -307,9 +307,15 @@ struct encryptedSharing {
   }
 
   showToast(msg: Resource) {
+    const currentFontSizeScale = AppStorage.get(Constants.FONT_SIZE_SCALE_KEY) as number ?? 1;
+    let showMode: promptAction.ToastShowMode = promptAction.ToastShowMode.DEFAULT;
+    if (currentFontSizeScale > 1) {
+      showMode = promptAction.ToastShowMode.SYSTEM_TOP_MOST;
+    }
     promptAction.showToast({
       message: msg,
-      duration: Constants.SHARE_SET_TIMEOUT
+      duration: Constants.SHARE_SET_TIMEOUT,
+      showMode: showMode,
     });
   }
 

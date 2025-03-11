@@ -264,4 +264,6 @@ export default class Constants {
   public static readonly INTERFACE_SUCCESS = 0;
   public static readonly TF_SYNC: number = 0;
   public static readonly TF_ASYNC: number = 1;
+
+  public static readonly FONT_SIZE_SCALE_KEY: string = 'currentFontSizeScale';
 }

@@ -20,11 +20,14 @@ import emitter from '@ohos.events.emitter';
 import Want from '@ohos.app.ability.Want';
 import { HiLog } from '../common/HiLog';
 import { getDLPInfo, DLPInfo } from '../common/utils';
+import { EnvironmentCallback } from '@kit.AbilityKit';
+import Constants from '../common/constant';
 
 const TAG = 'share';
 const BG_COLOR = '#00000000';
 
 export default class EncryptedSharingAbility extends ActionExtensionAbility {
+  private callbackId: number = 0;
 
   onForeground(): void {
     HiLog.info(TAG, `EncryptedSharingAbility onForeground.`);
@@ -57,6 +60,23 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     if (this.checkValidParameters(want) === false) {
       return;
     }
+
+    let envCallback: EnvironmentCallback = {
+      onConfigurationUpdated(config) {
+        AppStorage.setOrCreate<number>(Constants.FONT_SIZE_SCALE_KEY, config.fontSizeScale);
+      },
+      onMemoryLevel(level) {
+        HiLog.info(TAG, `onMemoryLevel level:${JSON.stringify(level)}`);
+      }
+    };
+
+    let applicationContext = this.context.getApplicationContext();
+    try {
+      this.callbackId = applicationContext.on('environment', envCallback);
+    } catch (err) {
+      HiLog.error(TAG, `on environment error:${JSON.stringify(err)}`);
+    }
+
     let parameters = want.parameters as Record<string, Object>;
     AppStorage.setOrCreate('hiPkgName', parameters['ohos.aafwk.param.callerBundleName']);
     let dlpInfo: DLPInfo = await getDLPInfo();
@@ -80,5 +100,17 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
 
   onDestroy(): void {
     HiLog.info(TAG, `EncryptedSharingAbility onDestroy.`);
+    let applicationContext = this.context.getApplicationContext();
+    try {
+      applicationContext.off('environment', this.callbackId, (error, data) => {
+        if (error && error.code != 0) {
+          HiLog.error(TAG, `off environment error: ${JSON.stringify(error)}`);
+        } else {
+          HiLog.info(TAG, `off environment success: ${JSON.stringify(data)}`);
+        }
+      });
+    } catch (err) {
+      HiLog.error(TAG, `off environment error:${JSON.stringify(err)}`);
+    }
   }
 };
