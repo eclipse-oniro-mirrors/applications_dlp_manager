@@ -83,7 +83,7 @@ struct encryptedSharing {
   @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') phoneNumSearchResult: string = '';
   @LocalStorageLink('commandGetAccountInfo') @Watch('checkGetAccountInfoResult') getAccountInfoResult: string = '';
   @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
-  @State isTextInputEnabled: boolean = true;
+  @State isTextInputEnabled: boolean = false;
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
   @State showUIExtensionForAccountLogin: boolean = false;
@@ -422,9 +422,10 @@ struct encryptedSharing {
         accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
         this.showUIExtensionForAccountLogin = true;
       } else {
-        this.textInputGetFocus();
+        this.enableComponents();
       }
     } catch (err) {
+      this.enableComponents();
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
     }
   }
@@ -641,8 +642,8 @@ struct encryptedSharing {
                 })
                 .enabled(this.isTextInputEnabled)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
-                .focusable(true)
-                .defaultFocus(true)
+                .focusable(this.isTextInputEnabled)
+                .defaultFocus(false)
                 .direction(Direction.Ltr)
                 .textAlign(SystemUtils.isRTL() ? TextAlign.End : TextAlign.Start)
                 .type(InputType.PhoneNumber)
@@ -767,7 +768,7 @@ struct encryptedSharing {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
-            this.textInputGetFocus();
+            this.enableComponents();
             this.showUIExtensionForAccountLogin = false;
           })
           .size({
