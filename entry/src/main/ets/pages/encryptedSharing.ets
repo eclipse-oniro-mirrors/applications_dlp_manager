@@ -761,6 +761,8 @@ struct encryptedSharing {
                 this.isTextInputEnabled = false;
                 this.isConfirmButtonEnabled = false;
                 this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
+              } else {
+                this.enableComponents();
               }
             } else {
               this.enableComponents();
@@ -768,7 +770,6 @@ struct encryptedSharing {
                 this.showToast($r('app.string.network_invalid'));
               }
             }
-            this.enableComponents();
             this.showUIExtensionForAccountLogin = false;
           })
           .size({
