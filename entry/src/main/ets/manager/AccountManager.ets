@@ -48,7 +48,7 @@ export default class AccountManager {
       return domainAccount;
     }
     let domainResponse: DomainAccountResponse | undefined =
-      await AccountManager.getDomainAccountByAccountNames([search]);
+      await AccountManager.getDomainAccountWithRetry([search]);
     if (domainResponse && domainResponse.getData() && domainResponse.getData().length > 0) {
       return domainResponse.getData()[0];
     }
