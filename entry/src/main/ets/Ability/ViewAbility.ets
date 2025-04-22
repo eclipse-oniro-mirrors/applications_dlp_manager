@@ -410,7 +410,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
           accountFlag = await AccountManager.checkAccountInfo(accountName);
         }
         if (!accountFlag) {
-          await this.callAlertAbility({code: Constants.ERR_JS_USER_NO_PERMISSION } as BusinessError);
+          await this.callAlertAbility({code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
           return;
         }
         await this.callAlertAbility(err.code === Constants.ERR_JS_APP_PERMISSION_DENY ?
