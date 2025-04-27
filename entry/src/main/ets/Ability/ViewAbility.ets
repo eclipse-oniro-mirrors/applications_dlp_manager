@@ -34,11 +34,12 @@ import {
   getFileUriByPath,
   getAppId,
   DLPInfo,
+  DLPGeneralInfo,
   getDLPInfo,
   sendDlpFileOpenProperties,
   isValidPath,
   defaultDlpFile,
-  getAccountType,
+  getAccountTypeAndRealFileType,
   getConnectionStatus
 } from '../common/utils';
 import {
@@ -60,9 +61,15 @@ import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'View';
 const SUFFIX_INDEX = 2;
+const MIN_REALY_TYPE_LENGTH = 2;
+const MAX_REALY_TYPE_LENGTH = 5;
 const APPID_FOR_HOPE: string = '5765880207854533797';
 const BUNDLE_NAME_FOR_HOPE: string = 'com.huawei.it.welink';
 const DLP_FILE_SUFFIX: string = '.dlp';
+const FILE_SUFFIX_TYPE_ARRAY: string[] = [
+  'txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
+  'bmp', 'bm', 'dng', 'gif', 'heic', 'heics', 'heif', 'heifs',
+  'hif', 'jpg', 'jpeg', 'jpe', 'png'];
 
 interface DlpConnectionPluginIdObj {
   id: string
@@ -94,6 +101,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private callerBundleName: string = '';
   private accountType: number = dlpPermission.AccountType.DOMAIN_ACCOUNT;
   private distributedInfoId: string = '';
+  private realFileType: string = '';
 
   async onCreate(want: Want): Promise<void> {
     if (!GlobalContext.load('sandbox2linkFile')) {
@@ -549,7 +557,18 @@ export default class ViewAbility extends ServiceExtensionAbility {
         reject('');
         return;
       }
-      let secondarySuffix = splitNames[splitNames.length - SUFFIX_INDEX];
+      let secondarySuffix =
+        (this.realFileType === '') ? splitNames[splitNames.length - SUFFIX_INDEX] : this.realFileType;
+      for (let len = MAX_REALY_TYPE_LENGTH; len >= MIN_REALY_TYPE_LENGTH; len--) {
+        if (len > secondarySuffix.length) {
+          continue;
+        }
+        let newStr = secondarySuffix.slice(0, len).toLowerCase();
+        if (FILE_SUFFIX_TYPE_ARRAY.includes(newStr)) {
+          secondarySuffix = secondarySuffix.slice(0, len);
+          break;
+        }
+      }
       this.linkFileName = String(this.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' + this.appIndex +
         '_' + timestamp + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.dlp.link.' +
         secondarySuffix;
@@ -785,7 +804,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     try {
       await this.dlpFileMapHistory(want);
-      this.accountType = await getAccountType(this.context, this.dlpFd);
+      let dlpGeneralInfo: DLPGeneralInfo = await getAccountTypeAndRealFileType(this.context, this.dlpFd);
+      this.accountType = dlpGeneralInfo.accountType;
+      this.realFileType = dlpGeneralInfo.realFileType;
     } catch (err) {
       if (err.code === Constants.SHARE_NO_SPACE_LEFT_ON_DEVICE) {
         await GetAlertMessage.requestModalUIExtension(this.context, {

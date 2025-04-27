@@ -103,6 +103,11 @@ interface DLPInfo {
   versionCode: string;
 }
 
+interface DLPGeneralInfo {
+  accountType: number;
+  realFileType: string;
+}
+
 function getFileUriByPath(filePath: string): string {
   try {
     let uri = fileUri.getUriFromPath(filePath);
@@ -439,8 +444,8 @@ function isValidPath(path: string): Boolean {
   return true;
 }
 
-function getAccountType(
-  context: common.ServiceExtensionContext | common.UIExtensionContext, fd: number): Promise<number> {
+function getAccountTypeAndRealFileType(
+  context: common.ServiceExtensionContext | common.UIExtensionContext, fd: number): Promise<DLPGeneralInfo> {
   return new Promise(async (resolve, reject) => {
     let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
     let option: ChangeOption = { offset: 0, length: HEAD_LENGTH_IN_BYTE };
@@ -457,6 +462,7 @@ function getAccountType(
       let filePath = context.filesDir + '/saveAs' + random;
       let dirPath = context.filesDir + '/saveAsUnzip' + random;
       let fileName = dirPath + '/dlp_cert';
+      let generalInfoPath = dirPath + '/dlp_gerenal_info';
       let ff: fs.File | undefined;
       try {
         fs.readSync(fd, z, option);
@@ -468,7 +474,16 @@ function getAccountType(
         let infoArray = dlpInfo.split('accountType');
         let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
         GlobalContext.store('accountType', Number(type));
-        resolve(Number(type));
+
+        let generalInfo = fs.readTextSync(generalInfoPath);
+        let generalInfoArray = generalInfo.split('realFileType');
+        let realFileType = generalInfoArray[1].split('\"')[2];
+
+        let result: DLPGeneralInfo = {
+          accountType: Number(type),
+          realFileType: realFileType,
+        }
+        resolve(result);
       } catch (err) {
         HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`);
         reject(err);
@@ -487,7 +502,11 @@ function getAccountType(
         let infoArray = fdString.split('accountType');
         let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
         GlobalContext.store('accountType', Number(type));
-        resolve(Number(type));
+        let result: DLPGeneralInfo = {
+          accountType: Number(type),
+          realFileType: '',
+        }
+        resolve(result);
       } catch (err) {
         HiLog.error(TAG, `getStringFromFd error: ${JSON.stringify(err)}`);
         reject();
@@ -637,9 +656,10 @@ export {
   sendDlpFileCreateProperties,
   sendDlpFileOpenProperties,
   DLPInfo,
+  DLPGeneralInfo,
   isValidPath,
   defaultDlpFile,
-  getAccountType,
+  getAccountTypeAndRealFileType,
   checkNetworkStatus,
   getConnectionStatus
 };
