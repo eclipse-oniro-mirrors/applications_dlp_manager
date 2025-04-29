@@ -30,10 +30,11 @@ import {
   getFileFd,
   getAppId,
   DLPInfo,
+  DLPGeneralInfo,
   getDLPInfo,
   sendDlpManagerAccountLogin,
   isValidPath,
-  getAccountType
+  getAccountTypeAndRealFileType
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
 import { GetAlertMessage } from '../common/GetAlertMessage';
@@ -329,8 +330,8 @@ export default class MainAbility extends UIExtensionAbility {
     } else {
       try {
         let dlpFd = getFileFd(String(want.uri));
-        let accountType = await getAccountType(this.context, dlpFd);
-        if (accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+        let dlpGeneralInfo: DLPGeneralInfo = await getAccountTypeAndRealFileType(this.context, dlpFd);
+        if (dlpGeneralInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
           this.dlpFilesToEncrypt(session, want);
         } else {
           await GetAlertMessage.phoneHandle(this.context, {
