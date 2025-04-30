@@ -548,7 +548,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       let timestamp = new Date().getTime();
       let splitNames = this.fileName.split('.');
       HiLog.debug(TAG, `splitNames: ${splitNames}`);
-      if (splitNames.length <= SUFFIX_INDEX) {
+      if (splitNames.length < SUFFIX_INDEX) {
         hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
         opening = false;
         await GetAlertMessage.requestModalUIExtension(this.context, {
