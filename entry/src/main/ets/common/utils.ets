@@ -462,7 +462,7 @@ function getAccountTypeAndRealFileType(
       let filePath = context.filesDir + '/saveAs' + random;
       let dirPath = context.filesDir + '/saveAsUnzip' + random;
       let fileName = dirPath + '/dlp_cert';
-      let generalInfoPath = dirPath + '/dlp_gerenal_info';
+      let generalInfoPath = dirPath + '/dlp_general_info';
       let ff: fs.File | undefined;
       try {
         fs.readSync(fd, z, option);
