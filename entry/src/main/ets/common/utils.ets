@@ -40,7 +40,6 @@ const HEAD_LENGTH_IN_U32 = 7;
 const CERT_OFFSET = 5;
 const CERT_SIZE = 6;
 const NUMBER_TWO = 2;
-const NUMBER_THREE = 3;
 
 const NET_CAPABILITY_INTERNET: number = 12;
 const NET_CAPABILITY_VALIDATED: number = 16;
@@ -482,7 +481,7 @@ function getAccountTypeAndRealFileType(
         let realFileType:string = '';
         if (generalInfoArray.length == NUMBER_TWO) {
           let realFileTypeStr = generalInfoArray[1].split('\"');
-          if (realFileTypeStr.length >= NUMBER_THREE) {
+          if (realFileTypeStr.length > NUMBER_TWO) {
             realFileType = realFileTypeStr[NUMBER_TWO];
           }
         }
