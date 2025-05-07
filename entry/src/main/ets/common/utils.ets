@@ -479,7 +479,6 @@ function getAccountTypeAndRealFileType(
 
         let generalInfo = fs.readTextSync(generalInfoPath);
         let generalInfoArray = generalInfo.split('realFileType');
-
         let realFileType:string = '';
         if (generalInfoArray.length == NUMBER_TWO) {
           let realFileTypeStr = generalInfoArray[1].split('\"');
