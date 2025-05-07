@@ -39,6 +39,8 @@ const HEAD_LENGTH_IN_BYTE = 28;
 const HEAD_LENGTH_IN_U32 = 7;
 const CERT_OFFSET = 5;
 const CERT_SIZE = 6;
+const NUMBER_TWO = 2;
+const NUMBER_THREE = 3;
 
 const NET_CAPABILITY_INTERNET: number = 12;
 const NET_CAPABILITY_VALIDATED: number = 16;
@@ -477,7 +479,14 @@ function getAccountTypeAndRealFileType(
 
         let generalInfo = fs.readTextSync(generalInfoPath);
         let generalInfoArray = generalInfo.split('realFileType');
-        let realFileType = generalInfoArray[1].split('\"')[2];
+
+        let realFileType:string = '';
+        if (generalInfoArray.length == NUMBER_TWO) {
+          let realFileTypeStr = generalInfoArray[1].split('\"');
+          if (realFileTypeStr.length >= NUMBER_THREE) {
+            realFileType = realFileTypeStr[NUMBER_TWO];
+          }
+        }
 
         let result: DLPGeneralInfo = {
           accountType: Number(type),
