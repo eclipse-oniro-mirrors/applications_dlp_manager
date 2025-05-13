@@ -600,6 +600,27 @@
           "attr":{
               "priority":"translate"
           }
+      },
+      {
+          "name":"File_no_permission",
+          "value":"The currently logged-in Huawei account does not have permission to view this file",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"File_damaged",
+          "value":"The file is damaged and cannot be opened",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"File_cannot_be_opened",
+          "value":"Unable to open this file. Please try again later",
+          "attr":{
+              "priority":"translate"
+          }
       }
   ]
 }
