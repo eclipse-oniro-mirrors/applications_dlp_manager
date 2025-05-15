@@ -603,7 +603,7 @@
       },
       {
           "name":"File_no_permission",
-          "value":"当前登录的华为账号没有权限查看此文件",
+          "value":"您的华为账号没有权限查看此文件",
           "attr":{
               "priority":"translate"
           }
@@ -618,6 +618,13 @@
       {
           "name":"File_cannot_be_opened",
           "value":"无法打开此文件，请稍后再试",
+          "attr":{
+              "priority":"translate"
+          }
+      },
+      {
+          "name":"Network_anomaly",
+          "value":"网络异常，无法验证您的华为账号",
           "attr":{
               "priority":"translate"
           }

@@ -603,21 +603,28 @@
         },
         {
             "name":"File_no_permission",
-            "value":"The currently logged-in Huawei account does not have permission to view this file",
+            "value":"Your Huawei ID does not have the permission to view this file.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"File_damaged",
-            "value":"The file is damaged and cannot be opened",
+            "value":"The file is damaged and cannot be opened.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"File_cannot_be_opened",
-            "value":"Unable to open this file. Please try again later",
+            "value":"Unable to open this file. Please try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"Network error. Unable to verify your Huawei ID.",
             "attr":{
                 "priority":"translate"
             }
