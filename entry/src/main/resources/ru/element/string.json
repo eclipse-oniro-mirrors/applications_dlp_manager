@@ -1,0 +1,578 @@
+{
+    "string":[
+        {
+            "name":"save",
+            "value":"Сохранить",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"Это приложение не может открыть этот файл.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"Приложение DLP не запустилось. Проверьте параметры и повторите попытку.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"Шифрование файла…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"Срок действия должен быть позже текущей даты. Укажите другую дату.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"Только я",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"Указанные пользователи",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_not_connected_description",
+            "value":"Настроен срок действия доступа к этому файлу. Для подтверждения прав подключитесь к Интернету.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"Передача с шифрованием",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"Закройте этот файл, чтобы зашифровать его.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"У вас нет права просмотра этого файла. Чтобы запросить право, свяжитесь с %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"Недействительный ID сотрудника. Введите повторно.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"У вас нет права просмотра этого файла.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"Этот файл защищен. У вас есть право Только чтение.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"Недостаточно памяти. Чтобы освободить место, удалите ненужные файлы.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screenshot",
+            "value":"Сделать скриншот",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"duplicate",
+            "value":"Копировать",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"Файл зашифрован.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
+            "value":"Сбой открытия файла. Проверьте и повторите попытку.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"Сбой идентификации данных входа. Чтобы продолжить, выполните вход в рабочий аккаунт.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"Сбой получения данных аккаунта. Повторите попытку позже.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"Выполняется шифрование файла %s. Повторите попытку позже.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"loading_title",
+            "value":"Загрузка…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_list",
+            "value":"Ограничьте доступ к файлу для его защиты.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid",
+            "value":"Срок действия",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"Пользователи с уровнем доступа Только чтение могут посмотреть этот файл, но не могут изменить, скопировать или напечатать его.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"Все",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"У вас нет права сохранения копии этого файла. Для запроса права свяжитесь с %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"Только номера мобильных телефонов. Зашифрованные файлы можно посмотреть на устройствах с %s или более поздней версией.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encrypt_employee_id",
+            "value":"ID сотрудника: %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"Для запроса прав свяжитесь с %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Appointed_day",
+            "value":"Указанная дата",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"change_encryption",
+            "value":"Изменить защиту",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"print",
+            "value":"Напечатать",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"Добавление пользователя",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"Введите ID сотрудника и нажмите Enter. Пример: a00123456",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"Этот файл открыт в другом приложении.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"Только чтение",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permanently",
+            "value":"Бессрочно",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"Ошибка приложения",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"Сбой шифрования файла.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"Сейчас выполняется шифрование этого файла. Дождитесь окончания шифрования и повторите попытку.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"Вход",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"network_invalid",
+            "value":"Ошибка сети. Повторите попытку позже.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit",
+            "value":"Изменение",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"Этот файл защищен, доступ к нему разрешен только указанным пользователям.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"Изменить",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"Истек срок действия ваших прав на доступ к файлу. Чтобы восстановить доступ, свяжитесь с %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_encrypted",
+            "value":"Файл защищен",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"Невозможно изменить настройки шифрования. Повторите попытку позже.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title",
+            "value":"Права доступа к файлу",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_account",
+            "value":"Введите аккаунт",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"Только чтение",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"Это действие сейчас недоступно. Повторите попытку позже.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"Этот файл невозможно зашифровать.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save_as",
+            "value":"Сохранить как",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"Доступ запрещен",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_not_connected",
+            "value":"Нет доступа в Интернет",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"Требуется обновление системы",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"Войдите в ваш аккаунт и повторите попытку.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Go_setting",
+            "value":"Настройки",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"Срок действия прав истек",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screen_recording",
+            "value":"Записать с экрана",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"finished",
+            "value":"Готово",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_account",
+            "value":"Недействительное имя аккаунта",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"Невозможно открыть файлы, зашифрованные в более новой версии системы. Обновите системное ПО и повторите попытку.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stow_away",
+            "value":"Скрыть",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"Сведения",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"sure",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_title",
+            "value":"Этот файл защищен. У вас есть права Только чтение и Изменение.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"da_button",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"Сбой шифрования. Слишком длинное имя файла.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"Сбой получения права. Повторите попытку позже.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"Фактические права зависят от приложения.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"Введите действительный номер телефона",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"Срок действия истекает",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"share_the_screen",
+            "value":"Показывать экран",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"unencrypted",
+            "value":"Отменить защиту",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ban",
+            "value":"Отмена",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"Пользователи с этим правом могут посмотреть, изменить, скопировать, сохранить, напечатать этот файл или записать его контент с экрана.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"delete_account",
+            "value":"Удалить",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

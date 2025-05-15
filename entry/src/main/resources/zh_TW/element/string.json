@@ -389,7 +389,7 @@
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
             "value":"無法開啟在新版本系統中加密的檔案，請升級系統，然後再試一次。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -487,14 +487,14 @@
             "name":"apply_for_the_subject",
             "value":"具體權限以應用程式的實際功能為準。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"EncryptedSharing",
             "value":"加密分享",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,14 +515,14 @@
             "name":"Share_Enter_Mobile_Number",
             "value":"僅支援輸入手機號碼。加密後的檔案只能在 %s 或更新版本的裝置上查看。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Share_Add_Viewable_Users",
             "value":"新增使用者",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -536,14 +536,14 @@
             "name":"Share_Confirms",
             "value":"確認",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Share_Tips_Phone_Format",
             "value":"請輸入正確格式的手機號碼",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -578,7 +578,7 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"儲存空間不足，請刪除不使用的檔案以釋放空間",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

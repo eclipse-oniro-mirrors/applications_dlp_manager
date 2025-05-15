@@ -1,0 +1,578 @@
+{
+    "string":[
+        {
+            "name":"save",
+            "value":"Enregistrement",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"Cette application ne peut pas ouvrir ce fichier.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"Le lancement de l'application DLP a échoué. Veuillez vérifier vos paramètres, puis réessayez.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"Cryptage du fichier en cours.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"La date d'expiration ne peut pas être dans le passé. Veuillez définir une autre date.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"Seulement moi",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"Utilisateurs spécifiés",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_not_connected_description",
+            "value":"Une période de validité a été définie pour l'accès à ce fichier. Veuillez vous connecter à Internet pour confirmer les autorisations.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"Partage crypté",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"Veuillez fermer ce fichier avant de le crypter.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"Vous n'avez pas l'autorisation de voir ce fichier. Veuillez contacter %s pour demander l'autorisation.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"L'ID d'employé n'est pas valide. Veuillez le saisir à nouveau.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"Vous n'avez pas l'autorisation de voir ce fichier.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"Ce fichier est protégé. Vous avez l'autorisation \"Lecture seule\".",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"Espace de stockage insuffisant. Veuillez supprimer les fichiers dont vous n'avez pas besoin pour libérer de l'espace.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screenshot",
+            "value":"Capture d'écran",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"duplicate",
+            "value":"Copier",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"Le fichier a été crypté.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
+            "value":"L'ouverture du fichier a échoué. Veuillez vérifier, puis réessayez.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"Les informations de connexion n'ont pas pu être identifiées. Veuillez vous connecter à votre compte professionnel pour continuer.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"L'obtention des informations sur le compte a échoué. Veuillez réessayer ultérieurement.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"Cryptage de \"%s\" en cours. Veuillez réessayer ultérieurement.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"loading_title",
+            "value":"Chargement en cours.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_list",
+            "value":"Pour protéger le fichier avec un accès restreint.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid",
+            "value":"Validité",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"Les utilisateurs disposant d'un accès en lecture seule peuvent afficher ce fichier, mais ne peuvent pas modifier, copier ou imprimer ce fichier.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"Tout le monde",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"Vous n'avez pas l'autorisation d'enregistrer une autre copie de ce fichier. Veuillez contacter %s pour demander l'autorisation.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"Numéros de téléphone uniquement. Les fichiers cryptés peuvent être affichés sur les appareils fonctionnant sous %s ou une version ultérieure.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encrypt_employee_id",
+            "value":"ID d'employé : %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"Veuillez contacter %s pour demander des autorisations.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Appointed_day",
+            "value":"Date spécifiée",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"change_encryption",
+            "value":"Changer la protection",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"print",
+            "value":"Impression",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"Ajouter un utilisateur",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"Saisir l'ID d'employé et appuyer sur Entrée. Par exemple : a00123456",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"Ce fichier est ouvert dans une autre application.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"Lecture seule",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permanently",
+            "value":"N'expire jamais",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"Erreur de l'application",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"Le cryptage du fichier a échoué.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"Cryptage du fichier en cours. Veuillez patienter qu'il soit terminé, puis réessayez.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"Se connecter",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"network_invalid",
+            "value":"Erreur réseau. Veuillez réessayer ultérieurement.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit",
+            "value":"Modification",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"Ce fichier est protégé et est accessible uniquement aux utilisateurs spécifiés.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"Modification",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"Vos autorisations du fichier ont expiré. Veuillez contacter %s pour y accéder à nouveau.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_encrypted",
+            "value":"Fichier protégé",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"La modification du cryptage a échoué. Veuillez réessayer ultérieurement.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title",
+            "value":"Autorisations du fichier",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_account",
+            "value":"Saisir le compte",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"Lecture seule",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"Ceci ne peut pas être fait maintenant. Veuillez réessayer ultérieurement.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"Ce fichier ne peut pas être crypté.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save_as",
+            "value":"Enregistrement sous",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"Accès refusé",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_not_connected",
+            "value":"Aucune connexion Internet",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"Mise à jour système nécessaire",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"Veuillez vous connecter à votre compte, puis réessayez.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Go_setting",
+            "value":"Aller à Paramètres",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"Autorisations expirées",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screen_recording",
+            "value":"Enregistrement de l'écran",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"finished",
+            "value":"Terminer",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_account",
+            "value":"Nom de compte invalide.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"Les fichiers cryptés dans une version système plus récente ne peuvent pas être ouverts. Veuillez mettre à jour le logiciel système, puis réessayez.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"Confirmer",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stow_away",
+            "value":"Masquer",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"Voir les détails",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"sure",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_title",
+            "value":"Ce fichier est protégé. Vous avez les autorisations \"Lecture seule\" et \"Modification\".",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"da_button",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"Le cryptage a échoué. Le nom du fichier est trop long.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"L'obtention de l'autorisation a échoué. Veuillez réessayer ultérieurement.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"Les autorisations réelles peuvent varier selon l'application.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"Veuillez saisir un numéro de téléphone valide.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"Validité jusqu'au",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"share_the_screen",
+            "value":"Partage d'écran",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"unencrypted",
+            "value":"Révoquer la protection",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ban",
+            "value":"Annuler",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"Les utilisateurs disposant de cette autorisation peuvent enregistrer l'écran, afficher, modifier, copier, enregistrer et imprimer ce fichier.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"delete_account",
+            "value":"Supprimer",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

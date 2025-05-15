@@ -389,7 +389,7 @@
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
             "value":"པར་གཞི་མཐོ་པོའི་རྒྱུད་ཁོངས་གསང་སྡོམ་བྱས་པའི་ཡིག་ཆ་ཁ་འབྱེད་ཐབས་བྲལ། རྒྱུད་ཁོངས་རིམ་སྤོར་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -487,14 +487,14 @@
             "name":"apply_for_the_subject",
             "value":"ཞིབ་ཕྲའི་དབང་ཚད་ནི་ཉེར་སྤྱོད་ཀྱི་དོན་དངོས་རྩོལ་ནུས་གཞིར་འཛིན་རོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"EncryptedSharing",
             "value":"གསང་སྡོམ་བརྒྱབ་ནས་མཉམ་སྤྱོད།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,14 +515,14 @@
             "name":"Share_Enter_Mobile_Number",
             "value":"ཁ་པར་ཨང་གྲངས་ཁོ་ན་ནང་འཇུག་བྱ་ཆོག གསང་སྡོམ་བརྒྱབ་རྗེས་ཀྱི་ཡིག་ཆ་ %s ཡང་ན་པར་གཞི་དེ་བས་མཐོ་བའི་སྒྲིག་ཆས་ཐོག་ཁོ་ན་ནས་ལྟ་ཞིབ་བྱ་ཆོག",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Share_Add_Viewable_Users",
             "value":"སྤྱོད་མཁན་སྣོན་པ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -536,14 +536,14 @@
             "name":"Share_Confirms",
             "value":"གཏན་འཁེལ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Share_Tips_Phone_Format",
             "value":"རྣམ་གཞན་ཡང་དག་པའི་ཁ་པར་ཨང་གྲངས་ནང་འཇུག་གནང་རོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -578,7 +578,7 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"ཉར་གསོག་བར་སྟོང་མི་འདང་བས། སྤྱོད་སྒོ་མེད་པའི་ཡིག་ཆ་བསུབས་ནས་བར་སྟོང་གློད་རོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
