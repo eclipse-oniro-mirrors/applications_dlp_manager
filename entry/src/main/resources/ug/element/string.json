@@ -389,7 +389,7 @@
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
             "value":"نەشرى يۇقىرى سىستېمىدا مەخپىيلەشتۈرۈلگەن ھۆججەت ئېچىلمايدۇ، سىستېما نەشرىنى يېڭىلاپ قايتا سىناڭ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -487,14 +487,14 @@
             "name":"apply_for_the_subject",
             "value":"كونكرېت ئىجازەت ئەپكە قاراپ ئوخشىمايدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"EncryptedSharing",
             "value":"مەخپىي ئورتاقلىشىش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,14 +515,14 @@
             "name":"Share_Enter_Mobile_Number",
             "value":"پەقەت يانفون نومۇرى كىرگۈزۈڭ. مەخپىيلەشتۈرۈلگەن ھۆججەت پەقەت %s ياكى يۇقىرى نەشرىدىكى ئۈسكۈنىدە ئېچىلىدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Share_Add_Viewable_Users",
             "value":"ئىشلەتكۈچى قوشۇش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -536,14 +536,14 @@
             "name":"Share_Confirms",
             "value":"جەزملەش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Share_Tips_Phone_Format",
             "value":"يانفون نومۇرىنى توغرا كىرگۈزۈڭ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -578,7 +578,7 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"بوشلۇق يېتەرسىز، ئىشلەتمەيدىغان ھۆججەتلەرنى ئۆچۈرۈڭ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]
