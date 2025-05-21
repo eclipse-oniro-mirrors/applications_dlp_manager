@@ -423,10 +423,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
             }
           }
         }
-        if (!accountFlag) {
-          await this.callAlertAbility({code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
-          return;
-        }
+
         await this.callAlertAbility(err.code === Constants.ERR_JS_APP_PERMISSION_DENY ?
           {code: Constants.ERR_JS_RELEASE_FILE_OPEN } as BusinessError : err);
         FileUtil.closeFdSync(this.dlpFd);
