@@ -411,11 +411,17 @@ export default class ViewAbility extends ServiceExtensionAbility {
           await this.callAlertAbility({code: Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION} as BusinessError);
           return;
         }
-        let accountFlag: boolean = true;
+
         if (this.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT &&
           err.code === Constants.ERR_JS_USER_NO_PERMISSION) {
-          let accountName: string = err.message.split(', contact:')?.[1];
-          accountFlag = await AccountManager.checkAccountInfo(accountName);
+          if (!this.needCheckAccountType) {
+            let accountName: string = err.message.split(', contact:')?.[1];
+            let accountFlag = await AccountManager.checkAccountInfo(accountName);
+            if (!accountFlag) {
+              await this.callAlertAbility({code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
+              return;
+            }
+          }
         }
         if (!accountFlag) {
           await this.callAlertAbility({code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
