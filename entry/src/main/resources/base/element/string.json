@@ -603,7 +603,7 @@
         },
         {
             "name":"File_no_permission",
-            "value":"Your Huawei ID does not have the permission to view this file.",
+            "value":"Not authorized to view this file with the current HUAWEI ID.",
             "attr":{
                 "priority":"translate"
             }
@@ -617,7 +617,7 @@
         },
         {
             "name":"File_cannot_be_opened",
-            "value":"Unable to open this file. Please try again later.",
+            "value":"Unable to open this file. Try again later.",
             "attr":{
                 "priority":"translate"
             }

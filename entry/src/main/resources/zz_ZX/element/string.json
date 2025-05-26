@@ -351,6 +351,22 @@
         {
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"[TS_1017669]_Insufficient storage. Delete files you don't need to free up space."
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"[TS_1073165]_Network error. Unable to verify your Huawei ID."
+        },
+        {
+            "name":"File_no_permission",
+            "value":"[TS_1071512]_Not authorized to view this file with the current HUAWEI ID."
+        },
+        {
+            "name":"File_damaged",
+            "value":"[TS_1071514]_The file is damaged and cannot be opened"
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"[TS_1071513]_Unable to open this file. Try again later."
         }
     ]
 }

@@ -573,6 +573,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"No estás autorizado para ver este archivo con el ID de HUAWEI actual.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

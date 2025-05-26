@@ -580,6 +580,13 @@
             "attr":{
                 "priority":"LT"
             }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"您的華為 ID 沒有權限檢視此檔案",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -573,6 +573,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"لا يوجد تخويل لعرض هذا الملف باستخدام حساب هواوي الحالي.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

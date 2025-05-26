@@ -573,6 +573,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"У текущего аккаунта HUAWEI нет права просмотра этого файла.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
