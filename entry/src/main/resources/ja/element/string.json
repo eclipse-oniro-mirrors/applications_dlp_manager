@@ -573,6 +573,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"現在のHUAWEI IDでは、このファイルを表示する権限がありません。",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
