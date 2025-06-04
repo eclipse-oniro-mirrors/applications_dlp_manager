@@ -18,8 +18,8 @@ import common from '@ohos.app.ability.common';
 import Constants from './constant';
 import GlobalContext from './GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
-import promptAction from '@ohos.promptAction';
 import { HiLog } from '../common/HiLog';
+import { UIContext } from '@kit.ArkUI';
 
 const TAG = 'AlertMessage';
 
@@ -31,11 +31,13 @@ export class GetAlertMessage {
     try {
       let resource = GetAlertMessage.getToastMessage(error);
       let toastMessage = await context.resourceManager.getStringValue(resource);
-      promptAction.showToast({
+      let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
+      uiContext.getPromptAction().showToast({
         message: toastMessage,
         duration: Constants.SHARE_SET_TIMEOUT
       });
       HiLog.info(TAG, 'showToast end.');
+      UIContext.destroyUIContextWithoutWindow();
     } catch (error) {
       HiLog.error(TAG, `showToast error: ${JSON.stringify(error)}`);
     } finally {
