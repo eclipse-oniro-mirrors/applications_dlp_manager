@@ -290,7 +290,7 @@ struct encryptedSharing {
     }
   }
 
-  CheckSuffixByFileName(fileName: string): Boolean {
+  checkSuffixByFileName(fileName: string): boolean {
     let infoArray = fileName.split('.');
     if (infoArray.length <= 1) {
       return false;
@@ -310,7 +310,7 @@ struct encryptedSharing {
       this.generalType = key;
       res = abilityPickerRecords[key][0]?.['4'];
     });
-    if (res === undefined || !this.CheckSuffixByFileName(res)) {
+    if (res === undefined || !this.checkSuffixByFileName(res)) {
       try {
         res = decodeURIComponent(srcFileMsg.fileName + srcFileMsg.fileType);
       } catch (error) {
