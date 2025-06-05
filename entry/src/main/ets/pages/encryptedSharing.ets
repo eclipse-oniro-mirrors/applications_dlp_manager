@@ -44,6 +44,10 @@ import { systemDateTime } from '@kit.BasicServicesKit';
 import { common } from '@kit.AbilityKit';
 
 const TAG = 'encryptedSharing';
+const FILE_SUFFIX_TYPE_ARRAY: string[] = [
+  'txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
+  'bmp', 'bm', 'dng', 'gif', 'heic', 'heics', 'heif', 'heifs',
+  'hif', 'jpg', 'jpeg', 'jpe', 'png'];
 
 class Test {
   public '0': number = 0;
@@ -286,6 +290,17 @@ struct encryptedSharing {
     }
   }
 
+  checkSuffixByFileName(fileName: string): boolean {
+    let infoArray = fileName.split('.');
+    if (infoArray.length <= 1) {
+      return false;
+    }
+    if (FILE_SUFFIX_TYPE_ARRAY.includes(infoArray[infoArray.length - 1])) {
+      return true;
+    }
+    return false;
+  }
+
   getFileName(parameters: Record<string, Array<string>>, inputUri: string): string | null {
     let abilityPickerRecords = parameters['ability.picker.records'];
     let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
@@ -295,7 +310,7 @@ struct encryptedSharing {
       this.generalType = key;
       res = abilityPickerRecords[key][0]?.['4'];
     });
-    if (res === undefined) {
+    if (res === undefined || !this.checkSuffixByFileName(res)) {
       try {
         res = decodeURIComponent(srcFileMsg.fileName + srcFileMsg.fileType);
       } catch (error) {
