@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,27 +14,32 @@
  */
 
 import ActionExtensionAbility from '@ohos.app.ability.ActionExtensionAbility';
-import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { Configuration } from '@ohos.app.ability.Configuration';
-import emitter from '@ohos.events.emitter';
-import Want from '@ohos.app.ability.Want';
-import { HiLog } from '../common/HiLog';
-import { getDLPInfo, DLPInfo } from '../common/utils';
-import { EnvironmentCallback } from '@kit.AbilityKit';
 import Constants from '../common/constant';
+import emitter from '@ohos.events.emitter';
+import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
+import EncryptSharingShowCodeEnum from '../common/enum/EncryptSharingShowCodeEnum';
+import EncryptSharingTerminateCode from '../common/enum/EncryptSharingTerminateCodeEnum';
+import { EnvironmentCallback } from '@kit.AbilityKit';
+import { getDLPInfo, DLPInfo, logErrorShowToast } from '../common/utils';
+import { HiLog } from '../common/HiLog';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import Want from '@ohos.app.ability.Want';
+import UriValidator from '../validator/UriValidator';
 
 const TAG = 'share';
 const BG_COLOR = '#00000000';
 
 export default class EncryptedSharingAbility extends ActionExtensionAbility {
   private callbackId: number = 0;
+  private inputUriArray: string[] = [];
 
   onForeground(): void {
-    HiLog.info(TAG, `EncryptedSharingAbility onForeground.`);
+    HiLog.info(TAG, 'EncryptedSharingAbility onForeground.');
   }
 
   onBackground(): void {
-    HiLog.info(TAG, `EncryptedSharingAbility onBackground.`);
+    HiLog.info(TAG, 'EncryptedSharingAbility onBackground.');
   }
 
   onConfigurationUpdate(newConfig: Configuration): void {
@@ -42,22 +47,53 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     emitter.emit('onConfigurationUpdate');
   }
 
-  checkValidParameters(want: Want): boolean {
-    let parameters = want.parameters as Record<string, Object>;
-    let inputUris = parameters['ability.params.stream'] as Array<Object>;
-    let callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
-    let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
-    if ((inputUris instanceof Array) && (typeof inputUris[0] === 'string') && (typeof callerToken === 'number') && 
-      (typeof callerBundleName === 'string')) {
+  checkInputUris(want: Want): boolean {
+    HiLog.info(TAG, 'Check input URIs.');
+    const parameters = want.parameters as Record<string, Object>;
+    this.inputUriArray = parameters['ability.params.stream'] as string[];
+
+    let validator = UriValidator.getInstance();
+    const result = validator.validate(this.inputUriArray);
+    if (result.errorCode === EncryptSharingShowCodeEnum.SUCCESS) {
       return true;
     }
-    HiLog.error(TAG, `want.parameters invalid.`);
+    logErrorShowToast(this.context, result.logMsg, result.toastMsg);
     return false;
   }
 
+  checkValidParameters(want: Want): boolean {
+    let parameters: Record<string, Object> = want.parameters as Record<string, Object>;
+    let inputUris: string[] = parameters['ability.params.stream'] as string[];
+    let callerToken: number = parameters['ohos.aafwk.param.callerToken'] as number;
+    let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
+
+    let paramsTypeFlag: boolean =
+      (inputUris instanceof Array) && (typeof callerToken === 'number') && (typeof callerBundleName === 'string');
+    if (!paramsTypeFlag) {
+      let logMsg: string = 'Check the types of inputUris, callerToken and callerBundleName.';
+      let code: number = EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR;
+      logErrorShowToast(this.context, logMsg, EncryptSharingHelper.getShowErr(code));
+      return false;
+    }
+
+    let checkUrisFlag: boolean = this.checkInputUris(want);
+    return checkUrisFlag;
+  }
+
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
-    HiLog.info(TAG, `EncryptedSharingAbility onSessionCreate.`);
-    if (this.checkValidParameters(want) === false) {
+    HiLog.info(TAG, 'EncryptedSharingAbility onSessionCreate.');
+
+    if (!this.checkValidParameters(want)) {
+      HiLog.error(TAG, 'The parameters of want are invalid.');
+      setTimeout(() => {
+        try {
+          session!.terminateSelfWithResult({
+            resultCode: EncryptSharingTerminateCode.CHECK_URI_FAILED
+          });
+        } catch (error) {
+          HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+        }
+      }, Constants.SHARE_SET_TIMEOUT);
       return;
     }
 
@@ -66,7 +102,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
         AppStorage.setOrCreate<number>(Constants.FONT_SIZE_SCALE_KEY, config.fontSizeScale);
       },
       onMemoryLevel(level) {
-        HiLog.info(TAG, `onMemoryLevel level:${JSON.stringify(level)}`);
+        HiLog.info(TAG, `onMemoryLevel level: ${JSON.stringify(level)}`);
       }
     };
 
@@ -74,7 +110,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     try {
       this.callbackId = applicationContext.on('environment', envCallback);
     } catch (err) {
-      HiLog.error(TAG, `on environment error:${JSON.stringify(err)}`);
+      HiLog.error(TAG, `on environment error: ${JSON.stringify(err)}`);
     }
 
     let parameters = want.parameters as Record<string, Object>;
@@ -84,7 +120,8 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
     let storage: LocalStorage = new LocalStorage({
       'session': session,
-      'actionWant': want
+      'actionWant': want,
+      'inputUriArray': this.inputUriArray
     } as Record<string, UIExtensionContentSession | Want>);
     try {
       session.loadContent('pages/encryptedSharing', storage);
@@ -95,11 +132,11 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
   }
 
   onSessionDestroy(): void {
-    HiLog.info(TAG, `EncryptedSharingAbility onSessionDestroy.`);
+    HiLog.info(TAG, 'EncryptedSharingAbility onSessionDestroy.');
   }
 
   onDestroy(): void {
-    HiLog.info(TAG, `EncryptedSharingAbility onDestroy.`);
+    HiLog.info(TAG, 'EncryptedSharingAbility onDestroy.');
     let applicationContext = this.context.getApplicationContext();
     try {
       applicationContext.off('environment', this.callbackId, (error, data) => {
@@ -113,4 +150,4 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
       HiLog.error(TAG, `off environment error:${JSON.stringify(err)}`);
     }
   }
-};
+}

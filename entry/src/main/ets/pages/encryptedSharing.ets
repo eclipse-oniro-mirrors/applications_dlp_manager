@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,41 +13,40 @@
  * limitations under the License.
  */
 
-import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import { BusinessError } from '@ohos.base';
+import Constants from '../common/constant';
+import { common, wantConstant } from '@kit.AbilityKit';
+import { contact } from '@kit.ContactsKit';
+import CredConnectService from '../rpc/CredConnectService';
+import deviceInfo from '@ohos.deviceInfo';
+import dlpPermission from '@ohos.dlpPermission';
 import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
-import CredConnectService from '../rpc/CredConnectService';
-import { LengthMetrics } from '@ohos.arkui.node';
-import dlpPermission from '@ohos.dlpPermission';
-import promptAction from '@ohos.promptAction';
-import { BusinessError } from '@ohos.base';
-import Want from '@ohos.app.ability.Want';
-import fs from '@ohos.file.fs';
 import emitter from '@ohos.events.emitter';
-import { HiLog } from '../common/HiLog';
-import Constants from '../common/constant';
+import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
+import EncryptSharingShowCodeEnum from '../common/enum/EncryptSharingShowCodeEnum';
+import EncryptSharingTerminateCode from '../common/enum/EncryptSharingTerminateCodeEnum';
 import FileUtils, { FileMsg } from '../common/FileUtils';
+import fs from '@ohos.file.fs';
 import {
-  getFileUriByPath,
-  getFileFd,
-  sendDlpFileCreateProperties,
-  getFileSizeByUri,
-  sendDlpManagerAccountLogin,
   getAppId,
+  getConnectionStatus,
+  getFileSizeByUriSync,
+  getFileUriByPath,
   getOsAccountInfo,
-  getConnectionStatus
+  sendDlpFileCreateProperties,
+  sendDlpManagerAccountLogin,
+  showToast
 } from '../common/utils';
+import { HiLog } from '../common/HiLog';
+import { LengthMetrics } from '@ohos.arkui.node';
 import { SystemUtils } from '../common/systemUtils';
-import { contact } from '@kit.ContactsKit';
-import deviceInfo from '@ohos.deviceInfo';
 import { systemDateTime } from '@kit.BasicServicesKit';
-import { common } from '@kit.AbilityKit';
+import taskpool from '@ohos.taskpool';
+import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
+import Want from '@ohos.app.ability.Want';
 
 const TAG = 'encryptedSharing';
-const FILE_SUFFIX_TYPE_ARRAY: string[] = [
-  'txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
-  'bmp', 'bm', 'dng', 'gif', 'heic', 'heics', 'heif', 'heifs',
-  'hif', 'jpg', 'jpeg', 'jpe', 'png'];
 
 class Test {
   public '0': number = 0;
@@ -60,6 +59,12 @@ class AuthUserList {
   public authAccountType: number = 0;
   public dlpFileAccess: number = 0;
   public permExpiryTime: number = 0;
+}
+
+interface GenerateDlpFileResult {
+  inFileFd: number | undefined;
+  dlpFileFd: number | undefined;
+  error: string | undefined;
 }
 
 let defaultDlpProperty: dlpPermission.DLPProperty = {
@@ -78,15 +83,19 @@ let storage = LocalStorage.getShared();
 @Component
 struct encryptedSharing {
   static readonly GET_ACCOUNT_INFO_RESET = 'clear';
-  private connectService: CredConnectService = new CredConnectService(getContext(this) as common.UIExtensionContext);
+
+  private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
+  private connectService: CredConnectService = new CredConnectService(this.context);
+  private inputUriArray: string[] = storage === undefined ? [] : storage.get<string[]>('inputUriArray') as string[];
   private isPhoneDevice: boolean = true;
+  private dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
+
   @State titlebarMargin: LocalizedMargin = {
     start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
     end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
   };
   @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') phoneNumSearchResult: string = '';
   @LocalStorageLink('commandGetAccountInfo') @Watch('checkGetAccountInfoResult') getAccountInfoResult: string = '';
-  @State dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
   @State isTextInputEnabled: boolean = false;
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
@@ -119,10 +128,6 @@ struct encryptedSharing {
           'isContactMultiSelect': false,
         }
       })
-        .onRelease((code) => {
-        })
-        .onResult((data) => {
-        })
         .onReceive((data) => {
           try {
             let params: [] = JSON.parse((data.want as Want)?.parameters?.contactObjects as string);
@@ -199,15 +204,16 @@ struct encryptedSharing {
           Constants.ERR_CODE_CONNECTION_FAIL,
           Constants.ERR_CODE_CONNECTION_TIME_OUT
         ].includes(Number(commandGetAccountInfoCallBack.errorCode))) {
-          this.showToast($r('app.string.network_invalid'));
+          showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
         } else {
-          this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+          showToast(this.getUIContext(),
+            EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
         }
         return;
       }
     } catch (error) {
       HiLog.error(TAG, `get account info failed: ${JSON.stringify(error)}`);
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
       this.enableComponents();
       this.recordSuccessUid = '';
       this.getAccountInfoResult = encryptedSharing.GET_ACCOUNT_INFO_RESET;
@@ -221,9 +227,9 @@ struct encryptedSharing {
     }
     let reg = /^(?:(?:\+|00)86)?1[3456789]\d{9}$/;
     if (!(reg.test(phoneNum))) {
-      HiLog.info(TAG, `Please enter the phoneNum.`);
+      HiLog.info(TAG, 'Please enter the phoneNum.');
       this.phoneFormatTips = true;
-      this.credentialCallBackMsg = $r('app.string.Share_Tips_Phone_Format');
+      this.credentialCallBackMsg = EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.VALID_PHONE_FORMAT_TIP);
       HiLog.info(TAG, `phoneFormatTips: ${this.phoneFormatTips}`);
       return false;
     }
@@ -234,130 +240,126 @@ struct encryptedSharing {
     return true;
   }
 
+  checkTaskResults(results: GenerateDlpFileResult[]): boolean {
+    if (!results || results.length !== this.inputUriArray.length) {
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
+      this.enableComponents();
+      return false;
+    }
+    for (const res of results) {
+      if (res && res.error === undefined) {
+        continue;
+      }
+      const errRes = JSON.parse(res?.error?? '') as BusinessError;
+      storage.setOrCreate('commandSearchUserInfo', '');
+      if (errRes && errRes.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
+        showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.FILE_NAME_TOO_LONG));
+        this.enableComponents();
+        return false;
+      }
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
+      this.enableComponents();
+      return false;
+    }
+    return true;
+  }
+
+  processTaskResults(results: GenerateDlpFileResult[], dlpFilePathArray: string[], dlpFileNameArray: string[]): void {
+    try {
+      if (!this.checkTaskResults(results)) {
+        HiLog.error(TAG, 'Check task results failed.');
+        return;
+      }
+
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.SUCCESS));
+      let dstFileSizeArray: number[] = [];
+      let filePathUriArray: string[] = [];
+      for (const dlpFilePath of dlpFilePathArray) {
+        let filePathUri: string = getFileUriByPath(dlpFilePath);
+        let dstFileSize: number = getFileSizeByUriSync(filePathUri);
+        filePathUriArray.push(filePathUri);
+        dstFileSizeArray.push(dstFileSize);
+      }
+      AppStorage.setOrCreate('hiPolicySizeEncArray', dstFileSizeArray);
+      AppStorage.setOrCreate('hiCode', 201);
+      sendDlpFileCreateProperties(dlpPermission.AccountType.CLOUD_ACCOUNT); // 201: DLP_2C_FILE_CREATE_EVENT
+      this.backToPages(filePathUriArray, dlpFileNameArray);
+      HiLog.info(TAG, 'beginToGenerateDLPFile success');
+    } finally {
+      for (const res of results) {
+        if (!res) {
+          continue;
+        }
+        if (res.inFileFd !== -1) {
+          fs.closeSync(res.inFileFd);
+        }
+        if (res.dlpFileFd !== -1) {
+          fs.closeSync(res.dlpFileFd);
+        }
+      }
+    }
+  }
+
   async beginToGenerateDLPFile() {
-    HiLog.info(TAG, `beginToGenerateDLPFile start`);
+    HiLog.info(TAG, 'beginToGenerateDLPFile start');
     if (!this.isRegisteredPhoneNum()) {
       this.enableComponents();
       return;
     }
-    let parameters = this.actionWant?.parameters as Record<string, Array<string>>;
-    let inputUri: string = parameters['ability.params.stream'][0];
-    let inputFileName: string | null = this.getFileName(parameters, inputUri);
-    if (inputFileName === null) {
-      storage.setOrCreate('commandSearchUserInfo', '');
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      this.enableComponents();
-      return;
-    }
-    let dlpFileName: string = inputFileName + '.dlp';
-    let inFileFd = getFileFd(inputUri);
-    let srcFileSize: number = await getFileSizeByUri(inputUri);
-    AppStorage.setOrCreate('hiFileSize', srcFileSize);
-    let filePath =
-      getContext(this).filesDir + `/Share/${systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false)}/`;
+
+    let filePath = this.context.filesDir + `/Share/${systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false)}/`;
     try {
       await fs.mkdir(filePath, true);
     } catch (error) {
       HiLog.error(TAG, `mkdir failed: ${JSON.stringify(error)}`);
     }
-    let newFilePath = filePath + dlpFileName;
-    let file: fs.File | undefined;
-    let filePathUri = getFileUriByPath(newFilePath);
-    try {
-      file = fs.openSync(newFilePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
-      await dlpPermission.generateDLPFile(inFileFd, file.fd, this.dlpProperty);
-      this.showToast($r('app.string.Share_File_Encrypted_Success'));
-      let dstFileSize: number = await getFileSizeByUri(filePathUri);
-      AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
-      AppStorage.setOrCreate('hiCode', 201);
-      sendDlpFileCreateProperties(dlpPermission.AccountType.CLOUD_ACCOUNT); // 201: DLP_2C_FILE_CREATE_EVENT
-      this.backToPages(filePathUri, dlpFileName);
-      HiLog.info(TAG, `beginToGenerateDLPFile success`);
-    } catch (err) {
-      HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
-      HiLog.error(TAG, `generateDLPFile file failed: ${JSON.stringify(err)}`);
-      storage.setOrCreate('commandSearchUserInfo', '');
-      if (err.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
-        this.showToast($r('app.string.Share_File_Name_Too_Long'));
-        return;
-      }
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
-      this.enableComponents();
-    } finally {
-      if (file) {
-        fs.closeSync(file);
-      }
+
+    let dlpFilePathArray: string[] = [];
+    let dlpFileNameArray: string[] = [];
+    let taskGroup: taskpool.TaskGroup = new taskpool.TaskGroup();
+    for (const inputUri of this.inputUriArray) {
+      let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
+      let dlpFileName: string = srcFileMsg.fileName + srcFileMsg.fileType + Constants.DLP_FILE_SUFFIX;
+      let dlpFilePath = filePath + dlpFileName;
+
+      let task: taskpool.Task =
+        new taskpool.Task(generateDlpFile, dlpFilePath, inputUri, this.dlpProperty);
+      taskGroup.addTask(task);
+      dlpFilePathArray.push(dlpFilePath);
+      dlpFileNameArray.push(dlpFileName);
     }
+    let taskResults: GenerateDlpFileResult[] = await taskpool.execute(taskGroup) as GenerateDlpFileResult[];
+    this.processTaskResults(taskResults, dlpFilePathArray, dlpFileNameArray);
   }
 
-  checkSuffixByFileName(fileName: string): boolean {
-    let infoArray = fileName.split('.');
-    if (infoArray.length <= 1) {
-      return false;
-    }
-    if (FILE_SUFFIX_TYPE_ARRAY.includes(infoArray[infoArray.length - 1])) {
-      return true;
-    }
-    return false;
-  }
-
-  getFileName(parameters: Record<string, Array<string>>, inputUri: string): string | null {
-    let abilityPickerRecords = parameters['ability.picker.records'];
-    let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
-    AppStorage.setOrCreate('hiFileType', srcFileMsg.fileType);
-    let res: string = '';
-    Object.keys(abilityPickerRecords).forEach(key => {
-      this.generalType = key;
-      res = abilityPickerRecords[key][0]?.['4'];
-    });
-    if (res === undefined || !this.checkSuffixByFileName(res)) {
-      try {
-        res = decodeURIComponent(srcFileMsg.fileName + srcFileMsg.fileType);
-      } catch (error) {
-        HiLog.error(TAG, `getFileName failed: ${error?.message}`);
-        return null;
-      }
-    }
-    return res;
-  }
-
-  showToast(msg: Resource) {
-    const currentFontSizeScale = AppStorage.get(Constants.FONT_SIZE_SCALE_KEY) as number ?? 1;
-    let showMode: promptAction.ToastShowMode = promptAction.ToastShowMode.DEFAULT;
-    if (currentFontSizeScale > 1) {
-      showMode = promptAction.ToastShowMode.SYSTEM_TOP_MOST;
-    }
-    promptAction.showToast({
-      message: msg,
-      duration: Constants.SHARE_SET_TIMEOUT,
-      showMode: showMode,
-    });
-  }
-
-  backToPages(filePathUri: string, dlpFileName: string) {
-    HiLog.info(TAG, `backToPages start: ${dlpFileName}`);
+  backToPages(filePathUriArray: string[], dlpFileNameArray: string[]) {
+    HiLog.info(TAG, `backToPages start: ${dlpFileNameArray}`);
     if (this.actionWant && this.actionWant.parameters) {
-      this.actionWant.parameters['ability.params.stream'] = [filePathUri];
-      let arr: Test[] = [
-        {
+      this.actionWant.flags = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+      this.actionWant.parameters['ability.params.stream'] = filePathUriArray;
+      let generatedFiles: Test[] = [];
+      for (const dlpFileName of dlpFileNameArray) {
+        let fileItem: Test = {
           '0': 0,
           '1': 0,
           '4': dlpFileName
-        }
-      ];
+        };
+        generatedFiles.push(fileItem);
+      }
+
       let generalFile: Record<string, Test[]> = {};
-      generalFile[this.generalType] = arr;
+      generalFile[this.generalType] = generatedFiles;
       this.actionWant.parameters['ability.picker.records'] = generalFile;
       setTimeout(() => {
         try {
           this.session!.terminateSelfWithResult({
-            resultCode: 2,
+            resultCode: EncryptSharingTerminateCode.SUCCESS,
             want: this.actionWant
           });
         } catch (error) {
           HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
         }
-      }, Constants.SHARE_SET_TIMEOUT)
+      }, Constants.SHARE_SET_TIMEOUT);
     }
   }
 
@@ -386,12 +388,12 @@ struct encryptedSharing {
       Constants.ERR_CODE_CONNECTION_FAIL,
       Constants.ERR_CODE_CONNECTION_TIME_OUT
     ].includes(Number(credentialCallBack.errorCode))) {
-      this.showToast($r('app.string.network_invalid'));
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
       storage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) !== Constants.ERR_CODE_SUCCESS) {
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
       storage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
@@ -426,8 +428,8 @@ struct encryptedSharing {
 
   async getLoginStatus() {
     HiLog.info(TAG, `get login status start.`);
-    if (await getConnectionStatus() === false) {
-      this.showToast($r('app.string.network_invalid'));
+    if (!(await getConnectionStatus())) {
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
       this.enableComponents();
       return;
     }
@@ -447,8 +449,8 @@ struct encryptedSharing {
 
   async getLocalAccountInfo() {
     HiLog.info(TAG, `get Account Info start`);
-    if (await getConnectionStatus() === false) {
-      this.showToast($r('app.string.network_invalid'));
+    if (!(await getConnectionStatus())) {
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
       this.enableComponents();
       return;
     }
@@ -460,7 +462,7 @@ struct encryptedSharing {
         return;
       }
       if (accountInfo.distributedInfo.id !== this.recordSuccessUid) {
-        HiLog.info(TAG, `COMMAND_GET_ACCOUNT_INFO start`);
+        HiLog.info(TAG, 'COMMAND_GET_ACCOUNT_INFO start');
         this.connectService.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
         this.recordSuccessUid = accountInfo.distributedInfo.id;
         return;
@@ -469,7 +471,7 @@ struct encryptedSharing {
       }
     } catch (err) {
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
-      this.showToast($r('app.string.Share_File_Encrypted_Failed'));
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
       this.enableComponents();
     }
   }
@@ -498,7 +500,7 @@ struct encryptedSharing {
 
   getExternalResourceString(bundle: string, module: string, resourceName: string): string {
     try {
-      let ctx = getContext().createModuleContext(bundle, module);
+      let ctx = this.context.createModuleContext(bundle, module);
       HiLog.info(TAG, 'getExternalResourceString get context from: ' + ctx.applicationInfo.name);
       let str = ctx.resourceManager.getStringByNameSync(resourceName);
       return str;
@@ -511,7 +513,7 @@ struct encryptedSharing {
 
   getContactPersonString() {
     try {
-      getContext().resourceManager.getStringValue($r('app.string.Share_Contact_Person').id,
+      this.context.resourceManager.getStringValue($r('app.string.Share_Contact_Person').id,
         (error: BusinessError, value: string) => {
           if (error === undefined || error === null) {
             this.contactPerson = value;
@@ -525,9 +527,9 @@ struct encryptedSharing {
   }
 
   clearHistoryDLPFile() {
-    let pathDir = getContext(this).filesDir + '/Share';
+    let pathDir = this.context.filesDir + '/Share';
     fs.listFile(pathDir).then((filenames: Array<string>) => {
-      HiLog.info(TAG, `listFile succeed when judge time`);
+      HiLog.info(TAG, 'listFile succeed when judge time');
       let realTime = Number(systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false));
       filenames.forEach((item) => {
         let fileTime = Number(item);
@@ -618,7 +620,7 @@ struct encryptedSharing {
                 if (this.session !== undefined) {
                   try {
                     this.session.terminateSelfWithResult({
-                      'resultCode': 1,
+                      'resultCode': EncryptSharingTerminateCode.CANCEL,
                     });
                   } catch (error) {
                     HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
@@ -632,7 +634,7 @@ struct encryptedSharing {
             if (this.session !== undefined) {
               try {
                 this.session.terminateSelfWithResult({
-                  'resultCode': 0,
+                  'resultCode': EncryptSharingTerminateCode.BACK,
                 });
               } catch (error) {
                 HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
@@ -782,7 +784,8 @@ struct encryptedSharing {
             } else {
               this.enableComponents();
               if (['12300001', '1001502005', '1001502009'].includes(res.code.toString())) {
-                this.showToast($r('app.string.network_invalid'));
+                showToast(this.getUIContext(),
+                  EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
               }
             }
             this.showUIExtensionForAccountLogin = false;
@@ -801,4 +804,38 @@ struct encryptedSharing {
       this.getScrollHeight(newValue);
     })
   }
+}
+
+@Concurrent
+async function generateDlpFile(newFilePath: string, inputUri: string,
+  dlpProperty: dlpPermission.DLPProperty): Promise<GenerateDlpFileResult> {
+  const TAG = 'GenerateDlpFile';
+  let error: BusinessError | undefined = undefined;
+  let inFile: fs.File | undefined = undefined;
+  let newFile: fs.File | undefined = undefined;
+  let result: GenerateDlpFileResult = {
+    inFileFd: -1,
+    dlpFileFd: -1,
+    error: undefined
+  }
+
+  try {
+    inFile = fs.openSync(inputUri, fs.OpenMode.READ_ONLY);
+    newFile = fs.openSync(newFilePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+    await dlpPermission.generateDLPFile(inFile.fd, newFile.fd, dlpProperty);
+  } catch (err) {
+    HiLog.error(TAG, `generateDlpFile failed: ${JSON.stringify(err)}`);
+    error = err;
+    if (newFile?.fd && newFile?.fd !== Constants.ERR_CODE_OPEN_FILE_ERROR) {
+      fs.closeSync(newFile.fd);
+      fs.unlinkSync(newFilePath);
+    }
+  } finally {
+    result = {
+      inFileFd: inFile?.fd ?? Constants.ERR_CODE_OPEN_FILE_ERROR,
+      dlpFileFd: (newFile?.fd === undefined || error === undefined) ? Constants.ERR_CODE_OPEN_FILE_ERROR : newFile?.fd,
+      error: error === undefined ? undefined : JSON.stringify(error)
+    }
+  }
+  return result;
 }

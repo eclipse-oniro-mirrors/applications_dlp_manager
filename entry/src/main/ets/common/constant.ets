@@ -244,9 +244,17 @@ export default class Constants {
   public static SHARE_SET_TIMEOUT = 1500;
   public static SHARE_NO_SPACE_LEFT_ON_DEVICE = 13900025;
   public static SHARE_FILE_NAME_TOO_LONG = 13900030;
-  public static SHARE_TEMP_SAVE_FILE_NUMBER = 20;
+  public static SHARE_TEMP_SAVE_FILE_NUMBER = 4 * 27;
   public static CLEAN_DLP_FILE_IN_CACHE_TIMEOUT: number = 60 * 60 * 1000;
+  public static SHARE_MAX_SUPPORT_NUMBER = 9;
+  public static SHARE_MAX_SUPPORT_SIZE_IMAGE_VIDEO_MB = 4086;
+  public static SHARE_MAX_SUPPORT_SIZE_IMAGE_VIDEO = 4086 * 1024 * 1024;
+  public static SHARE_MAX_SUPPORT_SIZE_DOC_MB = 300;
+  public static SHARE_MAX_SUPPORT_SIZE_DOC = 300 * 1024 * 1024;
+  public static DLP_FILE_LENGTH_LIMIT = 255;
+  public static DLP_FILE_SUFFIX = '.dlp';
 
+  public static readonly ERR_CODE_OPEN_FILE_ERROR = -1;
   public static readonly ERR_CODE_NETWORK_ERROR: number = -4;
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;
   public static readonly ERR_CODE_CONNECTION_TIME_OUT: number = -310;
