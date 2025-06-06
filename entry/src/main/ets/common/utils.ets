@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,32 +13,31 @@
  * limitations under the License.
  */
 
-import measure from '@ohos.measure';
-import window from '@ohos.window';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
-import emitter from '@ohos.events.emitter';
-import dlpPermission from '@ohos.dlpPermission';
 import bundleManager from '@ohos.bundle.bundleManager';
-import fs from '@ohos.file.fs';
-import zlib from '@ohos.zlib';
-import util from '@ohos.util';
-import fileUri from '@ohos.file.fileuri';
 import { BusinessError, Callback } from '@ohos.base'
-import Want from '@ohos.app.ability.Want';
 import common from '@ohos.app.ability.common';
 import connection from '@ohos.net.connection';
 import Constants from '../common/constant';
+import emitter from '@ohos.events.emitter';
+import dlpPermission from '@ohos.dlpPermission';
+import fileUri from '@ohos.file.fileuri';
+import fs from '@ohos.file.fs';
 import GlobalContext from './GlobalContext';
-import hiSysEvent from '@ohos.hiSysEvent';
 import { HiLog } from '../common/HiLog';
+import hiSysEvent from '@ohos.hiSysEvent';
+import { promptAction, UIContext } from '@kit.ArkUI';
 import { systemDateTime } from '@kit.BasicServicesKit';
+import util from '@ohos.util';
+import Want from '@ohos.app.ability.Want';
+import zlib from '@ohos.zlib';
 
 const TAG = 'Utils';
-const HEAD_LENGTH_IN_BYTE = 28;
-const HEAD_LENGTH_IN_U32 = 7;
-const CERT_OFFSET = 5;
-const CERT_SIZE = 6;
+const HEAD_LENGTH_IN_BYTE = 72;
+const HEAD_LENGTH_IN_U32 = 18;
+const CERT_OFFSET = 8;
+const CERT_SIZE = 10;
 const NUMBER_TWO = 2;
 
 const NET_CAPABILITY_INTERNET: number = 12;
@@ -50,6 +49,7 @@ const SLEEP_MILLISECONDS: number = 200;
 const DAY_TO_MILLISECOND: number = 1000 * 60 * 60 * 24;
 const MINUTE_TO_MILLISECOND: number = 1000 * 60;
 const SECOND_TO_MILLISECOND: number = 1000;
+const CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
 
 const enum UnitType {
   DAY_UNIT = 1,
@@ -67,6 +67,7 @@ class ChangeOption {
   public offset: number = 0
   public length: number = 0
 }
+
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
   ownerAccountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
@@ -79,13 +80,20 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 
 let defaultDlpFile: dlpPermission.DLPFile = {
   dlpProperty: defaultDlpProperty,
-  recoverDLPFile: async () => {},
-  closeDLPFile: async () => {},
-  addDLPLinkFile: async () => {},
-  stopFuseLink: async () => {},
-  resumeFuseLink: async () => {},
-  replaceDLPLinkFile: async () => {},
-  deleteDLPLinkFile: async () => {}
+  recoverDLPFile: async () => {
+  },
+  closeDLPFile: async () => {
+  },
+  addDLPLinkFile: async () => {
+  },
+  stopFuseLink: async () => {
+  },
+  resumeFuseLink: async () => {
+  },
+  replaceDLPLinkFile: async () => {
+  },
+  deleteDLPLinkFile: async () => {
+  }
 };
 
 interface AuthAccount {
@@ -127,7 +135,7 @@ function getFileFd(uri: string, mode?: number): number {
     return file.fd;
   } catch (err) {
     HiLog.error(TAG, `openSync error: ${JSON.stringify(err)}`);
-    return -1;
+    return Constants.ERR_CODE_OPEN_FILE_ERROR;
   }
 }
 
@@ -314,8 +322,23 @@ async function getFileSizeByUri(uri: string): Promise<number> {
     return stat.size;
   } catch (err) {
     HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(err)}`);
-    HiLog.error(TAG, `get file info failed with error message: ${JSON.stringify(err)}`);
-    return -1;
+    return Constants.ERR_CODE_OPEN_FILE_ERROR;
+  } finally {
+    if (inFile) {
+      fs.closeSync(inFile);
+    }
+  }
+}
+
+function getFileSizeByUriSync(uri: string): number {
+  let inFile: fs.File | undefined;
+  try {
+    inFile = fs.openSync(uri, fs.OpenMode.READ_ONLY);
+    let stat = fs.statSync(inFile.fd);
+    return stat.size;
+  } catch (err) {
+    HiLog.error(TAG, `openSync: ${uri}, failed: ${JSON.stringify(err)}`);
+    return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
       fs.closeSync(inFile);
@@ -330,14 +353,14 @@ function getDLPInfo() {
       bundleManager.getBundleInfoForSelf(bundleFlags, (err, data) => {
         if (err) {
           HiLog.error(TAG, `getBundleInfoForSelf failed. Cause: ${JSON.stringify(err)}`);
-          reject({name: '', versionCode: ''});
+          reject({ name: '', versionCode: '' });
         } else {
-          resolve({name: data.name, versionCode: data.versionCode.toString()});
+          resolve({ name: data.name, versionCode: data.versionCode.toString() });
         }
       });
     } catch (err) {
       HiLog.error(TAG, `getBundleInfoForSelf failed. Cause: ${JSON.stringify(err)}`);
-      reject({name: '', versionCode: ''});
+      reject({ name: '', versionCode: '' });
     }
   })
 }
@@ -360,7 +383,7 @@ function sendDlpManagerAccountLogin(errorCode: number) {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    HiLog.error(TAG, `sendDlpManagerAccountLogin failed`);
+    HiLog.error(TAG, 'sendDlpManagerAccountLogin failed');
   }
 }
 
@@ -386,31 +409,42 @@ function sendDlpManagerFileConfiguration() {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    HiLog.error(TAG, `sendDlpManagerFileConfiguration failed`);
+    HiLog.error(TAG, 'sendDlpManagerFileConfiguration failed');
   }
 }
 
 function sendDlpFileCreateProperties(accountType: number) {
-  let event: hiSysEvent.SysEventInfo = {
-    domain: 'DLP_UE',
-    name: 'DLP_FILE_CREATE_EVENT',
-    eventType: hiSysEvent?.EventType?.BEHAVIOR,
-    params: {
-      'ACCOUNT_TYPE': accountType,
-      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
-      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
-      'CODE': AppStorage.get('hiCode') ?? -1,
-      'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
-      'FILE_TYPE': AppStorage.get('hiFileType') ?? '',
-      'POLICY_SIZE_ENC': AppStorage.get('hiPolicySizeEnc') ?? -1,
-      'PKG_NAME': AppStorage.get('hiPkgName') ?? '',
-    } as Record<string, number>
-  };
+  let srcFileTypeArray: string[] = AppStorage.get('hiFileTypeArray') ?? [];
+  let srcFileSizeArray: string[] = AppStorage.get('hiFileSizeArray') ?? [];
+  let dstFileSizeArray: string[] = AppStorage.get('hiPolicySizeEncArray') ?? [];
 
-  try {
-    hiSysEvent.write(event);
-  } catch (err) {
-    HiLog.error(TAG, `sendDlpFileCreateProperties failed`);
+  let hiPNameId: string = AppStorage.get('hiPNameId') ?? '';
+  let hiPVersionId: string = AppStorage.get('hiPVersionId') ?? '';
+  let hiCode: number = AppStorage.get('hiCode') ?? -1;
+  let hiPkgName: string = AppStorage.get('hiPkgName') ?? '';
+
+  for (let index = 0; index < srcFileTypeArray.length; index++) {
+    let event: hiSysEvent.SysEventInfo = {
+      domain: 'DLP_UE',
+      name: 'DLP_FILE_CREATE_EVENT',
+      eventType: hiSysEvent?.EventType?.BEHAVIOR,
+      params: {
+        'ACCOUNT_TYPE': accountType,
+        'PNAMEID': hiPNameId,
+        'PVERSIONID': hiPVersionId,
+        'CODE': hiCode,
+        'FILE_SIZE': srcFileSizeArray[index],
+        'FILE_TYPE': srcFileTypeArray[index],
+        'POLICY_SIZE_ENC': dstFileSizeArray[index],
+        'PKG_NAME': hiPkgName,
+      }
+    };
+
+    try {
+      hiSysEvent.write(event);
+    } catch (err) {
+      HiLog.error(TAG, 'sendDlpFileCreateProperties failed');
+    }
   }
 }
 
@@ -434,7 +468,7 @@ function sendDlpFileOpenProperties() {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    HiLog.error(TAG, `sendDlpFileOpenProperties failed`);
+    HiLog.error(TAG, 'sendDlpFileOpenProperties failed');
   }
 }
 
@@ -478,7 +512,7 @@ function getAccountTypeAndRealFileType(
 
         let generalInfo = fs.readTextSync(generalInfoPath);
         let generalInfoArray = generalInfo.split('realFileType');
-        let realFileType:string = '';
+        let realFileType: string = '';
         if (generalInfoArray.length == NUMBER_TWO) {
           let realFileTypeStr = generalInfoArray[1].split('\"');
           if (realFileTypeStr.length > NUMBER_TWO) {
@@ -501,11 +535,12 @@ function getAccountTypeAndRealFileType(
       }
     } else {
       let cert = new ArrayBuffer(buf[CERT_SIZE]);
-      option = { offset: buf[CERT_OFFSET], length: buf[CERT_SIZE] };
+      let certOffset = CERT_OFFSET_4GB * buf[CERT_OFFSET + 1] + buf[CERT_OFFSET];
+      option = { offset: certOffset, length: buf[CERT_SIZE] };
       try {
         fs.readSync(fd, cert, option);
         let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
-        let fdString: string = textDecoder.decodeWithStream(new Uint8Array(cert), { stream: false });
+        let fdString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
         let infoArray = fdString.split('accountType');
         let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
         GlobalContext.store('accountType', Number(type));
@@ -589,7 +624,7 @@ async function getConnectionStatus(exactly: boolean = true): Promise<boolean> {
     let networkCap = capabilities.networkCap;
 
     while (exactly && networkCap?.includes(NET_CAPABILITY_CHECKING_CONNECTIVITY)) {
-      HiLog.info(TAG, `Checking connectivity...`);
+      HiLog.info(TAG, 'Checking connectivity...');
       if (isExpire(startTime, TIME_OUT_SECONDS, UnitType.SECOND_UNIT)) {
         HiLog.error(TAG, 'Network connection check failed.');
         return false;
@@ -639,6 +674,31 @@ function checkNetworkStatus(): Promise<void> {
   })
 }
 
+function isInvalidStr(input: string): boolean {
+  return (input === null || input === undefined || input.trim() === '' || input.length === 0);
+}
+
+function showToast(uiContext: UIContext, msg: Resource | string): void {
+  const currentFontSizeScale = AppStorage.get(Constants.FONT_SIZE_SCALE_KEY) as number ?? 1;
+  let showMode: promptAction.ToastShowMode = promptAction.ToastShowMode.DEFAULT;
+  if (currentFontSizeScale > 1) {
+    showMode = promptAction.ToastShowMode.SYSTEM_TOP_MOST;
+  }
+  uiContext.getPromptAction().showToast({
+    message: msg,
+    duration: Constants.SHARE_SET_TIMEOUT,
+    showMode: showMode,
+  });
+}
+
+function logErrorShowToast(context: common.UIAbilityContext | common.UIExtensionContext, logMsg: string,
+  toastMsg: Resource | string): void {
+  HiLog.error(TAG, logMsg);
+  let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
+  showToast(uiContext, toastMsg);
+  UIContext.destroyUIContextWithoutWindow();
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -657,6 +717,7 @@ export {
   getAppId,
   getTime,
   getFileSizeByUri,
+  getFileSizeByUriSync,
   getDLPInfo,
   sendDlpManagerAccountLogin,
   sendDlpManagerFileConfiguration,
@@ -664,9 +725,12 @@ export {
   sendDlpFileOpenProperties,
   DLPInfo,
   DLPGeneralInfo,
+  isInvalidStr,
   isValidPath,
   defaultDlpFile,
   getAccountTypeAndRealFileType,
   checkNetworkStatus,
-  getConnectionStatus
+  getConnectionStatus,
+  showToast,
+  logErrorShowToast
 };

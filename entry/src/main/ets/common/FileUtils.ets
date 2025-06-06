@@ -88,4 +88,8 @@ export default class FileUtils {
       }
     })
   }
+
+  static removeFileTypeFirstDot(str: string) {
+    return str.trim().replace(/^\./, '');
+  }
 }

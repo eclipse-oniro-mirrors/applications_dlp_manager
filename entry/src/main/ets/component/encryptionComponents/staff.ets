@@ -105,6 +105,7 @@ struct staffItem {
       }),
       autoCancel: false,
       customStyle: true,
+      showInSubWindow: true
     });
     this.dlpAlertDialog.open();
   }

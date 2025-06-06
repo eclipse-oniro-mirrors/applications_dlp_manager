@@ -628,6 +628,97 @@
           "attr":{
               "priority":"translate"
           }
+      },
+      {
+          "name": "Share_File_Count_Error",
+          "value": "最多可选择 %d 个文件加密",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_File_Type_Error",
+          "value": "仅支持加密%s类文件",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_File_Supported_Types",
+          "value": "文档、图片和视频",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_File_Single_Size_Limit_MB_Error",
+          "value": "无法加密大于 %d MB 的文件",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_File_Single_Size_Limit_GB_Error",
+          "value": "无法加密大于 %d GB 的文件",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_File_has_been_Encrypted",
+          "value": "此文件已加密，无法重复加密。",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_File_Path_Error",
+          "value": "文件不存在或无法访问",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+          "value": "文件权限获取失败，请稍后再试。",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "The_File_is_Opened_By_Other_App",
+          "value": "此文件已被其他应用打开。",
+          "attr": {
+              "priority":"translate"
+          }
+      },
+      {
+          "name": "MESSAGE_TRY_OTHER_APP_OPEN",
+          "value": "无法打开此文件，请通过其他应用打开。",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "MESSAGE_NO_SPACE_TO_CREATE_FILE",
+          "value": "存储空间不足，无法创建加密文件",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_Account_Not_Exist",
+          "value": "账号不存在，请重新输入。",
+          "attr": {
+              "priority": "translate"
+          }
+      },
+      {
+          "name": "Share_File_System_Version_Low",
+          "value": "系统版本过低，无法打开此文件。",
+          "attr": {
+              "priority": "translate"
+          }
       }
   ]
 }

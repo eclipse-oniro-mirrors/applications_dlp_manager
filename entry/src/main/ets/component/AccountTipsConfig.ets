@@ -84,7 +84,7 @@ export class AccountTipsConfig {
           }
           let contentArray: Uint8Array = resourceManager.getRawFileContentSync(AccountTipsConfig.configName);
           let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8', { ignoreBOM: true });
-          configStr = textDecoder.decodeWithStream(contentArray, { stream: false });
+          configStr = textDecoder.decodeToString(contentArray, { stream: false });
         }
 
         let accountTipsArray: AccountTips[] = [];

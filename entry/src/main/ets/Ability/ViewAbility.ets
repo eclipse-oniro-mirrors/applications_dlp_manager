@@ -15,7 +15,6 @@
 
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import dlpPermission from '@ohos.dlpPermission';
-import fileio from '@ohos.fileio';
 import Want from '@ohos.app.ability.Want';
 import hiTraceMeter from '@ohos.hiTraceMeter';
 import hiSysEvent from '@ohos.hiSysEvent';
@@ -65,7 +64,6 @@ const MIN_REALY_TYPE_LENGTH = 2;
 const MAX_REALY_TYPE_LENGTH = 5;
 const APPID_FOR_HOPE: string = '5765880207854533797';
 const BUNDLE_NAME_FOR_HOPE: string = 'com.huawei.it.welink';
-const DLP_FILE_SUFFIX: string = '.dlp';
 const FILE_SUFFIX_TYPE_ARRAY: string[] = [
   'txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
   'bmp', 'bm', 'dng', 'gif', 'heic', 'heics', 'heif', 'heifs',
@@ -787,13 +785,13 @@ export default class ViewAbility extends ServiceExtensionAbility {
   }
 
   CheckSuffixByUri(): Boolean {
-    if (this.uri.length < DLP_FILE_SUFFIX.length) {
+    if (this.uri.length < Constants.DLP_FILE_SUFFIX.length) {
       return false;
     }
 
-    let fileSuffix: string = this.uri.substring(this.uri.length - DLP_FILE_SUFFIX.length);
+    let fileSuffix: string = this.uri.substring(this.uri.length - Constants.DLP_FILE_SUFFIX.length);
     let lowerFileSuffix: string = fileSuffix.toLowerCase();
-    if (lowerFileSuffix === DLP_FILE_SUFFIX) {
+    if (lowerFileSuffix === Constants.DLP_FILE_SUFFIX) {
       return true;
     }
 

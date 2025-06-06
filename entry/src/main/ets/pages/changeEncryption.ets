@@ -160,7 +160,8 @@ struct changeEncryption {
       }),
       autoCancel: false,
       customStyle: true,
-      maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
+      maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
+      showInSubWindow: true
     });
     this.dlpAlertDialog.open();
   }
