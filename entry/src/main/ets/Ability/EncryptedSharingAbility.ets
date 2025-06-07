@@ -56,6 +56,9 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     const result = validator.validate(this.inputUriArray);
     if (result.errorCode === EncryptSharingShowCodeEnum.SUCCESS) {
       return true;
+    } else if (result.errorCode === EncryptSharingShowCodeEnum.SUPPORTED_TYPE_ERROR) {
+      let typeStr: string = this.context.resourceManager.getStringSync($r('app.string.Share_File_Supported_Types'));
+      result.toastMsg = this.context.resourceManager.getStringSync($r('app.string.Share_File_Type_Error'), typeStr);
     }
     logErrorShowToast(this.context, result.logMsg, result.toastMsg);
     return false;
