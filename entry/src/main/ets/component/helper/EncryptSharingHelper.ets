@@ -22,8 +22,6 @@ export default class EncryptSharingHelper {
     [EncryptSharingShowCodeEnum.COUNT_ERROR,
       $r('app.string.Share_File_Count_Error', Constants.SHARE_MAX_SUPPORT_NUMBER)],
     [EncryptSharingShowCodeEnum.FILE_ENCRYPTED_ERROR, $r('app.string.Share_File_has_been_Encrypted')],
-    [EncryptSharingShowCodeEnum.SUPPORTED_TYPE_ERROR,
-      $r('app.string.Share_File_Type_Error', $r('app.string.Share_File_Supported_Types'))],
     [EncryptSharingShowCodeEnum.SINGLE_SIZE_ERROR_DOC_MB,
       $r('app.string.Share_File_Single_Size_Limit_MB_Error', Constants.SHARE_MAX_SUPPORT_SIZE_DOC_MB)],
     [EncryptSharingShowCodeEnum.SINGLE_SIZE_ERROR_IMAGE_VIDEO_MB,
