@@ -250,7 +250,7 @@ struct encryptedSharing {
       if (res && res.error === undefined) {
         continue;
       }
-      const errRes = JSON.parse(res?.error?? '') as BusinessError;
+      const errRes = JSON.parse(res?.error ?? '') as BusinessError;
       storage.setOrCreate('commandSearchUserInfo', '');
       if (errRes && errRes.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
         showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.FILE_NAME_TOO_LONG));
