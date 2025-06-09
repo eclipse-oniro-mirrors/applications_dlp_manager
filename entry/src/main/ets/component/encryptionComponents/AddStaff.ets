@@ -113,7 +113,7 @@ struct AddStaff {
 
   private async dealAccount(startOffset: number[], endOffset: number[]) {
     HiLog.info(TAG, 'dealAccount start');
-    this.inputArray.filter(item =>{
+    this.inputArray = this.inputArray.filter(item =>{
       return !CommonUtil.isEmptyStr(item);
     });
     this.shardingCount = this.inputArray.length / Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
