@@ -580,6 +580,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"Не удалось открыть этот файл. Повторите попытку позже.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"Ошибка сети. Сбой подтверждения аккаунта HUAWEI.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

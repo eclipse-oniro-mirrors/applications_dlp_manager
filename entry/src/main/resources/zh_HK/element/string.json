@@ -587,6 +587,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"無法開啟此檔案，請稍後再試",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"網絡出現異常，無法驗證您的華為 ID",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
