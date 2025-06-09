@@ -587,6 +587,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"དྲ་རྒྱ་རྒྱུན་ལྡན་མིན། ཧྭ་ཝེ་ཐོ་ཨང་ར་སྤྲོད་བྱེད་མི་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

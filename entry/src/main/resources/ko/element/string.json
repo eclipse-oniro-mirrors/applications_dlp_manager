@@ -580,6 +580,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"이 파일을 열 수 없습니다. 나중에 다시 시도하십시오.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"네트워크 오류입니다. HUAWEI ID를 확인할 수 없습니다.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

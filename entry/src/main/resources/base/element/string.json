@@ -624,100 +624,100 @@
         },
         {
             "name":"Network_anomaly",
-            "value":"Network error. Unable to verify your Huawei ID.",
+            "value":"Network error. Unable to verify your HUAWEI ID.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
-            "name": "Share_File_Count_Error",
-            "value": "Up to %d files can be selected for encryption.",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "Share_File_Type_Error",
-            "value": "Encryption is only supported for %s.",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "Share_File_Supported_Types",
-            "value": "documents, images and videos",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "Share_File_Single_Size_Limit_MB_Error",
-            "value": "Unable to encrypt files larger than %d MB.",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "Share_File_Single_Size_Limit_GB_Error",
-            "value": "Unable to encrypt files larger than %d GB.",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "Share_File_has_been_Encrypted",
-            "value": "This file has been encrypted. Unable to encrypt it again.",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "Share_File_Path_Error",
-            "value": "The file does not exist or is inaccessible.",
-            "attr": {
-                "priority": "translate"
-            }
-        },
-        {
-            "name": "MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
-            "value": "Unable to obtain permission. Try again later.",
+            "name":"Share_File_Count_Error",
+            "value":"Up to %d files can be selected for encryption.",
             "attr":{
-                "priority": "translate"
+                "priority":"translate"
             }
         },
         {
-            "name": "The_File_is_Opened_By_Other_App",
-            "value": "The file has been opened by another app.",
-            "attr": {
-                "priority": "translate"
+            "name":"Share_File_Type_Error",
+            "value":"Encryption is only supported for %s.",
+            "attr":{
+                "priority":"translate"
             }
         },
         {
-            "name": "MESSAGE_TRY_OTHER_APP_OPEN",
-            "value": "This app can't open this file. Try using other app.",
-            "attr": {
-                "priority": "translate"
+            "name":"Share_File_Supported_Types",
+            "value":"documents, images and videos",
+            "attr":{
+                "priority":"translate"
             }
         },
         {
-            "name": "MESSAGE_NO_SPACE_TO_CREATE_FILE",
-            "value": "Insufficient storage. Unable to create encrypted file.",
-            "attr": {
-                "priority": "translate"
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"Unable to encrypt files larger than %d MB.",
+            "attr":{
+                "priority":"translate"
             }
         },
         {
-            "name": "Share_Account_Not_Exist",
-            "value": "The account does not exist. Please re-enter it.",
-            "attr": {
-                "priority": "translate"
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"Unable to encrypt files larger than %d GB.",
+            "attr":{
+                "priority":"translate"
             }
         },
         {
-            "name": "Share_File_System_Version_Low",
-            "value": "The system version is too low to open this file.",
-            "attr": {
-                "priority": "translate"
+            "name":"Share_File_has_been_Encrypted",
+            "value":"This file has been encrypted. Unable to encrypt it again.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"The file does not exist or is inaccessible.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"Unable to obtain permission. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"The file has been opened by another app.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"This app can't open this file. Try using other app.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"Insufficient storage. Unable to create encrypted file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"The account does not exist. Please re-enter it.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"The system version is too low to open this file.",
+            "attr":{
+                "priority":"translate"
             }
         }
     ]
