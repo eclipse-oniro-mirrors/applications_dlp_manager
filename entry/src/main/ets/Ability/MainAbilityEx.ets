@@ -331,6 +331,7 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         let dlpFd = getFileFd(String(want.uri));
         let dlpGeneralInfo: DLPGeneralInfo = await getAccountTypeAndRealFileType(this.context, dlpFd);
+        GlobalContext.store('realFileType', dlpGeneralInfo.realFileType);
         if (dlpGeneralInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
           this.dlpFilesToEncrypt(session, want);
         } else {

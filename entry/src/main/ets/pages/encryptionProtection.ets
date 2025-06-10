@@ -38,6 +38,7 @@ import {
   sendDlpFileCreateProperties,
   sendDlpManagerFileConfiguration,
   isValidPath,
+  isInvalidStr,
   getFileSizeByUri
 } from '../common/utils';
 import Constants from '../common/constant';
@@ -265,7 +266,18 @@ struct DlpDialog {
         return;
       }
     }
-    let filePath = getContext(this).filesDir + '/' + (new Date().getTime());
+    let dlpFileName: string = GlobalContext.load('uri') as string;
+    let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(dlpFileName);
+    let realFileType: string = GlobalContext.load('realFileType') ?? '';
+    HiLog.debug(TAG, `dlpFileName: ${dlpFileName}`);
+    HiLog.debug(TAG, `srcFileMsg fileType: ${srcFileMsg.fileType}`);
+    HiLog.debug(TAG, `realFileType: ${realFileType}`);
+
+    if (isInvalidStr(realFileType)) {
+      realFileType = srcFileMsg.fileType;
+    }
+
+    let filePath = this.getUIContext().getHostContext()?.filesDir + `/${new Date().getTime()}.${realFileType}`;
     let file: fs.File | undefined;
     try {
       file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
@@ -466,7 +478,7 @@ struct DlpDialog {
       undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
     this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
     this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
-    this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) => 
+    this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>
       !this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount)
     );
     property.ownerAccount = accountInfo.domainInfo.accountName;
