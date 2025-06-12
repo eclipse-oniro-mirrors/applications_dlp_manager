@@ -79,7 +79,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_NO_SPACE:
         return { 'msg': $r('app.string.MESSAGE_NO_SPACE_ERROR') } as Record<string, Resource>;
       default:
-        if (defaultTitle !== undefined && defaultMessage != undefined) {
+        if (defaultTitle !== undefined && defaultMessage !== undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
         } else {
           return { 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
