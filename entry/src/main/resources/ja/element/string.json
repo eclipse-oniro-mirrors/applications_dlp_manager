@@ -594,6 +594,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"このファイルは破損しているため、開くことができません。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"アカウントは存在しません。再度入力してください。",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

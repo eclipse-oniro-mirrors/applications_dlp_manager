@@ -362,11 +362,15 @@
         },
         {
             "name":"File_damaged",
-            "value":"[TS_1071514]_The file is damaged and cannot be opened"
+            "value":"[TS_1071514]_This file is damaged and can't be opened."
         },
         {
             "name":"File_cannot_be_opened",
             "value":"[TS_1071513]_Unable to open this file. Try again later."
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"[TS_1084966]_Account does not exist. Please re-enter."
         }
     ]
 }

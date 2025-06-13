@@ -594,6 +594,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"Ce fichier est endommagé et ne peut pas être ouvert.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"Le compte n'existe pas. Veuillez ressaisir.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

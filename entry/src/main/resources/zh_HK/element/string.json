@@ -601,6 +601,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"檔案已損壞，無法開啟",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"帳戶不存在，請重新輸入",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

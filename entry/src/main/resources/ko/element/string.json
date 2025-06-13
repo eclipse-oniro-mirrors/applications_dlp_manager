@@ -594,6 +594,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"이 파일은 손상되어 열 수 없습니다.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"계정이 존재하지 않습니다. 다시 입력하십시오.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
