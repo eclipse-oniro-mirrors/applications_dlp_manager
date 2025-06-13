@@ -23,7 +23,8 @@ export class SupportTypesConfig {
       'wrf', 'mpeg', 'mpeg2', 'mpv2', 'mp2v', 'm2v', 'm2t', 'mpeg1', 'mpv1', 'mp1v', 'm1v', 'mpg', 'mov', 'mkv', 'webm',
       'h264'];
   private static supportTypesSet: Set<string> =
-    new Set<string>([...this.documentTypes, ...this.imageTypes, ...this.videoTypes]);
+    new Set<string>([...SupportTypesConfig.documentTypes, ...SupportTypesConfig.imageTypes,
+      ...SupportTypesConfig.videoTypes]);
 
   public static checkType(type: string): boolean {
     return SupportTypesConfig.supportTypesSet.has(type.trim().toLowerCase());

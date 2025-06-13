@@ -41,7 +41,7 @@ export default class EncryptSharingHelper {
     [EncryptSharingShowCodeEnum.SINGLE_SIZE_ERROR_DOC_MB,
       `The single file size exceeds the limit of ${Constants.SHARE_MAX_SUPPORT_SIZE_DOC_MB} MB.`],
     [EncryptSharingShowCodeEnum.SINGLE_SIZE_ERROR_IMAGE_VIDEO_MB,
-      `The single file size exceeds the limit of ${Constants.SHARE_MAX_SUPPORT_SIZE_IMAGE_VIDEO_MB} GB.`],
+      `The single file size exceeds the limit of ${Constants.SHARE_MAX_SUPPORT_SIZE_IMAGE_VIDEO_MB} MB.`],
     [EncryptSharingShowCodeEnum.FILE_NAME_TOO_LONG, 'The file name is too long.'],
     [EncryptSharingShowCodeEnum.FILE_PATH_ERROR, 'The file path is invalid.']
   ]);
