@@ -594,6 +594,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"هذا الملف تالف ولا يمكن فتحه.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"الحساب غير موجود. يُرجى إعادة الإدخال.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

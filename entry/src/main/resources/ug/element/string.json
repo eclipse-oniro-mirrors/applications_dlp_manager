@@ -601,6 +601,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"ھۆججەت بۇزۇلغان، ئېچىلمايدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"بۇ ھېسابات يوق، قايتا كىرگۈزۈڭ.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -610,7 +610,7 @@
         },
         {
             "name":"File_damaged",
-            "value":"The file is damaged and cannot be opened.",
+            "value":"This file is damaged and can't be opened.",
             "attr":{
                 "priority":"translate"
             }
@@ -708,7 +708,7 @@
         },
         {
             "name":"Share_Account_Not_Exist",
-            "value":"The account does not exist. Please re-enter it.",
+            "value":"Account does not exist. Please re-enter.",
             "attr":{
                 "priority":"translate"
             }

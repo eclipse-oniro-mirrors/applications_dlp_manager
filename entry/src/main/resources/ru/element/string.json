@@ -594,6 +594,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"Сбой открытия. Файл поврежден.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"Аккаунт не существует. Введите повторно.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

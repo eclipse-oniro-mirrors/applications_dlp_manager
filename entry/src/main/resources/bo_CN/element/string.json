@@ -601,6 +601,20 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_damaged",
+            "value":"ཡིག་ཆར་སྐྱོན་ཤོར། ཁ་འབྱེད་མི་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"ཐོ་ཨང་མི་འདུག ཡང་བསྐྱར་འཇུག་རོགས།",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
