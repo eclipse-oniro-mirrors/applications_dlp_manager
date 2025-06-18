@@ -183,7 +183,7 @@ struct changeEncryption {
         if (err !== 0) {
           HiLog.error(TAG, `stopFuseLink failed: ${err}`);
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR') as Resource,
-            $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') as Resource);
+            $r('app.string.File_cannot_be_opened') as Resource);
           reject();
         }
         resolve();
