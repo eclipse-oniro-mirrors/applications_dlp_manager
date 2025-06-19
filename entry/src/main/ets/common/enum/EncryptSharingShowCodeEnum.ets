@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-enum EncryptSharingShowCodeEnum {
+const enum EncryptSharingShowCodeEnum {
   SUCCESS = 0,
   COUNT_ERROR = 1,
   FILE_ENCRYPTED_ERROR = 2,

@@ -71,7 +71,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
 
     let paramsTypeFlag: boolean =
-      (inputUris instanceof Array) && (typeof callerToken === 'number') && (typeof callerBundleName === 'string');
+      Array.isArray(inputUris) && (typeof callerToken === 'number') && (typeof callerBundleName === 'string');
     if (!paramsTypeFlag) {
       let logMsg: string = 'Check the types of inputUris, callerToken and callerBundleName.';
       let code: number = EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR;

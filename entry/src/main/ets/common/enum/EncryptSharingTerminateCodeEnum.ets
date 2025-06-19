@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-enum EncryptSharingTerminateCode {
+const enum EncryptSharingTerminateCode {
   BACK = 0,
   CANCEL = 1,
   SUCCESS = 2,

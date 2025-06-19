@@ -826,7 +826,7 @@ async function generateDlpFile(newFilePath: string, inputUri: string,
   } catch (err) {
     HiLog.error(TAG, `generateDlpFile failed: ${JSON.stringify(err)}`);
     error = err;
-    if (newFile?.fd && newFile?.fd !== Constants.ERR_CODE_OPEN_FILE_ERROR) {
+    if (newFile?.fd && newFile?.fd >= Constants.NORMAL_FD_MIN) {
       fs.closeSync(newFile.fd);
       fs.unlinkSync(newFilePath);
     }
