@@ -254,6 +254,7 @@ export default class Constants {
   public static DLP_FILE_LENGTH_LIMIT = 255;
   public static DLP_FILE_SUFFIX = '.dlp';
 
+  public static readonly NORMAL_FD_MIN = 0;
   public static readonly ERR_CODE_OPEN_FILE_ERROR = -1;
   public static readonly ERR_CODE_NETWORK_ERROR: number = -4;
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;
