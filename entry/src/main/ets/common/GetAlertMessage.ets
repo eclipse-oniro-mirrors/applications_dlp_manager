@@ -177,6 +177,8 @@ export class GetAlertMessage {
         return $r('app.string.Permission_has_expired');
       case Constants.ERR_JS_NO_SPACE:
         return $r('app.string.MESSAGE_NO_SPACE_ERROR');
+      case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
+        return $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION');
       default:
         return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
     }
