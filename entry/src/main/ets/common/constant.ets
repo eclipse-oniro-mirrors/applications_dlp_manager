@@ -253,6 +253,12 @@ export default class Constants {
   public static SHARE_MAX_SUPPORT_SIZE_DOC = 300 * 1024 * 1024;
   public static DLP_FILE_LENGTH_LIMIT = 255;
   public static DLP_FILE_SUFFIX = '.dlp';
+  public static SHARE_ASSOCIATION_MIN = 3;
+  public static SHARE_ASSOCIATION_MAX = 11;
+  public static SHARE_ASSOCIATION_LIST_WIDTH = '100%';
+  public static SHARE_ASSOCIATION_LIST_HEIGHT = 110;
+  public static SHARE_ASSOCIATION_LIST_ITEM_HEIGHT = 30;
+  public static SHARE_ASSOCIATION_LIST_PADDING = 5;
 
   public static readonly NORMAL_FD_MIN = 0;
   public static readonly ERR_CODE_OPEN_FILE_ERROR = -1;
@@ -275,4 +281,12 @@ export default class Constants {
   public static readonly TF_ASYNC: number = 1;
 
   public static readonly FONT_SIZE_SCALE_KEY: string = 'currentFontSizeScale';
+
+  public static readonly ERR_CODE_ASSOCIATION_SET_FAILED: number = -501;
+  public static readonly ERR_CODE_ASSOCIATION_GET_FAILED: number = -502;
+  public static readonly ERR_CODE_ASSOCIATION_DELETE_FAILED: number = -503;
+
+  public static readonly MAX_DATA_LEN = 50000;
+  public static readonly AES_NONCE_LENGTH = 12;
+  public static readonly AE_TAG_SLICE_LENGTH = 16;
 }

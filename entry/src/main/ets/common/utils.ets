@@ -32,6 +32,7 @@ import { systemDateTime } from '@kit.BasicServicesKit';
 import util from '@ohos.util';
 import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
+import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 
 const TAG = 'Utils';
 const HEAD_LENGTH_IN_BYTE = 72;
@@ -50,6 +51,8 @@ const DAY_TO_MILLISECOND: number = 1000 * 60 * 60 * 24;
 const MINUTE_TO_MILLISECOND: number = 1000 * 60;
 const SECOND_TO_MILLISECOND: number = 1000;
 const CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
+const RADIX_HEX: number = 16;
+const SHA256: string = 'SHA256';
 
 const enum UnitType {
   DAY_UNIT = 1,
@@ -699,6 +702,116 @@ function logErrorShowToast(context: common.UIAbilityContext | common.UIExtension
   UIContext.destroyUIContextWithoutWindow();
 }
 
+async function getSha256(inputData: Uint8Array): Promise<Uint8Array | null> {
+  if (!inputData || inputData.length === 0) {
+    HiLog.error(TAG, 'getSha256: input is invalid.');
+    return null;
+  }
+  let messageDig: cryptoFramework.Md;
+  try {
+    messageDig = cryptoFramework.createMd(SHA256);
+    await messageDig.update({
+      data: inputData
+    });
+    return (await messageDig.digest()).data;
+  } catch (err) {
+    HiLog.error(TAG, `Generate sha256 failed: ${JSON.stringify(err)}`);
+  }
+  return null;
+}
+
+function generateRandom(length: number): Uint8Array | null {
+  if (!length || length <= 0) {
+    HiLog.error(TAG, 'Invalid random number length.');
+    return null;
+  }
+  try {
+    let rand = cryptoFramework.createRandom();
+    let result: cryptoFramework.DataBlob = rand.generateRandomSync(length);
+    return result.data;
+  } catch (err) {
+    HiLog.error(TAG, `generate random failed: ${JSON.stringify(err)}`);
+  }
+  return null;
+}
+
+function encodeByBase64(data: Uint8Array): string | null {
+  if (!data || data.byteLength === 0) {
+    HiLog.error(TAG, 'encodeByBase64: input is invalid.');
+    return null;
+  }
+  let base64 = new util.Base64Helper();
+  try {
+    return base64.encodeToStringSync(data);
+  } catch (err) {
+    HiLog.error(TAG, 'Encode data failed.');
+  }
+  return null;
+}
+
+function decodeByBase64(data: string): Uint8Array | null {
+  if (isInvalidStr(data)) {
+    HiLog.error(TAG, 'decodeByBase64: input is invalid.');
+    return null;
+  }
+  let base64 = new util.Base64Helper();
+  try {
+    return base64.decodeSync(data);
+  } catch (err) {
+    HiLog.error(TAG, 'Decode data failed.');
+  }
+  return null;
+}
+
+function stringToUint8Array(inputData: string): Uint8Array | null {
+  if (isInvalidStr(inputData)) {
+    HiLog.error(TAG, 'stringToUint8Array: input is invalid.');
+    return null;
+  }
+  if (inputData.length > Constants.MAX_DATA_LEN) {
+    HiLog.error(TAG, 'stringToUint8Array: input length overflow.');
+    return null;
+  }
+  let arr: number[] = [];
+  for (let i = 0; i < inputData.length; i++) {
+    arr.push(inputData.charCodeAt(i));
+  }
+  return new Uint8Array(arr);
+}
+
+function uint8ArrayToString(inputData: Uint8Array): string | null {
+  if (!inputData || inputData.byteLength === 0) {
+    HiLog.error(TAG, 'uint8ArrayToString: input is invalid.');
+    return null;
+  }
+  if (inputData.length > Constants.MAX_DATA_LEN) {
+    HiLog.error(TAG, 'uint8ArrayToString: input length overflow.');
+    return null;
+  }
+  let dataString: string = '';
+  for (let i = 0; i < inputData.length; i++) {
+    dataString += String.fromCharCode(inputData[i]);
+  }
+  return dataString;
+}
+
+function uint8ArrayToHexString(inputData: Uint8Array): string | null {
+  if (!inputData || inputData.byteLength === 0) {
+    HiLog.error(TAG, 'uint8ArrayToHexString: input is invalid.');
+    return null;
+  }
+  if (inputData.length > Constants.MAX_DATA_LEN) {
+    HiLog.error(TAG, 'uint8ArrayToHexString: input length overflow.');
+    return null;
+  }
+  let hexString: string = '';
+  for (let i = 0; i < inputData.length; i++) {
+    const hex = inputData[i].toString(RADIX_HEX);
+    hexString += (hex.length === 1 ? '0' + hex : hex);
+  }
+  return hexString;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -715,6 +828,7 @@ export {
   toggleShow,
   directionStatus,
   getAppId,
+  getCurrentTime,
   getTime,
   getFileSizeByUri,
   getFileSizeByUriSync,
@@ -732,5 +846,12 @@ export {
   checkNetworkStatus,
   getConnectionStatus,
   showToast,
-  logErrorShowToast
+  logErrorShowToast,
+  getSha256,
+  generateRandom,
+  encodeByBase64,
+  decodeByBase64,
+  stringToUint8Array,
+  uint8ArrayToString,
+  uint8ArrayToHexString
 };
