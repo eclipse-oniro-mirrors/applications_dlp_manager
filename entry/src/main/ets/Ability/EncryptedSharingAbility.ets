@@ -125,7 +125,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
       'session': session,
       'actionWant': want,
       'inputUriArray': this.inputUriArray
-    } as Record<string, UIExtensionContentSession | Want>);
+    } as Record<string, UIExtensionContentSession | Want | string[]>);
     try {
       session.loadContent('pages/encryptedSharing', storage);
       session.setWindowBackgroundColor(BG_COLOR);

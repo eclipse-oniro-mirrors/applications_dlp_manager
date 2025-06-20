@@ -13,10 +13,17 @@
  * limitations under the License.
  */
 import AbilityStage from '@ohos.app.ability.AbilityStage'
+import AppStorageConstant from '../common/AppStorageConstant';
+import AppStorageMgr from '../common/AppStorageMgr';
 import Constants from '../common/constant';
+import { HiLog } from '../common/HiLog';
+
+const TAG: string = 'MyAbilityStage';
 
 export default class MyAbilityStage extends AbilityStage {
   onCreate() {
+    HiLog.info(TAG, 'onCreate');
     AppStorage.setOrCreate<number>(Constants.FONT_SIZE_SCALE_KEY, this.context.config.fontSizeScale);
+    AppStorageMgr.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, this.context.getApplicationContext(), true);
   }
 }
