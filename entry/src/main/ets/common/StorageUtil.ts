@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import { common } from "@kit.AbilityKit";
+import { common } from '@kit.AbilityKit';
 import data_preferences from '@ohos.data.preferences';
-import { HiLog } from "./HiLog";
+import { HiLog } from './HiLog';
 
 const TAG: string = 'StorageUtil';
 

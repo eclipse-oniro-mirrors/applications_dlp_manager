@@ -35,7 +35,7 @@ export default class AccountAssociationService {
     try {
       accountInfo = await getOsAccountInfo();
     } catch (err) {
-      HiLog.error(TAG, `getAuthorizedAccount failed: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
       return [];
     }
     let ownerAccountId: string = accountInfo.distributedInfo.name;
@@ -55,7 +55,7 @@ export default class AccountAssociationService {
     try {
       accountInfo = await getOsAccountInfo();
     } catch (err) {
-      HiLog.error(TAG, `getAuthorizedAccount failed: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
       return;
     }
     let ownerAccountId: string = accountInfo.distributedInfo.name;

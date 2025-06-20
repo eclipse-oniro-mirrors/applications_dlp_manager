@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import AccountAssociationCacheDTO from "../bean/data/AccountAssociationCacheDTO";
-import { AuthorizedAccount } from "../bean/data/AuthorizedAccount";
+import AccountAssociationCacheDTO from '../bean/data/AccountAssociationCacheDTO';
+import { AuthorizedAccount } from '../bean/data/AuthorizedAccount';
 
 export default class AccountAssociationConvertor {
   private constructor() {
