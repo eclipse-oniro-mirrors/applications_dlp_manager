@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AuthorizedAccount } from "./AuthorizedAccount";
+import { AuthorizedAccount } from './AuthorizedAccount';
 
 export default class AccountAssociationCacheDTO {
   private accountId: string;
