@@ -721,7 +721,7 @@ async function getSha256(inputData: Uint8Array): Promise<Uint8Array | null> {
 }
 
 function generateRandom(length: number): Uint8Array | null {
-  if (!length || length <= 0) {
+  if (length <= 0) {
     HiLog.error(TAG, 'Invalid random number length.');
     return null;
   }

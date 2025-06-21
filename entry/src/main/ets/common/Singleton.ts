@@ -14,7 +14,7 @@
  */
 
 export default class Singleton<T> {
-  private instance: T = null;
+  private instance: T | null = null;
 
   getInstance(constructor: new () => T): T {
     if (!this.instance) {

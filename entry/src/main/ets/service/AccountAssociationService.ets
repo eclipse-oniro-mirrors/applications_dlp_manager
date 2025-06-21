@@ -14,7 +14,7 @@
  */
 
 import AccountAssociationManager from '../manager/AccountAssociationManager';
-import { AuthorizedAccount } from '../bean/data/AuthorizedAccount';
+import AuthorizedAccount from '../bean/data/AuthorizedAccount';
 import { getOsAccountInfo } from '../common/utils';
 import { HiLog } from '../common/HiLog';
 import Singleton from '../common/Singleton';
@@ -38,8 +38,13 @@ export default class AccountAssociationService {
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
       return [];
     }
+
     let ownerAccountId: string = accountInfo.distributedInfo.name;
-    const associationMgr: AccountAssociationManager = AccountAssociationManager.getInstance();
+    const associationMgr: AccountAssociationManager | null = AccountAssociationManager.getInstance();
+    if (!associationMgr) {
+      HiLog.error(TAG, 'Get account association manager failed.');
+      return [];
+    }
     let authorizedAccounts: AuthorizedAccount[] = await associationMgr.getAuthorizedAccount(ownerAccountId);
     let responseData: string[] = [];
     authorizedAccounts.forEach(account => {
@@ -58,7 +63,13 @@ export default class AccountAssociationService {
       HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
       return;
     }
+
     let ownerAccountId: string = accountInfo.distributedInfo.name;
-    await AccountAssociationManager.getInstance().setAuthorizedAccount(ownerAccountId, authorizedAccount);
+    const associationMgr: AccountAssociationManager | null = AccountAssociationManager.getInstance();
+    if (!associationMgr) {
+      HiLog.error(TAG, 'Get account association manager failed.');
+      return;
+    }
+    await associationMgr.setAuthorizedAccount(ownerAccountId, authorizedAccount);
   }
 }
