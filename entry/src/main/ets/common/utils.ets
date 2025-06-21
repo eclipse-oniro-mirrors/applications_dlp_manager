@@ -20,8 +20,9 @@ import { BusinessError, Callback } from '@ohos.base'
 import common from '@ohos.app.ability.common';
 import connection from '@ohos.net.connection';
 import Constants from '../common/constant';
-import emitter from '@ohos.events.emitter';
+import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import dlpPermission from '@ohos.dlpPermission';
+import emitter from '@ohos.events.emitter';
 import fileUri from '@ohos.file.fileuri';
 import fs from '@ohos.file.fs';
 import GlobalContext from './GlobalContext';
@@ -32,7 +33,6 @@ import { systemDateTime } from '@kit.BasicServicesKit';
 import util from '@ohos.util';
 import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
-import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 
 const TAG = 'Utils';
 const HEAD_LENGTH_IN_BYTE = 72;

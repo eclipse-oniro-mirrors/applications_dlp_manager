@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-import AccountAssociation from '../bean/data/AccountAssociation';
-import Constants from '../common/constant';
-import { HiLog } from '../common/HiLog';
-import HuksCipherUtils from '../common/huks/HuksCipherUtil';
-import HuksProperties from '../common/huks/HuksProperties';
-import StorageUtil from '../common/StorageUtil';
-import { encodeByBase64, generateRandom } from '../common/utils';
-import { stringToUint8Array } from '../common/utils';
+import AccountAssociation from '../../bean/data/AccountAssociation';
+import Constants from '../../common/constant';
+import { encodeByBase64, generateRandom } from '../../common/utils';
+import { HiLog } from '../../common/HiLog';
+import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
+import HuksProperties from '../../common/huks/HuksProperties';
+import StorageUtil from '../../common/StorageUtil';
+import { stringToUint8Array } from '../../common/utils';
 
-const TAG: string = 'AssocMgrValid';
+const TAG: string = 'AssocEncValid';
 
 class EncryptionContext {
   constructor(
@@ -218,11 +218,8 @@ class DataStorageHandler extends EncryptionHandler {
   }
 }
 
-export class EncryptAndSaveValidator {
+export default class EncryptAndSaveValidator {
   public static instance: EncryptAndSaveValidator;
-
-  private constructor() {
-  }
 
   public static getInstance(): EncryptAndSaveValidator {
     if (!EncryptAndSaveValidator.instance) {
@@ -236,7 +233,7 @@ export class EncryptAndSaveValidator {
     association: AccountAssociation,
     saveFileName: string
   ): Promise<boolean> {
-    HiLog.info(TAG, 'Enter encrypt and save validator.');
+    HiLog.info(TAG, 'Enter encrypt and save data validator.');
     let chain = new DataConversionHandler();
     chain.setNext(new KeyCheckHandler())
       .setNext(new NonceGenerationHandler())
