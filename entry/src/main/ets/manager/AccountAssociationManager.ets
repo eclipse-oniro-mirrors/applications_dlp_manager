@@ -47,6 +47,8 @@ export default class AccountAssociationManager {
   }
 
   public async getAuthorizedAccount(ownerAccountId: string): Promise<AuthorizedAccount[]> {
+    HiLog.info(TAG, 'Enter getAuthorizedAccount.');
+
     if (isInvalidStr(ownerAccountId)) {
       HiLog.error(TAG, `The ownerAccountId is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_GET_FAILED}`);
       return [];
@@ -65,6 +67,8 @@ export default class AccountAssociationManager {
     ownerAccountId: string,
     authorizedAccount: string
   ): Promise<AuthorizedAccount[] | null> {
+    HiLog.info(TAG, 'Enter updateAuthorizedAccount.');
+
     let currentTime: number = getCurrentTime(false);
     let authorizedAccounts: AuthorizedAccount[] = await this.getAuthorizedAccount(ownerAccountId);
     let accountData: AuthorizedAccount[] =
@@ -83,7 +87,7 @@ export default class AccountAssociationManager {
           return null;
         }
 
-        let earliestAccount = accountAssociation.removeEarliestAuthorizedAccount();
+        const earliestAccount = accountAssociation.removeEarliestAuthorizedAccount();
         if (!earliestAccount) {
           HiLog.error(TAG, 'Remove the earliest authorized account failed.');
           return null;
@@ -103,7 +107,7 @@ export default class AccountAssociationManager {
   }
 
   public async setAuthorizedAccount(ownerAccountId: string, authorizedAccount: string): Promise<void> {
-    HiLog.info(TAG, 'Start setAuthorizedAccount.');
+    HiLog.info(TAG, 'Enter setAuthorizedAccount.');
 
     if (isInvalidStr(ownerAccountId) || isInvalidStr(authorizedAccount)) {
       HiLog.error(TAG,
@@ -136,7 +140,7 @@ export default class AccountAssociationManager {
   }
 
   public async deleteAuthorizedAccount(ownerAccountId: string): Promise<void> {
-    HiLog.info(TAG, 'Start deleteAuthorizedAccount.');
+    HiLog.info(TAG, 'Enter deleteAuthorizedAccount.');
 
     if (isInvalidStr(ownerAccountId)) {
       HiLog.error(TAG, `Input ownerAccountId is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_DELETE_FAILED}`);

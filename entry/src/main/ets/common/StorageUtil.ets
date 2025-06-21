@@ -41,7 +41,7 @@ export default class StorageUtil {
     }
     try {
       let preference = await data_preferences.getPreferences(this.appContext, name);
-      if (preference === null) {
+      if (!preference) {
         HiLog.error(TAG, 'Preference is null.');
         return false;
       }
@@ -61,7 +61,7 @@ export default class StorageUtil {
   async getData(key: string, name: string): Promise<data_preferences.ValueType> {
     if (!this.appContext) {
       HiLog.error(TAG, 'App context is null.');
-      return false;
+      return '';
     }
     try {
       let preference = await data_preferences.getPreferences(this.appContext, name);

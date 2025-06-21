@@ -677,7 +677,7 @@ function checkNetworkStatus(): Promise<void> {
   })
 }
 
-function isInvalidStr(input: string): boolean {
+function isInvalidStr(input: string | null): boolean {
   return (input === null || input === undefined || input.trim() === '' || input.length === 0);
 }
 
@@ -721,7 +721,7 @@ async function getSha256(inputData: Uint8Array): Promise<Uint8Array | null> {
 }
 
 function generateRandom(length: number): Uint8Array | null {
-  if (length <= 0) {
+  if (length <= Constants.RANDOM_LENGTH_MIN) {
     HiLog.error(TAG, 'Invalid random number length.');
     return null;
   }

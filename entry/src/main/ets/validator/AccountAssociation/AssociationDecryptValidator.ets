@@ -19,31 +19,31 @@ import AccountAssociationUtil from '../../common/AccountAssociationUtil';
 import AppStorageMgr from '../../common/AppStorageMgr';
 import { common } from '@kit.AbilityKit';
 import Constants from '../../common/constant';
+import { decodeByBase64, isInvalidStr, stringToUint8Array, uint8ArrayToString } from '../../common/utils';
 import { HiLog } from '../../common/HiLog';
 import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
 import HuksProperties from '../../common/huks/HuksProperties';
+import Singleton from '../../common/Singleton';
 import StorageUtil from '../../common/StorageUtil';
-import { decodeByBase64, isInvalidStr, stringToUint8Array, uint8ArrayToString } from '../../common/utils';
 
 const TAG: string = 'AssocDecValid';
 
 class DecryptionContext {
+  public aad: Uint8Array | null = null;
+  public appContext: common.Context | undefined = undefined;
+  public associationCipherBase64: string | null = null;
+  public associationCipherData: Uint8Array | null = null;
+  public associationFileName: string | null = null;
+  public associationObjStr: string | null = null;
+  public associationObj: AccountAssociation | null = null;
+  public associationUint8: Uint8Array | undefined = undefined;
+  public nonce: Uint8Array | null = null;
+  public nonceBase64: string | null = null;
+  public ownerAccountId: string = '';
+
   constructor(ownerAccountId: string) {
     this.ownerAccountId = ownerAccountId;
   }
-
-  appContext: common.Context | undefined = undefined;
-  associationFileName: string | null = null;
-  associationCipherBase64: string | null = null;
-  nonceBase64: string | null = null;
-  associationCipherData: Uint8Array | null = null;
-  nonce: Uint8Array | null = null;
-  aad: Uint8Array | null = null;
-  associationUint8: Uint8Array | undefined = undefined;
-  associationObjStr: string | null = null;
-  associationObj: AccountAssociation | null = null;
-  ownerAccountId: string = '';
-  error: string | null = null;
 }
 
 abstract class DecryptionHandler {
@@ -64,10 +64,11 @@ abstract class DecryptionHandler {
 
 class FileNameHandler extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Enter FileNameHandler.');
+
     context.associationFileName = await AccountAssociationUtil.getAccountAssociationFileName(context.ownerAccountId);
     if (!context.associationFileName) {
-      context.error = 'Get account association file name failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get account association file name failed.');
       return null;
     }
     return super.handle(context);
@@ -76,14 +77,15 @@ class FileNameHandler extends DecryptionHandler {
 
 class AppContextHandler extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Enter AppContextHandler.');
+
     if (!context) {
       HiLog.error(TAG, 'Get Context failed.');
       return null;
     }
     context.appContext = AppStorageMgr.getApplicationContext();
     if (!context.appContext) {
-      context.error = 'Get Application Context failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get Application Context failed.');
       return null;
     }
     return super.handle(context);
@@ -92,69 +94,76 @@ class AppContextHandler extends DecryptionHandler {
 
 class AssociationDataReader extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Enter AssociationDataReader.');
+
     if (!context.appContext) {
-      context.error = 'AppContext not initialized';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'AppContext not initialized.');
       return null;
     }
 
     const storageUtil = StorageUtil.getInstance(context.appContext);
-    context.associationCipherBase64 = await storageUtil.getData(
-      Constants.ASSOCIATION_STORAGE_KEY,
-      context.associationFileName!
-    ) as string;
-
-    if (isInvalidStr(context.associationCipherBase64)) {
-      context.error = 'No account association in storage.';
-      HiLog.error(TAG, context.error);
+    if (!storageUtil) {
+      HiLog.error(TAG, 'Storage util is null.');
       return null;
     }
-    return super.handle(context);
+    let res = await storageUtil.getData(
+      Constants.ASSOCIATION_STORAGE_KEY,
+      context.associationFileName!
+    );
+    if (typeof res === 'string' && !isInvalidStr(res)) {
+      context.associationCipherBase64 = res;
+      return super.handle(context);
+    }
+    HiLog.error(TAG, 'No account association in storage.');
+    return null;
   }
 }
 
 class NonceReader extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Enter NonceReader.');
+
     if (!context.appContext) {
-      context.error = 'AppContext not initialized';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'AppContext not initialized.');
       return null;
     }
 
     const storageUtil = StorageUtil.getInstance(context.appContext);
-    context.nonceBase64 = await storageUtil.getData(
+    let res = await storageUtil.getData(
       Constants.AES_NONCE_KEY,
       context.associationFileName!
-    ) as string;
-
-    if (isInvalidStr(context.nonceBase64)) {
-      context.error = 'No AES nonce in storage.';
-      HiLog.error(TAG, context.error);
-      return null;
+    );
+    if (typeof res === 'string' && !isInvalidStr(res)) {
+      context.nonceBase64 = res;
+      return super.handle(context);
     }
-    return super.handle(context);
+    HiLog.error(TAG, 'No AES nonce in storage.');
+    return null;
   }
 }
 
 class Base64DecodingHandler extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
-    if (!context.associationCipherBase64 || !context.nonceBase64) {
-      context.error = 'Missing Base64 data for decoding';
-      HiLog.error(TAG, context.error);
+    HiLog.info(TAG, 'Enter Base64DecodingHandler.');
+
+    if (!context.associationCipherBase64) {
+      HiLog.error(TAG, 'Missing Base64 cipher data for decoding.');
+      return null;
+    }
+    if (!context.nonceBase64) {
+      HiLog.error(TAG, 'Missing Base64 nonce data for decoding.');
       return null;
     }
 
     context.associationCipherData = decodeByBase64(context.associationCipherBase64);
     if (!context.associationCipherData) {
-      context.error = 'Get associationCipherData failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get associationCipherData failed.');
       return null;
     }
 
     context.nonce = decodeByBase64(context.nonceBase64);
     if (!context.nonce) {
-      context.error = 'Get nonce failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get nonce failed.');
       return null;
     }
     return super.handle(context);
@@ -163,10 +172,11 @@ class Base64DecodingHandler extends DecryptionHandler {
 
 class AADPreparationHandler extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Enter AADPreparationHandler.');
+
     context.aad = stringToUint8Array(Constants.ASSOCIATION_AAD);
     if (!context.aad) {
-      context.error = 'Get AAD failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get AAD failed.');
       return null;
     }
     return super.handle(context);
@@ -175,9 +185,18 @@ class AADPreparationHandler extends DecryptionHandler {
 
 class DataDecryptionHandler extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
-    if (!context.associationCipherData || !context.nonce || !context.aad) {
-      context.error = 'Missing decryption parameters';
-      HiLog.error(TAG, context.error);
+    HiLog.info(TAG, 'Enter DataDecryptionHandler.');
+
+    if (!context.associationCipherData) {
+      HiLog.error(TAG, 'Missing cipher data for decryption.');
+      return null;
+    }
+    if (!context.nonce) {
+      HiLog.error(TAG, 'Missing nonce data for decryption.');
+      return null;
+    }
+    if (!context.aad) {
+      HiLog.error(TAG, 'Missing AAD data for decryption.');
       return null;
     }
 
@@ -197,8 +216,7 @@ class DataDecryptionHandler extends DecryptionHandler {
     );
 
     if (!context.associationUint8) {
-      context.error = 'Get associationUint8 failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get associationUint8 failed.');
       return null;
     }
     return super.handle(context);
@@ -207,16 +225,16 @@ class DataDecryptionHandler extends DecryptionHandler {
 
 class Uint8ToStringHandler extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Enter Uint8ToStringHandler.');
+
     if (!context.associationUint8) {
-      context.error = 'Missing decrypted data';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Missing decrypted data.');
       return null;
     }
 
     context.associationObjStr = uint8ArrayToString(context.associationUint8);
     if (!context.associationObjStr) {
-      context.error = 'Get associationObjStr failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get associationObjStr failed.');
       return null;
     }
     return super.handle(context);
@@ -225,9 +243,10 @@ class Uint8ToStringHandler extends DecryptionHandler {
 
 class AssociationConversionHandler extends DecryptionHandler {
   async handle(context: DecryptionContext): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Enter decrypt data from local validator.');
+
     if (!context.associationObjStr) {
-      context.error = 'Missing JSON data for conversion';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Missing JSON data for conversion.');
       return null;
     }
 
@@ -235,25 +254,28 @@ class AssociationConversionHandler extends DecryptionHandler {
       context.associationObj = AccountAssociationConvertor.convertToAccountAssociation(context.associationObjStr);
       return context.associationObj;
     } catch (error) {
-      context.error = `Convert to AccountAssociation failed: ${JSON.stringify(error)}`;
-      HiLog.error(TAG, context.error);
-      return null;
+      HiLog.error(TAG, `Convert to AccountAssociation failed: ${error}`);
     }
+    return null;
   }
 }
 
-export default class DecryptFromLocalValidator {
-  public static instance: DecryptFromLocalValidator;
+export default class AssociationDecryptValidator {
+  public static singletonInstance: Singleton<AssociationDecryptValidator> =
+    new Singleton<AssociationDecryptValidator>(() => new AssociationDecryptValidator());
 
-  public static getInstance(): DecryptFromLocalValidator {
-    if (!DecryptFromLocalValidator.instance) {
-      DecryptFromLocalValidator.instance = new DecryptFromLocalValidator();
-    }
-    return DecryptFromLocalValidator.instance;
+  public static getInstance(): AssociationDecryptValidator {
+    return AssociationDecryptValidator.singletonInstance.getInstance();
   }
 
   public async validate(ownerAccountId: string): Promise<AccountAssociation | null> {
     HiLog.info(TAG, 'Enter decrypt data from local validator.');
+
+    if (isInvalidStr(ownerAccountId)) {
+      HiLog.error(TAG, 'The owner account ID is invalid.');
+      return null;
+    }
+
     let chain = new FileNameHandler();
     chain
       .setNext(new AppContextHandler())

@@ -15,10 +15,15 @@
 
 export default class Singleton<T> {
   private instance: T | null = null;
+  private factory: () => T;
 
-  getInstance(constructor: new () => T): T {
+  constructor(factory: () => T) {
+    this.factory = factory;
+  }
+
+  getInstance(): T {
     if (!this.instance) {
-      this.instance = new constructor();
+      this.instance = this.factory();
     }
     return this.instance;
   }

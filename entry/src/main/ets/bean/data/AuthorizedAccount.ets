@@ -12,7 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { HiLog } from "../../common/HiLog";
+
+import { HiLog } from '../../common/HiLog';
 
 const TAG: string = 'AuthAccount';
 
@@ -38,7 +39,7 @@ export default class AuthorizedAccount {
   }
 
   public setTimestamp(timestamp: number): void {
-    if (timestamp < 0) {
+    if (isNaN(timestamp)) {
       HiLog.error(TAG, 'The input timestamp is invalid.');
       return;
     }

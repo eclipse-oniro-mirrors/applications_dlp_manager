@@ -296,4 +296,5 @@ export default class Constants {
   public static readonly ASSOCIATION_FILE_PREFIX: string = 'DlpAuthorizedAccounts_';
   public static readonly ASSOCIATION_MAX_SIZE: number = 20;
   public static readonly ASSOCIATION_STORAGE_KEY: string = 'AccountAssociation';
+  public static readonly RANDOM_LENGTH_MIN: number = 0;
 }

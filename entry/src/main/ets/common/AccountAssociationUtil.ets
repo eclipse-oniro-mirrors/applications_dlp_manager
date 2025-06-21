@@ -14,8 +14,8 @@
  */
 
 import AccountAssociation from '../bean/data/AccountAssociation';
-import DecryptFromLocalValidator from '../validator/AccountAssociation/AssociationDecryptValidator';
-import EncryptAndSaveValidator from '../validator/AccountAssociation/AssociationEncryptValidator';
+import AssociationDecryptValidator from '../validator/AccountAssociation/AssociationDecryptValidator';
+import AssociationEncryptValidator from '../validator/AccountAssociation/AssociationEncryptValidator';
 import Constants from './constant';
 import { HiLog } from './HiLog';
 import StorageUtil from './StorageUtil';
@@ -25,7 +25,11 @@ const TAG: string = 'AssocUtil';
 
 export default class AccountAssociationUtil {
   public static async getAccountAssociationFileName(ownerAccountId: string): Promise<string | null> {
-    HiLog.info(TAG, 'Start to get account association file name.');
+    HiLog.info(TAG, 'Start getting account association file name.');
+    if (isInvalidStr(ownerAccountId)) {
+      HiLog.error(TAG, 'Owner account ID is invalid');
+      return null;
+    }
     let accountIdUint8: Uint8Array | null = decodeByBase64(ownerAccountId);
     if (!accountIdUint8) {
       HiLog.error(TAG, 'Get accountIdUint8 failed.');
@@ -36,21 +40,27 @@ export default class AccountAssociationUtil {
       HiLog.error(TAG, 'Get accountIdSha256 failed.');
       return null;
     }
-    return Constants.ASSOCIATION_FILE_PREFIX + uint8ArrayToHexString(accountIdSha256);
+    const accountIdSha256Str: string | null = uint8ArrayToHexString(accountIdSha256);
+    if (isInvalidStr(accountIdSha256Str)) {
+      HiLog.error(TAG, 'Uint8Array to hex string failed.');
+      return null;
+    }
+    return Constants.ASSOCIATION_FILE_PREFIX + accountIdSha256Str;
   }
 
   public static async getAssociationFromLocal(ownerAccountId: string): Promise<AccountAssociation | null> {
-    HiLog.info(TAG, 'Start to get account association data from local.');
+    HiLog.info(TAG, 'Start getting account association data from local.');
     if (isInvalidStr(ownerAccountId)) {
       HiLog.error(TAG, 'Owner account ID is invalid');
       return null;
     }
 
     try {
-      const validator = DecryptFromLocalValidator.getInstance();
+      const validator = AssociationDecryptValidator.getInstance();
       let res: AccountAssociation | null = await validator.validate(ownerAccountId);
       if (res) {
         HiLog.info(TAG, 'Get account association data from local success.');
+        return res;
       }
       HiLog.error(TAG, 'Get account association data from local failed.');
     } catch (error) {
@@ -64,14 +74,14 @@ export default class AccountAssociationUtil {
     association: AccountAssociation,
     saveFileName: string
   ): Promise<boolean> {
-    HiLog.info(TAG, 'Start to encrypt and save account association.');
+    HiLog.info(TAG, 'Start encrypting and saving account association.');
 
     if (!storageUtil) {
       HiLog.error(TAG, 'Storage util is null.');
       return false;
     }
 
-    const validator = EncryptAndSaveValidator.getInstance();
+    const validator = AssociationEncryptValidator.getInstance();
     let res: boolean = await validator.validate(storageUtil, association, saveFileName);
     if (!res) {
       HiLog.error(TAG, 'EncryptAndSaveAssociation failed.');

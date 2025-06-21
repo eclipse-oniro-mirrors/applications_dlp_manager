@@ -21,8 +21,8 @@ import { isInvalidStr } from '../common/utils';
 const TAG: string = 'AssocConvertor';
 
 interface AuthorizedAccountJson {
-  userAccount: string;
-  timestamp: number;
+  mUserAccount: string;
+  mTimestamp: number;
 }
 
 interface AccountAssociationJson {
@@ -57,11 +57,15 @@ export default class AccountAssociationConvertor {
     let accountId: string = accountAssociationJson.accountId;
 
     for (const account of authorizedAccountsJson) {
-      if (!account || !account.userAccount || !account.timestamp) {
-        HiLog.error(TAG, 'Obtain authorizedAccountsJson attributes failed.');
+      if (isInvalidStr(account.mUserAccount)) {
+        HiLog.error(TAG, 'Obtain authorizedAccountsJson userAccount failed.');
+        return null
+      }
+      if (account.mTimestamp === undefined || isNaN(account.mTimestamp)) {
+        HiLog.error(TAG, 'Obtain authorizedAccountsJson timestamp failed.');
         return null;
       }
-      authorizedAccounts.push(new AuthorizedAccount(account.userAccount, account.timestamp));
+      authorizedAccounts.push(new AuthorizedAccount(account.mUserAccount, account.mTimestamp));
     }
 
     return new AccountAssociation(accountId, authorizedAccounts);

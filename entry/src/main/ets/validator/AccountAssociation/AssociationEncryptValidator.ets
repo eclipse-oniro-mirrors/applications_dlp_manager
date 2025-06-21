@@ -15,37 +15,37 @@
 
 import AccountAssociation from '../../bean/data/AccountAssociation';
 import Constants from '../../common/constant';
-import { encodeByBase64, generateRandom } from '../../common/utils';
+import { encodeByBase64, generateRandom, isInvalidStr } from '../../common/utils';
 import { HiLog } from '../../common/HiLog';
 import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
 import HuksProperties from '../../common/huks/HuksProperties';
+import Singleton from '../../common/Singleton';
 import StorageUtil from '../../common/StorageUtil';
 import { stringToUint8Array } from '../../common/utils';
 
 const TAG: string = 'AssocEncValid';
 
 class EncryptionContext {
+  public aad: Uint8Array | null = null;
+  public accountAssociation: AccountAssociation | null = null;
+  public associationCipherData: Uint8Array | undefined = undefined;
+  public associationCipherBase64: string | null = null;
+  public data: Uint8Array | null = null;
+  public keyExist: boolean = false;
+  public nonce: Uint8Array | null = null;
+  public nonceBase64: string | null = null;
+  public saveFileName: string = '';
+  public saveResultAssociation: boolean | undefined;
+  public saveResultNonce: boolean | undefined;
+  public success: boolean = false;
+
   constructor(
-    association: AccountAssociation,
+    accountAssociation: AccountAssociation,
     saveFileName: string
   ) {
-    this.association = association;
+    this.accountAssociation = accountAssociation;
     this.saveFileName = saveFileName;
   }
-
-  association: AccountAssociation | null = null;
-  saveFileName: string = '';
-  data: Uint8Array | null = null;
-  existFlag: boolean = false;
-  nonce: Uint8Array | null = null;
-  aad: Uint8Array | null = null;
-  associationCipherData: Uint8Array | undefined = undefined;
-  associationCipherBase64: string | null = null;
-  nonceBase64: string | null = null;
-  saveResultAssociation: boolean | undefined;
-  saveResultNonce: boolean | undefined;
-  success: boolean = false;
-  error: string | null = null;
 }
 
 abstract class EncryptionHandler {
@@ -66,11 +66,11 @@ abstract class EncryptionHandler {
 
 class DataConversionHandler extends EncryptionHandler {
   async handle(context: EncryptionContext): Promise<boolean> {
-    HiLog.info(TAG, 'Start encryptAndSaveAssociation.');
-    context.data = stringToUint8Array(JSON.stringify(context.association));
+    HiLog.info(TAG, 'Enter DataConversionHandler.');
+
+    context.data = stringToUint8Array(JSON.stringify(context.accountAssociation));
     if (!context.data) {
-      context.error = 'Convert associationObj to Uint8Array failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Convert AccountAssociation to Uint8Array failed.');
       return false;
     }
     return super.handle(context);
@@ -79,8 +79,10 @@ class DataConversionHandler extends EncryptionHandler {
 
 class KeyCheckHandler extends EncryptionHandler {
   async handle(context: EncryptionContext): Promise<boolean> {
-    context.existFlag = await HuksCipherUtils.isKeyExist(Constants.ASSOCIATION_KEY_ALIAS);
-    if (!context.existFlag) {
+    HiLog.info(TAG, 'Enter KeyCheckHandler.');
+
+    context.keyExist = await HuksCipherUtils.isKeyExist(Constants.ASSOCIATION_KEY_ALIAS);
+    if (!context.keyExist) {
       HiLog.info(TAG, 'The key of ASSOCIATION_KEY_ALIAS not exist. Create a new one.');
       const props = HuksProperties.getAesGenerateProperties();
       const isGenerated = await HuksCipherUtils.generateKey(
@@ -88,8 +90,7 @@ class KeyCheckHandler extends EncryptionHandler {
         { properties: props }
       );
       if (!isGenerated) {
-        context.error = 'Generate key with keyAlias failed.';
-        HiLog.error(TAG, context.error);
+        HiLog.error(TAG, 'Generate key with keyAlias failed.');
         return false;
       }
     }
@@ -99,10 +100,11 @@ class KeyCheckHandler extends EncryptionHandler {
 
 class NonceGenerationHandler extends EncryptionHandler {
   async handle(context: EncryptionContext): Promise<boolean> {
+    HiLog.info(TAG, 'Enter NonceGenerationHandler');
+
     context.nonce = generateRandom(Constants.AES_NONCE_LENGTH);
     if (!context.nonce || context.nonce.byteLength === 0) {
-      context.error = 'Generate nonce failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Generate nonce failed.');
       return false;
     }
     return super.handle(context);
@@ -111,10 +113,10 @@ class NonceGenerationHandler extends EncryptionHandler {
 
 class AADPreparationHandler extends EncryptionHandler {
   async handle(context: EncryptionContext): Promise<boolean> {
+    HiLog.info(TAG, 'Enter AADPreparationHandler.');
     context.aad = stringToUint8Array(Constants.ASSOCIATION_AAD);
     if (!context.aad) {
-      context.error = 'Get AAD failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get AAD failed.');
       return false;
     }
     return super.handle(context);
@@ -123,9 +125,18 @@ class AADPreparationHandler extends EncryptionHandler {
 
 class DataEncryptionHandler extends EncryptionHandler {
   async handle(context: EncryptionContext): Promise<boolean> {
-    if (!context.data || !context.nonce || !context.aad) {
-      context.error = 'Missing required parameters for encryption.';
-      HiLog.error(TAG, context.error);
+    HiLog.info(TAG, 'Enter DataEncryptionHandler.');
+
+    if (!context.data) {
+      HiLog.error(TAG, 'Missing plain data for encryption.');
+      return false;
+    }
+    if (!context.nonce) {
+      HiLog.error(TAG, 'Missing nonce for encryption.');
+      return false;
+    }
+    if (!context.aad) {
+      HiLog.error(TAG, 'Missing AAD for encryption.');
       return false;
     }
 
@@ -136,8 +147,7 @@ class DataEncryptionHandler extends EncryptionHandler {
     );
 
     if (!context.associationCipherData) {
-      context.error = 'Encrypt data failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Encrypt data failed.');
       return false;
     }
     return super.handle(context);
@@ -146,23 +156,26 @@ class DataEncryptionHandler extends EncryptionHandler {
 
 class Base64EncodingHandler extends EncryptionHandler {
   async handle(context: EncryptionContext): Promise<boolean> {
-    if (!context.associationCipherData || !context.nonce) {
-      context.error = 'Missing cipher data or nonce for encoding.';
-      HiLog.error(TAG, context.error);
+    HiLog.info(TAG, 'Enter Base64EncodingHandler.');
+
+    if (!context.associationCipherData) {
+      HiLog.error(TAG, 'Missing cipher data for encoding.');
+      return false;
+    }
+    if (!context.nonce) {
+      HiLog.error(TAG, 'Missing nonce for encoding.');
       return false;
     }
 
     context.associationCipherBase64 = encodeByBase64(context.associationCipherData);
     if (!context.associationCipherBase64) {
-      context.error = 'Get associationCipherBase64 failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get associationCipherBase64 failed.');
       return false;
     }
 
     context.nonceBase64 = encodeByBase64(context.nonce);
     if (!context.nonceBase64) {
-      context.error = 'Get nonceBase64 failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Get nonceBase64 failed.');
       return false;
     }
     return super.handle(context);
@@ -178,9 +191,14 @@ class DataStorageHandler extends EncryptionHandler {
   }
 
   async handle(context: EncryptionContext): Promise<boolean> {
-    if (!context.associationCipherBase64 || !context.nonceBase64) {
-      context.error = 'Missing base64 data for storage.';
-      HiLog.error(TAG, context.error);
+    HiLog.info(TAG, 'Enter DataStorageHandler.');
+
+    if (!context.associationCipherBase64) {
+      HiLog.error(TAG, 'Missing Base64 cipher data for storage.');
+      return false;
+    }
+    if (!context.nonceBase64) {
+      HiLog.error(TAG, 'Missing Base64 nonce data for storage.');
       return false;
     }
     if (!this.storageUtil) {
@@ -195,8 +213,7 @@ class DataStorageHandler extends EncryptionHandler {
     );
 
     if (!context.saveResultAssociation) {
-      context.error = 'Storage save account association failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Storage save account association failed.');
       return false;
     }
 
@@ -207,33 +224,41 @@ class DataStorageHandler extends EncryptionHandler {
     );
 
     if (!context.saveResultNonce) {
-      context.error = 'Storage save AES nonce failed.';
-      HiLog.error(TAG, context.error);
+      HiLog.error(TAG, 'Storage save AES nonce failed.');
       return false;
     }
-
-    HiLog.info(TAG, 'EncryptAndSaveAssociation success!');
     context.success = true;
     return super.handle(context);
   }
 }
 
-export default class EncryptAndSaveValidator {
-  public static instance: EncryptAndSaveValidator;
+export default class AssociationEncryptValidator {
+  public static singletonInstance: Singleton<AssociationEncryptValidator> =
+    new Singleton<AssociationEncryptValidator>(() => new AssociationEncryptValidator());
 
-  public static getInstance(): EncryptAndSaveValidator {
-    if (!EncryptAndSaveValidator.instance) {
-      EncryptAndSaveValidator.instance = new EncryptAndSaveValidator();
-    }
-    return EncryptAndSaveValidator.instance;
+  public static getInstance(): AssociationEncryptValidator {
+    return AssociationEncryptValidator.singletonInstance.getInstance();
   }
 
   public async validate(
     storageUtil: StorageUtil,
-    association: AccountAssociation,
+    accountAssociation: AccountAssociation,
     saveFileName: string
   ): Promise<boolean> {
     HiLog.info(TAG, 'Enter encrypt and save data validator.');
+    if (!storageUtil) {
+      HiLog.error(TAG, 'Storage util is null.');
+      return false;
+    }
+    if (!accountAssociation) {
+      HiLog.error(TAG, 'Account association is null.');
+      return false;
+    }
+    if (isInvalidStr(saveFileName)) {
+      HiLog.error(TAG, 'The save file name is invalid.');
+      return false;
+    }
+
     let chain = new DataConversionHandler();
     chain.setNext(new KeyCheckHandler())
       .setNext(new NonceGenerationHandler())
@@ -242,7 +267,7 @@ export default class EncryptAndSaveValidator {
       .setNext(new Base64EncodingHandler())
       .setNext(new DataStorageHandler(storageUtil));
 
-    const context = new EncryptionContext(association, saveFileName);
+    const context = new EncryptionContext(accountAssociation, saveFileName);
     return chain.handle(context);
   }
 }

@@ -17,16 +17,17 @@ import AccountAssociationManager from '../manager/AccountAssociationManager';
 import AuthorizedAccount from '../bean/data/AuthorizedAccount';
 import { getOsAccountInfo } from '../common/utils';
 import { HiLog } from '../common/HiLog';
-import Singleton from '../common/Singleton';
 import { osAccount } from '@kit.BasicServicesKit';
+import Singleton from '../common/Singleton';
 
 const TAG: string = 'AssociationSer';
 
 export default class AccountAssociationService {
-  private static singletonInstance: Singleton<AccountAssociationService> = new Singleton<AccountAssociationService>();
+  private static singletonInstance: Singleton<AccountAssociationService> =
+    new Singleton<AccountAssociationService>(() => new AccountAssociationService());
 
   public static getInstance(): AccountAssociationService {
-    return AccountAssociationService.singletonInstance.getInstance(AccountAssociationService);
+    return AccountAssociationService.singletonInstance.getInstance();
   }
 
   public async getAuthorizedAccount(): Promise<string[]> {
@@ -39,13 +40,13 @@ export default class AccountAssociationService {
       return [];
     }
 
-    let ownerAccountId: string = accountInfo.distributedInfo.name;
+    const ownerAccountId: string = accountInfo.distributedInfo.name;
     const associationMgr: AccountAssociationManager | null = AccountAssociationManager.getInstance();
     if (!associationMgr) {
       HiLog.error(TAG, 'Get account association manager failed.');
       return [];
     }
-    let authorizedAccounts: AuthorizedAccount[] = await associationMgr.getAuthorizedAccount(ownerAccountId);
+    const authorizedAccounts: AuthorizedAccount[] = await associationMgr.getAuthorizedAccount(ownerAccountId);
     let responseData: string[] = [];
     authorizedAccounts.forEach(account => {
       responseData.push(account.getUserAccount());
@@ -64,7 +65,7 @@ export default class AccountAssociationService {
       return;
     }
 
-    let ownerAccountId: string = accountInfo.distributedInfo.name;
+    const ownerAccountId: string = accountInfo.distributedInfo.name;
     const associationMgr: AccountAssociationManager | null = AccountAssociationManager.getInstance();
     if (!associationMgr) {
       HiLog.error(TAG, 'Get account association manager failed.');
