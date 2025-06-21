@@ -20,15 +20,14 @@ import AuthorizedAccount from '../bean/data/AuthorizedAccount';
 import Constants from '../common/constant';
 import {
   decodeByBase64,
-  encodeByBase64,
   getCurrentTime,
-  generateRandom,
   getSha256,
   isInvalidStr,
   stringToUint8Array,
   uint8ArrayToHexString,
   uint8ArrayToString
 } from '../common/utils';
+import { EncryptAndSaveValidator } from '../validator/AccountAssociationValidator';
 import { HiLog } from '../common/HiLog';
 import HuksCipherUtils from '../common/huks/HuksCipherUtil';
 import HuksProperties from '../common/huks/HuksProperties';
@@ -38,11 +37,6 @@ const TAG: string = 'AssociationMgr';
 
 export default class AccountAssociationManager {
   private static mInstance: AccountAssociationManager | null = null;
-  private static readonly AAD: string = 'AssociationAAD';
-  private static readonly AES_NONCE_KEY: string = 'NONCE';
-  private static readonly ASSOCIATION_FILE_PREFIX: string = 'DlpAuthorizedAccounts_';
-  private static readonly ASSOCIATION_STORAGE_KEY: string = 'AccountAssociation';
-  private static readonly ASSOCIATION_MAX_SIZE: number = 20;
   private storageUtil: StorageUtil | null = null;
 
   private constructor() {
@@ -77,8 +71,10 @@ export default class AccountAssociationManager {
     return associationObj.getAuthorizedAccounts();
   }
 
-  private async updateAuthorizedAccount(ownerAccountId: string,
-    authorizedAccount: string): Promise<AuthorizedAccount[] | null> {
+  private async updateAuthorizedAccount(
+    ownerAccountId: string,
+    authorizedAccount: string
+  ): Promise<AuthorizedAccount[] | null> {
     let currentTime: number = getCurrentTime(false);
     let authorizedAccounts: AuthorizedAccount[] = await this.getAuthorizedAccount(ownerAccountId);
     let accountData: AuthorizedAccount[] =
@@ -86,9 +82,9 @@ export default class AccountAssociationManager {
 
     if (accountData.length === 0) {
       HiLog.info(TAG, 'No authorized account infomation. Create a new one.');
-      if (authorizedAccounts.length === AccountAssociationManager.ASSOCIATION_MAX_SIZE) {
+      if (authorizedAccounts.length === Constants.ASSOCIATION_MAX_SIZE) {
         HiLog.info(TAG,
-          `The authorized account list has reached the limit of ${AccountAssociationManager.ASSOCIATION_MAX_SIZE}.`);
+          `The authorized account list has reached the limit of ${Constants.ASSOCIATION_MAX_SIZE}.`);
         HiLog.info(TAG, 'Update the authorized account list.');
 
         let association = new AccountAssociation(ownerAccountId, authorizedAccounts);
@@ -155,7 +151,7 @@ export default class AccountAssociationManager {
       HiLog.error(TAG, `Input ownerAccountId is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_DELETE_FAILED}`);
       return;
     }
-    await HuksCipherUtils.deleteKey(HuksCipherUtils.ASSOCIATION_KEY_ALIAS);
+    await HuksCipherUtils.deleteKey(Constants.ASSOCIATION_KEY_ALIAS);
 
     let associationFileName = await this.getAccountAssociationFileName(ownerAccountId);
     if (!associationFileName) {
@@ -167,8 +163,8 @@ export default class AccountAssociationManager {
       return;
     }
 
-    await this.storageUtil.deleteData(AccountAssociationManager.ASSOCIATION_STORAGE_KEY, associationFileName);
-    await this.storageUtil.deleteData(AccountAssociationManager.AES_NONCE_KEY, associationFileName);
+    await this.storageUtil.deleteData(Constants.ASSOCIATION_STORAGE_KEY, associationFileName);
+    await this.storageUtil.deleteData(Constants.AES_NONCE_KEY, associationFileName);
     await this.storageUtil.deleteFile(associationFileName);
   }
 
@@ -184,7 +180,7 @@ export default class AccountAssociationManager {
       HiLog.error(TAG, 'Get accountIdSha256 failed.');
       return null;
     }
-    return AccountAssociationManager.ASSOCIATION_FILE_PREFIX + uint8ArrayToHexString(accountIdSha256);
+    return Constants.ASSOCIATION_FILE_PREFIX + uint8ArrayToHexString(accountIdSha256);
   }
 
   private async getAssociationFromLocal(ownerAccountId: string): Promise<AccountAssociation | null> {
@@ -202,14 +198,13 @@ export default class AccountAssociationManager {
 
     let associationCipherBase64: string =
       await StorageUtil.getInstance(appContext)
-        .getData(AccountAssociationManager.ASSOCIATION_STORAGE_KEY, associationFileName) as string;
+        .getData(Constants.ASSOCIATION_STORAGE_KEY, associationFileName) as string;
     if (isInvalidStr(associationCipherBase64)) {
       HiLog.error(TAG, 'No account association in storage.');
       return null;
     }
     let nonceBase64: string =
-      await StorageUtil.getInstance(appContext)
-        .getData(AccountAssociationManager.AES_NONCE_KEY, associationFileName) as string;
+      await StorageUtil.getInstance(appContext).getData(Constants.AES_NONCE_KEY, associationFileName) as string;
     if (isInvalidStr(nonceBase64)) {
       HiLog.error(TAG, 'No AES nonce in storage.');
       return null;
@@ -226,12 +221,12 @@ export default class AccountAssociationManager {
         HiLog.error(TAG, 'Get nonce failed.');
         return null;
       }
-      let aad: Uint8Array | null = stringToUint8Array(AccountAssociationManager.AAD);
+      let aad: Uint8Array | null = stringToUint8Array(Constants.ASSOCIATION_AAD);
       if (!aad) {
         HiLog.error(TAG, 'Get AAD failed.');
         return null;
       }
-      let associationUint8 = await HuksCipherUtils.decrypt(HuksCipherUtils.ASSOCIATION_KEY_ALIAS,
+      let associationUint8 = await HuksCipherUtils.decrypt(Constants.ASSOCIATION_KEY_ALIAS,
         associationCipherData.slice(0, associationCipherData.length - Constants.AE_TAG_SLICE_LENGTH),
         HuksProperties.getAesGcmDecryptProperties(associationCipherData, nonce, aad));
       if (!associationUint8) {
@@ -250,65 +245,19 @@ export default class AccountAssociationManager {
     return null;
   }
 
-  private async encryptAndSaveAssociation(associationObj: AccountAssociation,
+  private async encryptAndSaveAssociation(association: AccountAssociation,
     saveFileName: string): Promise<boolean> {
-    HiLog.info(TAG, 'Start encryptAndSaveAssociation.');
-    const data: Uint8Array | null = stringToUint8Array(JSON.stringify(associationObj));
-    if (!data) {
-      HiLog.error(TAG, 'Convert associationObj to Uint8Array failed.');
-      return false;
-    }
-    const existFlag: boolean = await HuksCipherUtils.isKeyExist(HuksCipherUtils.ASSOCIATION_KEY_ALIAS);
-    if (!existFlag) {
-      HiLog.info(TAG, 'The key of ASSOCIATION_KEY_ALIAS not exist. Create a new one.');
-      let props = HuksProperties.getAesGenerateProperties();
-      let isGenerated: boolean = await HuksCipherUtils.generateKey(HuksCipherUtils.ASSOCIATION_KEY_ALIAS, {
-        properties: props
-      });
-      if (!isGenerated) {
-        HiLog.error(TAG, 'Generate key with keyAlias failed.');
-        return false;
-      }
-    }
-    let nonce = generateRandom(Constants.AES_NONCE_LENGTH);
-    if (!nonce || nonce.byteLength === 0) {
-      HiLog.error(TAG, 'Generate nonce failed.');
-      return false;
-    }
-    let aad: Uint8Array | null = stringToUint8Array(AccountAssociationManager.AAD);
-    if (!aad) {
-      HiLog.error(TAG, 'Get AAD failed.');
-      return false;
-    }
-    let associationCipherData = await HuksCipherUtils.encrypt(HuksCipherUtils.ASSOCIATION_KEY_ALIAS, data,
-      HuksProperties.getAesGcmEncryptProperties(nonce, aad));
-    if (!associationCipherData) {
-      HiLog.error(TAG, 'Encrypt data failed.');
+    HiLog.info(TAG, 'Start encrypt and save account association.');
+
+    if (!this.storageUtil) {
+      HiLog.error(TAG, 'Storage util is null.');
       return false;
     }
 
-    let associationCipherBase64 = encodeByBase64(associationCipherData);
-    if (!associationCipherBase64) {
-      HiLog.error(TAG, 'Get associationCipherBase64 failed.');
-      return false;
-    }
-    let nonceBase64 = encodeByBase64(nonce);
-    if (!nonceBase64) {
-      HiLog.error(TAG, 'Get nonceBase64 failed.');
-      return false;
-    }
-
-    let saveResultAssociation =
-      await this.storageUtil?.saveData(AccountAssociationManager.ASSOCIATION_STORAGE_KEY, associationCipherBase64,
-        saveFileName);
-    if (!saveResultAssociation) {
-      HiLog.error(TAG, 'Storage save account association failed.');
-      return false;
-    }
-    let saveResultNonce =
-      await this.storageUtil?.saveData(AccountAssociationManager.AES_NONCE_KEY, nonceBase64, saveFileName);
-    if (!saveResultNonce) {
-      HiLog.error(TAG, 'Storage save AES nonce failed.');
+    const validator = EncryptAndSaveValidator.getInstance();
+    let res = validator.validate(this.storageUtil, association, saveFileName);
+    if (!res) {
+      HiLog.error(TAG, 'EncryptAndSaveAssociation failed.');
       return false;
     }
     HiLog.info(TAG, 'EncryptAndSaveAssociation success!');

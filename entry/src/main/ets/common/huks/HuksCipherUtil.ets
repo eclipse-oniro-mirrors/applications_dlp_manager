@@ -20,8 +20,6 @@ import { huks } from '@kit.UniversalKeystoreKit';
 const TAG: string = 'HuksCipherUtils';
 
 export default class HuksCipherUtils {
-  public static readonly ASSOCIATION_KEY_ALIAS: string = 'ASSOCIATION_KEY_ALIAS';
-
   public static async isKeyExist(keyAlias: string): Promise<boolean> {
     if (isInvalidStr(keyAlias)) {
       HiLog.error(TAG, 'Input key alias is invalid.');
