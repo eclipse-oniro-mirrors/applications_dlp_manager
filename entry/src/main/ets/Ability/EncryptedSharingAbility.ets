@@ -118,9 +118,13 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
 
     let parameters = want.parameters as Record<string, Object>;
     AppStorage.setOrCreate('hiPkgName', parameters['ohos.aafwk.param.callerBundleName']);
-    let dlpInfo: DLPInfo = await getDLPInfo();
-    AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
-    AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
+
+    let dlpInfoRet = await getDLPInfo();
+    if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS) {
+      AppStorage.setOrCreate('hiPNameId', dlpInfoRet.result!.name);
+      AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result!.versionCode);
+    }
+
     let storage: LocalStorage = new LocalStorage({
       'session': session,
       'actionWant': want,
@@ -143,7 +147,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     let applicationContext = this.context.getApplicationContext();
     try {
       applicationContext.off('environment', this.callbackId, (error, data) => {
-        if (error && error.code != 0) {
+        if (error && error.code !== 0) {
           HiLog.error(TAG, `off environment error: ${JSON.stringify(error)}`);
         } else {
           HiLog.info(TAG, `off environment success: ${JSON.stringify(data)}`);

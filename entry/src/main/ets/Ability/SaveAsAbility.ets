@@ -175,8 +175,8 @@ export default class SaveAsAbility extends UIAbility {
       Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
         .get(this.tokenId)?.[0] as dlpPermission.DLPFile;
       let contactAccount = dlpFileInfo.dlpProperty.contactAccount as string;
-      if (this.authPerm != dlpPermission.DLPFileAccess.CONTENT_EDIT &&
-        this.authPerm != dlpPermission.DLPFileAccess.FULL_CONTROL) {
+      if (this.authPerm !== dlpPermission.DLPFileAccess.CONTENT_EDIT &&
+        this.authPerm !== dlpPermission.DLPFileAccess.FULL_CONTROL) {
         HiLog.error(TAG, `invalid authPerm: ${this.authPerm}`);
         this.isOK = false;
         AppStorage.setOrCreate('contactAccount', contactAccount);
@@ -386,7 +386,7 @@ export default class SaveAsAbility extends UIAbility {
           throw new Error('file name exceeds max length');
         }
         let srcName = this.getSourceFileName();
-        if (option.newFileNames[0].length > 0 && srcName != option.newFileNames[0]) {
+        if (option.newFileNames[0].length > 0 && srcName !== option.newFileNames[0]) {
           HiLog.error(TAG, `src file name is not same with newFileName provided`);
           throw new Error('picker filename error');
         }
@@ -526,7 +526,14 @@ export default class SaveAsAbility extends UIAbility {
       this.sandboxBundleName = token2FileValue[1] as string;
       let appId: number = token2FileValue[2] as number;
       let srcUri: string = token2FileValue[4] as string;
-      this.srcFdPicker = getFileFd(srcUri);
+
+      let getFileFdRet = getFileFd(srcUri);
+      if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+        HiLog.error(TAG, 'getFileFd error')
+        reject();
+      }
+      this.srcFdPicker = getFileFdRet.result!;
+
       let success = await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
       if (!success) {
         FileUtil.closeFileSync(this.file);

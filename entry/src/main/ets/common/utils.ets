@@ -32,12 +32,14 @@ import { systemDateTime } from '@kit.BasicServicesKit';
 import util from '@ohos.util';
 import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
+import Result from './Result';
+import { ResultMsg } from './ResultMsg';
 
 const TAG = 'Utils';
-const HEAD_LENGTH_IN_BYTE = 72;
-const HEAD_LENGTH_IN_U32 = 18;
-const CERT_OFFSET = 8;
-const CERT_SIZE = 10;
+// const HEAD_LENGTH_IN_BYTE = 72;
+// const HEAD_LENGTH_IN_U32 = 18;
+// const CERT_OFFSET = 8;
+// const CERT_SIZE = 10;
 const NUMBER_TWO = 2;
 
 const NET_CAPABILITY_INTERNET: number = 12;
@@ -96,6 +98,11 @@ let defaultDlpFile: dlpPermission.DLPFile = {
   }
 };
 
+let defaultAppInfo: dlpPermission.DLPSandboxInfo = {
+  appIndex: -1,
+  tokenID: -1,
+};
+
 interface AuthAccount {
   authAccount: string;
   textContent?: string;
@@ -127,15 +134,15 @@ function getFileUriByPath(filePath: string): string {
   }
 }
 
-function getFileFd(uri: string, mode?: number): number {
+function getFileFd(uri: string, mode?: number): Result<number>{
   mode = mode || fs.OpenMode.READ_ONLY;
   try {
     let file = fs.openSync(uri, mode);
     HiLog.info(TAG, `open: ${uri}, as: ${file.fd}`);
-    return file.fd;
+    return ResultMsg.buildSuccess(file.fd);
   } catch (err) {
-    HiLog.error(TAG, `openSync error: ${JSON.stringify(err)}`);
-    return Constants.ERR_CODE_OPEN_FILE_ERROR;
+    HiLog.wrapError(TAG, err, 'openSync error');
+    return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
   }
 }
 
@@ -144,19 +151,22 @@ async function getOsAccountInfo(): Promise<account_osAccount.OsAccountInfo> {
   return await accountMgr.queryOsAccount();
 }
 
-function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): number {
+function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): Result<void> {
   AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.DOMAIN_ACCOUNT);
   if (accountInfo.domainInfo.accountName === '' &&
     accountInfo.domainInfo.accountId === '') {
     AppStorage.setOrCreate('hiAccountStatus', 0);
-    return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
+    // return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
+    return ResultMsg.getErrMsg(Constants.ERR_JS_APP_NO_ACCOUNT_ERROR);
   }
   if (!accountInfo.domainInfo.isAuthenticated) {
     AppStorage.setOrCreate('hiAccountStatus', 0);
-    return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
+    // return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
+    return ResultMsg.getErrMsg(Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED);
   }
   AppStorage.setOrCreate('hiAccountStatus', 1);
-  return Constants.ERR_JS_APP_ACCOUNT_INFO;
+  // return Constants.ERR_JS_APP_ACCOUNT_INFO;
+  return ResultMsg.buildSuccess();
 }
 
 async function getUserId(): Promise<number> {
@@ -294,6 +304,20 @@ function getAppId(bundleName: string) {
   })
 }
 
+async function getAppIdWithUserId(bundleName: string, userId: number): Promise<Result<string>> {
+  let bundleFlags: number = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO;
+  try {
+    let data = await bundleManager.getBundleInfo(bundleName, bundleFlags, userId);
+    if (data.signatureInfo.appId) {
+      return ResultMsg.buildSuccess(data.signatureInfo.appId);
+    }
+    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION);
+  } catch (err) {
+    HiLog.wrapError(TAG, err, 'get appId failed');
+    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION);
+  }
+}
+
 function getTime() {
   let permanent: boolean | undefined = AppStorage.get('permanent');
   if (permanent) {
@@ -346,23 +370,19 @@ function getFileSizeByUriSync(uri: string): number {
   }
 }
 
-function getDLPInfo() {
-  return new Promise<DLPInfo>(async (resolve, reject) => {
-    let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_DEFAULT;
-    try {
-      bundleManager.getBundleInfoForSelf(bundleFlags, (err, data) => {
-        if (err) {
-          HiLog.error(TAG, `getBundleInfoForSelf failed. Cause: ${JSON.stringify(err)}`);
-          reject({ name: '', versionCode: '' });
-        } else {
-          resolve({ name: data.name, versionCode: data.versionCode.toString() });
-        }
-      });
-    } catch (err) {
-      HiLog.error(TAG, `getBundleInfoForSelf failed. Cause: ${JSON.stringify(err)}`);
-      reject({ name: '', versionCode: '' });
-    }
-  })
+async function getDLPInfo(): Promise<Result<DLPInfo>> {
+  let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_DEFAULT;
+  try {
+    const data = await bundleManager.getBundleInfoForSelf(bundleFlags);
+    let dlpInfo: DLPInfo = {
+      name: data.name,
+      versionCode: data.versionCode.toString()
+    };
+    return ResultMsg.buildSuccess(dlpInfo);
+  } catch (err) {
+    HiLog.wrapError(TAG, err, `getBundleInfoForSelf failed`);
+    return ResultMsg.getErrMsg(Constants.ERR_CODE_GET_BUNDLE_INFO_ERROR);
+  }
 }
 
 function sendDlpManagerAccountLogin(errorCode: number) {
@@ -482,8 +502,8 @@ function isValidPath(path: string): Boolean {
 function getAccountTypeAndRealFileType(
   context: common.ServiceExtensionContext | common.UIExtensionContext, fd: number): Promise<DLPGeneralInfo> {
   return new Promise(async (resolve, reject) => {
-    let z = new ArrayBuffer(HEAD_LENGTH_IN_BYTE);
-    let option: ChangeOption = { offset: 0, length: HEAD_LENGTH_IN_BYTE };
+    let z = new ArrayBuffer(Constants.HEAD_LENGTH_IN_BYTE);
+    let option: ChangeOption = { offset: 0, length: Constants.HEAD_LENGTH_IN_BYTE };
     try {
       fs.readSync(fd, z, option);
     } catch (error) {
@@ -491,7 +511,7 @@ function getAccountTypeAndRealFileType(
       reject();
       return;
     }
-    let buf = new Uint32Array(z, 0, HEAD_LENGTH_IN_U32);
+    let buf = new Uint32Array(z, 0, Constants.HEAD_LENGTH_IN_U32);
     if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
       let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
       let filePath = context.filesDir + '/saveAs' + random;
@@ -534,9 +554,9 @@ function getAccountTypeAndRealFileType(
         removeDir(dirPath);
       }
     } else {
-      let cert = new ArrayBuffer(buf[CERT_SIZE]);
-      let certOffset = CERT_OFFSET_4GB * buf[CERT_OFFSET + 1] + buf[CERT_OFFSET];
-      option = { offset: certOffset, length: buf[CERT_SIZE] };
+      let cert = new ArrayBuffer(buf[Constants.CERT_SIZE]);
+      let certOffset = CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
+      option = { offset: certOffset, length: buf[Constants.CERT_SIZE] };
       try {
         fs.readSync(fd, cert, option);
         let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
@@ -732,5 +752,11 @@ export {
   checkNetworkStatus,
   getConnectionStatus,
   showToast,
-  logErrorShowToast
+  logErrorShowToast,
+  closeFile,
+  deleteFile,
+  removeDir,
+  getCurrentTime,
+  defaultAppInfo,
+  getAppIdWithUserId
 };

@@ -43,6 +43,7 @@ import FileUtils from '../common/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import IdDlpRpcServiceProxy from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import common from '@ohos.app.ability.common';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'MainEx';
 
@@ -102,9 +103,11 @@ export default class MainAbility extends UIExtensionAbility {
       return;
     }
     GlobalContext.store('session', session);
-    let dlpInfo:DLPInfo = await getDLPInfo();
-    AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
-    AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
+    let dlpInfoRet = await getDLPInfo();
+    if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS) {
+      AppStorage.setOrCreate('hiPNameId', dlpInfoRet.result!.name);
+      AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result!.versionCode);
+    }
     GlobalContext.store('abilityWant', want);
     GlobalContext.store('uri', want.uri ?? '');
     direction = this.context.config.direction ?? -1;
@@ -267,10 +270,10 @@ export default class MainAbility extends UIExtensionAbility {
     } catch {
       return;
     }
-    let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
+    let codeMessageRet = checkDomainAccountInfo(GlobalContext.load('accountInfo'));
     sendDlpManagerAccountLogin(0);
-    if (codeMessage) {
-      this.gotoAlertPage(session, { code: codeMessage } as BusinessError);
+    if (codeMessageRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      this.gotoAlertPage(session, { code: codeMessageRet.errcode } as BusinessError);
       return;
     }
     let requestIsFromSandBox: boolean = await judgeIsSandBox(want);
@@ -328,8 +331,15 @@ export default class MainAbility extends UIExtensionAbility {
       }
       return;
     } else {
+      let dlpFd: number = -1;
       try {
-        let dlpFd = getFileFd(String(want.uri));
+        let getFileFdRet = getFileFd(String(want.uri));
+        if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+          HiLog.error(TAG, 'getFileFd error')
+          return;
+        }
+        dlpFd = getFileFdRet.result!;
+
         let dlpGeneralInfo: DLPGeneralInfo = await getAccountTypeAndRealFileType(this.context, dlpFd);
         GlobalContext.store('realFileType', dlpGeneralInfo.realFileType);
         if (dlpGeneralInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
@@ -339,7 +349,9 @@ export default class MainAbility extends UIExtensionAbility {
             code: Constants.ERR_JS_APP_CANNOT_OPEN } as BusinessError);
         }
       } catch {
-        return;
+        HiLog.error(TAG, 'getFileFd error');
+      } finally {
+        FileUtil.closeFdSync(dlpFd);
       }
     }
   }

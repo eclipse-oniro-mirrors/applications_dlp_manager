@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,8 @@
  * limitations under the License.
  */
 
-export class ObjectUtil {
-  static Assign<T extends {}, U>(target: T, source: U): T & U {
-    return Object.assign(target, source);
-  }
-
-  static AssignCopyAll<T extends {}, U, V>(target: T, source1: U, source2: V) {
-    return Object.assign({}, target, source1, source2);
-  }
+export default interface Result<T> {
+  errcode: number;
+  errmsg?: string;
+  result?: T;
 }

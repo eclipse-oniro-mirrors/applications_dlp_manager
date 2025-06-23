@@ -14,6 +14,7 @@
  */
 
 import hilog from '@ohos.hilog';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 /**
  * 日志级别
@@ -95,5 +96,16 @@ export class HiLog {
     if (LogVersion.Fatal >= HiLog.LOG_LEVEL) {
       hilog.fatal(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, message);
     }
+  }
+
+  /**
+   * 打印 Error 日志
+   * @param tag 日志Tag
+   * @param message 打印信息
+   */
+  public static wrapError(tag: string, error: Error, msg: string): void {
+    const busErr: BusinessError = error as BusinessError;
+    hilog.error(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, msg + ` Code is ${busErr.code},
+    message is ${busErr.message}}, data is ${busErr.data}}`)
   }
 }

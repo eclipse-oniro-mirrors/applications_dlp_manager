@@ -436,11 +436,11 @@ struct changeEncryption {
       }
       return;
     }
-    let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
-    if (codeMessage) {
+    let codeMessageRet = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
+    if (codeMessageRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage(
-          { code: codeMessage } as BusinessError);
+          { code: codeMessageRet.errcode } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       }
       return;

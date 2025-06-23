@@ -136,7 +136,7 @@ export default class Constants {
   public static readonly ERR_JS_APP_NETWORK_INVALID = 9;
   public static readonly ERR_JS_APP_ENCRYPTING = 10;
   public static readonly ERR_JS_APP_CANNOT_OPEN = 11;
-  public static readonly ERR_JS_RELEASE_FILE_OPEN = 13
+  public static readonly ERR_JS_RELEASE_FILE_OPEN = 13;
   public static readonly ERR_JS_APP_PERMISSION_DENY = 201;
   public static readonly ERR_JS_CREDENTIAL_TIMEOUT = 19100003;
   public static readonly ERR_JS_CREDENTIAL_SERVICE_ERROR = 19100004;
@@ -254,11 +254,22 @@ export default class Constants {
   public static DLP_FILE_LENGTH_LIMIT = 255;
   public static DLP_FILE_SUFFIX = '.dlp';
 
-  public static readonly ERR_CODE_OPEN_FILE_ERROR = -1;
-  public static readonly ERR_CODE_NETWORK_ERROR: number = -4;
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;
   public static readonly ERR_CODE_CONNECTION_TIME_OUT: number = -310;
+
+  // open dlp file error code
   public static readonly ERR_CODE_SUCCESS: number = 0;
+  public static readonly ERR_CODE_OPEN_FILE_ERROR = -1;
+  public static readonly ERR_CODE_PARAMS_CHECK_ERROR = -2;
+  public static readonly ERR_CODE_CREATE_DECRYPT_TASK_ERROR = -3;
+  public static readonly ERR_CODE_NETWORK_ERROR: number = -4;
+  public static readonly ERR_CODE_PARSE_DLP_FILE_ERROR: number = -5;
+  public static readonly ERR_CODE_START_ABILITY_ERROR: number = -6;
+  public static readonly ERR_CODE_GET_BUNDLE_INFO_ERROR: number = -7;
+  public static readonly ERR_CODE_GET_LOCK_ASYNC_ERROR: number = -8;
+  public static readonly ERR_CODE_FILE_IS_DECRYPTING_ERROR: number = -9;
+  public static readonly ERR_CODE_FILE_IS_ENCRYPTING_ERROR: number = -10; // 可能有重复的
+
   public static readonly COMMAND_SEARCH_USER_INFO = 1;
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
   public static readonly COMMAND_GET_DOMAIN_ACCOUNT_INFO = 3;
@@ -274,4 +285,13 @@ export default class Constants {
   public static readonly TF_ASYNC: number = 1;
 
   public static readonly FONT_SIZE_SCALE_KEY: string = 'currentFontSizeScale';
+
+  public static HEAD_LENGTH_IN_BYTE = 72;
+  public static HEAD_LENGTH_IN_U32 = 18;
+  public static CERT_OFFSET = 8;
+  public static CERT_SIZE = 10;
+  public static NUMBER_ONE = 1;
+  public static NUMBER_TWO = 2;
+  public static CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
+
 }
