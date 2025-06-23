@@ -14,7 +14,7 @@
  */
 
 import Constants from '../../common/constant';
-import EncryptSharingShowCodeEnum from '../../common/enum/EncryptSharingShowCodeEnum';
+import { EncryptSharingShowCodeEnum } from '../../common/enum/EncryptSharingShowCodeEnum';
 
 export default class EncryptSharingHelper {
   private static readonly ERROR_SHOW_MAP = new Map<number, Resource | string>([

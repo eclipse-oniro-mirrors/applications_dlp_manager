@@ -25,8 +25,7 @@ import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import emitter from '@ohos.events.emitter';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
-import EncryptSharingShowCodeEnum from '../common/enum/EncryptSharingShowCodeEnum';
-import EncryptSharingTerminateCode from '../common/enum/EncryptSharingTerminateCodeEnum';
+import { EncryptSharingShowCodeEnum, EncryptSharingTerminateCode } from '../common/enum/EncryptSharingShowCodeEnum';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import fs from '@ohos.file.fs';
 import {
@@ -86,6 +85,9 @@ struct encryptedSharing {
   private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
   private connectService: CredConnectService = new CredConnectService(this.context);
   private storage = this.getUIContext().getSharedLocalStorage() as LocalStorage;
+  private session: UIExtensionContentSession | undefined =
+    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
+  private actionWant: Want | undefined = this.storage.get<Want>('actionWant');
   private inputUriArray: string[] =
     this.storage === undefined ? [] : this.storage.get<string[]>('inputUriArray') as string[];
   private isPhoneDevice: boolean = true;
@@ -104,15 +106,12 @@ struct encryptedSharing {
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
   @State showUIExtensionForAccountLogin: boolean = false;
-  @State actionWant: Want | undefined = this.storage.get<Want>('actionWant');
   @State inputValue: string = '';
   @State phoneFormatTips: boolean = false;
   @State ownerAccount: string = '';
   @State ownerAccountID: string = '';
   @State contactExists: boolean = true;
   @State credentialCallBackMsg: string | Resource = '';
-  @State session: UIExtensionContentSession | undefined =
-    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
   @State placeHolderStr: ResourceStr = '';
   @State contactPerson: string = '';
   @State recordSuccessUid: string = '';
@@ -166,8 +165,7 @@ struct encryptedSharing {
   }
 
   associationItemAction(phone: string[]) {
-    const str = phone.join('');
-    this.inputValue = str;
+    this.inputValue = phone.join('');
     this.showAssociationList = [];
   }
 
@@ -403,6 +401,9 @@ struct encryptedSharing {
       await fs.mkdir(filePath, true);
     } catch (error) {
       HiLog.error(TAG, `mkdir failed: ${JSON.stringify(error)}`);
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
+      this.enableComponents();
+      return;
     }
 
     let dlpFilePathArray: string[] = [];

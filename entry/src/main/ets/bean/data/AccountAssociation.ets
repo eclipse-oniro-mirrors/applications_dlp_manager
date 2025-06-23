@@ -12,9 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AuthorizedAccount } from './AuthorizedAccount';
 
-export default class AccountAssociationCacheDTO {
+import AuthorizedAccount from './AuthorizedAccount';
+import { HiLog } from '../../common/HiLog';
+
+const TAG: string = 'AccAssociation';
+
+export default class AccountAssociation {
   private accountId: string;
   private authorizedAccounts: AuthorizedAccount[];
 
@@ -41,6 +45,7 @@ export default class AccountAssociationCacheDTO {
 
   public removeEarliestAuthorizedAccount(): AuthorizedAccount | null {
     if (!this.authorizedAccounts || this.authorizedAccounts.length === 0) {
+      HiLog.error(TAG, 'The authorized account array is invalid.');
       return null;
     }
     let earliestAccount: AuthorizedAccount = this.authorizedAccounts.reduce((min, current) => {

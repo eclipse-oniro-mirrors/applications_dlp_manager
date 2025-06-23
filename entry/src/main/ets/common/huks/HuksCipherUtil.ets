@@ -20,8 +20,6 @@ import { huks } from '@kit.UniversalKeystoreKit';
 const TAG: string = 'HuksCipherUtils';
 
 export default class HuksCipherUtils {
-  public static readonly ASSOCIATION_KEY_ALIAS: string = 'ASSOCIATION_KEY_ALIAS';
-
   public static async isKeyExist(keyAlias: string): Promise<boolean> {
     if (isInvalidStr(keyAlias)) {
       HiLog.error(TAG, 'Input key alias is invalid.');
@@ -41,8 +39,12 @@ export default class HuksCipherUtils {
   }
 
   public static async generateKey(keyAlias: string, options: huks.HuksOptions): Promise<boolean> {
-    if (isInvalidStr(keyAlias) || !options) {
-      HiLog.error(TAG, 'Input parameter is invalid.');
+    if (isInvalidStr(keyAlias)) {
+      HiLog.error(TAG, 'keyAlias is invalid.');
+      return false;
+    }
+    if (!options) {
+      HiLog.error(TAG, 'HuksOptions is invalid.');
       return false;
     }
     try {
@@ -57,7 +59,7 @@ export default class HuksCipherUtils {
 
   public static async deleteKey(keyAlias: string): Promise<void> {
     if (isInvalidStr(keyAlias)) {
-      HiLog.error(TAG, 'Input parameter is invalid.');
+      HiLog.error(TAG, 'keyAlias is invalid.');
       return;
     }
     let emptyOptions: huks.HuksOptions = {
@@ -73,8 +75,16 @@ export default class HuksCipherUtils {
 
   public static async encrypt(keyAlias: string, plainData: Uint8Array,
     params: huks.HuksParam[]): Promise<Uint8Array | undefined> {
-    if (isInvalidStr(keyAlias) || !plainData || plainData.length === 0 || !params) {
-      HiLog.error(TAG, 'Input parameter is invalid.');
+    if (isInvalidStr(keyAlias)) {
+      HiLog.error(TAG, 'keyAlias is invalid.');
+      return undefined;
+    }
+    if (!plainData || plainData.length === 0) {
+      HiLog.error(TAG, 'plainData is invalid.');
+      return undefined;
+    }
+    if (!params) {
+      HiLog.error(TAG, 'HuksParam is invalid.');
       return undefined;
     }
     let option: huks.HuksOptions = {
@@ -99,8 +109,16 @@ export default class HuksCipherUtils {
 
   public static async decrypt(keyAlias: string, cipherData: Uint8Array,
     params: huks.HuksParam[]): Promise<Uint8Array | undefined> {
-    if (isInvalidStr(keyAlias) || !cipherData || cipherData.length === 0 || !params) {
-      HiLog.error(TAG, 'Input parameter is invalid.');
+    if (isInvalidStr(keyAlias)) {
+      HiLog.error(TAG, 'keyAlias is invalid.');
+      return undefined;
+    }
+    if (!cipherData || cipherData.length === 0) {
+      HiLog.error(TAG, 'cipherData is invalid.');
+      return undefined;
+    }
+    if (!params) {
+      HiLog.error(TAG, 'HuksParam is invalid.');
       return undefined;
     }
     let option: huks.HuksOptions = {

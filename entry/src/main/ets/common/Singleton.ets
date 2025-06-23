@@ -13,28 +13,18 @@
  * limitations under the License.
  */
 
-export class AuthorizedAccount {
-  private mUserAccount: string;
-  private mTimestamp: number;
+export default class Singleton<T> {
+  private instance: T | null = null;
+  private factory: () => T;
 
-  constructor(userAccount: string, timestamp: number) {
-    this.mUserAccount = userAccount;
-    this.mTimestamp = timestamp;
+  constructor(factory: () => T) {
+    this.factory = factory;
   }
 
-  public getUserAccount(): string {
-    return this.mUserAccount;
-  }
-
-  public setUserAccount(userAccount: string): void {
-    this.mUserAccount = userAccount;
-  }
-
-  public getTimestamp(): number {
-    return this.mTimestamp;
-  }
-
-  public setTimestamp(timestamp: number): void {
-    this.mTimestamp = timestamp;
+  getInstance(): T {
+    if (!this.instance) {
+      this.instance = this.factory();
+    }
+    return this.instance;
   }
 }

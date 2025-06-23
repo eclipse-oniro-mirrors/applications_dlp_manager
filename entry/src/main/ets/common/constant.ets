@@ -289,4 +289,12 @@ export default class Constants {
   public static readonly MAX_DATA_LEN = 50000;
   public static readonly AES_NONCE_LENGTH = 12;
   public static readonly AE_TAG_SLICE_LENGTH = 16;
+
+  public static readonly AES_NONCE_KEY: string = 'NONCE';
+  public static readonly ASSOCIATION_AAD: string = 'AssociationAAD';
+  public static readonly ASSOCIATION_KEY_ALIAS: string = 'ASSOCIATION_KEY_ALIAS';
+  public static readonly ASSOCIATION_FILE_PREFIX: string = 'DlpAuthorizedAccounts_';
+  public static readonly ASSOCIATION_MAX_SIZE: number = 20;
+  public static readonly ASSOCIATION_STORAGE_KEY: string = 'AccountAssociation';
+  public static readonly RANDOM_LENGTH_MIN: number = 0;
 }

@@ -18,17 +18,22 @@ import { Configuration } from '@ohos.app.ability.Configuration';
 import Constants from '../common/constant';
 import emitter from '@ohos.events.emitter';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
-import EncryptSharingShowCodeEnum from '../common/enum/EncryptSharingShowCodeEnum';
-import EncryptSharingTerminateCode from '../common/enum/EncryptSharingTerminateCodeEnum';
+import { EncryptSharingShowCodeEnum, EncryptSharingTerminateCode } from '../common/enum/EncryptSharingShowCodeEnum';
 import { EnvironmentCallback } from '@kit.AbilityKit';
 import { getDLPInfo, DLPInfo, logErrorShowToast } from '../common/utils';
 import { HiLog } from '../common/HiLog';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
-import Want from '@ohos.app.ability.Want';
 import UriValidator from '../validator/UriValidator';
+import Want from '@ohos.app.ability.Want';
 
 const TAG = 'share';
 const BG_COLOR = '#00000000';
+
+interface encryptedSharingParams {
+  session: UIExtensionContentSession,
+  actionWant: Want,
+  inputUriArray: string[]
+}
 
 export default class EncryptedSharingAbility extends ActionExtensionAbility {
   private callbackId: number = 0;
@@ -121,11 +126,13 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     let dlpInfo: DLPInfo = await getDLPInfo();
     AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
-    let storage: LocalStorage = new LocalStorage({
+
+    let storageParams: encryptedSharingParams = {
       'session': session,
       'actionWant': want,
       'inputUriArray': this.inputUriArray
-    } as Record<string, UIExtensionContentSession | Want | string[]>);
+    }
+    let storage: LocalStorage = new LocalStorage(storageParams);
     try {
       session.loadContent('pages/encryptedSharing', storage);
       session.setWindowBackgroundColor(BG_COLOR);

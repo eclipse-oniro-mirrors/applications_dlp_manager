@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-const enum EncryptSharingShowCodeEnum {
+export const enum EncryptSharingShowCodeEnum {
   SUCCESS = 0,
   COUNT_ERROR = 1,
   FILE_ENCRYPTED_ERROR = 2,
@@ -28,4 +28,9 @@ const enum EncryptSharingShowCodeEnum {
   ENCRYPT_FAIL_ERROR = 11
 }
 
-export default EncryptSharingShowCodeEnum;
+export const enum EncryptSharingTerminateCode {
+  BACK = 0,
+  CANCEL = 1,
+  SUCCESS = 2,
+  CHECK_URI_FAILED = 3
+}
