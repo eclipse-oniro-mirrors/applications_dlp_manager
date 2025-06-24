@@ -69,7 +69,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_NOT_DLP_FILE:
         return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_USER_NO_PERMISSION:
-        return { 'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM') } as Record<string, Resource>;
+        return { 'msg': $r('app.string.File_no_permission') } as Record<string, Resource>;
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
         return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
       case Constants.ERR_JS_OFFLINE:
@@ -164,7 +164,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_NOT_DLP_FILE:
         return $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR');
       case Constants.ERR_JS_USER_NO_PERMISSION:
-        return $r('app.string.MESSAGE_APP_NOT_HAVE_PERM');
+        return $r('app.string.File_no_permission');
       case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
         return $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED');
       case Constants.ERR_JS_APP_CANNOT_OPEN:

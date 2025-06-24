@@ -351,6 +351,10 @@
         {
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"[TS_1017669]_Insufficient storage. Delete files you don't need to free up space."
+        },
+        {
+            "name":"File_no_permission",
+            "value":"[TS_1071512]_Not authorized to view this file with the current HUAWEI ID."
         }
     ]
 }

@@ -580,6 +580,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"ཁྱེད་ཀྱི་ཧྭ་ཝེ་ཐོ་ཨང་ལ་ཡིག་ཆ་འདིར་ལྟ་ཞིབ་བྱེད་པའི་དབང་ཚད་མེད།",
+            "attr":{
+                "priority":"LT"
+            }
         }
     ]
 }
