@@ -199,6 +199,10 @@ class DataDecryptionHandler extends DecryptionHandler {
       HiLog.error(TAG, 'Missing AAD data for decryption.');
       return null;
     }
+    if (!context.associationCipherBase64 || context.associationCipherBase64.length < Constants.AE_TAG_SLICE_LENGTH) {
+      HiLog.error(TAG, 'associationCipherBase64 is invalid.');
+      return null;
+    }
 
     const cipherData = context.associationCipherData.slice(
       0,
@@ -250,13 +254,8 @@ class AssociationConversionHandler extends DecryptionHandler {
       return null;
     }
 
-    try {
-      context.associationObj = AccountAssociationConvertor.convertToAccountAssociation(context.associationObjStr);
-      return context.associationObj;
-    } catch (error) {
-      HiLog.error(TAG, `Convert to AccountAssociation failed: ${error}`);
-    }
-    return null;
+    context.associationObj = AccountAssociationConvertor.convertToAccountAssociation(context.associationObjStr);
+    return context.associationObj;
   }
 }
 
