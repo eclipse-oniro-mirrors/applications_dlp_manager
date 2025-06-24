@@ -677,7 +677,7 @@ function checkNetworkStatus(): Promise<void> {
   })
 }
 
-function isInvalidStr(input: string | null): boolean {
+function isInvalidStr(input: string | null | undefined): boolean {
   return (input === null || input === undefined || input.trim() === '' || input.length === 0);
 }
 

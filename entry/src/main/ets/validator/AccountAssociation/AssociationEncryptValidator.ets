@@ -93,6 +93,7 @@ class KeyCheckHandler extends EncryptionHandler {
         HiLog.error(TAG, 'Generate key with keyAlias failed.');
         return false;
       }
+      context.keyExist = true;
     }
     return super.handle(context);
   }

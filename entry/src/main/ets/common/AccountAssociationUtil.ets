@@ -55,17 +55,13 @@ export default class AccountAssociationUtil {
       return null;
     }
 
-    try {
-      const validator = AssociationDecryptValidator.getInstance();
-      let res: AccountAssociation | null = await validator.validate(ownerAccountId);
-      if (res) {
-        HiLog.info(TAG, 'Get account association data from local success.');
-        return res;
-      }
-      HiLog.error(TAG, 'Get account association data from local failed.');
-    } catch (error) {
-      HiLog.error(TAG, `Get account association from local error: ${JSON.stringify(error)}`);
+    const validator = AssociationDecryptValidator.getInstance();
+    let res: AccountAssociation | null = await validator.validate(ownerAccountId);
+    if (res) {
+      HiLog.info(TAG, 'Get account association data from local success.');
+      return res;
     }
+    HiLog.error(TAG, 'Get account association data from local failed.');
     return null;
   }
 

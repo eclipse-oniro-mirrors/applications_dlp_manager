@@ -35,12 +35,7 @@ export default class AppStorageMgr {
 
   static setOrCreate<T>(key: string, value: T, isCreate: boolean = true): boolean {
     if (isCreate) {
-      try {
-        AppStorage.setOrCreate(key, value);
-      } catch (err) {
-        HiLog.error(TAG, `setOrCreate failed: ${JSON.stringify(err)}`);
-        return false;
-      }
+      AppStorage.setOrCreate(key, value);
       return true;
     }
     return AppStorage.set<T>(key, value);

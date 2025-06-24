@@ -127,12 +127,12 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
     AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
 
-    let storageParams: encryptedSharingParams = {
+    const storageParams: encryptedSharingParams = {
       'session': session,
       'actionWant': want,
       'inputUriArray': this.inputUriArray
     }
-    let storage: LocalStorage = new LocalStorage(storageParams);
+    const storage: LocalStorage = new LocalStorage(storageParams);
     try {
       session.loadContent('pages/encryptedSharing', storage);
       session.setWindowBackgroundColor(BG_COLOR);
