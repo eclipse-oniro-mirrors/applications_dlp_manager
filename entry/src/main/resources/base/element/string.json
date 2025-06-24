@@ -605,7 +605,7 @@
           "name":"File_no_permission",
           "value":"Not authorized to view this file with the current HUAWEI ID.",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
       }
   ]

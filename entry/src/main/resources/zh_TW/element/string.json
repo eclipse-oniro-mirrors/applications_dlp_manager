@@ -585,7 +585,7 @@
             "name":"File_no_permission",
             "value":"您的華為 ID 沒有查看此檔案的權限",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

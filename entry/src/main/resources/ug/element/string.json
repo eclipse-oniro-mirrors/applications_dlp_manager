@@ -585,7 +585,7 @@
             "name":"File_no_permission",
             "value":"خۇاۋېي ھېسابىڭىزنىڭ بۇ ھۆججەتنى كۆرۈش ئىجازىتى يوق.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         }
     ]

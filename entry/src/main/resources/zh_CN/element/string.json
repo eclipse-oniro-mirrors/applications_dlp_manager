@@ -605,7 +605,7 @@
           "name":"File_no_permission",
           "value":"您的华为账号没有权限查看此文件",
           "attr":{
-              "priority":"translate"
+              "priority":"LT"
           }
       }
   ]
