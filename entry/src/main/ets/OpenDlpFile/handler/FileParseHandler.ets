@@ -20,17 +20,12 @@ import fs, { ReadOptions } from '@ohos.file.fs';
 import { closeFile, deleteFile, getFileFd, removeDir } from '../../common/utils';
 import { HiLog } from '../../common/HiLog';
 import { zlib } from '@kit.BasicServicesKit';
-import { BusinessError } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';
 import FileUtil from '../../common/external/FileUtil';
+import { dlpPermission } from '@kit.DataProtectionKit';
+import FileMetaInfo from '../../bean/data/FileMetaInfo';
 
 const TAG: string = 'FileParse';
-
-export interface FileMetaInfo {
-  accountType: number;
-  fileType: string;
-  ownerAccount: string;
-}
 
 interface GeneralInfo {
   ownerAccount: string;
@@ -41,13 +36,14 @@ interface DlpCertInfo {
   accountType: string;
 }
 
-export enum FileParseType {
+enum FileParseType {
   ZIP = 1,
   RAW = 2
 }
 
 abstract class FileParseBase {
   protected metaInfo?: FileMetaInfo;
+
   public abstract parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>>;
 }
 
@@ -62,34 +58,34 @@ class ZipParse extends FileParseBase {
     let ff: fs.File | undefined;
     try {
       file = fs.openSync(uri, fs.OpenMode.READ_ONLY);
-      // Decompress file
-      let ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+      ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
       await fs.copyFile(file.fd, ff.fd);
       await fs.mkdir(dirPath);
       await zlib.decompressFile(filePath, dirPath);
 
-      // Parse DlpCertInfo
       let dlpInfo = fs.readTextSync(fileName);
-      let dlpInfoObj: DlpCertInfo = JSON.parse(dlpInfo) as DlpCertInfo;
-      let accountType = Number(dlpInfoObj.accountType);
+      let infoArray = dlpInfo.split('accountType');
+      let type = infoArray[Constants.NUMBER_ONE].slice(Constants.TYPE_START, Constants.TYPE_END);
 
-      // Parse GeneralInfo
       let generalInfo = fs.readTextSync(generalInfoPath);
-      let generalInfoObj: GeneralInfo = JSON.parse(generalInfo) as GeneralInfo;
-      let fileType = generalInfoObj.realFileType ? generalInfoObj.realFileType : '';
+      let generalInfoArray = generalInfo.split('realFileType');
+      let realFileType: string = '';
+      if (generalInfoArray.length === Constants.NUMBER_TWO) {
+        let realFileTypeStr = generalInfoArray[Constants.NUMBER_ONE].split('\"');
+        if (realFileTypeStr.length > Constants.NUMBER_TWO) {
+          realFileType = realFileTypeStr[Constants.NUMBER_TWO];
+        }
+      }
 
       this.metaInfo = {
-        accountType: accountType,
-        fileType: fileType,
-        ownerAccount: generalInfoObj.ownerAccount
+        accountType: Number(type),
+        fileType: realFileType,
+        ownerAccount: ''
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
-      HiLog.error(TAG, `Error parse zipfile: ${JSON.stringify(error)}`);
-      let busErr = error as BusinessError;
-      // TODO: 这里需要根据错误码区分一下返回的错误信息
-      // return ResultMsg.buildMsg(busErr.code, busErr.message);
-      return ResultMsg.getErrMsg(busErr.code);
+      HiLog.wrapError(TAG, error, 'Error parse zipFile');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
     } finally {
       FileUtil.closeSync(file);
       closeFile(ff);
@@ -114,23 +110,26 @@ class RawParse extends FileParseBase {
       option = { offset: certOffset, length: buf[Constants.CERT_SIZE] };
       fs.readSync(file.fd, cert, option);
 
-      // TODO: 需要根据江伟最新代码修改
-      let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
-      let fdString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
-      let infoArray = fdString.split('accountType');
-      let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
+      const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
+      const fdString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
+      const infoArray = fdString.split('accountType');
+      const type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
+      const accountType = Number(type);
+      if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
+        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+        HiLog.error(TAG, `Error accountType: ${accountType}`);
+        return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
+      }
 
       this.metaInfo = {
-        accountType: Number(type),
+        accountType: accountType,
         fileType: '',
         ownerAccount: ''
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
-      HiLog.error(TAG, `Error parse rawfile: ${JSON.stringify(error)}`);
-      let busErr = error as BusinessError;
-      // TODO: 这里需要根据错误码区分一下返回的错误信息
-      return ResultMsg.buildMsg(busErr.code, busErr.message);
+      HiLog.wrapError(TAG, error, 'Error parse rawfile');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
     } finally {
       FileUtil.closeSync(file);
     }
@@ -139,20 +138,21 @@ class RawParse extends FileParseBase {
 
 class FileFormatDetector {
   static async detect(fd: number): Promise<Result<FileParseType>> {
+    HiLog.info(TAG, 'start detect');
     let data = new ArrayBuffer(Constants.HEAD_LENGTH_IN_BYTE);
     let option: ReadOptions = { offset: 0, length: Constants.HEAD_LENGTH_IN_BYTE };
     try {
       fs.readSync(fd, data, option);
     } catch (error) {
-      HiLog.wrapError(TAG, error, `FileFormatDetector error`);
+      HiLog.wrapError(TAG, error, 'FileFormatDetector error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }
     let buf = new Uint32Array(data, 0, Constants.HEAD_LENGTH_IN_U32);
     if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
-      HiLog.debug(TAG, `FileFormatDetector zip`);
+      HiLog.debug(TAG, 'FileFormatDetector zip');
       return ResultMsg.buildSuccess(FileParseType.ZIP);
     } else {
-      HiLog.debug(TAG, `FileFormatDetector raw`);
+      HiLog.debug(TAG, 'FileFormatDetector raw');
       return ResultMsg.buildSuccess(FileParseType.RAW);
     }
   }
@@ -160,14 +160,16 @@ class FileFormatDetector {
 
 export class FileParseFactory {
   static async createFileParse(uri: string): Promise<Result<FileParseBase>> {
-    HiLog.debug(TAG, `CreateFileParse`);
+    HiLog.debug(TAG, 'CreateFileParse');
     let getFileFdRet = getFileFd(uri, fs.OpenMode.READ_WRITE);
     if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'getFileFd failed');
       return ResultMsg.buildMsg(getFileFdRet.errcode, getFileFdRet.errmsg);
     }
     let dlpFd = getFileFdRet.result!;
     const format = await FileFormatDetector.detect(dlpFd);
     if (format.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'detect failed');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }
     FileUtil.closeFdSync(dlpFd);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -114,6 +114,12 @@ export default class Constants {
   public static DLP_CREDMGR_INTERFACE_TOKEN = 'OHOS.HapDlpCredAbilityServiceStub';
   public static DLP_MGR_INTERFACE_TOKEN = 'OHOS.HapDlpMgrAbilityServiceStub';
   public static DLP_PERMISSION_CLEAN_STUB = 'OHOS.HapDlpPermissionAbilityServiceStub';
+
+  public static DLP_MGR_OPENING_DIALOG_TOKEN = 'OHOS.HapDlpMgrOpeningDialogStub';
+  public static DLP_MGR_VIEW_ABILITY_TOKEN = 'OHOS.HapDlpMgrViewAbilityStub';
+  public static DLP_VIEW_SERVICE = 'ViewAbility';
+  public static DLP_OPENING_DIALOG_UI_EXT_ABILITY = 'OpeningDialogUIExtAbility';
+
   public static SA_INTERFACE_TOKEN = 'OHOS.Security.DlpCredentialAbility';
   public static TRANSPARENT_BACKGROUND_COLOR = '#00000000';
   public static START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH = 400;
@@ -253,7 +259,14 @@ export default class Constants {
   public static SHARE_MAX_SUPPORT_SIZE_DOC = 300 * 1024 * 1024;
   public static DLP_FILE_LENGTH_LIMIT = 255;
   public static DLP_FILE_SUFFIX = '.dlp';
+  public static SHARE_ASSOCIATION_MIN = 3;
+  public static SHARE_ASSOCIATION_MAX = 11;
+  public static SHARE_ASSOCIATION_LIST_WIDTH = '100%';
+  public static SHARE_ASSOCIATION_LIST_HEIGHT = 110;
+  public static SHARE_ASSOCIATION_LIST_ITEM_HEIGHT = 30;
+  public static SHARE_ASSOCIATION_LIST_PADDING = 5;
 
+  public static readonly NORMAL_FD_MIN = 0;
   public static readonly ERR_CODE_CONNECTION_FAIL: number = -301;
   public static readonly ERR_CODE_CONNECTION_TIME_OUT: number = -310;
 
@@ -268,11 +281,13 @@ export default class Constants {
   public static readonly ERR_CODE_GET_BUNDLE_INFO_ERROR: number = -7;
   public static readonly ERR_CODE_GET_LOCK_ASYNC_ERROR: number = -8;
   public static readonly ERR_CODE_FILE_IS_DECRYPTING_ERROR: number = -9;
-  public static readonly ERR_CODE_FILE_IS_ENCRYPTING_ERROR: number = -10; // 可能有重复的
+  public static readonly ERR_CODE_USER_STOP_DIALOG: number = -10;
+  public static readonly ERR_CODE_DECRYPT_TIME_OUT: number = -11;
 
   public static readonly COMMAND_SEARCH_USER_INFO = 1;
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
   public static readonly COMMAND_GET_DOMAIN_ACCOUNT_INFO = 3;
+  public static readonly COMMAND_BATCH_REFRESH = 4;
 
   public static readonly GET_SETTING_ITEM_XXL1 = 8;
   public static readonly GET_SETTING_ITEM_XXL2 = 18;
@@ -285,13 +300,46 @@ export default class Constants {
   public static readonly TF_ASYNC: number = 1;
 
   public static readonly FONT_SIZE_SCALE_KEY: string = 'currentFontSizeScale';
+  public static readonly ERR_CODE_ASSOCIATION_SET_FAILED: number = -501;
+  public static readonly ERR_CODE_ASSOCIATION_GET_FAILED: number = -502;
+  public static readonly ERR_CODE_ASSOCIATION_DELETE_FAILED: number = -503;
 
-  public static HEAD_LENGTH_IN_BYTE = 72;
-  public static HEAD_LENGTH_IN_U32 = 18;
-  public static CERT_OFFSET = 8;
-  public static CERT_SIZE = 10;
-  public static NUMBER_ONE = 1;
-  public static NUMBER_TWO = 2;
-  public static CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
+  public static readonly MAX_DATA_LEN = 50000;
+  public static readonly AES_NONCE_LENGTH = 12;
+  public static readonly AE_TAG_SLICE_LENGTH = 16;
 
+  public static readonly AES_NONCE_KEY: string = 'NONCE';
+  public static readonly ASSOCIATION_AAD: string = 'AssociationAAD';
+  public static readonly ASSOCIATION_KEY_ALIAS: string = 'ASSOCIATION_KEY_ALIAS';
+  public static readonly ASSOCIATION_FILE_PREFIX: string = 'DlpAuthorizedAccounts_';
+  public static readonly ASSOCIATION_MAX_SIZE: number = 20;
+  public static readonly ASSOCIATION_STORAGE_KEY: string = 'AccountAssociation';
+  public static readonly RANDOM_LENGTH_MIN: number = 0;
+
+  public static readonly HEAD_LENGTH_IN_BYTE = 80;
+  public static readonly HEAD_LENGTH_IN_U32 = 20;
+  public static readonly CERT_OFFSET = 16;
+  public static readonly CERT_SIZE = 6;
+  public static readonly CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
+  public static readonly NUMBER_ONE = 1;
+  public static readonly NUMBER_TWO = 2;
+
+  // want params
+  public static readonly PARAMS_BUNDLE_NAME: string = 'ohos.dlp.params.bundleName';
+  public static readonly PARAMS_CALLER_BUNDLE_NAME: string = 'ohos.aafwk.param.callerBundleName';
+  public static readonly PARAMS_STREAM: string = 'ability.params.stream';
+  public static readonly PARAMS_CALLER_TOKEN: string = 'ohos.aafwk.param.callerToken';
+  public static readonly PARAMS_CALLER_APP_IDENTIFIER: string = 'ohos.aafwk.param.callerAppIdentifier';
+  public static readonly PARAMS_DLP_CONNECTION_PLUGIN_ID: string = 'dlpConnectionPluginId';
+  public static readonly PARAMS_MODULE_NAME: string = 'ohos.dlp.params.moduleName';
+  public static readonly PARAMS_ABILITY_NAME: string = 'ohos.dlp.params.abilityName';
+  public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
+  public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;
+  public static readonly COMMAND_SHOW_DIALOG = 1;
+  public static readonly COMMAND_SET_REMOTE_OBJECT = 1;
+  public static readonly COMMAND_DIALOG_DISAPPEAR = 2;
+  public static readonly COMMAND_DIALOG_TIMEOUT = 3;
+  public static readonly SHOW_DIALOG_EVENT: string = 'SHOW_DIALOG_EVENT';
+  public static readonly CONNECT_VIEW_ABILITY: string = 'connectViewAbility';
+  public static readonly STRING_DECRYPT_TIMEOUT: string = 'DECRYPT_TIMEOUT';
 }

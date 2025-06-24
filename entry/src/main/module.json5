@@ -111,6 +111,14 @@
         "permissions": [
           "ohos.permission.START_DLP_CRED"
         ]
+      },
+      {
+        "name": "OpeningDialogUIExtAbility",
+        "icon": "$media:icon",
+        "description": "OpeningDialogUIExtAbility",
+        "type": "sys/commonUI",
+        "exported": true,
+        "srcEntry": "./ets/Ability/OpeningDialogUIExtAbility.ets"
       }
     ],
     "requestPermissions": [

@@ -105,7 +105,7 @@ export class HiLog {
    */
   public static wrapError(tag: string, error: Error, msg: string): void {
     const busErr: BusinessError = error as BusinessError;
-    hilog.error(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, msg + ` Code is ${busErr.code},
+    hilog.error(HiLog.LOG_DOMAIN, `[${HiLog.APP_TAG}_${tag}]`, msg + `, Code is ${busErr.code},
     message is ${busErr.message}}, data is ${busErr.data}}`)
   }
 }

@@ -16,22 +16,14 @@ import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import Want from '@ohos.app.ability.Want';
 import dlpPermission from '@ohos.dlpPermission';
 import { HiLog } from '../common/HiLog';
-import { FileDecryptionManager } from '../OpenDlpFile/FileDecryptionManager';
-import Constants from '../common/constant';
+import { clearDlpInfoBatch } from '../common/DataUtils';
 
 const TAG = 'DataAbility';
 
 export default class DataAbility extends ServiceExtensionAbility {
   private static isSubscriber = false;
-
   private uninstallCallback: Callback<dlpPermission.DLPSandboxState> = async (data: dlpPermission.DLPSandboxState) => {
-    let bundleName: string = data.bundleName;
-    let sandboxAppIndex: number = data.appIndex;
-    const manager = FileDecryptionManager.getInstance();
-    const rmRet = await manager.removeByBundleNameAndAppIndex(bundleName, sandboxAppIndex);
-    if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'removeByBundleNameAndAppIndex error');
-    }
+    await clearDlpInfoBatch(data.bundleName, data.appIndex);
   }
 
   onCreate(want: Want): void {
@@ -52,7 +44,7 @@ export default class DataAbility extends ServiceExtensionAbility {
   }
 
   onDestroy(): void {
-    HiLog.info(TAG, `DataAbility onDestroy`);
+    HiLog.info(TAG, 'DataAbility onDestroy');
     if (DataAbility.isSubscriber) {
       HiLog.info(TAG, 'cancelSubscriber uninstallDLPSandbox');
       try {

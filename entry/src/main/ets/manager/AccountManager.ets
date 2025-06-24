@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import DomainAccountInfo from '../bean/data/DomainAccountInfo';
 import DomainAccountResponse from '../bean/response/DomainAccountResponse';
 import CredConnectServiceDomain from '../rpc/CredConnectServiceDomain';
@@ -22,7 +23,7 @@ import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import account_osAccount from '@ohos.account.osAccount';
 import CommonUtil from '../common/CommonUtil';
 import { common } from '@kit.AbilityKit';
-import Constants from '../common/constant'
+import Constants from '../common/constant';
 
 const TAG = 'AccountManager';
 

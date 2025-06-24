@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ValueType } from "@kit.ArkData";
-import { BigDataConstants, ReportToBigDataUtil } from "../common/ReportToBigDataUtil";
-import DecryptContent from "./data/DecryptContent";
+
+import { BigDataConstants, ReportToBigDataUtil } from '../common/ReportToBigDataUtil';
+import DecryptContent from './data/DecryptContent';
 import { BusinessError } from '@kit.BasicServicesKit';
 
 const TAG: string = 'DlpFileOpenReport';

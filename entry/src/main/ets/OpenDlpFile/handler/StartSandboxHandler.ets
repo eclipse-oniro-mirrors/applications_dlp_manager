@@ -24,12 +24,14 @@ import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
 import { DlpFileOpenReport } from '../DlpFileOpenReport';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { FileDecryptionManager } from '../FileDecryptionManager';
+import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
+import OpeningDialogManager from '../manager/OpeningDialogManager';
 
 const TAG: string = 'StartSandboxHandler';
 
 export default class StartSandboxHandler {
-  constructor() {}
+  constructor() {
+  }
 
   public async startSandbox(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
@@ -38,6 +40,7 @@ export default class StartSandboxHandler {
     const startSandboxAppRet = await this.startSandboxApp(decryptContent, context);
     hiTraceMeter.finishTrace('DlpStartSandboxJs', decryptContent.openDlpFileData.startId);
     if (startSandboxAppRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'startSandboxApp failed');
       return ResultMsg.buildMsg(startSandboxAppRet.errcode, startSandboxAppRet.errmsg);
     }
 
@@ -88,19 +91,19 @@ export default class StartSandboxHandler {
     HiLog.info(TAG, 'start sandbox begin');
     this.prepareWantParams(decryptContent);
     try {
+      if (!OpeningDialogManager.getInstance().getCanStartAbility()) {
+        HiLog.error(TAG, 'user stop dialog');
+        return ResultMsg.getErrMsg(Constants.ERR_CODE_USER_STOP_DIALOG);
+      }
       await context.startAbility(decryptContent.openDlpFileData.want);
-      HiLog.info(TAG, 'startSandboxApp success');
+      HiLog.info(TAG, 'startAbility success');
       await this.addDecryptData(decryptContent);
       DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_START_SANDBOX_SUCCESS, decryptContent);
       return ResultMsg.buildSuccess();
     } catch (error) {
-      HiLog.wrapError(TAG, error, 'startSandboxApp failed');
+      HiLog.wrapError(TAG, error, 'startAbility failed');
       const busErr: BusinessError = error as BusinessError;
       DlpFileOpenReport.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, decryptContent, busErr);
-      // when calling startAbility errCode is ERR_JS_APP_NOT_EXIST, delete info.
-      if (busErr.code === Constants.ERR_JS_APP_NOT_EXIST) {
-        await this.deleteDecryptData(decryptContent);
-      }
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_INSIDE_ERROR);
     }
   }
@@ -120,18 +123,10 @@ export default class StartSandboxHandler {
   }
 
   private async addDecryptData(decryptContent: DecryptContent): Promise<void> {
-    const manager = FileDecryptionManager.getInstance();
-    const setRet = await manager.addContent(decryptContent.openDlpFileData.uri, decryptContent);
+    const manager = OpenDlpFileManager.getInstance();
+    const setRet = await manager.addDecryptContent(decryptContent.openDlpFileData.uri, decryptContent);
     if (setRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'addDecryptData failed');
-    }
-  }
-
-  private async deleteDecryptData(decryptContent: DecryptContent): Promise<void> {
-    const manager = FileDecryptionManager.getInstance();
-    const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
-    if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'deleteDecryptData failed');
     }
   }
 }

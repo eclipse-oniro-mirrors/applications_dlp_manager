@@ -23,12 +23,13 @@ const TAG = 'CredConnectService';
 
 export default class CredConnectService {
   private service: CredCallbackStub = new CredCallbackStub();
-  private context: common.UIExtensionContext;
+  private context: common.UIExtensionContext | common.ServiceExtensionContext;
   private optionsSearchUser: common.ConnectOptions;
   private optionsGetAccount: common.ConnectOptions;
+  private optionsBatchRefresh: common.ConnectOptions;
   private cloudPhone: string = '';
 
-  constructor(context: common.UIExtensionContext) {
+  constructor(context: common.UIExtensionContext | common.ServiceExtensionContext) {
     this.context = context;
     this.optionsSearchUser = {
       onConnect: (elementName, remote) => {
@@ -54,6 +55,18 @@ export default class CredConnectService {
         HiLog.info(TAG, `onFailed: GetAccount`);
       }
     }
+    this.optionsBatchRefresh = {
+      onConnect: (elementName, remote) => {
+        HiLog.info(TAG, `onConnect success batch refresht ${JSON.stringify(elementName)}`);
+        this.service.batchRefresh(remote);
+      },
+      onDisconnect: () => {
+        HiLog.info(TAG, `onDisconnect: BatchRefresh`);
+      },
+      onFailed: () => {
+        HiLog.info(TAG, `onFailed: BatchRefresh`);
+      }
+    }
   }
 
   setCloudPhone(cloudPhone: string) {
@@ -61,7 +74,7 @@ export default class CredConnectService {
   }
 
   connectServiceShareAbility(code: number) {
-    HiLog.info(TAG, `connectServiceShareAbility start`);
+    HiLog.info(TAG, 'connectServiceShareAbility start');
     let want: Want = {
       bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
       abilityName: Constants.DLP_CREDMGR_DATA_ABILITY_NAME,
@@ -77,6 +90,11 @@ export default class CredConnectService {
         case Constants.COMMAND_GET_ACCOUNT_INFO: {
           connectionId = this.context.connectServiceExtensionAbility(want, this.optionsGetAccount);
           AppStorage.setOrCreate(`connection_${Constants.COMMAND_GET_ACCOUNT_INFO}`, connectionId);
+          break;
+        }
+        case Constants.COMMAND_BATCH_REFRESH: {
+          connectionId = this.context.connectServiceExtensionAbility(want, this.optionsBatchRefresh);
+          AppStorage.setOrCreate(`connection_${Constants.COMMAND_BATCH_REFRESH}`, connectionId);
           break;
         }
         default: {

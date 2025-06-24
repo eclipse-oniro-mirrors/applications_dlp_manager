@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Want from "@ohos.app.ability.Want";
-import Constants from "../../common/constant";
-import { HiLog } from "../../common/HiLog";
-import { ObjectUtil } from "../../common/ObjectUtil";
-import { isInvalidStr, isValidPath } from "../../common/utils";
+import Want from '@ohos.app.ability.Want';
+import Constants from '../../common/constant';
+import { HiLog } from '../../common/HiLog';
+import { isInvalidStr, isValidPath } from '../../common/utils';
 
 const TAG: string = 'OpenDlpFileData';
 const APPID_FOR_HOPE: string = '5765880207854533797';
@@ -147,7 +146,7 @@ export default class OpenDlpFileData {
     }
 
     if (this._callerAppId !== APPID_FOR_HOPE || this._callerBundleName !== BUNDLE_NAME_FOR_HOPE) {
-      HiLog.error(TAG, `callerAppId or callerBundleNameis error.`);
+      HiLog.error(TAG, 'callerAppId or callerBundleName error.');
       return false;
     }
 
@@ -170,43 +169,40 @@ export default class OpenDlpFileData {
   }
 
   public checkAndSetWantParams(): boolean {
-    this._sandboxBundleName = this._want.parameters?.['ohos.dlp.params.bundleName'] as string;
-    if (!isInvalidStr(this._sandboxBundleName)) {
-      HiLog.error(TAG, `invalid bundleName in want.parameters`);
+    this._sandboxBundleName = this._want.parameters?.[Constants.PARAMS_BUNDLE_NAME] as string;
+    if (isInvalidStr(this._sandboxBundleName)) {
+      HiLog.error(TAG, 'invalid bundleName in want.parameters');
       return false;
     }
 
     this._uri = this._want.uri as string;
-    if (!isInvalidStr(this._uri) && !isValidPath(this._uri) && !this.CheckSuffixByUri()) {
-      HiLog.error(TAG, `invalid uri in want.uri`);
+    if (isInvalidStr(this._uri) && !isValidPath(this._uri) && !this.CheckSuffixByUri()) {
+      HiLog.error(TAG, 'invalid uri in want.uri');
       return false;
     }
 
-    this._callerBundleName = this._want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
-    if (!isInvalidStr(this._callerBundleName)) {
-      HiLog.error(TAG, 'invalid callerBundleName')
+    this._callerBundleName = this._want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
+    if (isInvalidStr(this._callerBundleName)) {
+      HiLog.error(TAG, 'invalid callerBundleName');
       return false;
     }
 
-    this._pluginId = (this._want.parameters?.['dlpConnectionPluginId'] as DlpConnectionPluginIdObj)?.id;
-    this._callerAppId = this._want.parameters?.['ohos.aafwk.param.callerAppIdentifier'] as string;
+    this._pluginId =
+      (this._want.parameters?.[Constants.PARAMS_DLP_CONNECTION_PLUGIN_ID] as DlpConnectionPluginIdObj)?.id;
+    this._callerAppId = this._want.parameters?.[Constants.PARAMS_CALLER_APP_IDENTIFIER] as string;
     let checkPluginId: boolean = this.checkPermissionWithPluginId();
     if (!checkPluginId) {
-      HiLog.error(TAG, 'checkPermissionWithPluginId failed')
+      HiLog.error(TAG, 'checkPermissionWithPluginId failed');
       return false;
     }
 
-    this._sandboxAbilityName = this._want.parameters?.['ohos.dlp.params.abilityName'] as string;
-    if (!isInvalidStr(this._sandboxAbilityName)) {
-      HiLog.error(TAG, 'invalid abilityName')
+    this._sandboxAbilityName = this._want.parameters?.[Constants.PARAMS_ABILITY_NAME] as string;
+    if (isInvalidStr(this._sandboxAbilityName)) {
+      HiLog.error(TAG, 'invalid abilityName');
       return false;
     }
 
-    this._sandboxModuleName = this._want.parameters?.['ohos.dlp.params.moduleName'] as string;
-    if (!isInvalidStr(this._sandboxModuleName)) {
-      HiLog.error(TAG, 'invalid moduleName')
-      return false;
-    }
+    this._sandboxModuleName = this._want.parameters?.[Constants.PARAMS_MODULE_NAME] as string;
     return true;
   }
 }

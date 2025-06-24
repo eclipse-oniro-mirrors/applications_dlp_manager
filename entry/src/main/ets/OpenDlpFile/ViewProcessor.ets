@@ -12,30 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Result from "../common/Result";
-import { ResultMsg } from "../common/ResultMsg";
-import { FileParseFactory } from "./handler/FileParseHandler";
-import OpenDlpFileData from "./data/OpenDlpFileData";
+import Result from '../common/Result';
+import { ResultMsg } from '../common/ResultMsg';
+import { FileParseFactory } from './handler/FileParseHandler';
+import OpenDlpFileData from './data/OpenDlpFileData';
 import common from '@ohos.app.ability.common';
 import Constants from '../common/constant';
-import DecryptContent from "./data/DecryptContent";
-import { AccountHandlerFactory } from "./handler/AccountHandler";
-import DecryptHandler from "./handler/DecryptHandler";
-import StartSandboxHandler from "./handler/StartSandboxHandler";
-import { FileDecryptionManager } from "./FileDecryptionManager";
-import { hiTraceMeter } from "@kit.PerformanceAnalysisKit";
-import { HiLog } from "../common/HiLog";
-import FileUtil from "../common/external/FileUtil";
-import { ErrorHandlerFactory } from "./handler/ErrorHandler";
+import DecryptContent from './data/DecryptContent';
+import { AccountHandlerFactory } from './handler/AccountHandler';
+import DecryptHandler from './handler/DecryptHandler';
+import StartSandboxHandler from './handler/StartSandboxHandler';
+import { DecryptState, OpenDlpFileManager } from './manager/OpenDlpFileManager';
+import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
+import { HiLog } from '../common/HiLog';
+import { ErrorHandlerFactory } from './handler/ErrorHandler';
+import { clearDlpInfo } from '../common/DataUtils';
+import { getCurrentTime } from '../common/utils';
+import CredConnectService from '../rpc/CredConnectService';
+import OpeningDialogManager from './manager/OpeningDialogManager';
+import StartSandboxManager from './manager/StartSandboxManager';
 
 const TAG: string = 'OpenDlpFileProcessor';
 
 export class OpenDlpFileProcessor {
   public async process(want: Want, startId: number, context: common.ServiceExtensionContext): Promise<Result<void>> {
+    this.batchRefresh(context);
     const proRet = await this.processOpenDlpFile(want, startId, context);
     if (proRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      this.processErrcode(context, proRet.errcode, proRet.errmsg, proRet.result);
+      HiLog.error(TAG, 'processOpenDlpFile error');
+      return await this.processErrcode(context, proRet.errcode, proRet.errmsg, proRet.result);
     }
+    HiLog.debug(TAG, 'processOpenDlpFile success');
     return ResultMsg.buildSuccess();
   }
 
@@ -45,99 +52,122 @@ export class OpenDlpFileProcessor {
     // 1. Params check
     const openDlpFileData = new OpenDlpFileData(want, startId);
     if (!openDlpFileData.checkAndSetWantParams()) {
+      HiLog.error(TAG, 'checkAndSetWantParams error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
     }
 
-    // 2. Parse dlp file
+    // 2. Check if uri in decrypting or encrypting
+    const checkRet = await this.checkAndSetState(openDlpFileData.uri);
+    if (checkRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'checkAndSetState error');
+      return ResultMsg.buildMsg(checkRet.errcode, checkRet.errmsg);
+    }
+
+    // 3. Parse dlp file
     const fileParseRet = await FileParseFactory.createFileParse(openDlpFileData.uri);
     if (fileParseRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'createFileParse error');
       return ResultMsg.buildMsg(fileParseRet.errcode, fileParseRet.errmsg);
     }
     const fileMetaInfoRet = await fileParseRet.result!.parse(openDlpFileData.uri, context.filesDir);
     if (fileMetaInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'parse error');
       return ResultMsg.buildMsg(fileMetaInfoRet.errcode, fileMetaInfoRet.errmsg);
     }
 
-    // 3. Prepare parameters
-    let decryptContent = new DecryptContent(fileMetaInfoRet.result!, openDlpFileData);
-    const prepareParamsRet = decryptContent.prepareParams();
-    if (prepareParamsRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      return ResultMsg.buildMsg(prepareParamsRet.errcode, prepareParamsRet.errmsg);
-    }
-
     // 4. Handle account
+    let decryptContent = new DecryptContent(fileMetaInfoRet.result!, openDlpFileData);
     const accountHandler = AccountHandlerFactory.createAccountHandler(decryptContent);
-    const handleLoginRet = await accountHandler.handleLogin(decryptContent, context);
+    const handleLoginRet = await accountHandler.handle(decryptContent, context);
     if (handleLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'handleLogin error');
       return ResultMsg.buildMsg(handleLoginRet.errcode, handleLoginRet.errmsg);
     }
 
     // 5. decrypt and install sandbox
     hiTraceMeter.startTrace('DlpInstallSandboxJs', startId);
     const decryptHandler = new DecryptHandler();
-    const getDecryptDataRet = await decryptHandler.getDecryptData(decryptContent);
+    const getDecryptDataRet = await decryptHandler.getDecryptData(decryptContent, context);
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
     if (getDecryptDataRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'getDecryptData error');
       return ResultMsg.buildMsg(getDecryptDataRet.errcode, getDecryptDataRet.errmsg);
     }
 
     // 6. start sandbox
-    const startSandboxHandler = new StartSandboxHandler();
-    const startSandboxRet = await startSandboxHandler.startSandbox(decryptContent, context);
+    const startSandboxRet = await StartSandboxManager.getInstance().startSandbox(decryptContent, context);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'startSandbox error');
       return ResultMsg.buildMsg(startSandboxRet.errcode, startSandboxRet.errmsg);
     }
 
     return ResultMsg.buildSuccess(decryptContent);
   }
 
-  private async processErrcode(context: common.ServiceExtensionContext, errcode: number, errmsg?: string,
-    decryptContent?: DecryptContent): Promise<void> {
-    const errorHandle = ErrorHandlerFactory.createErrorHandle();
-    await errorHandle.handleError(context, errcode, errmsg);
+  private checkIfContinue(state: DecryptState): Result<void> {
+    if (state === DecryptState.DECRYPTING || OpeningDialogManager.getInstance().getIsDecrypting()) {
+      HiLog.info(TAG,
+        `in decrypting state ${state}, isDecrypting ${OpeningDialogManager.getInstance().getIsDecrypting()}`);
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_FILE_IS_DECRYPTING_ERROR);
+    }
+    if (state === DecryptState.ENCRYPTING) {
+      HiLog.info(TAG, 'in encrypting');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_APP_ENCRYPTION_REJECTED);
+    }
+    HiLog.info(TAG, 'not start or decrypted');
+    return ResultMsg.buildSuccess();
+  }
+
+  private async checkAndSetState(uri: string): Promise<Result<void>> {
+    const manager = OpenDlpFileManager.getInstance();
+    const getStatusRet = manager.getStatus(uri);
+    if (getStatusRet.errcode !== Constants.ERR_CODE_SUCCESS || !getStatusRet.result) {
+      HiLog.error(TAG, 'getStatus error');
+      return ResultMsg.buildMsg(getStatusRet.errcode, getStatusRet.errmsg);
+    }
+
+    const checkRet = this.checkIfContinue(getStatusRet.result.state);
+    if (checkRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'checkIfContinue not continue');
+      return ResultMsg.buildMsg(checkRet.errcode, checkRet.errmsg);
+    }
+    return ResultMsg.buildSuccess();
+  }
+
+  public async processErrcode(context: common.ServiceExtensionContext, errcode: number, errmsg?: string,
+    decryptContent?: DecryptContent): Promise<Result<void>> {
     if (decryptContent) {
-      this.clearAllDlpInfo(decryptContent)
+      clearDlpInfo(decryptContent);
     }
-    this.terminateViewAbility(context);
-  }
-
-  private async clearAllDlpInfo(decryptContent: DecryptContent): Promise<void> {
-    await this.deleteDlpLinkFile(decryptContent);
-    await this.closeDlpFile(decryptContent);
-    FileUtil.closeFdSync(decryptContent.dlpFd);
-  }
-
-  private async closeDlpFile(decryptContent: DecryptContent): Promise<void> {
-    try {
-      await decryptContent.dlpFile.closeDLPFile();
-    } catch (err) {
-      HiLog.wrapError(TAG, err, 'dlpFile closeDLPFile failed');
+    const errorHandle = ErrorHandlerFactory.createErrorHandle();
+    const hadRet = await errorHandle.handle(context, errcode, errmsg);
+    if (!hadRet.result) {
+      this.terminateViewAbility(context);
     }
-  }
-
-  private async deleteDlpLinkFile(decryptContent: DecryptContent): Promise<void> {
-    try {
-      await decryptContent.dlpFile.deleteDLPLinkFile(decryptContent.linkFileName);
-    } catch (err) {
-      HiLog.wrapError(TAG, err, 'deleteDlpLinkFile error');
-    }
+    return ResultMsg.buildSuccess();
   }
 
   private async terminateViewAbility(context: common.ServiceExtensionContext): Promise<void> {
-    const manager = FileDecryptionManager.getInstance();
-    const getSizeRet = await manager.getHasDecryptedSize();
+    const manager = OpenDlpFileManager.getInstance();
+    const getSizeRet = manager.getHasDecryptedSize();
     if (getSizeRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'terminateViewAbility getHasDecryptedSize error')
+      HiLog.error(TAG, 'terminateViewAbility getHasDecryptedSize error');
       return;
     }
     const hasDecryptedSize = getSizeRet.result!;
     HiLog.debug(TAG, `hasDecryptedSize: ${hasDecryptedSize}`);
-    if (hasDecryptedSize === 0) {
+    if (hasDecryptedSize === 0 && OpeningDialogManager.getInstance().getHasCallback()) {
       try {
         await context.terminateSelf();
       } catch (error) {
-        HiLog.wrapError(TAG, error, 'terminateSelf exception')
+        HiLog.wrapError(TAG, error, 'terminateSelf exception');
       }
     }
+  }
+
+  private batchRefresh(context: common.ServiceExtensionContext) {
+    HiLog.info(TAG, 'begin batchRefresh');
+    const connectService: CredConnectService = new CredConnectService(context);
+    connectService.connectServiceShareAbility(Constants.COMMAND_BATCH_REFRESH);
   }
 }

@@ -13,11 +13,18 @@
  * limitations under the License.
  */
 
-enum EncryptSharingTerminateCode {
-  BACK = 0,
-  CANCEL = 1,
-  SUCCESS = 2,
-  CHECK_URI_FAILED = 3
-}
+export default class Singleton<T> {
+  private instance: T | null = null;
+  private factory: () => T;
 
-export default EncryptSharingTerminateCode;
+  constructor(factory: () => T) {
+    this.factory = factory;
+  }
+
+  getInstance(): T {
+    if (!this.instance) {
+      this.instance = this.factory();
+    }
+    return this.instance;
+  }
+}

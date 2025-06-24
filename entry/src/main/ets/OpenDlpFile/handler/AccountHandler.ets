@@ -42,17 +42,18 @@ abstract class AccountHandlerBase {
     return ResultMsg.buildSuccess();
   }
 
-  public abstract handleLogin(decryptContent: DecryptContent,
+  public abstract handle(decryptContent: DecryptContent,
     context: common.ServiceExtensionContext): Promise<Result<void>>;
 }
 
 class CloudAccountHandle extends AccountHandlerBase {
-  public async handleLogin(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
+  public async handle(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
     hiTraceMeter.startTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     const getAccountInfoRet = await this.getAccountInfo();
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'CloudAccountHandle getAccountInfo error');
       return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
     }
     if (this.accountInfo!.distributedInfo.name === 'ohosAnonymousName' &&
@@ -60,8 +61,10 @@ class CloudAccountHandle extends AccountHandlerBase {
       HiLog.info(TAG, 'Cloud account not login');
       const lunchLoginRet = await this.lunchLogin(context);
       if (lunchLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+        HiLog.error(TAG, 'lunchLogin error');
         return ResultMsg.buildMsg(lunchLoginRet.errcode, lunchLoginRet.errmsg);
       } else {
+        HiLog.info(TAG, 'lunchLogin success');
         return ResultMsg.getErrMsg(Constants.ERR_JS_ACCOUNT_NOT_LOGIN);
       }
     }
@@ -75,7 +78,8 @@ class CloudAccountHandle extends AccountHandlerBase {
       bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
       abilityName: Constants.DLP_CREDMGR_LOGIN_ABILITY_NAME,
     };
-    if (await getConnectionStatus() === false) {
+    if (!(await getConnectionStatus())) {
+      HiLog.error(TAG, 'getConnectionStatus error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_NETWORK_ERROR);
     }
     try {
@@ -89,18 +93,19 @@ class CloudAccountHandle extends AccountHandlerBase {
 }
 
 class DomainAccountHandle extends AccountHandlerBase {
-  public async handleLogin(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
+  public async handle(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
     AccountManager.connectAbility(context);
     hiTraceMeter.startTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     const getAccountInfoRet = await this.getAccountInfo();
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'DomainAccountHandle getAccountInfo error');
       return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
     }
     let checkAccountRet = checkDomainAccountInfo(this.accountInfo!);
     if (checkAccountRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      hiTraceMeter.finishTrace('DlpOpenFileJs', decryptContent.openDlpFileData.startId);
+      HiLog.error(TAG, 'checkDomainAccountInfo error');
       return ResultMsg.buildMsg(checkAccountRet.errcode, checkAccountRet.errmsg);
     }
     decryptContent.distributedInfoId = this.accountInfo!.distributedInfo.id;
@@ -111,12 +116,13 @@ class DomainAccountHandle extends AccountHandlerBase {
 }
 
 class PluginAccountHandle extends AccountHandlerBase {
-  public async handleLogin(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
+  public async handle(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
     hiTraceMeter.startTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     const getAccountInfoRet = await this.getAccountInfo();
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'getAccountInfo error');
       return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
     }
     decryptContent.distributedInfoId = this.accountInfo!.distributedInfo.id;

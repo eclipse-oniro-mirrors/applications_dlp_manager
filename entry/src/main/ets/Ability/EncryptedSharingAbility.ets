@@ -18,17 +18,22 @@ import { Configuration } from '@ohos.app.ability.Configuration';
 import Constants from '../common/constant';
 import emitter from '@ohos.events.emitter';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
-import EncryptSharingShowCodeEnum from '../common/enum/EncryptSharingShowCodeEnum';
-import EncryptSharingTerminateCode from '../common/enum/EncryptSharingTerminateCodeEnum';
+import { EncryptSharingShowCodeEnum, EncryptSharingTerminateCode } from '../common/enum/EncryptSharingShowCodeEnum';
 import { EnvironmentCallback } from '@kit.AbilityKit';
 import { getDLPInfo, DLPInfo, logErrorShowToast } from '../common/utils';
 import { HiLog } from '../common/HiLog';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
-import Want from '@ohos.app.ability.Want';
 import UriValidator from '../validator/UriValidator';
+import Want from '@ohos.app.ability.Want';
 
 const TAG = 'share';
 const BG_COLOR = '#00000000';
+
+interface encryptedSharingParams {
+  session: UIExtensionContentSession,
+  actionWant: Want,
+  inputUriArray: string[]
+}
 
 export default class EncryptedSharingAbility extends ActionExtensionAbility {
   private callbackId: number = 0;
@@ -50,7 +55,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
   checkInputUris(want: Want): boolean {
     HiLog.info(TAG, 'Check input URIs.');
     const parameters = want.parameters as Record<string, Object>;
-    this.inputUriArray = parameters['ability.params.stream'] as string[];
+    this.inputUriArray = parameters[Constants.PARAMS_STREAM] as string[];
 
     let validator = UriValidator.getInstance();
     const result = validator.validate(this.inputUriArray);
@@ -66,12 +71,12 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
 
   checkValidParameters(want: Want): boolean {
     let parameters: Record<string, Object> = want.parameters as Record<string, Object>;
-    let inputUris: string[] = parameters['ability.params.stream'] as string[];
-    let callerToken: number = parameters['ohos.aafwk.param.callerToken'] as number;
-    let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
+    let inputUris: string[] = parameters[Constants.PARAMS_STREAM] as string[];
+    let callerToken: number = parameters[Constants.PARAMS_CALLER_TOKEN] as number;
+    let callerBundleName: string = parameters[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
 
     let paramsTypeFlag: boolean =
-      (inputUris instanceof Array) && (typeof callerToken === 'number') && (typeof callerBundleName === 'string');
+      Array.isArray(inputUris) && (typeof callerToken === 'number') && (typeof callerBundleName === 'string');
     if (!paramsTypeFlag) {
       let logMsg: string = 'Check the types of inputUris, callerToken and callerBundleName.';
       let code: number = EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR;
@@ -117,7 +122,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     }
 
     let parameters = want.parameters as Record<string, Object>;
-    AppStorage.setOrCreate('hiPkgName', parameters['ohos.aafwk.param.callerBundleName']);
+    AppStorage.setOrCreate('hiPkgName', parameters[Constants.PARAMS_CALLER_BUNDLE_NAME]);
 
     let dlpInfoRet = await getDLPInfo();
     if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS) {
@@ -125,11 +130,12 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
       AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result!.versionCode);
     }
 
-    let storage: LocalStorage = new LocalStorage({
+    let storageParams: encryptedSharingParams = {
       'session': session,
       'actionWant': want,
       'inputUriArray': this.inputUriArray
-    } as Record<string, UIExtensionContentSession | Want>);
+    }
+    let storage: LocalStorage = new LocalStorage(storageParams);
     try {
       session.loadContent('pages/encryptedSharing', storage);
       session.setWindowBackgroundColor(BG_COLOR);

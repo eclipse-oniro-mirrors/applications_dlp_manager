@@ -13,13 +13,14 @@
  * limitations under the License.
  */
 
+import { EncryptSharingShowCodeEnum } from '../common/enum/EncryptSharingShowCodeEnum';
+import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
+import Constants from '../common/constant';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import { getFileSizeByUriSync } from '../common/utils';
 import { HiLog } from '../common/HiLog';
 import { SupportTypesConfig } from '../common/SupportTypesConfig';
-import Constants from '../common/constant';
-import EncryptSharingShowCodeEnum from '../common/enum/EncryptSharingShowCodeEnum';
-import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
+import Singleton from '../common/Singleton';
 
 const TAG = 'UriValidator';
 const DLP_FILE_TYPE = 'dlp';
@@ -178,16 +179,10 @@ class DataPersistHandler extends BaseValidator {
 }
 
 export default class UriValidator {
-  private static instance: UriValidator;
-
-  private constructor() {
-  }
+  public static singletonInstance: Singleton<UriValidator> = new Singleton<UriValidator>(() => new UriValidator());
 
   public static getInstance(): UriValidator {
-    if (!UriValidator.instance) {
-      UriValidator.instance = new UriValidator();
-    }
-    return UriValidator.instance;
+    return UriValidator.singletonInstance.getInstance();
   }
 
   public validate(uriList: string[]): UriValidationResult {

@@ -57,6 +57,7 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR') } as Record<string, Resource>;
       case Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR:
         return { 'msg': $r('app.string.MESSAGE_APP_GET_FILE_ASSET_ERROR') } as Record<string, Resource>;
+      case Constants.ERR_JS_APP_PERMISSION_DENY:
       case Constants.ERR_JS_RELEASE_FILE_OPEN:
       case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
         return { 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
@@ -67,22 +68,23 @@ export class GetAlertMessage {
       case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
       case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
       case Constants.ERR_JS_APP_INSIDE_ERROR:
-        return { 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
+        return { 'msg': $r('app.string.File_cannot_be_opened') } as Record<string, Resource>;
       case Constants.ERR_JS_NOT_DLP_FILE:
-        return { 'msg': $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR') } as Record<string, Resource>;
+        return { 'msg': $r('app.string.File_damaged') } as Record<string, Resource>;
       case Constants.ERR_JS_USER_NO_PERMISSION:
-        return { 'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM') } as Record<string, Resource>;
+        return { 'msg': $r('app.string.File_no_permission') } as Record<string, Resource>;
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
         return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
       case Constants.ERR_JS_OFFLINE:
         return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
+      case Constants.SHARE_NO_SPACE_LEFT_ON_DEVICE:
       case Constants.ERR_JS_NO_SPACE:
         return { 'msg': $r('app.string.MESSAGE_NO_SPACE_ERROR') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage !== undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
         } else {
-          return { 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, Resource>;
+          return { 'msg': $r('app.string.File_cannot_be_opened') } as Record<string, Resource>;
         }
     }
   }
@@ -133,7 +135,7 @@ export class GetAlertMessage {
       default:
         return {
           'title': $r('app.string.header_title'),
-          'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR')
+          'msg': $r('app.string.File_cannot_be_opened')
         } as Record<string, Resource>;
     }
   }
@@ -150,7 +152,7 @@ export class GetAlertMessage {
       default:
         return {
           'title': $r('app.string.header_title'),
-          'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR')
+          'msg': $r('app.string.File_cannot_be_opened')
         } as Record<string, Resource>;
     }
   }
@@ -164,9 +166,9 @@ export class GetAlertMessage {
       case Constants.ERR_JS_OFFLINE:
         return $r('app.string.network_invalid');
       case Constants.ERR_JS_NOT_DLP_FILE:
-        return $r('app.string.MESSAGE_APP_FILE_PARAM_ERROR');
+        return $r('app.string.File_damaged');
       case Constants.ERR_JS_USER_NO_PERMISSION:
-        return $r('app.string.MESSAGE_APP_NOT_HAVE_PERM');
+        return $r('app.string.File_no_permission');
       case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
         return $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED');
       case Constants.ERR_JS_APP_CANNOT_OPEN:
@@ -175,10 +177,13 @@ export class GetAlertMessage {
         return $r('app.string.This_File_is_Open_By_Other_App');
       case Constants.ERR_JS_FILE_EXPIRATION:
         return $r('app.string.Permission_has_expired');
+      case Constants.SHARE_NO_SPACE_LEFT_ON_DEVICE:
       case Constants.ERR_JS_NO_SPACE:
         return $r('app.string.MESSAGE_NO_SPACE_ERROR');
+      case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
+        return $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION');
       default:
-        return $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR');
+        return $r('app.string.File_cannot_be_opened');
     }
   }
 

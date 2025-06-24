@@ -33,6 +33,9 @@ import { HiLog } from '../common/HiLog';
 import dialogRequest from '@ohos.app.ability.dialogRequest';
 import AccountManager from '../manager/AccountManager';
 import FileUtil from '../common/external/FileUtil';
+import { OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
+import App from '@system.app';
+import DecryptContent from '../OpenDlpFile/data/DecryptContent';
 
 const TAG = 'SaveAs';
 
@@ -153,7 +156,7 @@ export default class SaveAsAbility extends UIAbility {
       return false;
     }
 
-    this.tokenId = want.parameters?.['ohos.aafwk.param.callerToken'] as number;
+    this.tokenId = want.parameters?.[Constants.PARAMS_CALLER_TOKEN] as number;
     if (this.tokenId === undefined) {
       HiLog.error(TAG, `invalid tokenId`);
       return false;
@@ -168,12 +171,15 @@ export default class SaveAsAbility extends UIAbility {
 
   checkParseParams(want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      this.authPerm = (GlobalContext.load('token2File') as
-      Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
-        .get(this.tokenId)?.[3] as dlpPermission.DLPFileAccess;
-      let dlpFileInfo = (GlobalContext.load('token2File') as
-      Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
-        .get(this.tokenId)?.[0] as dlpPermission.DLPFile;
+      const manager = OpenDlpFileManager.getInstance();
+      const getRet = manager.getHasDecryptedContentByTokenId(this.tokenId);
+      if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
+        HiLog.error(TAG, 'getHasDecryptedContentByTokenId error');
+        reject();
+      }
+      const decryptedContent = getRet.result!;
+      this.authPerm = decryptedContent.authPerm;
+      let dlpFileInfo = decryptedContent.dlpFile;
       let contactAccount = dlpFileInfo.dlpProperty.contactAccount as string;
       if (this.authPerm !== dlpPermission.DLPFileAccess.CONTENT_EDIT &&
         this.authPerm !== dlpPermission.DLPFileAccess.FULL_CONTROL) {
@@ -190,20 +196,17 @@ export default class SaveAsAbility extends UIAbility {
           { code: Constants.ERR_JS_DLP_FILE_READ_ONLY } as BusinessError);
         reject();
       }
-      if (!(GlobalContext.load('token2File') as Map<number, Object[]>).has(this.tokenId)) {
-        HiLog.error(TAG, `invalid token2File`);
-        reject();
-      }
+
       let newFileName = want.parameters?.['key_pick_file_name'] as [];
       if (newFileName === undefined) {
-        HiLog.error(TAG, `invalid newFileName`);
+        HiLog.error(TAG, 'invalid newFileName');
         reject();
       }
       this.fileName = newFileName.join('');
       let splitNames = this.fileName.split('.');
       HiLog.info(TAG, `splitNames: ${splitNames}`);
       if (splitNames.length <= SUFFIX_INDEX) {
-        HiLog.error(TAG, `get suffix failed`);
+        HiLog.error(TAG, 'get suffix failed');
         reject();
       }
       this.suffix = splitNames[splitNames.length - SUFFIX_INDEX];
@@ -348,14 +351,17 @@ export default class SaveAsAbility extends UIAbility {
       FileUtil.closeFileSync(file);
     }
   }
-  
-  getSourceFileName() {
+
+  async getSourceFileName() {
     try {
-      let token2FileValue: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[] =
-        (GlobalContext
-          .load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
-          .get(this.tokenId) as (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[];
-      let srcUri: string = token2FileValue[SRC_URI_OFFSET] as string;
+      const manager = OpenDlpFileManager.getInstance();
+      const getRet = manager.getHasDecryptedContentByTokenId(this.tokenId);
+      if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
+        HiLog.error(TAG, 'getHasDecryptedContentByTokenId error');
+        return '';
+      }
+      const decryptedContent = getRet.result;
+      let srcUri: string = decryptedContent.openDlpFileData.uri;
       let uriObj = new fileUri.FileUri(srcUri);
       let dir = uriObj.getFullDirectoryUri(); // get directory path
       let name = srcUri.replace(dir, '').replace('/', ''); // strip directory path and '/'
@@ -368,7 +374,7 @@ export default class SaveAsAbility extends UIAbility {
     }
   }
 
-  parseDocumentPickerSaveOption(args: picker.DocumentSaveOptions[], action: string) {
+  async parseDocumentPickerSaveOption(args: picker.DocumentSaveOptions[], action: string) {
     let config: Record<string, string | Record<string, Object>> = {
       'action': action,
       'parameters': {
@@ -385,9 +391,9 @@ export default class SaveAsAbility extends UIAbility {
         if (option.newFileNames[0].length > FILENAME_MAX_LEN) {
           throw new Error('file name exceeds max length');
         }
-        let srcName = this.getSourceFileName();
+        let srcName = await this.getSourceFileName();
         if (option.newFileNames[0].length > 0 && srcName !== option.newFileNames[0]) {
-          HiLog.error(TAG, `src file name is not same with newFileName provided`);
+          HiLog.error(TAG, 'src file name is not same with newFileName provided');
           throw new Error('picker filename error');
         }
         config.parameters['key_pick_file_name'] = option.newFileNames;
@@ -398,7 +404,7 @@ export default class SaveAsAbility extends UIAbility {
       if (isDir) {
         config.parameters['key_pick_dir_path'] = option.defaultFilePathUri;
       } else {
-        throw new Error(`defaultFilePathUri is not a valid directory uri`);
+        throw new Error('defaultFilePathUri is not a valid directory uri');
       }
       if ((option.fileSuffixChoices !== undefined) && option.fileSuffixChoices.length > 0) {
         config.parameters['key_file_suffix_choices'] = option.fileSuffixChoices;
@@ -423,7 +429,7 @@ export default class SaveAsAbility extends UIAbility {
         if (args.want.parameters.pick_path_return) {
           saveResult.data = args.want.parameters.pick_path_return as string[];
         } else {
-          saveResult.data = args.want.parameters['ability.params.stream'] as string[];
+          saveResult.data = args.want.parameters[Constants.PARAMS_STREAM] as string[];
         }
       }
     } else if (((args as dialogRequest.RequestResult).result !== undefined &&
@@ -447,7 +453,7 @@ export default class SaveAsAbility extends UIAbility {
     let config: Record<string, string | Record<string, Object>>;
     let result: dialogRequest.RequestResult | ability.AbilityResult;
     try {
-      config = this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION);
+      config = await this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION);
       result = await this.context.startAbilityForResult(config, {windowMode: 0});
     } catch (error) {
       HiLog.error(TAG, `startAbilityForResult error: ${JSON.stringify(error)}`);
@@ -475,12 +481,12 @@ export default class SaveAsAbility extends UIAbility {
   }
 
   async prepareDlpFile(want: Want): Promise<void> {
-    HiLog.info(TAG, `getFile start prepareDlpFile`);
+    HiLog.info(TAG, 'getFile start prepareDlpFile');
     let uri = '';
     let displayName = '';
     let ret = await this.parseParams(want);
     if (!ret) {
-      HiLog.error(TAG, `parseParams failed`);
+      HiLog.error(TAG, 'parseParams failed');
       return;
     }
     let documentSaveOptions = new picker.DocumentSaveOptions();
@@ -490,19 +496,19 @@ export default class SaveAsAbility extends UIAbility {
     try {
       let saveRes: BusinessError | string[] | undefined = await this.documentPickerSave(documentSaveOptions);
       if (saveRes == undefined || (saveRes instanceof Array && saveRes.length == 0)) {
-        HiLog.error(TAG, `fail to get uri`);
+        HiLog.error(TAG, 'fail to get uri');
         return;
       }
       uri = saveRes[0]
       if (!isValidPath(uri)) {
-        HiLog.error(TAG, `invalid uri`);
+        HiLog.error(TAG, 'invalid uri');
         return;
       }
       try {
         await this.fileOpen(uri);
         await this.pickerDialog(uri, want);
       } catch {
-        HiLog.error(TAG, `fileOpen or pickerDialog start failed`);
+        HiLog.error(TAG, 'fileOpen or pickerDialog start failed');
         return;
       }
     } catch (err) {
@@ -518,18 +524,22 @@ export default class SaveAsAbility extends UIAbility {
 
   pickerDialog(uri: string, want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      let token2FileValue: (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[] =
-        (GlobalContext
-        .load('token2File') as Map<number, (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[]>)
-        .get(this.tokenId) as (number | string | dlpPermission.DLPFile | dlpPermission.DLPFileAccess)[];
-      this.dlpFile = token2FileValue[0] as dlpPermission.DLPFile;
-      this.sandboxBundleName = token2FileValue[1] as string;
-      let appId: number = token2FileValue[2] as number;
-      let srcUri: string = token2FileValue[4] as string;
+      const manager = OpenDlpFileManager.getInstance();
+      const getRet = manager.getHasDecryptedContent(uri);
+      if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
+        HiLog.error(TAG, 'getHasDecryptedContent error');
+        reject();
+      }
+      const decryptContent = getRet.result!;
 
+      this.dlpFile = decryptContent.dlpFile;
+      this.sandboxBundleName = decryptContent.openDlpFileData.sandboxBundleName;
+      let appId: number = decryptContent.appInfo.appIndex;
+
+      let srcUri: string = decryptContent.openDlpFileData.uri;
       let getFileFdRet = getFileFd(srcUri);
       if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-        HiLog.error(TAG, 'getFileFd error')
+        HiLog.error(TAG, 'getFileFd error');
         reject();
       }
       this.srcFdPicker = getFileFdRet.result!;
@@ -553,23 +563,41 @@ export default class SaveAsAbility extends UIAbility {
         FileUtil.closeFdSync(this.srcFdPicker);
         reject();
       }
-      let linkFilePath = Constants.FUSE_PATH + this.linkFileName;
-      let linkUri = getFileUriByPath(linkFilePath);
-      (GlobalContext.load('token2File') as Map<number, Object[]>)
-        .set(this.tokenId, [this.dlpFile, this.sandboxBundleName, appId, this.authPerm, srcUri]);
-      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> =
-        GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-      sandbox2linkFile.get(this.sandboxBundleName + appId)
-        ?.push([this.newDlpFile, this.linkFileName, this.dstFdPicker, this.tokenId]);
-      (GlobalContext.load('fileOpenHistory') as Map<string, Object[]>)
-        .set(uri, [this.sandboxBundleName, appId, this.linkFileName, linkUri]);
-      (GlobalContext.load('linkSet') as Set<string>).add(linkUri);
+      const linkFilePath = Constants.FUSE_PATH + this.linkFileName;
+      const linkUri = getFileUriByPath(linkFilePath);
+      const copyRet = await this.copyNewDecryptContent(decryptContent, uri, appId, linkUri);
+      if (!copyRet) {
+        HiLog.error(TAG, 'copyNewDecryptContent failed');
+        reject();
+      }
       this.resultUri = getFileUriByPath(linkFilePath);
       (this.result.want?.parameters?.pick_path_return as string[]).push(this.resultUri);
       this.result.resultCode = 0;
       FileUtil.closeFdSync(this.srcFdPicker);
       resolve();
     })
+  }
+
+  private async copyNewDecryptContent(decryptContent: DecryptContent, uri: string, appId: number, linkUri: string):
+    Promise<boolean> {
+    let decryptContentNew = decryptContent.clone();
+    decryptContentNew.dlpFile = this.newDlpFile;
+    decryptContentNew.openDlpFileData.sandboxBundleName = this.sandboxBundleName;
+    decryptContentNew.appInfo.appIndex = appId;
+    decryptContentNew.authPerm = this.authPerm;
+    decryptContentNew.openDlpFileData.uri = uri;
+    decryptContentNew.linkFileName = this.linkFileName;
+    decryptContentNew.dlpFd = this.dstFdPicker;
+    decryptContentNew.appInfo.tokenID = this.tokenId;
+    decryptContentNew.linkUri = linkUri;
+
+    const manager = OpenDlpFileManager.getInstance();
+    const setRet = await manager.addDecryptContent(uri, decryptContentNew);
+    if (setRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'addDecryptContent failed');
+      return false;
+    }
+    return true;
   }
 
   fileOpen(uri: string): Promise<void> {
@@ -593,7 +621,7 @@ export default class SaveAsAbility extends UIAbility {
     return new Promise(async (resolve, reject) => {
       let callerAppId: string;
       try {
-        let callerBundleName = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
+        let callerBundleName = want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
         callerAppId = await getAppId(callerBundleName);
         HiLog.info(TAG, `get AppId: ${callerAppId}`);
       } catch {

@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-import { HiLog } from "../../common/HiLog";
-import { defaultAppInfo, defaultDlpFile, getAuthPerm } from "../../common/utils";
-import Constants from "../../common/constant";
-import { FileMetaInfo } from "../handler/FileParseHandler";
-import { dlpPermission } from "@kit.DataProtectionKit";
-import Result from "../../common/Result";
-import { ResultMsg } from "../../common/ResultMsg";
-import OpenDlpFileData from "./OpenDlpFileData";
+import { HiLog } from '../../common/HiLog';
+import { defaultAppInfo, defaultDlpFile, getAuthPerm } from '../../common/utils';
+import Constants from '../../common/constant';
+import { dlpPermission } from '@kit.DataProtectionKit';
+import Result from '../../common/Result';
+import { ResultMsg } from '../../common/ResultMsg';
+import OpenDlpFileData from './OpenDlpFileData';
 import fs from '@ohos.file.fs';
-import { fileUri } from "@kit.CoreFileKit";
+import { fileUri } from '@kit.CoreFileKit';
+import FileMetaInfo from '../../bean/data/FileMetaInfo';
 
 const TAG: string = 'DecryptContent';
 
@@ -46,6 +46,8 @@ export default class DecryptContent {
   constructor(fileMetaInfo: FileMetaInfo, openDlpFileData: OpenDlpFileData) {
     this._fileMetaInfo = fileMetaInfo;
     this._openDlpFileData = openDlpFileData;
+    let strArray: string[] = this._openDlpFileData.uri.split('/');
+    this._fileName = strArray[strArray.length - 1];
   }
 
   public set fileMetaInfo(value: FileMetaInfo) {
@@ -148,13 +150,44 @@ export default class DecryptContent {
     return this._linkUriStat;
   }
 
+  public set linkUriStat(value: fs.Stat | undefined) {
+    this._linkUriStat = value;
+  }
+
+  public set linkFileWriteable(value: boolean) {
+    this._linkFileWriteable = value;
+  }
+
   public get linkFileWriteable(): boolean {
     return this._linkFileWriteable;
+  }
+
+  public set uriInfo(value: fileUri.FileUri) {
+    this._uriInfo = value;
   }
 
   public get uriInfo(): fileUri.FileUri {
     return this._uriInfo;
   }
+
+  public clone(): DecryptContent {
+    const clone = new DecryptContent(this._fileMetaInfo, this._openDlpFileData);
+    clone.dlpFd = this._dlpFd;
+    clone.dlpFile = this._dlpFile;
+    clone.appInfo = this._appInfo;
+    clone.distributedInfoId = this._distributedInfoId;
+    clone.linkUri = this._linkUri;
+    clone.linkFileName = this._linkFileName;
+    clone.authPerm = this._authPerm;
+    clone.fileName = this._fileName;
+    clone.userId = this._userId;
+    clone.accountName = this._accountName;
+    clone.linkUriStat = this._linkUriStat;
+    clone.linkFileWriteable = this._linkFileWriteable;
+    clone.uriInfo = this._uriInfo;
+    return clone;
+  }
+
 
   public generateLinkFileName(): Result<string> {
     let timestamp = new Date().getTime();
@@ -167,17 +200,6 @@ export default class DecryptContent {
 
     let secondarySuffix = (this._fileMetaInfo.fileType === '') ?
     splitNames[splitNames.length - Constants.NUMBER_TWO] : this._fileMetaInfo.fileType;
-    // TODO: 原逻辑这里加了白名单，但是实际上权限管理sa也有白名单，所以是不是可以省略这个白名单？
-    // for (let len = Constants.MAX_REALLY_TYPE_LENGTH; len >= Constants.MIN_REALLY_TYPE_LENGTH; len--) {
-    //   if (len > secondarySuffix.length) {
-    //     continue;
-    //   }
-    //   let newStr = secondarySuffix.slice(0, len).toLowerCase();
-    //   if (FILE_SUFFIX_TYPE_ARRAY.includes(newStr)) {
-    //     secondarySuffix = secondarySuffix.slice(0, len);
-    //     break;
-    //   }
-    // }
     this._linkFileName = String(this._openDlpFileData.sandboxBundleName).substring(0, Constants.BUNDLE_LEN) + '_' +
     this._appInfo.appIndex + '_' + timestamp +
     String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END) + '.dlp.link.' + secondarySuffix;
@@ -197,7 +219,6 @@ export default class DecryptContent {
       this._linkUri = fileUri.getUriFromPath(linkFilePath);
       this._uriInfo = new fileUri.FileUri(this._openDlpFileData.uri);
       this._linkUriStat = fs.statSync(this._uriInfo.path);
-      // TODO: 需要删
       HiLog.debug(TAG, `uriInfo.name: ${this._uriInfo.name}, uriInfo.path: ${JSON.stringify(this._uriInfo.path)}`)
       return ResultMsg.buildSuccess();
     } catch (error) {
@@ -207,7 +228,6 @@ export default class DecryptContent {
   }
 
   public setDlpGetAuthPerm(): Result<void> {
-    // TODO: 这里要尝试一下，手动把dlp文件里的AccountType修改之后是什么表现。
     if (!this._openDlpFileData.isFromPlugin &&
       this._fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
       this._authPerm = getAuthPerm(this._accountName ?? '', this._dlpFile.dlpProperty);
@@ -220,11 +240,5 @@ export default class DecryptContent {
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }
     return ResultMsg.buildSuccess();
-  }
-
-  public prepareParams(): Result<void> {
-    let strArray: string[] = this._openDlpFileData.uri.split('/');
-    this._fileName = strArray[strArray.length - 1];
-    return ResultMsg.buildResult(Constants.ERR_CODE_SUCCESS);
   }
 }

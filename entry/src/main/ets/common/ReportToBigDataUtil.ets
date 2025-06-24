@@ -12,12 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ValueType } from "@kit.ArkData";
-import { HiLog } from "./HiLog";
-import { DLPInfo, getDLPInfo } from "./utils";
-import Constants from "./constant";
-import { ObjectUtil } from "./ObjectUtil";
-import hiSysEvent from "@ohos.hiSysEvent";
+import { ValueType } from '@kit.ArkData';
+import { HiLog } from './HiLog';
+import { DLPInfo, getDLPInfo } from './utils';
+import Constants from './constant';
+import { ObjectUtil } from './ObjectUtil';
+import hiSysEvent from '@ohos.hiSysEvent';
 
 const TAG: string = 'ReportToBigDataUtil';
 
@@ -34,7 +34,7 @@ export class ReportToBigDataUtil {
     const getDLPInfoRet = await getDLPInfo();
     if (getDLPInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'getDLPInfo failed');
-      return {name: '', versionCode: ''};
+      return { name: '', versionCode: '' };
     }
     ReportToBigDataUtil.currentBundleInfo = getDLPInfoRet.result;
     return ReportToBigDataUtil.currentBundleInfo!;

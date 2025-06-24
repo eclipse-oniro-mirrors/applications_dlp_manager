@@ -29,7 +29,6 @@ import {
   judgeIsSandBox,
   getFileFd,
   getAppId,
-  DLPInfo,
   DLPGeneralInfo,
   getDLPInfo,
   sendDlpManagerAccountLogin,
@@ -208,8 +207,8 @@ export default class MainAbility extends UIExtensionAbility {
       HiLog.error(TAG, `need uri in want`);
       return false;
     }
-    this.callerToken = parameters['ohos.aafwk.param.callerToken'] as number;
-    let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
+    this.callerToken = parameters[Constants.PARAMS_CALLER_TOKEN] as number;
+    let callerBundleName: string = parameters[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
     if (this.callerToken === undefined || callerBundleName === undefined) {
       HiLog.error(TAG, `need caller info in want.parameters`);
       return false;

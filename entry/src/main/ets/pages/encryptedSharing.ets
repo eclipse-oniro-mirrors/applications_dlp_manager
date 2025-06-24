@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import AccountAssociationService from '../service/AccountAssociationService';
 import { BusinessError } from '@ohos.base';
 import Constants from '../common/constant';
 import { common, wantConstant } from '@kit.AbilityKit';
@@ -24,8 +25,7 @@ import { EditableLeftIconType } from '@ohos.arkui.advanced.EditableTitleBar';
 import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import emitter from '@ohos.events.emitter';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
-import EncryptSharingShowCodeEnum from '../common/enum/EncryptSharingShowCodeEnum';
-import EncryptSharingTerminateCode from '../common/enum/EncryptSharingTerminateCodeEnum';
+import { EncryptSharingShowCodeEnum, EncryptSharingTerminateCode } from '../common/enum/EncryptSharingShowCodeEnum';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import fs from '@ohos.file.fs';
 import {
@@ -77,44 +77,127 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
   everyoneAccessList: []
 };
 
-let storage = LocalStorage.getShared();
-
-@Entry(storage)
+@Entry
 @Component
 struct encryptedSharing {
   static readonly GET_ACCOUNT_INFO_RESET = 'clear';
 
   private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
   private connectService: CredConnectService = new CredConnectService(this.context);
-  private inputUriArray: string[] = storage === undefined ? [] : storage.get<string[]>('inputUriArray') as string[];
+  private storage = this.getUIContext().getSharedLocalStorage() as LocalStorage;
+  private session: UIExtensionContentSession | undefined =
+    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
+  private actionWant: Want | undefined = this.storage.get<Want>('actionWant');
+  private inputUriArray: string[] =
+    this.storage === undefined ? [] : this.storage.get<string[]>('inputUriArray') as string[];
   private isPhoneDevice: boolean = true;
   private dlpProperty: dlpPermission.DLPProperty = defaultDlpProperty;
+  private isFromContactsPicker: boolean = false;
+  private tempInputValue: string = '';
+  private allAssociationList: string[] = [];
 
   @State titlebarMargin: LocalizedMargin = {
     start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
     end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
   };
-  @LocalStorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') phoneNumSearchResult: string = '';
-  @LocalStorageLink('commandGetAccountInfo') @Watch('checkGetAccountInfoResult') getAccountInfoResult: string = '';
+  @StorageLink('commandSearchUserInfo') @Watch('beginToGenerateDLPFile') phoneNumSearchResult: string = '';
+  @StorageLink('commandGetAccountInfo') @Watch('checkGetAccountInfoResult') getAccountInfoResult: string = '';
   @State isTextInputEnabled: boolean = false;
   @State isConfirmButtonEnabled: boolean = false;
   @State isShowSheet: boolean = false;
   @State showUIExtensionForAccountLogin: boolean = false;
-  @State actionWant: Want | undefined = storage.get<Want>('actionWant');
   @State inputValue: string = '';
   @State phoneFormatTips: boolean = false;
   @State ownerAccount: string = '';
   @State ownerAccountID: string = '';
   @State contactExists: boolean = true;
   @State credentialCallBackMsg: string | Resource = '';
-  @State session: UIExtensionContentSession | undefined =
-    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   @State placeHolderStr: ResourceStr = '';
   @State contactPerson: string = '';
   @State recordSuccessUid: string = '';
   @State osVersion: ResourceStr = '';
   @State generalType: string = 'general.file';
   @State scrollHeight: number = 188;
+  @State showAssociationList: string[][] = [];
+
+  async getAuthorizedAccount() {
+    const list = await AccountAssociationService.getInstance().getAuthorizedAccount();
+    if (!list || !list.length) {
+      HiLog.error(TAG, 'Cannot get association account list.');
+      this.allAssociationList = [];
+      return;
+    }
+    this.allAssociationList = list;
+  }
+
+  getShowAccountAssociationList(value: string) {
+    this.showAssociationList = [];
+    if (value.length < Constants.SHARE_ASSOCIATION_MIN || value.length >= Constants.SHARE_ASSOCIATION_MAX) {
+      return;
+    }
+    if (!this.allAssociationList || !this.allAssociationList.length) {
+      return;
+    }
+    const filterList = this.allAssociationList.filter(item => item.includes(value));
+    filterList.forEach(item => {
+      let index = 0;
+      const result: string[] = [];
+      while (index < item.length) {
+        const nextIndex = item.indexOf(this.inputValue, index);
+        if (nextIndex === -1) {
+          result.push(item.slice(index));
+          break;
+        } else {
+          if (nextIndex !== index) {
+            result.push(item.slice(index, nextIndex));
+          }
+          result.push(item.slice(nextIndex, nextIndex + this.inputValue.length));
+          index = nextIndex + this.inputValue.length;
+        }
+      }
+      this.showAssociationList.push(result);
+    })
+  }
+
+  async setAuthorizedAccount(authorizedAccount: string) {
+    await AccountAssociationService.getInstance().setAuthorizedAccount(authorizedAccount);
+    this.getAuthorizedAccount();
+  }
+
+  associationItemAction(phone: string[]) {
+    this.inputValue = phone.join('');
+    this.showAssociationList = [];
+  }
+
+  @Builder
+  AssociationList() {
+    List() {
+      ForEach(this.showAssociationList, (phone: string[]) => {
+        ListItem() {
+          Text() {
+            ForEach(phone, (item: string) => {
+              Span(item).fontWeight(item === this.inputValue ? FontWeight.Bold : FontWeight.Normal)
+            })
+          }
+          .width(Constants.SHARE_ASSOCIATION_LIST_WIDTH)
+          .height(Constants.SHARE_ASSOCIATION_LIST_HEIGHT)
+          .textAlign(TextAlign.Start)
+          .backgroundColor($r('sys.color.ohos_id_color_background'))
+        }
+        .onClick(() => {
+          this.associationItemAction(phone);
+        })
+      }, (item: string) => item)
+    }
+    .listDirection(Axis.Vertical)
+    .backgroundColor($r('sys.color.ohos_id_color_background'))
+    .width(Constants.SHARE_ASSOCIATION_LIST_WIDTH)
+    .height(Constants.SHARE_ASSOCIATION_LIST_HEIGHT)
+    .padding({
+      top: Constants.SHARE_ASSOCIATION_LIST_PADDING,
+      bottom: Constants.SHARE_ASSOCIATION_LIST_PADDING
+    })
+  }
 
   @Builder
   contactsPicker() {
@@ -163,6 +246,8 @@ struct encryptedSharing {
         const phoneNumber = phoneNumbers[0].phoneNumber;
         if (phoneNumber) {
           this.inputValue = phoneNumber;
+          this.isFromContactsPicker = true;
+          this.tempInputValue = phoneNumber;
         }
       }).catch((error: BusinessError) => {
         HiLog.error(TAG, `Failed to select Contacts, Code: ${error.code}, message: ${error.message}`);
@@ -251,7 +336,7 @@ struct encryptedSharing {
         continue;
       }
       const errRes = JSON.parse(res?.error ?? '') as BusinessError;
-      storage.setOrCreate('commandSearchUserInfo', '');
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
       if (errRes && errRes.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
         showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.FILE_NAME_TOO_LONG));
         this.enableComponents();
@@ -264,7 +349,8 @@ struct encryptedSharing {
     return true;
   }
 
-  processTaskResults(results: GenerateDlpFileResult[], dlpFilePathArray: string[], dlpFileNameArray: string[]): void {
+  async processTaskResults(results: GenerateDlpFileResult[], dlpFilePathArray: string[],
+    dlpFileNameArray: string[]): Promise<void> {
     try {
       if (!this.checkTaskResults(results)) {
         HiLog.error(TAG, 'Check task results failed.');
@@ -283,6 +369,9 @@ struct encryptedSharing {
       AppStorage.setOrCreate('hiPolicySizeEncArray', dstFileSizeArray);
       AppStorage.setOrCreate('hiCode', 201);
       sendDlpFileCreateProperties(dlpPermission.AccountType.CLOUD_ACCOUNT); // 201: DLP_2C_FILE_CREATE_EVENT
+      if (!this.isFromContactsPicker) {
+        await this.setAuthorizedAccount(this.inputValue);
+      }
       this.backToPages(filePathUriArray, dlpFileNameArray);
       HiLog.info(TAG, 'beginToGenerateDLPFile success');
     } finally {
@@ -312,6 +401,9 @@ struct encryptedSharing {
       await fs.mkdir(filePath, true);
     } catch (error) {
       HiLog.error(TAG, `mkdir failed: ${JSON.stringify(error)}`);
+      showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
+      this.enableComponents();
+      return;
     }
 
     let dlpFilePathArray: string[] = [];
@@ -329,14 +421,14 @@ struct encryptedSharing {
       dlpFileNameArray.push(dlpFileName);
     }
     let taskResults: GenerateDlpFileResult[] = await taskpool.execute(taskGroup) as GenerateDlpFileResult[];
-    this.processTaskResults(taskResults, dlpFilePathArray, dlpFileNameArray);
+    await this.processTaskResults(taskResults, dlpFilePathArray, dlpFileNameArray);
   }
 
   backToPages(filePathUriArray: string[], dlpFileNameArray: string[]) {
     HiLog.info(TAG, `backToPages start: ${dlpFileNameArray}`);
     if (this.actionWant && this.actionWant.parameters) {
       this.actionWant.flags = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
-      this.actionWant.parameters['ability.params.stream'] = filePathUriArray;
+      this.actionWant.parameters[Constants.PARAMS_STREAM] = filePathUriArray;
       let generatedFiles: Test[] = [];
       for (const dlpFileName of dlpFileNameArray) {
         let fileItem: Test = {
@@ -380,7 +472,7 @@ struct encryptedSharing {
       let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'no_user');
       this.credentialCallBackMsg = str.length > 0 ? str : credentialCallBack.errorMsg;
       this.phoneFormatTips = true;
-      storage.setOrCreate('commandSearchUserInfo', '');
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     if (!credentialCallBack.status && [
@@ -389,12 +481,12 @@ struct encryptedSharing {
       Constants.ERR_CODE_CONNECTION_TIME_OUT
     ].includes(Number(credentialCallBack.errorCode))) {
       showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
-      storage.setOrCreate('commandSearchUserInfo', '');
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) !== Constants.ERR_CODE_SUCCESS) {
       showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
-      storage.setOrCreate('commandSearchUserInfo', '');
+      AppStorage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
     let authUserList: AuthUserList[] = [
@@ -448,7 +540,7 @@ struct encryptedSharing {
   }
 
   async getLocalAccountInfo() {
-    HiLog.info(TAG, `get Account Info start`);
+    HiLog.info(TAG, 'get Account Info start');
     if (!(await getConnectionStatus())) {
       showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
       this.enableComponents();
@@ -595,6 +687,7 @@ struct encryptedSharing {
     AppStorage.setOrCreate('hiAccountType', dlpPermission.AccountType.CLOUD_ACCOUNT);
     sendDlpManagerAccountLogin(-1);
     this.checkContacts();
+    this.getAuthorizedAccount();
     this.clearHistoryDLPFile();
     this.subscribeLanguageChange();
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'add_users_hint');
@@ -673,8 +766,13 @@ struct encryptedSharing {
                 .onChange((value: string) => {
                   HiLog.info(TAG, `input length: ${value.length}`);
                   this.inputValue = value;
+                  this.getShowAccountAssociationList(value);
                   this.phoneFormatTips = false;
                   this.isConfirmButtonEnabled = value.length > 0;
+                  if (this.tempInputValue !== this.inputValue) {
+                    this.tempInputValue = '';
+                    this.isFromContactsPicker = false;
+                  }
                 })
               if (this.contactExists) {
                 Column() {
@@ -704,16 +802,21 @@ struct encryptedSharing {
               }
             }
 
-            Text(this.phoneFormatTips ?
-            this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
-              .fontColor(this.phoneFormatTips ?
-              $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
-              .fontSize($r('sys.float.ohos_id_text_size_body3'))
-              .fontWeight(FontWeight.Regular)
-              .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
-              .backgroundColor(Color.Transparent)
-              .width(Constants.CONTACTS_PICKER_WIDTH)
-              .padding({ left: Constants.SHARE_TITLE_HEAD_PADDING_LEFT })
+            Stack({ alignContent: Alignment.TopStart }) {
+              Text(this.phoneFormatTips ?
+              this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
+                .fontColor(this.phoneFormatTips ?
+                $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
+                .fontSize($r('sys.float.ohos_id_text_size_body3'))
+                .fontWeight(FontWeight.Regular)
+                .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })
+              if (this.showAssociationList.length) {
+                this.AssociationList();
+              }
+            }
+            .backgroundColor(Color.Transparent)
+            .width(Constants.CONTACTS_PICKER_WIDTH)
+            .padding({ left: Constants.SHARE_TITLE_HEAD_PADDING_LEFT })
           }
           .margin({ left: Constants.SHARE_TEXT_INPUT_MARGIN_LEFT, right: Constants.SHARE_TEXT_INPUT_MARGIN_RIGHT })
         }
@@ -826,7 +929,7 @@ async function generateDlpFile(newFilePath: string, inputUri: string,
   } catch (err) {
     HiLog.error(TAG, `generateDlpFile failed: ${JSON.stringify(err)}`);
     error = err;
-    if (newFile?.fd && newFile?.fd !== Constants.ERR_CODE_OPEN_FILE_ERROR) {
+    if (newFile?.fd && newFile?.fd >= Constants.NORMAL_FD_MIN) {
       fs.closeSync(newFile.fd);
       fs.unlinkSync(newFilePath);
     }

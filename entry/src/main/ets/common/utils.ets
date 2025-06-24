@@ -20,8 +20,9 @@ import { BusinessError, Callback } from '@ohos.base'
 import common from '@ohos.app.ability.common';
 import connection from '@ohos.net.connection';
 import Constants from '../common/constant';
-import emitter from '@ohos.events.emitter';
+import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import dlpPermission from '@ohos.dlpPermission';
+import emitter from '@ohos.events.emitter';
 import fileUri from '@ohos.file.fileuri';
 import fs from '@ohos.file.fs';
 import GlobalContext from './GlobalContext';
@@ -36,11 +37,6 @@ import Result from './Result';
 import { ResultMsg } from './ResultMsg';
 
 const TAG = 'Utils';
-// const HEAD_LENGTH_IN_BYTE = 72;
-// const HEAD_LENGTH_IN_U32 = 18;
-// const CERT_OFFSET = 8;
-// const CERT_SIZE = 10;
-const NUMBER_TWO = 2;
 
 const NET_CAPABILITY_INTERNET: number = 12;
 const NET_CAPABILITY_VALIDATED: number = 16;
@@ -51,7 +47,8 @@ const SLEEP_MILLISECONDS: number = 200;
 const DAY_TO_MILLISECOND: number = 1000 * 60 * 60 * 24;
 const MINUTE_TO_MILLISECOND: number = 1000 * 60;
 const SECOND_TO_MILLISECOND: number = 1000;
-const CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
+const RADIX_HEX: number = 16;
+const SHA256: string = 'SHA256';
 
 const enum UnitType {
   DAY_UNIT = 1,
@@ -134,7 +131,7 @@ function getFileUriByPath(filePath: string): string {
   }
 }
 
-function getFileFd(uri: string, mode?: number): Result<number>{
+function getFileFd(uri: string, mode?: number): Result<number> {
   mode = mode || fs.OpenMode.READ_ONLY;
   try {
     let file = fs.openSync(uri, mode);
@@ -156,16 +153,13 @@ function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): R
   if (accountInfo.domainInfo.accountName === '' &&
     accountInfo.domainInfo.accountId === '') {
     AppStorage.setOrCreate('hiAccountStatus', 0);
-    // return Constants.ERR_JS_APP_NO_ACCOUNT_ERROR;
     return ResultMsg.getErrMsg(Constants.ERR_JS_APP_NO_ACCOUNT_ERROR);
   }
   if (!accountInfo.domainInfo.isAuthenticated) {
     AppStorage.setOrCreate('hiAccountStatus', 0);
-    // return Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED;
     return ResultMsg.getErrMsg(Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED);
   }
   AppStorage.setOrCreate('hiAccountStatus', 1);
-  // return Constants.ERR_JS_APP_ACCOUNT_INFO;
   return ResultMsg.buildSuccess();
 }
 
@@ -210,8 +204,8 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
 
 function judgeIsSandBox(want: Want) {
   return new Promise<boolean>(async resolve => {
-    let callerToken: number = want.parameters?.['ohos.aafwk.param.callerToken'] as number;
-    let callerBundleName: string = want.parameters?.['ohos.aafwk.param.callerBundleName'] as string;
+    let callerToken: number = want.parameters?.[Constants.PARAMS_CALLER_TOKEN] as number;
+    let callerBundleName: string = want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
     try {
       let applicationInfo = await bundleManager.getApplicationInfo(
         callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
@@ -311,11 +305,10 @@ async function getAppIdWithUserId(bundleName: string, userId: number): Promise<R
     if (data.signatureInfo.appId) {
       return ResultMsg.buildSuccess(data.signatureInfo.appId);
     }
-    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION);
   } catch (err) {
     HiLog.wrapError(TAG, err, 'get appId failed');
-    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION);
   }
+  return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION);
 }
 
 function getTime() {
@@ -380,7 +373,7 @@ async function getDLPInfo(): Promise<Result<DLPInfo>> {
     };
     return ResultMsg.buildSuccess(dlpInfo);
   } catch (err) {
-    HiLog.wrapError(TAG, err, `getBundleInfoForSelf failed`);
+    HiLog.wrapError(TAG, err, 'getBundleInfoForSelf failed');
     return ResultMsg.getErrMsg(Constants.ERR_CODE_GET_BUNDLE_INFO_ERROR);
   }
 }
@@ -533,10 +526,10 @@ function getAccountTypeAndRealFileType(
         let generalInfo = fs.readTextSync(generalInfoPath);
         let generalInfoArray = generalInfo.split('realFileType');
         let realFileType: string = '';
-        if (generalInfoArray.length === NUMBER_TWO) {
+        if (generalInfoArray.length === Constants.NUMBER_TWO) {
           let realFileTypeStr = generalInfoArray[1].split('\"');
-          if (realFileTypeStr.length > NUMBER_TWO) {
-            realFileType = realFileTypeStr[NUMBER_TWO];
+          if (realFileTypeStr.length > Constants.NUMBER_TWO) {
+            realFileType = realFileTypeStr[Constants.NUMBER_TWO];
           }
         }
 
@@ -555,7 +548,7 @@ function getAccountTypeAndRealFileType(
       }
     } else {
       let cert = new ArrayBuffer(buf[Constants.CERT_SIZE]);
-      let certOffset = CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
+      let certOffset = Constants.CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
       option = { offset: certOffset, length: buf[Constants.CERT_SIZE] };
       try {
         fs.readSync(fd, cert, option);
@@ -694,7 +687,7 @@ function checkNetworkStatus(): Promise<void> {
   })
 }
 
-function isInvalidStr(input: string): boolean {
+function isInvalidStr(input: string | null): boolean {
   return (input === null || input === undefined || input.trim() === '' || input.length === 0);
 }
 
@@ -719,6 +712,116 @@ function logErrorShowToast(context: common.UIAbilityContext | common.UIExtension
   UIContext.destroyUIContextWithoutWindow();
 }
 
+async function getSha256(inputData: Uint8Array): Promise<Uint8Array | null> {
+  if (!inputData || inputData.length === 0) {
+    HiLog.error(TAG, 'getSha256: input is invalid.');
+    return null;
+  }
+  let messageDig: cryptoFramework.Md;
+  try {
+    messageDig = cryptoFramework.createMd(SHA256);
+    await messageDig.update({
+      data: inputData
+    });
+    return (await messageDig.digest()).data;
+  } catch (err) {
+    HiLog.error(TAG, `Generate sha256 failed: ${JSON.stringify(err)}`);
+  }
+  return null;
+}
+
+function generateRandom(length: number): Uint8Array | null {
+  if (length <= Constants.RANDOM_LENGTH_MIN) {
+    HiLog.error(TAG, 'Invalid random number length.');
+    return null;
+  }
+  try {
+    let rand = cryptoFramework.createRandom();
+    let result: cryptoFramework.DataBlob = rand.generateRandomSync(length);
+    return result.data;
+  } catch (err) {
+    HiLog.error(TAG, `generate random failed: ${JSON.stringify(err)}`);
+  }
+  return null;
+}
+
+function encodeByBase64(data: Uint8Array): string | null {
+  if (!data || data.byteLength === 0) {
+    HiLog.error(TAG, 'encodeByBase64: input is invalid.');
+    return null;
+  }
+  let base64 = new util.Base64Helper();
+  try {
+    return base64.encodeToStringSync(data);
+  } catch (err) {
+    HiLog.error(TAG, 'Encode data failed.');
+  }
+  return null;
+}
+
+function decodeByBase64(data: string): Uint8Array | null {
+  if (isInvalidStr(data)) {
+    HiLog.error(TAG, 'decodeByBase64: input is invalid.');
+    return null;
+  }
+  let base64 = new util.Base64Helper();
+  try {
+    return base64.decodeSync(data);
+  } catch (err) {
+    HiLog.error(TAG, 'Decode data failed.');
+  }
+  return null;
+}
+
+function stringToUint8Array(inputData: string): Uint8Array | null {
+  if (isInvalidStr(inputData)) {
+    HiLog.error(TAG, 'stringToUint8Array: input is invalid.');
+    return null;
+  }
+  if (inputData.length > Constants.MAX_DATA_LEN) {
+    HiLog.error(TAG, 'stringToUint8Array: input length overflow.');
+    return null;
+  }
+  let arr: number[] = [];
+  for (let i = 0; i < inputData.length; i++) {
+    arr.push(inputData.charCodeAt(i));
+  }
+  return new Uint8Array(arr);
+}
+
+function uint8ArrayToString(inputData: Uint8Array): string | null {
+  if (!inputData || inputData.byteLength === 0) {
+    HiLog.error(TAG, 'uint8ArrayToString: input is invalid.');
+    return null;
+  }
+  if (inputData.length > Constants.MAX_DATA_LEN) {
+    HiLog.error(TAG, 'uint8ArrayToString: input length overflow.');
+    return null;
+  }
+  let dataString: string = '';
+  for (let i = 0; i < inputData.length; i++) {
+    dataString += String.fromCharCode(inputData[i]);
+  }
+  return dataString;
+}
+
+function uint8ArrayToHexString(inputData: Uint8Array): string | null {
+  if (!inputData || inputData.byteLength === 0) {
+    HiLog.error(TAG, 'uint8ArrayToHexString: input is invalid.');
+    return null;
+  }
+  if (inputData.length > Constants.MAX_DATA_LEN) {
+    HiLog.error(TAG, 'uint8ArrayToHexString: input length overflow.');
+    return null;
+  }
+  let hexString: string = '';
+  for (let i = 0; i < inputData.length; i++) {
+    const hex = inputData[i].toString(RADIX_HEX);
+    hexString += (hex.length === 1 ? '0' + hex : hex);
+  }
+  return hexString;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -735,6 +838,7 @@ export {
   toggleShow,
   directionStatus,
   getAppId,
+  getCurrentTime,
   getTime,
   getFileSizeByUri,
   getFileSizeByUriSync,
@@ -756,7 +860,13 @@ export {
   closeFile,
   deleteFile,
   removeDir,
-  getCurrentTime,
   defaultAppInfo,
-  getAppIdWithUserId
+  getAppIdWithUserId,
+  getSha256,
+  generateRandom,
+  encodeByBase64,
+  decodeByBase64,
+  stringToUint8Array,
+  uint8ArrayToString,
+  uint8ArrayToHexString
 };
