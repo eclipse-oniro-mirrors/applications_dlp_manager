@@ -631,70 +631,70 @@
         },
         {
             "name":"Share_File_Count_Error",
-            "value":"Up to %d files can be selected for encryption.",
+            "value":"A maximum of %d files can be encrypted at a time",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"Share_File_Type_Error",
-            "value":"Encryption is only supported for %s.",
+            "value":"Only %s can be encrypted.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"Share_File_Supported_Types",
-            "value":"documents, images and videos",
+            "value":"documents, images, and videos",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"Share_File_Single_Size_Limit_MB_Error",
-            "value":"Unable to encrypt files larger than %d MB.",
+            "value":"Files larger than %d MB can't be encrypted.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"Share_File_Single_Size_Limit_GB_Error",
-            "value":"Unable to encrypt files larger than %d GB.",
+            "value":"Files larger than %d GB can't be encrypted.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"Share_File_has_been_Encrypted",
-            "value":"This file has been encrypted. Unable to encrypt it again.",
+            "value":"This file has already been encrypted.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"Share_File_Path_Error",
-            "value":"The file does not exist or is inaccessible.",
+            "value":"File does not exist or can't be accessed.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
-            "value":"Unable to obtain permission. Try again later.",
+            "value":"Unable to obtain file permission. Try again later.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"The_File_is_Opened_By_Other_App",
-            "value":"The file has been opened by another app.",
+            "value":"This file is open in another app.",
             "attr":{
                 "priority":"translate"
             }
         },
         {
             "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"This app can't open this file. Try using other app.",
+            "value":"Unable to open file. Try opening in another app.",
             "attr":{
                 "priority":"translate"
             }
@@ -715,7 +715,7 @@
         },
         {
             "name":"Share_File_System_Version_Low",
-            "value":"The system version is too low to open this file.",
+            "value":"System version is too old to open this file.",
             "attr":{
                 "priority":"translate"
             }

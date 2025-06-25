@@ -608,6 +608,90 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"Un maximum de %d fichiers peuvent être chiffrés à la fois",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"L'ouverture du fichier a échoué. Veuillez essayer de l'ouvrir dans une autre application.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"L'obtention de l'autorisation de fichier a échoué. Veuillez réessayer ultérieurement.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"Seuls les %s peuvent être chiffrés.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"Ce fichier a déjà été chiffré.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"Ce fichier est ouvert dans une autre application.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"Espace de stockage insuffisant. La création du fichier crypté a échoué.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"Les fichiers de plus de %d Mo ne peuvent pas être chiffrés.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"Le fichier n'existe pas ou n'est pas accessible.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"Les fichiers de plus de %d Go ne peuvent pas être chiffrés.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"La version du système est trop ancienne pour ouvrir ce fichier.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"documents, images et vidéos",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

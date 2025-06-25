@@ -608,6 +608,90 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"يمكن تشفير %d ملفات بحد أقصى في المرة الواحدة",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"تعذّر فتح الملف، حاول فتحة في تطبيق آخر",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"يتعذّر الحصول على إذن الملف، أعد المحاولة لاحقًا",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"يمكن تشفير %s فقط",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"هذا الملف مُشفر بالفعل",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"هذا الملف مفتوح في تطبيق آخر",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"مساحة التخزين غير كافية، يتعذّر إنشاء ملف مشفر",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"لا يمكن تشفير الملفات التي يزيد حجمها على %d ميغابايت.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"الملف غير موجود أو لا يمكن الوصول إليه",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"لا يمكن تشفير الملفات التي يزيد حجمها على %d غيغابايت.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"يتعذّر فتح هذا الملف لأن إصدار النظام قديم جدًا",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"المستندات والصور والفيديوهات",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -608,6 +608,90 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"1度に最大%d個のファイルを暗号化できます",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"ファイルを開けません。別のアプリで開いてください。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"ファイルの権限を取得できません。後で再試行してください。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"%sのみ暗号化可能です。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"このファイルはすでに暗号化されています。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"このファイルは別のアプリで開かれています。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"空き容量が不足しています。暗号化されたファイルを作成できません。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"%d MBを超えるサイズのファイルは暗号化できません。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"ファイルが存在しないか、ファイルにアクセスできません。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"%d GBを超えるサイズのファイルは暗号化できません。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"システムバージョンが古すぎるためこのファイルを開けません。",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"文書、画像、ビデオ",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

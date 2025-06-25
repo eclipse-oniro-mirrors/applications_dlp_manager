@@ -608,6 +608,90 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"Se puede cifrar un máximo de %d archivos a la vez",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"No se ha podido abrir el archivo. Prueba a abrirlo en otra aplicación.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"No se ha podido obtener el permiso del archivo. Vuelve a intentarlo más tarde.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"Solo se pueden cifrar %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"Este archivo ya se ha cifrado.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"Este archivo está abierto en otra aplicación.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"Memoria insuficiente. No se ha podido crear el archivo cifrado.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"No se pueden cifrar archivos de más de %d MB.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"El archivo no existe o no se puede acceder a él.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"No se pueden cifrar archivos de más de %d GB.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"La versión del sistema es demasiado antigua para abrir este archivo.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"documentos, imágenes y vídeos",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -615,6 +615,90 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"最多可選擇 %d 個檔案加密",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"無法開啟此檔案，請透過其他應用程式開啟",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"無法取得檔案權限，請稍後再試",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"僅支援加密%s類檔案",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"此檔案已加密，無法重複加密",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"此檔案已被其他應用程式開啟",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"儲存空間不足，無法建立加密檔案",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"無法加密大於 %d MB 的檔案",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"檔案不存在或無法存取",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"無法加密大於 %d GB 的檔案",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"系統版本過舊，無法開啟此檔案",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"文件、圖片和影片",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
