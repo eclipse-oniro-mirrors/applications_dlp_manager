@@ -615,6 +615,90 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"མང་ཤོས་སུ་ཡིག་ཆ་ %d གསང་སྡོམ་རྒྱག་རྒྱུར་གདམ་ཆོག",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ། ཉེར་སྤྱོད་གཞན་པས་ཁ་འབྱེད་རོགས།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"ཡིག་ཆའི་དབང་ཚད་ལེན་མ་ཐུབ་པས། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"%sགྲས་ཀྱི་ཡིག་ཆ་ཁོ་ནར་གསང་སྡོམ་རྒྱག་ཆོག",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"ཡིག་ཆ་འདིར་གསང་སྡོམ་བརྒྱབ་འདུག ཡང་བསྐྱར་གསང་སྡོམ་རྒྱག་ཐབས་བྲལ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"ཡིག་ཆ་འདི་ཉེར་སྤྱོད་གཞན་པས་ཕྱེ་ཟིན།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"ཉར་གསོག་བར་སྟོང་མ་འདང་བས། གསང་སྡོམ་ཡིག་ཆ་གསར་དུ་འཛུགས་མི་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"%d MB ལས་ཆེ་བའི་ཡིག་ཆར་གསང་སྡོམ་རྒྱག་མི་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"ཡིག་ཆ་མེད་པའམ་ལྟ་སྤྱོད་བྱེད་ཐབས་བྲལ་བ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"%d GB ལས་ཆེ་བའི་ཡིག་ཆར་གསང་སྡོམ་རྒྱག་མི་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"རྒྱུད་ཁོངས་ཀྱི་པར་གཞི་དམའ་དྲགས། ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ།",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"ཡིག་ཚགས་དང་། པར་རིས། བརྙན་ཟློས་",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

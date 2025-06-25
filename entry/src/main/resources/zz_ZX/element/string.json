@@ -371,6 +371,54 @@
         {
             "name":"Share_Account_Not_Exist",
             "value":"[TS_1084966]_Account does not exist. Please re-enter."
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"[TS_1084969]_A maximum of %d files can be encrypted at a time"
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"[TS_1084973]_Unable to open file. Try opening in another app."
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"[TS_1084968]_Unable to obtain file permission. Try again later."
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"[TS_1084965]_Only %s can be encrypted."
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"[TS_1084967]_This file has already been encrypted."
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"[TS_1084976]_This file is open in another app."
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"[TS_1084975]_Insufficient storage. Unable to create encrypted file."
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"[TS_1084972]_Files larger than %d MB can't be encrypted."
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"[TS_1084974]_File does not exist or can't be accessed."
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"[TS_1084964]_Files larger than %d GB can't be encrypted."
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"[TS_1084971]_System version is too old to open this file."
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"[TS_1084970]_documents, images, and videos"
         }
     ]
 }

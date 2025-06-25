@@ -615,6 +615,90 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"بىر قېتىمدا كۆپىدە %d ھۆججەت مەخپىيلەشتۈرۈلىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
+            "value":"بۇ ھۆججەت ئېچىلمايدۇ، باشقا ئەپتە ئېچىڭ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"ھۆججەت ئىجازىتى ئوقۇلمىدى، كېيىنرەك قايتا سىناڭ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"پەقەت %s تۈرىدىكى ھۆججەت مەخپىيلەشتۈرۈلىدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"بۇ ھۆججەت مەخپىيلەشتۈرۈلگەن، تەكرار مەخپىيلەشتۈرۈلمەيدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"بۇ ھۆججەت باشقا ئەپتە ئوچۇق.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"بوشلۇق يېتەرسىز، مەخپىيلەشتۈرۈلگەن ھۆججەت قۇرۇلمايدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"سىغىمى %dMB دىن چوڭ ھۆججەت مەخپىيلەشتۈرۈلمەيدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"ھۆججەت يوق ياكى ئېچىلمايدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"سىغىمى %dGB دىن چوڭ ھۆججەت مەخپىيلەشتۈرۈلمەيدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"سىستېما نەشرى تۆۋەن، بۇ ھۆججەت ئېچىلمايدۇ.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"پۈتۈك، رەسىم ۋە سىن",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
