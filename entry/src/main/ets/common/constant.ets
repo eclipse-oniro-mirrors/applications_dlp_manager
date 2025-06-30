@@ -92,6 +92,7 @@ export default class Constants {
   public static ENCRYPTION_DOUBLED_NUMBER = 2;
   public static ENCRYPTION_SET_TIMEOUT_TIME = 20;
   public static ENCRYPTION_EMIT_DIRECTION_STATUS = 1;
+  public static ENCRYPTION_FIRST_QUERY_BATCH = 0;
   public static ENCRYPTION_ADD_STAFF_LENGTH_MAX = 50;
   public static ENCRYPTION_ADD_STAFF_LENGTH = 0.9;
   public static ENCRYPTION_STATUS_VALUE_COLOR = 0.6;
