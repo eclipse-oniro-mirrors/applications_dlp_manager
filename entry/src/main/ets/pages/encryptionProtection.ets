@@ -267,7 +267,7 @@ struct DlpDialog {
       }
     }
     let dlpFileName: string = GlobalContext.load('uri') as string;
-    let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(dlpFileName);
+    let srcFileMsg: FileMsg = FileUtils.getAllSuffixByUri(dlpFileName);
     let realFileType: string = GlobalContext.load('realFileType') ?? '';
     HiLog.debug(TAG, `dlpFileName: ${dlpFileName}`);
     HiLog.debug(TAG, `srcFileMsg fileType: ${srcFileMsg.fileType}`);
