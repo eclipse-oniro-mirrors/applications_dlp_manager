@@ -419,6 +419,10 @@
         {
             "name":"Share_File_Supported_Types",
             "value":"[TS_1084970]_documents, images, and videos"
+        },
+        {
+            "name":"file_opening",
+            "value":"[TS_1091009]_Opening…"
         }
     ]
 }

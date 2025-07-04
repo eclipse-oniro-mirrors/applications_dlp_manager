@@ -722,7 +722,10 @@
         },
         {
             "name":"file_opening",
-            "value":"Opening..."
+            "value":"Opening…",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
