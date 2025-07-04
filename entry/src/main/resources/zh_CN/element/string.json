@@ -722,7 +722,10 @@
         },
         {
             "name":"file_opening",
-            "value":"正在打开..."
+            "value":"正在打开…",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

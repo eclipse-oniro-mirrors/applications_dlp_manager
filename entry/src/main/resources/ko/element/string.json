@@ -692,6 +692,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"file_opening",
+            "value":"여는 중…",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
