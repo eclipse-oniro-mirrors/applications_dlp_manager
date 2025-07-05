@@ -69,6 +69,11 @@ export default class CredCallbackStub extends rpc.RemoteObject {
         this.disconnectServiceShareAbility(`connection_${Constants.COMMAND_GET_ACCOUNT_INFO}`);
         return true;
       }
+      case Constants.COMMAND_BATCH_REFRESH: {
+        HiLog.info(TAG, 'onRemoteMessageRequest command batch refresh');
+        this.disconnectServiceShareAbility(`connection_${Constants.COMMAND_BATCH_REFRESH}`);
+        return true;
+      }
       default: {
         HiLog.error(TAG, `invalid request code: ${code}`);
         break;
@@ -108,7 +113,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
   getLocalAccountInfo(remote: rpc.IRemoteObject) {
     HiLog.info(TAG, 'getLocalAccountInfo start');
     if (remote === null) {
-      HiLog.error(TAG, `onConnect remote is null.`);
+      HiLog.error(TAG, 'getLocalAccountInfo onConnect remote is null.');
       return;
     }
     let option = new rpc.MessageOption(Constants.TF_ASYNC);
@@ -126,6 +131,33 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       HiLog.info(TAG, 'getLocalAccountInfo success.');
     }).catch((e: string) => {
       HiLog.error(TAG, `getLocalAccountInfo error: ${e}`);
+    }).finally(() => {
+      data.reclaim();
+      reply.reclaim();
+    });
+  }
+
+  batchRefresh(remote: rpc.IRemoteObject) {
+    HiLog.info(TAG, 'batchRefresh start');
+    if (remote === null) {
+      HiLog.error(TAG, 'batchRefresh onConnect remote is null.');
+      return;
+    }
+    let option = new rpc.MessageOption(Constants.TF_ASYNC);
+    let data = new rpc.MessageSequence();
+    let reply = new rpc.MessageSequence();
+    try {
+      data.writeInterfaceToken(Constants.DLP_CREDMGR_INTERFACE_TOKEN);
+      let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
+      data.writeRemoteObject(callback.asObject());
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'batchRefresh prepare data exception');
+      return;
+    }
+    remote.sendMessageRequest(Constants.COMMAND_BATCH_REFRESH, data, reply, option).then((result) => {
+      HiLog.info(TAG, 'batchRefresh success.');
+    }).catch((e: string) => {
+      HiLog.error(TAG, `batchRefresh error: ${e}`);
     }).finally(() => {
       data.reclaim();
       reply.reclaim();

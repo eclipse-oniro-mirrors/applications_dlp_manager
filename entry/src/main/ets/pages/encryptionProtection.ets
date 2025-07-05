@@ -72,6 +72,7 @@ interface dlpDataType {
   offlineAccess: boolean;
   everyoneAccessList: Array<dlpPermission.DLPFileAccess>;
 }
+
 let defaultDlpProperty: dlpPermission.DLPProperty = {
   ownerAccount: '',
   ownerAccountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
@@ -116,11 +117,32 @@ struct DlpDialog {
   @State staffDataArrayReadOnly: AuthAccount[] = [];
   @State staffDataArrayEdit: AuthAccount[] = [];
   @State selectedPermissionTypeReadOnly: PermissionType =
-    { data: '', value: { id: 0, type: 0, params: [], bundleName: '', moduleName: '' }, index: -1 };
+    {
+      data: '',
+      value: {
+        id: 0,
+        type: 0,
+        params: [],
+        bundleName: '',
+        moduleName: ''
+      },
+      index: -1
+    };
   @State selectedPermissionTypeEdit: PermissionType =
-    { data: '', value: { id: 0, type: 0, params: [], bundleName: '', moduleName: '' }, index: -1 };
+    {
+      data: '',
+      value: {
+        id: 0,
+        type: 0,
+        params: [],
+        bundleName: '',
+        moduleName: ''
+      },
+      index: -1
+    };
 
-  @Builder popupBuilderReadOnly() {
+  @Builder
+  popupBuilderReadOnly() {
     Row() {
       Text($r('app.string.header_title_readonly_tips'))
         .fontFamily('HarmonyHeiTi')
@@ -136,7 +158,8 @@ struct DlpDialog {
     })
   }
 
-  @Builder popupBuilderEdit() {
+  @Builder
+  popupBuilderEdit() {
     Row() {
       Text($r('app.string.header_title_edit_tips'))
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
@@ -284,14 +307,15 @@ struct DlpDialog {
       HiLog.info(TAG, `open temp file`);
     } catch (err) {
       HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
-      this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+      this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.File_cannot_be_opened'));
       await this.catchProcess();
       return;
     } finally {
       if (file) {
         fs.closeSync(file);
       }
-    };
+    }
+    ;
     let filePathUri = getFileUriByPath(filePath);
     try {
       await new Promise<void>((resolve, reject) => {
@@ -300,7 +324,7 @@ struct DlpDialog {
             fs.unlinkSync(filePath);
             HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
             let errorInfo =
-              {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+              { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
             this.showErrorDialog(errorInfo.title, errorInfo.msg);
             await this.catchProcess();
             reject();
@@ -319,7 +343,7 @@ struct DlpDialog {
       this.dlpRpcProxy?.stopFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `stopFuseLink failed: ${err}`);
-          this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+          this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.File_cannot_be_opened'));
           this.processing = false;
           reject();
         }
@@ -330,7 +354,7 @@ struct DlpDialog {
 
   changeToGenDlpFileHome(filePathUri: string, filePath: string) {
     let _dlp = this.tempData();
-    this.dlpRpcProxy?.genDlpFile(filePathUri, GlobalContext.load('uri'), _dlp, async(err: number) => {
+    this.dlpRpcProxy?.genDlpFile(filePathUri, GlobalContext.load('uri'), _dlp, async (err: number) => {
       if (err !== 0) {
         HiLog.error(TAG, `generateDLPFile failed: ${err}`);
         try {
@@ -339,7 +363,7 @@ struct DlpDialog {
           HiLog.error(TAG, `unlinkSync exception, error is ${JSON.stringify(error)}`);
         }
         let errorInfo =
-          {'title': '', 'msg': $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR') } as Record<string, string | Resource>;
+          { 'title': '', 'msg': $r('app.string.File_cannot_be_opened') } as Record<string, string | Resource>;
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         await this.catchProcess();
       } else {
@@ -417,7 +441,8 @@ struct DlpDialog {
         this.beginToGenDlpFileHome(srcFileUri, uri, uriInfo);
       }).catch((err: BusinessError) => {
         HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(err)}`);
-        let errorInfo = GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+        let errorInfo = GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
+          $r('app.string.File_cannot_be_opened'));
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         this.processing = false;
         return;
@@ -434,7 +459,7 @@ struct DlpDialog {
     this.dlpRpcProxy?.genDlpFile(srcFileUri, uri, _dlp, async (err: number) => {
       if (err !== 0) {
         if (err === 100) {
-          this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR'));
+          this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.File_cannot_be_opened'));
           this.processing = false;
           return;
         }
@@ -479,7 +504,7 @@ struct DlpDialog {
     this.staffDataArrayReadOnly = removeDuplicate(this.staffDataArrayReadOnly, 'authAccount');
     this.staffDataArrayEdit = removeDuplicate(this.staffDataArrayEdit, 'authAccount');
     this.staffDataArrayReadOnly = this.staffDataArrayReadOnly.filter((item) =>
-      !this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount)
+    !this.staffDataArrayEdit.some((ele) => ele.authAccount === item.authAccount)
     );
     property.ownerAccount = accountInfo.domainInfo.accountName;
     property.ownerAccountID = accountInfo.domainInfo.accountId ?? '';
@@ -574,8 +599,8 @@ struct DlpDialog {
     })
     let readOnlyData: dlpPermission.AuthUser[] =
       defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
-      return item.dlpFileAccess === 1;
-    }) ?? []
+        return item.dlpFileAccess === 1;
+      }) ?? []
     let editData: dlpPermission.AuthUser[] = defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 2;
     }) ?? []
@@ -613,11 +638,11 @@ struct DlpDialog {
       }
       return;
     }
-    let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
-    if (codeMessage) {
+    let codeMessageRet = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
+    if (codeMessageRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage(
-          { code: codeMessage } as BusinessError);
+          { code: codeMessageRet.errcode } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       }
       return;
@@ -896,9 +921,9 @@ struct DlpDialog {
               })
               .margin({
                 right: SystemUtils.isRTL() ?
-                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
                 left: SystemUtils.isRTL() ?
-                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
               })
             Button($r('app.string.sure'), { type: ButtonType.Capsule, stateEffect: true })
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
@@ -907,10 +932,10 @@ struct DlpDialog {
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
               .enabled(
                 this.isAccountCheckSuccess &&
-                (this.staffDataArrayReadOnly.length > 0 ||
-                this.staffDataArrayEdit.length > 0 ||
-                ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') ||
-                ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? ''))
+                  (this.staffDataArrayReadOnly.length > 0 ||
+                    this.staffDataArrayEdit.length > 0 ||
+                  ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') ||
+                  ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? ''))
               )
               .controlSize(ControlSize.NORMAL)
               .onClick(async (event) => {
@@ -938,9 +963,9 @@ struct DlpDialog {
               })
               .margin({
                 right: SystemUtils.isRTL() ?
-                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                 left: SystemUtils.isRTL() ?
-                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
               })
           }
           .margin({
@@ -954,7 +979,7 @@ struct DlpDialog {
         .width(Constants.ENCRYPTION_PC_FIXING_WIDTH)
         .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
         .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
-        .constraintSize({minWidth: Constants.ENCRYPTION_PC_FIXING_WIDTH})
+        .constraintSize({ minWidth: Constants.ENCRYPTION_PC_FIXING_WIDTH })
         .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
       }
     }
@@ -962,6 +987,7 @@ struct DlpDialog {
 }
 
 let storage = LocalStorage.getShared();
+
 @Entry(storage)
 @Component
 struct encryptionProtection {
@@ -992,8 +1018,10 @@ struct encryptionProtection {
           lg: Constants.DIALOG_LG_OFFSET
         }
       }) {
-        Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
-          direction: FlexDirection.Column }) {
+        Flex({
+          justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
+          direction: FlexDirection.Column
+        }) {
           DlpDialog()
         }
       }

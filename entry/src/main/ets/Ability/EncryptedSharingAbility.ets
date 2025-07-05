@@ -55,7 +55,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
   checkInputUris(want: Want): boolean {
     HiLog.info(TAG, 'Check input URIs.');
     const parameters = want.parameters as Record<string, Object>;
-    this.inputUriArray = parameters['ability.params.stream'] as string[];
+    this.inputUriArray = parameters[Constants.PARAMS_STREAM] as string[];
 
     let validator = UriValidator.getInstance();
     const result = validator.validate(this.inputUriArray);
@@ -71,9 +71,9 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
 
   checkValidParameters(want: Want): boolean {
     let parameters: Record<string, Object> = want.parameters as Record<string, Object>;
-    let inputUris: string[] = parameters['ability.params.stream'] as string[];
-    let callerToken: number = parameters['ohos.aafwk.param.callerToken'] as number;
-    let callerBundleName: string = parameters['ohos.aafwk.param.callerBundleName'] as string;
+    let inputUris: string[] = parameters[Constants.PARAMS_STREAM] as string[];
+    let callerToken: number = parameters[Constants.PARAMS_CALLER_TOKEN] as number;
+    let callerBundleName: string = parameters[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
 
     let paramsTypeFlag: boolean =
       Array.isArray(inputUris) && (typeof callerToken === 'number') && (typeof callerBundleName === 'string');
@@ -122,10 +122,13 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     }
 
     let parameters = want.parameters as Record<string, Object>;
-    AppStorage.setOrCreate('hiPkgName', parameters['ohos.aafwk.param.callerBundleName']);
-    let dlpInfo: DLPInfo = await getDLPInfo();
-    AppStorage.setOrCreate('hiPNameId', dlpInfo.name);
-    AppStorage.setOrCreate('hiPVersionId', dlpInfo.versionCode);
+    AppStorage.setOrCreate('hiPkgName', parameters[Constants.PARAMS_CALLER_BUNDLE_NAME]);
+
+    let dlpInfoRet = await getDLPInfo();
+    if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS) {
+      AppStorage.setOrCreate('hiPNameId', dlpInfoRet.result!.name);
+      AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result!.versionCode);
+    }
 
     const storageParams: encryptedSharingParams = {
       'session': session,
@@ -150,7 +153,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     let applicationContext = this.context.getApplicationContext();
     try {
       applicationContext.off('environment', this.callbackId, (error, data) => {
-        if (error && error.code != 0) {
+        if (error && error.code !== 0) {
           HiLog.error(TAG, `off environment error: ${JSON.stringify(error)}`);
         } else {
           HiLog.info(TAG, `off environment success: ${JSON.stringify(data)}`);

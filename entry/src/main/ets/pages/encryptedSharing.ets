@@ -428,7 +428,7 @@ struct encryptedSharing {
     HiLog.info(TAG, `backToPages start: ${dlpFileNameArray}`);
     if (this.actionWant && this.actionWant.parameters) {
       this.actionWant.flags = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
-      this.actionWant.parameters['ability.params.stream'] = filePathUriArray;
+      this.actionWant.parameters[Constants.PARAMS_STREAM] = filePathUriArray;
       let generatedFiles: Test[] = [];
       for (const dlpFileName of dlpFileNameArray) {
         let fileItem: Test = {

@@ -14,11 +14,9 @@
  */
 
 export default class DomainAccountInfo {
-
   public accountId: string;
   public accountName: string;
   public cnName: string;
   public dept: string;
   public mail: string;
-
 }

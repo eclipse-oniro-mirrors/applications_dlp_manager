@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,35 +17,38 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
-import GlobalContext from '../common/GlobalContext';
+import Want from '@ohos.app.ability.Want';
+import OpeningDialogService from '../rpc/OpeningDialogService';
 
-const TAG = 'DialogUIExt';
+const TAG = 'OpeningDialogUIExt';
 
-export default class DialogUIExtAbility extends UIExtensionAbility {
+export default class OpeningDialogUIExtAbility extends UIExtensionAbility {
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
-    HiLog.info(TAG, `onSessionCreate start`);
-    GlobalContext.store('dialogUIExtWant', want);
+    HiLog.info(TAG, 'OpeningDialogUIExtAbility onSessionCreate start');
     try {
-      session.loadContent('pages/alert');
+      session.loadContent('pages/OpeningDialog');
       session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-    } catch (exception) {
-      HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'loadContent failed');
     }
+    OpeningDialogService.getInstance().setContext(this.context);
+    OpeningDialogService.getInstance().connectViewAbility();
   }
 
   onSessionDestroy(session: UIExtensionContentSession): void {
-    HiLog.info(TAG, `onSessionDestroy`);
+    HiLog.info(TAG, 'OpeningDialogUIExtAbility onSessionDestroy');
+    OpeningDialogService.getInstance().disconnectViewAbility();
   }
 
   onWindowStageDestroy(): void {
-    HiLog.info(TAG, `onWindowStageDestroy`);
+    HiLog.info(TAG, 'OpeningDialogUIExtAbility onWindowStageDestroy');
   }
 
   onForeground(): void {
-    HiLog.info(TAG, `onForeground`);
+    HiLog.info(TAG, 'OpeningDialogUIExtAbility onForeground');
   }
 
   onBackground() {
-    HiLog.info(TAG, `onBackground`);
+    HiLog.info(TAG, 'OpeningDialogUIExtAbility onBackground');
   }
 };

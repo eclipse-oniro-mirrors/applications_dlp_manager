@@ -47,7 +47,7 @@ import FileUtils, { FileMsg } from '../common/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import CommonUtil from '../common/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
-import { promptAction} from '@kit.ArkUI';
+import { promptAction } from '@kit.ArkUI';
 
 const TAG = 'ModEnc';
 
@@ -70,6 +70,7 @@ function customizeText() {
 }
 
 let storage = LocalStorage.getShared();
+
 @Entry(storage)
 @Component
 struct changeEncryption {
@@ -119,7 +120,8 @@ struct changeEncryption {
     index: 1
   }
 
-  @Builder popupBuilderReadOnly() {
+  @Builder
+  popupBuilderReadOnly() {
     Row() {
       Text($r('app.string.header_title_readonly_tips'))
         .fontFamily('HarmonyHeiTi')
@@ -135,7 +137,8 @@ struct changeEncryption {
     })
   }
 
-  @Builder popupBuilderEdit() {
+  @Builder
+  popupBuilderEdit() {
     Row() {
       Text($r('app.string.header_title_edit_tips'))
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
@@ -197,7 +200,7 @@ struct changeEncryption {
         if (err !== 0) {
           HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
           let errorInfo =
-            {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+            { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
           this.showErrorDialog(errorInfo.title, errorInfo.msg);
           await this.catchProcess();
           reject();
@@ -274,7 +277,7 @@ struct changeEncryption {
         HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
       }
       let errorInfo =
-        {'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+        { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
       this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
       await this.catchProcess();
       return;
@@ -366,7 +369,7 @@ struct changeEncryption {
     } else {
       AppStorage.setOrCreate('hiReadScope', 'User');
       this.staffDataArrayReadOnly = readOnlyData;
-      filterEditFilter(); 
+      filterEditFilter();
     }
     try {
       await this.getRouterParams();
@@ -402,7 +405,7 @@ struct changeEncryption {
   }
 
   async dealStaffData(dataArray: AuthAccount[]): Promise<void> {
-    let searchReq = dataArray.map(item =>{
+    let searchReq = dataArray.map(item => {
       return item.authAccount;
     });
     if (searchReq.length < 1) {
@@ -412,7 +415,7 @@ struct changeEncryption {
     if (!result || CommonUtil.isEmptyArray(result.getData())) {
       return;
     }
-    dataArray.forEach(data =>{
+    dataArray.forEach(data => {
       let accountName = data.authAccount;
       let match = result?.getData().find(
         item => accountName.toLocaleUpperCase() === item.accountName.toLocaleUpperCase());
@@ -436,11 +439,11 @@ struct changeEncryption {
       }
       return;
     }
-    let codeMessage = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
-    if (codeMessage) {
+    let codeMessageRet = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
+    if (codeMessageRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage(
-          { code: codeMessage } as BusinessError);
+          { code: codeMessageRet.errcode } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       }
       return;
@@ -488,8 +491,10 @@ struct changeEncryption {
           lg: Constants.DIALOG_LG_OFFSET
         }
       }) {
-        Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
-          direction: FlexDirection.Column }) {
+        Flex({
+          justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
+          direction: FlexDirection.Column
+        }) {
           Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
             EncryptingPanel({ processing: $prepareData, loadingType: Constants.LOAD_TYPE_CE })
             if (!this.prepareData) {
@@ -644,7 +649,7 @@ struct changeEncryption {
                                     .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.readOnlyFlag ?
-                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
@@ -664,7 +669,7 @@ struct changeEncryption {
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
                             if (oldValue.width ===
-                              Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                            Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
                               let nameValue = calculate(newValue, this.staffDataArrayReadOnly);
                               this.rowNamesLenReadOnly = nameValue.rowNamesLen as number;
                               this.showNamesArrReadOnly = nameValue.showNamesArr as AuthAccount[];
@@ -690,7 +695,7 @@ struct changeEncryption {
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
                           Text(this.selectedPermissionTypeEdit.data === 'all' ?
-                            $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
+                          $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
@@ -799,7 +804,7 @@ struct changeEncryption {
                                     .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.editFlag ?
-                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
@@ -819,7 +824,7 @@ struct changeEncryption {
                           }
                           .onAreaChange((oldValue: Area, newValue: Area) => {
                             if (oldValue.width ===
-                              Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
+                            Constants.ENCRYPTION_ON_AREA_CHANGE_WIDTH || newValue.width !== oldValue.width) {
                               let nameValue = calculate(newValue, this.staffDataArrayEdit);
                               this.rowNamesLenEdit = nameValue.rowNamesLen as number;
                               this.showNamesArrEdit = nameValue.showNamesArr as AuthAccount[];
@@ -875,6 +880,7 @@ struct changeEncryption {
                   left: Constants.HEADER_COLUMN_PADDING_LEFT,
                   right: Constants.HEADER_COLUMN_PADDING_RIGHT
                 })
+
                 Flex({ direction: FlexDirection.Row }) {
                   Button($r('app.string.unencrypted'), { type: ButtonType.Capsule, stateEffect: true })
                     .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
@@ -893,9 +899,9 @@ struct changeEncryption {
                     })
                     .margin({
                       right: SystemUtils.isRTL() ?
-                        Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                      Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
                       left: SystemUtils.isRTL() ?
-                        Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                      Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                     })
                   Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })
                     .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
@@ -917,9 +923,9 @@ struct changeEncryption {
                     })
                     .margin({
                       right: SystemUtils.isRTL() ?
-                        Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                      Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                       left: SystemUtils.isRTL() ?
-                        Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                      Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
                     })
                 }
                 .margin({
