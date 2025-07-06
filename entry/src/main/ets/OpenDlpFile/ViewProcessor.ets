@@ -91,6 +91,7 @@ export class OpenDlpFileProcessor {
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
     if (getDecryptDataRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'getDecryptData error');
+      await OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
       return ResultMsg.buildMsg(getDecryptDataRet.errcode, getDecryptDataRet.errmsg);
     }
 
@@ -105,16 +106,16 @@ export class OpenDlpFileProcessor {
   }
 
   private checkIfContinue(state: DecryptState): Result<void> {
-    if (state === DecryptState.DECRYPTING || OpeningDialogManager.getInstance().getIsDecrypting()) {
-      HiLog.info(TAG,
-        `in decrypting state ${state}, isDecrypting ${OpeningDialogManager.getInstance().getIsDecrypting()}`);
+    HiLog.info(TAG, `checkIfContinue state is ${state}`);
+    const isDecrypting = OpeningDialogManager.getInstance().getIsDecrypting();
+    if (state === DecryptState.DECRYPTING || isDecrypting) {
+      HiLog.info(TAG, `in decrypting, state ${state}, isDecrypting ${isDecrypting}`);
       return ResultMsg.getErrMsg(Constants.ERR_CODE_FILE_IS_DECRYPTING_ERROR);
     }
     if (state === DecryptState.ENCRYPTING) {
       HiLog.info(TAG, 'in encrypting');
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_ENCRYPTION_REJECTED);
     }
-    HiLog.info(TAG, 'not start or decrypted');
     return ResultMsg.buildSuccess();
   }
 
@@ -155,10 +156,13 @@ export class OpenDlpFileProcessor {
       return;
     }
     const hasDecryptedSize = getSizeRet.result!;
-    HiLog.debug(TAG, `hasDecryptedSize: ${hasDecryptedSize}`);
-    if (hasDecryptedSize === 0 && OpeningDialogManager.getInstance().getHasCallback()) {
+    const hasCallback = OpeningDialogManager.getInstance().getHasCallback();
+    const isDecrypting = OpeningDialogManager.getInstance().getIsDecrypting();
+    HiLog.info(TAG, `hasDecryptedSize: ${hasDecryptedSize},hasCallback: ${hasCallback},isDecrypting: ${isDecrypting}`);
+    if (hasDecryptedSize === 0 && hasCallback && !isDecrypting) {
       try {
         await context.terminateSelf();
+        HiLog.info(TAG, 'viewAbility terminateSelf success');
       } catch (error) {
         HiLog.wrapError(TAG, error, 'terminateSelf exception');
       }

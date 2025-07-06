@@ -49,21 +49,25 @@ export default class OpeningDialogStub extends rpc.RemoteObject {
 
   onRemoteMessageRequest(code: number, data: rpc.MessageSequence): boolean {
     if (!this.checkParams(code, data)) {
+      HiLog.error(TAG, 'onRemoteMessageRequest checkParams false');
       return false;
     }
     switch (code) {
       case Constants.COMMAND_SHOW_DIALOG: {
         HiLog.info(TAG, 'command show dialog');
-        let resultVar = false;
+        let showDialog: boolean = false;
+        let requestId: string = '';
         try {
-          resultVar = data.readBoolean();
+          showDialog = data.readBoolean();
+          requestId = data.readString();
         } catch (error) {
-          HiLog.wrapError(TAG, error, 'read boolean exception');
+          HiLog.wrapError(TAG, error, 'read boolean or string exception');
           return false;
         }
         const eventData: emitter.EventData = {
           data: {
-            'showDialog': resultVar
+            'showDialog': showDialog,
+            'requestId': requestId
           }
         };
         emitter.emit(Constants.SHOW_DIALOG_EVENT, eventData);

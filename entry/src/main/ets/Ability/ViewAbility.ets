@@ -45,7 +45,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     HiLog.debug(TAG, `enter onRequest startId: ${startId}`);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
     if (OpeningDialogManager.getInstance().getIsChargeOpeningDialog()) {
-      HiLog.error(TAG, 'isChargeOpeningDialog');
       return;
     }
     OpeningDialogManager.getInstance().loadOpeningDialog(this.context);
@@ -54,12 +53,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (processRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'process error');
     }
-    await OpeningDialogManager.getInstance().unLoadOpeningDialog();
+    await OpeningDialogManager.getInstance().unLoadOpeningDialogNormal();
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
   }
 
   async onDestroy(): Promise<void> {
-    HiLog.debug(TAG, 'onDestroy');
-    await OpeningDialogManager.getInstance().unLoadOpeningDialog();
+    HiLog.debug(TAG, 'ViewAbility onDestroy');
+    await OpeningDialogManager.getInstance().unLoadOpeningDialogAbnormal();
   }
 }

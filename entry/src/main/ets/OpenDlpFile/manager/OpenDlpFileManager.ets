@@ -53,7 +53,7 @@ export class OpenDlpFileManager {
   }
 
   public async setStatus(uri: string, status: DecryptStatus): Promise<Result<void>> {
-    HiLog.debug(TAG, `setStatus: uri = ${uri}, status = ${status}`);
+    HiLog.info(TAG, `setStatus: uri = ${uri}, status = ${status.state}`);
     try {
       await this.lock.lockAsync(() => {
         this.statusMap.set(uri, status);
@@ -68,10 +68,12 @@ export class OpenDlpFileManager {
   public getStatus(uri: string): Result<DecryptStatus> {
     let status: DecryptStatus | undefined;
     status = this.statusMap.get(uri) || { state: DecryptState.NOT_STARTED };
+    HiLog.info(TAG, `getStatus: uri = ${uri}, status = ${status.state}`);
     return ResultMsg.buildSuccess(status);
   }
 
   public async deleteStatus(uri: string): Promise<Result<void>> {
+    HiLog.info(TAG, `deleteStatus: uri = ${uri}`);
     try {
       await this.lock.lockAsync(() => {
         this.statusMap.delete(uri);
@@ -84,7 +86,7 @@ export class OpenDlpFileManager {
   }
 
   public async addDecryptContent(uri: string, content: DecryptContent): Promise<Result<void>> {
-    HiLog.info(TAG, `addDecryptContent uri: ${uri}, content: ${content}`);
+    HiLog.info(TAG, `addDecryptContent uri: ${uri}`);
     try {
       await this.lock.lockAsync(() => {
         this.contentMap.set(uri, content);

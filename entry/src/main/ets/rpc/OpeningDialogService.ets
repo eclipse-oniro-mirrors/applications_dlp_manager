@@ -60,7 +60,7 @@ export default class OpeningDialogService {
   }
 
   public connectViewAbility(): void {
-    HiLog.info(TAG, 'connectViewAbility');
+    HiLog.info(TAG, 'connectViewAbility start');
     let want: Want = {
       bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
       abilityName: Constants.DLP_VIEW_SERVICE,
@@ -75,7 +75,7 @@ export default class OpeningDialogService {
   }
 
   public disconnectViewAbility(): void {
-    HiLog.info(TAG, 'disconnectViewAbility');
+    HiLog.info(TAG, 'disconnectViewAbility start');
     try {
       this._context?.disconnectServiceExtensionAbility(this.connectionId);
     } catch (error) {
@@ -84,7 +84,7 @@ export default class OpeningDialogService {
   }
 
   private setRemoteObject(): void {
-    HiLog.info(TAG, 'setRemoteObject');
+    HiLog.info(TAG, `setRemoteObject start`);
     if (!this.remoteProxy) {
       HiLog.error(TAG, 'setRemoteObject remoteProxy is null');
       return;
@@ -111,8 +111,8 @@ export default class OpeningDialogService {
     }
   }
 
-  public dialogDisappear(): void {
-    HiLog.info(TAG, 'dialogDisappear');
+  public dialogDisappear(requestId: string): void {
+    HiLog.info(TAG, `dialogDisappear requestId ${requestId}`);
     if (!this.remoteProxy) {
       HiLog.error(TAG, 'dialogDisappear remoteProxy is null');
       return;
@@ -122,6 +122,7 @@ export default class OpeningDialogService {
     let reply = new rpc.MessageSequence();
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
+      data.writeString(requestId);
     } catch (error) {
       HiLog.wrapError(TAG, error, 'dialogDisappear prepare data exception');
       return;
@@ -137,8 +138,8 @@ export default class OpeningDialogService {
     }
   }
 
-  public dialogTimeout(): void {
-    HiLog.info(TAG, 'dialogTimeout');
+  public dialogTimeout(requestId: string): void {
+    HiLog.info(TAG, `dialogTimeout requestId ${requestId}`);
     if (!this.remoteProxy) {
       HiLog.error(TAG, 'dialogTimeout remoteProxy is null');
       return;
@@ -148,6 +149,7 @@ export default class OpeningDialogService {
     let reply = new rpc.MessageSequence();
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
+      data.writeString(requestId);
     } catch (error) {
       HiLog.wrapError(TAG, error, 'dialogTimeout prepare data exception');
       return;

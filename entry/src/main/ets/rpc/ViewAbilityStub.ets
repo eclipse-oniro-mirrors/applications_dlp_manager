@@ -14,7 +14,7 @@
  */
 
 import { HiLog } from '../common/HiLog';
-import rpc from '@ohos.rpc'
+import rpc from '@ohos.rpc';
 import Constants from '../common/constant';
 import ViewAbilityService from './ViewAbilityService';
 import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
@@ -50,6 +50,7 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
 
   async onRemoteMessageRequest(code: number, data: rpc.MessageSequence): Promise<boolean> {
     if (!this.checkParams(code, data)) {
+      HiLog.error(TAG, 'onRemoteMessageRequest checkParams failed');
       return false;
     }
     switch (code) {
@@ -65,12 +66,26 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
       }
       case Constants.COMMAND_DIALOG_DISAPPEAR: {
         HiLog.info(TAG, 'command dialog disappear');
-        OpeningDialogManager.getInstance().dialogDisappear();
+        let resultVar = '';
+        try {
+          resultVar = data.readString();
+        } catch (error) {
+          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          return false;
+        }
+        await OpeningDialogManager.getInstance().dialogDisappear(resultVar);
         return true;
       }
       case Constants.COMMAND_DIALOG_TIMEOUT: {
         HiLog.info(TAG, 'command dialog timeout');
-        OpeningDialogManager.getInstance().dialogTimeout();
+        let resultVar = '';
+        try {
+          resultVar = data.readString();
+        } catch (error) {
+          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          return false;
+        }
+        OpeningDialogManager.getInstance().dialogTimeout(resultVar);
         return true;
       }
       default: {
