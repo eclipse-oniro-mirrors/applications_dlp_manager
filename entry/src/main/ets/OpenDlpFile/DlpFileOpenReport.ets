@@ -22,6 +22,18 @@ const TAG: string = 'DlpFileOpenReport';
 export class DlpFileOpenReport {
   public static reportDlpFileOpenSuccess(code: number, decryptContent: DecryptContent) {
     const msg: Record<string, number | string | boolean> = {
+      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
+      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
+      'ACCOUNT_TYPE': decryptContent.fileMetaInfo.accountType,
+      'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
+      'REAL_FILE_TYPE': decryptContent.fileMetaInfo.fileType,
+      'RECV_USER_ID': decryptContent.fileMetaInfo.ownerAccount.slice(0, 2) ?? -1,
+      'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
+      'PACK_METHOD': -1,
+      'OPERATION_COST': '',
+      'DECRYPTION_COST': 0,
+      'FVERSIONID': 0,
+      'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
       'USER_ID': decryptContent.userId,
       'SANDBOX_PKGNAME': decryptContent.openDlpFileData.sandboxBundleName,
@@ -32,11 +44,23 @@ export class DlpFileOpenReport {
 
   public static sendDlpFileOpenFault(code: number, decryptContent: DecryptContent, busErr?: BusinessError) {
     const msg: Record<string, number | string | boolean> = {
+      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
+      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
+      'ACCOUNT_TYPE': decryptContent.fileMetaInfo.accountType,
+      'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
+      'REAL_FILE_TYPE': decryptContent.fileMetaInfo.fileType,
+      'RECV_USER_ID': decryptContent.fileMetaInfo.ownerAccount.slice(0, 2) ?? -1,
+      'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
+      'PACK_METHOD': -1,
+      'OPERATION_COST': '',
+      'DECRYPTION_COST': 0,
+      'FVERSIONID': 0,
+      'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
       'USER_ID': decryptContent.userId,
       'SANDBOX_PKGNAME': decryptContent.openDlpFileData.sandboxBundleName,
       'SANDBOX_INDEX': decryptContent.appInfo.appIndex,
-      'REASON': busErr ? `errcode is ${busErr.code}, message is ${busErr.message}}, data is ${busErr.data}}` : '',
+      'REASON': busErr ? `errcode is ${busErr.code}, message is ${busErr.message}, data is ${busErr.data}` : '',
     };
     ReportToBigDataUtil.reportErrEvent(BigDataConstants.DLP_FILE_OPEN, msg);
   }
