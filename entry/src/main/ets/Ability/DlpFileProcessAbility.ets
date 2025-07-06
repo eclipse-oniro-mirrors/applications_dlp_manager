@@ -38,6 +38,8 @@ import GlobalContext from '../common/GlobalContext';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
 import FileUtil from '../common/external/FileUtil';
+import { DecryptState, OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
+import DecryptContent from '../OpenDlpFile/data/DecryptContent';
 
 const TAG = 'DlpRpcServiceStub';
 
@@ -50,17 +52,12 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     super(des);
   }
 
-  getOpeningFile(inputUri: string) : dlpPermission.DLPFile | null {
-    let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-    if (sandbox2linkFile !== undefined) {
-      for (let key of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
-        for (let j of key) {
-          if (j[4] === inputUri) {
-            let dlpFile: dlpPermission.DLPFile = j[0] as dlpPermission.DLPFile;
-            return dlpFile;
-          }
-        }
-      }
+  async getOpeningFile(inputUri: string): Promise<dlpPermission.DLPFile | null> {
+    const manager = OpenDlpFileManager.getInstance();
+    const getRet = manager.getHasDecryptedContent(inputUri);
+    if (getRet.errcode === Constants.ERR_CODE_SUCCESS && getRet.result) {
+      const decryptContent = getRet.result;
+      return decryptContent.dlpFile;
     }
 
     if (this.dlpFileMap.has(inputUri)) {
@@ -72,7 +69,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
   async genDlpFile(inputUri: string, outputUri: string, dlp: IDLDLPProperty, callback: genDlpFileCallback
   ): Promise<void> {
-    HiLog.info(TAG, `genDlpFile in service`);
+    HiLog.info(TAG, 'genDlpFile in service');
     let result: Record<string, number>;
     try {
       result = await this.genDlpFileFd(inputUri, outputUri);
@@ -81,19 +78,20 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       return;
     }
     let dlpP: dlpPermission.DLPProperty = {
-      'ownerAccount' : dlp.ownerAccount,
-      'ownerAccountID' : dlp.ownerAccountID,
-      'ownerAccountType' : dlp.ownerAccountType,
-      'authUserList' : dlp.authUserList,
-      'contactAccount' : dlp.contactAccount,
-      'offlineAccess' : dlp.offlineAccess,
-      'everyoneAccessList' : dlp.everyoneAccessList,
+      'ownerAccount': dlp.ownerAccount,
+      'ownerAccountID': dlp.ownerAccountID,
+      'ownerAccountType': dlp.ownerAccountType,
+      'authUserList': dlp.authUserList,
+      'contactAccount': dlp.contactAccount,
+      'offlineAccess': dlp.offlineAccess,
+      'everyoneAccessList': dlp.everyoneAccessList,
       'expireTime': dlp.expireTime
     }
     try {
       let dlpFile = await dlpPermission.generateDLPFile(result.inFileFd, result.outFileFd, dlpP);
       if (!this.dlpFileMap.has(outputUri)) {
         this.dlpFileMap.set(outputUri, dlpFile);
+        this.addEncryptingState(outputUri);
         AppStorage.setOrCreate('dlpFileMap', this.dlpFileMap);
       } else {
         let rawDlpFile = this.dlpFileMap.get(outputUri) ?? null;
@@ -106,6 +104,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         }
         this.dlpFileMap.delete(outputUri);
         this.dlpFileMap.set(outputUri, dlpFile);
+        this.addEncryptingState(outputUri);
         AppStorage.setOrCreate('dlpFileMap', this.dlpFileMap);
       }
       callback(0);
@@ -185,11 +184,13 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       callback(0, _dlp, '');
       if (!this.dlpFileMap.has(srcUri)) {
         this.dlpFileMap.set(srcUri, dlpFile);
+        this.addEncryptingState(srcUri);
         AppStorage.setOrCreate('dlpFileMap', this.dlpFileMap);
       } else {
         HiLog.info(TAG, `map is overwrite`);
         this.dlpFileMap.delete(srcUri);
         this.dlpFileMap.set(srcUri, dlpFile);
+        this.addEncryptingState(srcUri);
         AppStorage.setOrCreate('dlpFileMap', this.dlpFileMap);
       }
     } catch (err) {
@@ -202,7 +203,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
   async stopFuseLink(uri: string, callback: stopFuseLinkCallback): Promise<void> {
     HiLog.info(TAG, `stopFuseLink start: ${uri}`);
-    let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(uri);
+    let dlpFile: dlpPermission.DLPFile | null = await this.getOpeningFile(uri);
     if (dlpFile !== null) {
       await dlpFile.stopFuseLink();
     } else {
@@ -213,7 +214,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
   async resumeFuseLink(uri: string, callback: resumeFuseLinkCallback): Promise<void> {
     HiLog.info(TAG, `resumeFuseLink start`);
-    let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(uri);
+    let dlpFile: dlpPermission.DLPFile | null = await this.getOpeningFile(uri);
     if (dlpFile !== null) {
       await dlpFile.resumeFuseLink();
     } else {
@@ -223,18 +224,20 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async replaceDlpLinkFile(srcUri: string, linkFileName: string, callback: replaceDlpLinkFileCallback): Promise<void> {
-    GlobalContext.load('sandbox2linkFile');
     if (this.dlpFileMap.has(srcUri)) {
       let dlpFile: dlpPermission.DLPFile = this.dlpFileMap.get(srcUri) as dlpPermission.DLPFile;
-      let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-      for (let key of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
-        for (let j of key) {
-          if (j[1] === linkFileName) {
-            j[0] = dlpFile;
-          }
-        }
+      const manager = OpenDlpFileManager.getInstance();
+      const getRet = manager.getHasDecryptedContentByLinkFileName(linkFileName);
+      if (getRet.errcode === Constants.ERR_CODE_SUCCESS && getRet.result) {
+        const decryptContent = getRet.result;
+        decryptContent.dlpFile = dlpFile;
       }
-      await dlpFile.replaceDLPLinkFile(linkFileName);
+
+      try {
+        await dlpFile.replaceDLPLinkFile(linkFileName);
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'replaceDLPLinkFile error');
+      }
     } else {
       HiLog.error(TAG, `replaceDLPLinkFile not find: ${srcUri}`);
       callback(-1);
@@ -242,7 +245,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async recoverDlpFile(srcUri: string, pathUri: string, callback: recoverDlpFileCallback): Promise<void> {
-    let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(srcUri);
+    let dlpFile: dlpPermission.DLPFile | null = await this.getOpeningFile(srcUri);
     if (dlpFile !== null) {
       let inFile: fs.File | undefined;
       try {
@@ -262,12 +265,13 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
   async closeDlpFile(srcUri: string, callback: closeDlpFileCallback): Promise<void> {
     HiLog.info(TAG, `closeDlpFile start`);
-    let dlpFile: dlpPermission.DLPFile | null = this.getOpeningFile(srcUri);
+    let dlpFile: dlpPermission.DLPFile | null = await this.getOpeningFile(srcUri);
     if (dlpFile !== null) {
       try {
         await dlpFile.closeDLPFile();
         if (this.dlpFileMap.has(srcUri)) {
           this.dlpFileMap.delete(srcUri);
+          this.deleteEncryptingState(srcUri);
           AppStorage.setOrCreate('dlpFileMap', this.dlpFileMap);
         }
         callback(0);
@@ -279,63 +283,86 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async sandBoxLinkFile(linkFileName: string, callerToken: number, callback: sandBoxLinkFileCallback): Promise<void> {
-    let sandbox2linkFile: Map<string, (number | string | dlpPermission.DLPFile)[][]> = GlobalContext.load('sandbox2linkFile') as Map<string, (number | string | dlpPermission.DLPFile)[][]>;
-    for (let value of Array.from<(number | string | dlpPermission.DLPFile)[][]>(sandbox2linkFile.values())) {
-      for (let linkFile of value) {
-        let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
-        if (linkFile[Constants.FILE_OPEN_HISTORY_ONE] === linkFileName) {
-          let authUserListNew: IAuthUser[] = [];
-          if (callerToken !== linkFile[Constants.FILE_OPEN_HISTORY_THREE]) {
-            HiLog.error(TAG, `found file, but token invalid: ${linkFileName}`);
-            callback(-1, _dlp, '');
-          } else {
-            let linkFileInfo: Record<number, number | string | dlpPermission.DLPFile> =
-              linkFile[0] as Record<number, number | string | dlpPermission.DLPFile>;
-            linkFileInfo['dlpProperty'].authUserList.forEach((item: IAuthUser)=> {
-              authUserListNew.push(
-                new IAuthUser(
-                  item.authAccount,
-                  item.authAccountType,
-                  item.dlpFileAccess,
-                  item.permExpiryTime
-                ))
-            })
-            _dlp = new IDLDLPProperty(
-              linkFileInfo['dlpProperty'].ownerAccount,
-              linkFileInfo['dlpProperty'].ownerAccountID,
-              linkFileInfo['dlpProperty'].ownerAccountType,
-              authUserListNew,
-              linkFileInfo['dlpProperty'].contactAccount,
-              linkFileInfo['dlpProperty'].offlineAccess,
-              linkFileInfo['dlpProperty'].everyoneAccessList ?? [],
-              linkFileInfo['dlpProperty'].expireTime ?? 0
-            );
-            let fileUri = linkFile[4];
-            callback(0, _dlp, fileUri.toString());
-          }
-        } else {
-          HiLog.error(TAG, `request from sandbox, but can not find dlp file by linkFileName: ${linkFileName}`);
-          callback(-1, _dlp, '');
-        }
-      }
+    let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
+    const manager = OpenDlpFileManager.getInstance();
+    const getRet = manager.getHasDecryptedContentByLinkFileName(linkFileName);
+    if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
+      HiLog.error(TAG, `request from sandbox, but can not find dlp file by linkFileName: ${linkFileName}`);
+      callback(-1, _dlp, '');
+      return;
     }
+    const decryptContent: DecryptContent = getRet.result;
+    if (decryptContent.appInfo.tokenID !== callerToken) {
+      HiLog.error(TAG, `found file, but token invalid: ${linkFileName}`);
+      callback(-1, _dlp, '');
+      return;
+    }
+
+    let authUserListNew: IAuthUser[] = [];
+    const dlpFile = decryptContent.dlpFile;
+    dlpFile.dlpProperty.authUserList?.forEach(item => {
+      authUserListNew.push(
+        new IAuthUser(
+          item.authAccount,
+          item.authAccountType,
+          item.dlpFileAccess,
+          item.permExpiryTime
+        ))
+    })
+
+    _dlp = new IDLDLPProperty(
+      dlpFile.dlpProperty.ownerAccount,
+      dlpFile.dlpProperty.ownerAccountID,
+      dlpFile.dlpProperty.ownerAccountType,
+      authUserListNew,
+      dlpFile.dlpProperty.contactAccount,
+      dlpFile.dlpProperty.offlineAccess,
+      dlpFile.dlpProperty.everyoneAccessList ?? [],
+      dlpFile.dlpProperty.expireTime ?? 0
+    );
+    let fileUri = decryptContent.openDlpFileData.uri;
+    callback(0, _dlp, fileUri.toString());
   }
 
   async fileOpenHistory(uri: string, callback: fileOpenHistoryCallback): Promise<void> {
-    HiLog.info(TAG, `fileOpenHistory start`);
-    if ((GlobalContext.load('fileOpenHistory') as Map<string, (number | string)[]>)?.has(uri)) {
-      callback(0);
-    } else {
+    HiLog.info(TAG, 'fileOpenHistory start');
+    const manager = OpenDlpFileManager.getInstance();
+    const getRet = manager.getHasDecryptedContent(uri);
+    if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
       callback(-1);
+    } else {
+      callback(0);
     }
   }
 
   async linkSet(uri: string, callback: linkSetCallback): Promise<void> {
-    HiLog.info(TAG, `linkSet start`);
-    if ((GlobalContext.load('linkSet') as Map<string, (number | string)[]>)?.has(uri)) {
-      callback(0);
-    } else {
+    HiLog.info(TAG, 'linkSet start');
+    const manager = OpenDlpFileManager.getInstance();
+    const getRet = manager.getHasDecryptedContent(uri);
+    if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
       callback(-1);
+    } else {
+      callback(0);
+    }
+  }
+
+  private async addEncryptingState(uri: string): Promise<void> {
+    const manager = OpenDlpFileManager.getInstance();
+    const setRet = await manager.setStatus(uri, { state: DecryptState.ENCRYPTING });
+    if (setRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, `addEncryptingState ${uri} failed.`);
+    } else {
+      HiLog.info(TAG, `addEncryptingState ${uri} success.`);
+    }
+  }
+
+  private async deleteEncryptingState(uri: string): Promise<void> {
+    const manager = OpenDlpFileManager.getInstance();
+    const deleteRet = await manager.deleteStatus(uri);
+    if (deleteRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, `deleteEncryptingState ${uri} failed.`);
+    } else {
+      HiLog.info(TAG, `deleteEncryptingState ${uri} success.`);
     }
   }
 }
@@ -359,6 +386,6 @@ export default class DlpFileProcessAbility extends ServiceExtensionAbility {
   }
 
   onDestroy(): void {
-    HiLog.info(TAG, `onDestroy`);
+    HiLog.info(TAG, 'onDestroy');
   }
 }

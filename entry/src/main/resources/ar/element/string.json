@@ -692,6 +692,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"file_opening",
+            "value":"جارٍ الفتح…",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

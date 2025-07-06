@@ -699,6 +699,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"file_opening",
+            "value":"ཁ་འབྱེད་བཞིན་པ།",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -22,7 +22,6 @@ import GlobalContext from '../common/GlobalContext';
 const TAG = 'DialogUIExt';
 
 export default class DialogUIExtAbility extends UIExtensionAbility {
-
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, `onSessionCreate start`);
     GlobalContext.store('dialogUIExtWant', want);

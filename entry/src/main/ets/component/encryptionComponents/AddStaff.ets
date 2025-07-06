@@ -96,9 +96,6 @@ struct AddStaff {
     let inputString = inputId.replace(regex, '');
     this.inputArray = inputString.split(';');
     this.errInput = [];
-    if (this.inputArray.length > Constants.RICH_EDITOR_FIRST) {
-      this.deleteBuildSpan(startOffset, endOffset);
-    }
 
     await this.dealAccount(startOffset, endOffset);
 
@@ -120,12 +117,16 @@ struct AddStaff {
     let startLine: number = 0;
     for (let i = 0; i < this.shardingCount; i++) {
       if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
+        this.staffArrayLength = true;
         this.errInput = [];
         break;
       }
       let searchArray: string[] = this.inputArray.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
       let accountResponse: DomainAccountResponse | undefined =
         await AccountManager.getDomainAccountByAccountNames(searchArray);
+      if (i === Constants.ENCRYPTION_FIRST_QUERY_BATCH) {
+        this.deleteBuildSpan(startOffset, endOffset);
+      }
       this.dealAccountResponse(searchArray, accountResponse, startOffset, endOffset);
 
       startLine = (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
@@ -146,6 +147,10 @@ struct AddStaff {
       let matchAccount = dataArray?.find(
         data => data.accountName.toLocaleUpperCase() === accountName.toLocaleUpperCase());
       if (matchAccount) {
+        if (this.staffArray.length >= Constants.TIPS_STAFF_MAX_WIDTH) {
+          this.staffArrayLength = true;
+          return;
+        }
         this.addStaff(matchAccount);
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
           this.deleteBuildSpan(startOffset, endOffset);
@@ -181,9 +186,6 @@ struct AddStaff {
       authAccount: matchAccount.accountName.toLocaleLowerCase(),
       textContent: matchAccount[this.textContent] as string
     };
-    if (this.staffArray.length >= Constants.TIPS_STAFF_MAX_WIDTH) {
-      return;
-    }
     this.staffArray.push(staff);
   }
 

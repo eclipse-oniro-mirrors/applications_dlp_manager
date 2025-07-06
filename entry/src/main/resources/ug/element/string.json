@@ -699,6 +699,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"file_opening",
+            "value":"ئېچىلىۋاتىدۇ...",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -16,15 +16,12 @@ import Constants from '../../common/constant';
 import EncryptProtectionShowCodeEnum from '../../common/enum/EncryptProtectionShowCodeEnum';
 
 export default class EncryptProtectionHelper {
-
   public static readonly INPUT_MAX_LENGTH = 50 * 20;
-
   private static readonly ERROR_SHOW_MAP = new Map<number, Resource>([
     [EncryptProtectionShowCodeEnum.NET_ERROR, $r('app.string.network_invalid')],
     [EncryptProtectionShowCodeEnum.INPUT_ERROR, $r('app.string.incorrect_work_ID')],
-    [EncryptProtectionShowCodeEnum.DEFAULT_ERROR, $r('app.string.MESSAGE_SERVICE_INSIDE_ERROR')],
+    [EncryptProtectionShowCodeEnum.DEFAULT_ERROR, $r('app.string.File_cannot_be_opened')],
   ]);
-
   private static readonly BUSINESS_CODE_MAP = new Map<number, number>([
     [Constants.ERR_JS_NETWORK_INVALID, EncryptProtectionShowCodeEnum.NET_ERROR],
     [Constants.ERR_JS_ACCOUNT_NOT_FOUND, EncryptProtectionShowCodeEnum.INPUT_ERROR],
@@ -49,7 +46,6 @@ export default class EncryptProtectionHelper {
     }
     return EncryptProtectionShowCodeEnum.DEFAULT_ERROR;
   }
-
 }
 
 

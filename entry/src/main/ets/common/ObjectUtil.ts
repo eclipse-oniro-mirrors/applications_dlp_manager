@@ -17,4 +17,8 @@ export class ObjectUtil {
   static Assign<T extends {}, U>(target: T, source: U): T & U {
     return Object.assign(target, source);
   }
+
+  static AssignCopyAll<T extends {}, U, V>(target: T, source1: U, source2: V) {
+    return Object.assign({}, target, source1, source2);
+  }
 }

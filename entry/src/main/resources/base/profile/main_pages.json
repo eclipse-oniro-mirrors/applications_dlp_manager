@@ -5,6 +5,7 @@
     "pages/encryptionSuccess",
     "pages/changeEncryption",
     "pages/permissionStatus",
-    "pages/encryptedSharing"
+    "pages/encryptedSharing",
+    "pages/OpeningDialog"
   ]
 }
