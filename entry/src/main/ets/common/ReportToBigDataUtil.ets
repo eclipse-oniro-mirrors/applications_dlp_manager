@@ -24,7 +24,7 @@ const TAG: string = 'ReportToBigDataUtil';
 export declare type BigDataMsg = Record<string, ValueType | undefined>;
 
 export class ReportToBigDataUtil {
-  private static readonly DLP_UE_DOMAIN: string = 'DLP';
+  private static readonly DLP_UE_DOMAIN: string = 'DLP_UE';
   private static currentBundleInfo: DLPInfo | undefined = undefined;
 
   private static async loadBundleInfo(): Promise<DLPInfo> {
