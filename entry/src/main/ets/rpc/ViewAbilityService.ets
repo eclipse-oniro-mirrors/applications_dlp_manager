@@ -39,8 +39,8 @@ export default class ViewAbilityService {
     await OpeningDialogManager.getInstance().checkShowDialogState();
   }
 
-  public async showDialog(showDialog: boolean): Promise<boolean> {
-    HiLog.info(TAG, 'showDialog');
+  public async showDialog(showDialog: boolean, requestId?: string): Promise<boolean> {
+    HiLog.info(TAG, `showDialog ${showDialog}, requestId ${requestId}`);
     if (!this._remoteProxy) {
       HiLog.error(TAG, 'showDialog remoteProxy is invalid');
       return false;
@@ -51,6 +51,7 @@ export default class ViewAbilityService {
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
       data.writeBoolean(showDialog);
+      data.writeString(requestId ? requestId : '');
     } catch (error) {
       HiLog.wrapError(TAG, error, 'showDialog prepare data exception');
       return false;

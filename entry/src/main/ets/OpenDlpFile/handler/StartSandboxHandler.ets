@@ -24,8 +24,7 @@ import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
 import { DlpFileOpenReport } from '../DlpFileOpenReport';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
-import OpeningDialogManager from '../manager/OpeningDialogManager';
+import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 
 const TAG: string = 'StartSandboxHandler';
 
@@ -91,10 +90,6 @@ export default class StartSandboxHandler {
     HiLog.info(TAG, 'start sandbox begin');
     this.prepareWantParams(decryptContent);
     try {
-      if (!OpeningDialogManager.getInstance().getCanStartAbility()) {
-        HiLog.error(TAG, 'user stop dialog');
-        return ResultMsg.getErrMsg(Constants.ERR_CODE_USER_STOP_DIALOG);
-      }
       await context.startAbility(decryptContent.openDlpFileData.want);
       HiLog.info(TAG, 'startAbility success');
       await this.addDecryptData(decryptContent);
@@ -102,6 +97,7 @@ export default class StartSandboxHandler {
       return ResultMsg.buildSuccess();
     } catch (error) {
       HiLog.wrapError(TAG, error, 'startAbility failed');
+      await OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
       const busErr: BusinessError = error as BusinessError;
       DlpFileOpenReport.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, decryptContent, busErr);
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_INSIDE_ERROR);

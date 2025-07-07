@@ -42,12 +42,33 @@ export default class DecryptContent {
   private _linkUriStat?: fs.Stat | undefined;
   private _linkFileWriteable: boolean = false;
   private _uriInfo: fileUri.FileUri = new fileUri.FileUri('');
+  private _hasDecrypted: boolean = false;
 
   constructor(fileMetaInfo: FileMetaInfo, openDlpFileData: OpenDlpFileData) {
     this._fileMetaInfo = fileMetaInfo;
     this._openDlpFileData = openDlpFileData;
     let strArray: string[] = this._openDlpFileData.uri.split('/');
     this._fileName = strArray[strArray.length - 1];
+  }
+
+  // DecryptContent里添加成员变量，一定要在clone()里添加复制操作
+  public clone(): DecryptContent {
+    const clone = new DecryptContent(this._fileMetaInfo, this._openDlpFileData);
+    clone.dlpFd = this._dlpFd;
+    clone.dlpFile = this._dlpFile;
+    clone.appInfo = this._appInfo;
+    clone.distributedInfoId = this._distributedInfoId;
+    clone.linkUri = this._linkUri;
+    clone.linkFileName = this._linkFileName;
+    clone.authPerm = this._authPerm;
+    clone.fileName = this._fileName;
+    clone.userId = this._userId;
+    clone.accountName = this._accountName;
+    clone.linkUriStat = this._linkUriStat;
+    clone.linkFileWriteable = this._linkFileWriteable;
+    clone.uriInfo = this._uriInfo;
+    clone.hasDecrypted = this._hasDecrypted;
+    return clone;
   }
 
   public set fileMetaInfo(value: FileMetaInfo) {
@@ -170,24 +191,13 @@ export default class DecryptContent {
     return this._uriInfo;
   }
 
-  public clone(): DecryptContent {
-    const clone = new DecryptContent(this._fileMetaInfo, this._openDlpFileData);
-    clone.dlpFd = this._dlpFd;
-    clone.dlpFile = this._dlpFile;
-    clone.appInfo = this._appInfo;
-    clone.distributedInfoId = this._distributedInfoId;
-    clone.linkUri = this._linkUri;
-    clone.linkFileName = this._linkFileName;
-    clone.authPerm = this._authPerm;
-    clone.fileName = this._fileName;
-    clone.userId = this._userId;
-    clone.accountName = this._accountName;
-    clone.linkUriStat = this._linkUriStat;
-    clone.linkFileWriteable = this._linkFileWriteable;
-    clone.uriInfo = this._uriInfo;
-    return clone;
+  public set hasDecrypted(value: boolean) {
+    this._hasDecrypted = value;
   }
 
+  public get hasDecrypted(): boolean {
+    return this._hasDecrypted;
+  }
 
   public generateLinkFileName(): Result<string> {
     let timestamp = new Date().getTime();

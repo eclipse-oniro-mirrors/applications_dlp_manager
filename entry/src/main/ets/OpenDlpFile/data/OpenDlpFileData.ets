@@ -46,6 +46,7 @@ export default class OpenDlpFileData {
   private _sandboxAbilityName: string = '';
   private _sandboxModuleName: string = '';
   private _isFromPlugin: boolean = false;
+  private _requestId: string = '';
 
   constructor(want: Want, startId: number) {
     this._want = want;
@@ -140,6 +141,14 @@ export default class OpenDlpFileData {
     return this._isFromPlugin;
   }
 
+  public set requestId(value: string) {
+    this._requestId = value;
+  }
+
+  public get requestId(): string {
+    return this._requestId;
+  }
+
   private checkPermissionWithPluginId(): boolean {
     if (this._pluginId === null || this._pluginId === undefined) {
       return true;
@@ -180,6 +189,10 @@ export default class OpenDlpFileData {
       HiLog.error(TAG, 'invalid uri in want.uri');
       return false;
     }
+
+    const tempRandom = Date.now() + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
+    this._requestId = this._uri + tempRandom;
+    HiLog.info(TAG, `checkAndSetWantParams uri ${this._uri} ${this._requestId}`);
 
     this._callerBundleName = this._want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
     if (isInvalidStr(this._callerBundleName)) {

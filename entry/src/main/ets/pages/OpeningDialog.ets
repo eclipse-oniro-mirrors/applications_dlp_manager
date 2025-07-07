@@ -28,6 +28,7 @@ struct Index {
   private timeoutId: number | null = null;
   private shouldCloseAfterTimeout: boolean = true;
   private receivedCloseSignal: boolean = false;
+  private requestId: string = '';
   private dlpAlertDialog: CustomDialogController = new CustomDialogController({
     builder: CustomContentDialog({
       contentBuilder: () => {
@@ -42,7 +43,7 @@ struct Index {
   aboutToAppear(): void {
     HiLog.info(TAG, 'OpeningDialog aboutToAppear');
     emitter.on(Constants.SHOW_DIALOG_EVENT, (eventData: emitter.EventData) => {
-      this.handleShowDialogEvent(eventData.data?.showDialog);
+      this.handleShowDialogEvent(eventData.data?.showDialog, eventData.data?.requestId);
     });
   }
 
@@ -51,9 +52,10 @@ struct Index {
     emitter.off(Constants.SHOW_DIALOG_EVENT);
   }
 
-  handleShowDialogEvent(showDialog: boolean) {
-    HiLog.info(TAG, `handleShowDialogEvent showDialog ${showDialog}`);
+  handleShowDialogEvent(showDialog: boolean, requestId: string) {
+    HiLog.info(TAG, `handleShowDialogEvent showDialog ${showDialog}, requestId ${requestId}`);
     if (showDialog) {
+      this.requestId = requestId;
       this.dlpAlertDialog.open();
       this.startTimeoutClose();
       return;
@@ -70,7 +72,7 @@ struct Index {
     this.shouldCloseAfterTimeout = false;
     this.timeoutId = setTimeout(() => {
       this.shouldCloseAfterTimeout = true;
-      OpeningDialogService.getInstance().dialogTimeout();
+      OpeningDialogService.getInstance().dialogTimeout(this.requestId);
       if (this.receivedCloseSignal) {
         HiLog.info(TAG, 'closeDialogAndTerminate by timeout');
         this.closeDialogAndTerminate();
@@ -89,7 +91,7 @@ struct Index {
       this.timeoutId = null;
     }
     this.dlpAlertDialog.close();
-    OpeningDialogService.getInstance().dialogDisappear();
+    OpeningDialogService.getInstance().dialogDisappear(this.requestId);
     this.terminateSelfWithResult();
   }
 
