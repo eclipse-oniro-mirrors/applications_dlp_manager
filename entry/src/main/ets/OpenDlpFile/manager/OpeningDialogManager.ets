@@ -149,7 +149,6 @@ export default class OpeningDialogManager {
     this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();
     if (decryptingState.needStartAbility) { // 弹框超时，且需要拉起沙箱，就去拉沙箱
-      this._decryptingMap.delete(requestId);
       const startSandboxRet = await StartSandboxManager.getInstance().startSandbox();
       if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
         HiLog.error(TAG, 'startSandbox error');
