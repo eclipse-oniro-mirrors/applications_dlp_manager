@@ -34,7 +34,6 @@ import {
 } from './data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
 import IDLDLPProperty from '../common/dlpClass';
 import { IAuthUser } from '../common/dlpClass';
-import GlobalContext from '../common/GlobalContext';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
 import FileUtil from '../common/external/FileUtil';
@@ -116,8 +115,8 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async closeFile(): Promise<void> {
-    FileUtil.closeFileSync(this.inFile);
-    FileUtil.closeFileSync(this.outFile);
+    FileUtil.closeSync(this.inFile);
+    FileUtil.closeSync(this.outFile);
   }
 
   async genDlpFileFd(inputUri: string, outputUri: string): Promise<Record<string, number>> {
@@ -142,7 +141,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.outFile = await fs.open(outputUri, fs.OpenMode.READ_WRITE);
         outFileFd = this.outFile.fd;
       } catch (error) {
-        FileUtil.closeFileSync(this.inFile);
+        FileUtil.closeSync(this.inFile);
         FileUtil.unlinkSync(uriInfo.path);
         reject((error as BusinessError).code);
         return;
@@ -197,7 +196,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       callback((err as BusinessError).code, _dlp, (err as BusinessError).message);
     } finally {
-      FileUtil.closeFileSync(inFile);
+      FileUtil.closeSync(inFile);
     }
   }
 
@@ -255,7 +254,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         HiLog.error(TAG, `recoverDlpFileInner4: ${JSON.stringify(err)}`);
         callback((err as BusinessError).code);
       } finally {
-        FileUtil.closeFileSync(inFile);
+        FileUtil.closeSync(inFile);
       }
     } else {
       HiLog.error(TAG, `recoverDlpFile not find: ${srcUri}`);

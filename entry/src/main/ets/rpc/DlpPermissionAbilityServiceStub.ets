@@ -18,6 +18,7 @@ import rpc from '@ohos.rpc'
 import Constant from '../common/constant'
 import fs from '@ohos.file.fs'
 import { BusinessError } from '@ohos.base';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'CleanDLPFileInCacheServiceStub';
 
@@ -32,7 +33,7 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
     let pathDir = this.pathDir + '/Share';
     fs.listFile(pathDir).then((filenames: Array<string>) => {
       filenames.forEach((item) => {
-        fs.rmdirSync(pathDir + `/${item}`)
+        FileUtil.rmdirSync(pathDir + `/${item}`);
       })
     }).catch((err: BusinessError) => {
       HiLog.error(TAG, `list delete dlp file failed with error: ${JSON.stringify(err)}`);

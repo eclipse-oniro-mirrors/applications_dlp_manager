@@ -147,7 +147,7 @@ struct AddStaff {
       let matchAccount = dataArray?.find(
         data => data.accountName.toLocaleUpperCase() === accountName.toLocaleUpperCase());
       if (matchAccount) {
-        if (this.staffArray.length >= Constants.TIPS_STAFF_MAX_WIDTH) {
+        if (this.staffArray.length >= Constants.TIPS_STAFF_MAX_LENGTH) {
           this.staffArrayLength = true;
           return;
         }

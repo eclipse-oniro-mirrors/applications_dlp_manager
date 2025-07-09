@@ -16,6 +16,7 @@
 import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import { HiLog } from '../common/HiLog';
+import FileUtil from './external/FileUtil';
 
 const TAG = 'FileUtils';
 export interface FileMsg {
@@ -83,7 +84,7 @@ export default class FileUtils {
         reject(err);
       } finally {
         if (file) {
-          fs.closeSync(file);
+          FileUtil.closeSync(file);
         }
       }
     })

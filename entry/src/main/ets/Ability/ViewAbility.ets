@@ -42,7 +42,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   }
 
   async onRequest(want: Want, startId: number): Promise<void> {
-    HiLog.debug(TAG, `enter onRequest startId: ${startId}`);
+    HiLog.info(TAG, `enter onRequest startId: ${startId}`);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
     if (OpeningDialogManager.getInstance().getIsChargeOpeningDialog()) {
       return;
@@ -58,7 +58,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   }
 
   async onDestroy(): Promise<void> {
-    HiLog.debug(TAG, 'ViewAbility onDestroy');
+    HiLog.info(TAG, 'ViewAbility onDestroy');
     await OpeningDialogManager.getInstance().unLoadOpeningDialogAbnormal();
   }
 }

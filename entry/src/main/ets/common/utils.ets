@@ -35,6 +35,7 @@ import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
 import Result from './Result';
 import { ResultMsg } from './ResultMsg';
+import FileUtil from './external/FileUtil';
 
 const TAG = 'Utils';
 
@@ -342,7 +343,7 @@ async function getFileSizeByUri(uri: string): Promise<number> {
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
-      fs.closeSync(inFile);
+      FileUtil.closeSync(inFile);
     }
   }
 }
@@ -358,7 +359,7 @@ function getFileSizeByUriSync(uri: string): number {
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
-      fs.closeSync(inFile);
+      FileUtil.closeSync(inFile);
     }
   }
 }
@@ -542,9 +543,9 @@ function getAccountTypeAndRealFileType(
         HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`);
         reject(err);
       } finally {
-        closeFile(ff);
-        deleteFile(filePath);
-        removeDir(dirPath);
+        FileUtil.closeSync(ff);
+        FileUtil.unlinkSync(filePath);
+        FileUtil.rmdirSync(dirPath);
       }
     } else {
       let cert = new ArrayBuffer(buf[Constants.CERT_SIZE]);
@@ -568,38 +569,6 @@ function getAccountTypeAndRealFileType(
       }
     }
   })
-}
-
-function closeFile(file: fs.File | undefined) {
-  try {
-    if (file) {
-      fs.closeSync(file);
-    }
-  } catch (err) {
-    HiLog.error(TAG, `closeSync: ${JSON.stringify(err)}`);
-  }
-}
-
-function deleteFile(file: string) {
-  try {
-    let res = fs.accessSync(file);
-    if (res) {
-      fs.unlinkSync(file);
-    }
-  } catch (err) {
-    HiLog.error(TAG, `deleteFile: ${JSON.stringify(err)}`);
-  }
-}
-
-function removeDir(file: string) {
-  try {
-    let res = fs.accessSync(file);
-    if (res) {
-      fs.rmdirSync(file);
-    }
-  } catch (err) {
-    HiLog.error(TAG, `rmdirSync: ${JSON.stringify(err)}`);
-  }
 }
 
 function getCurrentTime(isNano: boolean = false): number {
@@ -857,9 +826,6 @@ export {
   getConnectionStatus,
   showToast,
   logErrorShowToast,
-  closeFile,
-  deleteFile,
-  removeDir,
   defaultAppInfo,
   getAppIdWithUserId,
   getSha256,

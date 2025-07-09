@@ -49,7 +49,7 @@ export default class OpeningDialogManager {
   }
 
   private printAllDecryptingMap(): void {
-    HiLog.debug(TAG, 'printAllDecryptingMap');
+    HiLog.debug(TAG, `printAllDecryptingMap ${this._decryptingMap.size}`);
     this._decryptingMap.forEach((value, key) => {
       HiLog.debug(TAG, `key ${key}, uri ${value.uri}, dialogTimeout ${value.dialogTimeout},
       needStartAbility ${value.needStartAbility}`);
@@ -98,7 +98,7 @@ export default class OpeningDialogManager {
     const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
     const timeout = decryptingState.dialogTimeout;
 
-    HiLog.info(TAG, `getNeedStartAbility requestId ${requestId}, isDecrypting ${isDecrypting},
+    HiLog.info(TAG, `OpeningDialogManager getNeedStartAbility requestId ${requestId}, isDecrypting ${isDecrypting},
     timeout ${timeout}, showDialogState ${this._showDialogState}`);
     if (!this._showDialogState || (isDecrypting && timeout)) {
       HiLog.info(TAG, 'can startAbility');
@@ -121,7 +121,7 @@ export default class OpeningDialogManager {
   // 弹框消失的回调，需要判断是否是用户主动终止解密流程
   public async dialogDisappear(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
-    HiLog.info(TAG, `dialogDisappear requestId ${requestId}`);
+    HiLog.info(TAG, `OpeningDialogManager dialogDisappear requestId ${requestId}`);
     this._showDialogState = false;
     const isDecrypting = this._decryptingMap.has(requestId);
     const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
@@ -138,7 +138,7 @@ export default class OpeningDialogManager {
   // 弹框超过250ms的回调
   public async dialogTimeout(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
-    HiLog.info(TAG, `dialogTimeout requestId ${requestId}`);
+    HiLog.info(TAG, `OpeningDialogManager dialogTimeout requestId ${requestId}`);
     const isDecrypting = this._decryptingMap.has(requestId);
     if (!isDecrypting) {
       HiLog.info(TAG, 'dialogTimeout uri is not decrypting');
@@ -151,24 +151,20 @@ export default class OpeningDialogManager {
     if (decryptingState.needStartAbility) { // 弹框超时，且需要拉起沙箱，就去拉沙箱
       const startSandboxRet = await StartSandboxManager.getInstance().startSandbox();
       if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-        HiLog.error(TAG, 'startSandbox error');
+        HiLog.error(TAG, 'OpeningDialogManager startSandbox error');
       }
       this._decryptingMap.delete(requestId);
-      return;
-    }
-    if (!decryptingState.dialogTimeout) { // 把弹框状态置为超时
-      HiLog.info(TAG, 'set dialogTimeout true');
     }
   }
 
   private async showDialog(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
     this._showDialogState = await ViewAbilityService.getInstance().showDialog(true, requestId);
-    HiLog.info(TAG, `showDialog requestId: ${requestId}, state: ${this._showDialogState}`);
+    HiLog.info(TAG, `OpeningDialogManager showDialog requestId: ${requestId}, state: ${this._showDialogState}`);
   }
 
   private async hideDialog(): Promise<void> {
-    HiLog.info(TAG, 'hideDialog start');
+    HiLog.info(TAG, 'OpeningDialogManager hideDialog start');
     this._showDialogState = false;
     await ViewAbilityService.getInstance().showDialog(false);
   }
@@ -191,7 +187,7 @@ export default class OpeningDialogManager {
     this._hasCallback = true;
     const isDecrypting = this._decryptingMap.size > 0;
     const requestId = this.getDecryptingRequestId();
-    HiLog.error(TAG, `checkShowDialogState showDialogState ${this._showDialogState},
+    HiLog.error(TAG, `OpeningDialogManager checkShowDialogState showDialogState ${this._showDialogState},
     isDecrypting ${isDecrypting}, requestId ${requestId}, isChargeOpeningDialog ${this._isChargeOpeningDialog} `);
 
     if (!isDecrypting && !this._isChargeOpeningDialog) { // 没在处理弹框逻辑或解密逻辑，需要取消弹框
@@ -200,7 +196,7 @@ export default class OpeningDialogManager {
     }
 
     if (!requestId) {
-      HiLog.info(TAG, 'checkShowDialogState getDecryptingRequestId not found');
+      HiLog.info(TAG, 'OpeningDialogManager checkShowDialogState getDecryptingRequestId not found');
       return;
     }
     if (isDecrypting && !this._showDialogState) { // 正在解密，且没拉起弹框，需要拉起弹框
@@ -212,7 +208,7 @@ export default class OpeningDialogManager {
   // openDLPFile前调用
   public async ShowOpeningDialog(uri: string, requestId: string): Promise<void> {
     this.printAllDecryptingMap();
-    HiLog.info(TAG, 'ShowOpeningDialog');
+    HiLog.info(TAG, 'OpeningDialogManager ShowOpeningDialog');
     const decryptingState: DecryptingState = {
       uri: uri,
       dialogTimeout: false,
@@ -231,7 +227,7 @@ export default class OpeningDialogManager {
   public async HideOpeningDialog(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
     const isDecrypting = this._decryptingMap.has(requestId);
-    HiLog.info(TAG, `HideOpeningDialog requestId ${requestId}, isDecrypting ${isDecrypting}`);
+    HiLog.info(TAG, `OpeningDialogManager HideOpeningDialog requestId ${requestId}, isDecrypting ${isDecrypting}`);
     if (!isDecrypting) { // 没在解密，就是用户主动取消的场景
       HiLog.info(TAG, 'HideOpeningDialog uri is not decrypting');
       return;
@@ -251,7 +247,7 @@ export default class OpeningDialogManager {
   // viewAbility进来
   public async loadOpeningDialog(context: common.ServiceExtensionContext): Promise<void> {
     this.printAllDecryptingMap();
-    HiLog.info(TAG, 'loadOpeningDialog start');
+    HiLog.info(TAG, 'OpeningDialogManager loadOpeningDialog start');
     this._hasCallback = false;
     this._isChargeOpeningDialog = true;
     await this.loadOpeningDialogUIExtAbility(context);
@@ -262,7 +258,7 @@ export default class OpeningDialogManager {
     this.printAllDecryptingMap();
     this._isChargeOpeningDialog = false;
     const isDecrypting = this._decryptingMap.size > 0;
-    HiLog.info(TAG, `unLoadOpeningDialogNormal isDecrypting ${isDecrypting}`);
+    HiLog.info(TAG, `OpeningDialogManager unLoadOpeningDialogNormal isDecrypting ${isDecrypting}`);
     if (isDecrypting) {
       return;
     }
@@ -271,9 +267,7 @@ export default class OpeningDialogManager {
 
   // viewAbility异常结束
   public async unLoadOpeningDialogAbnormal(): Promise<void> {
-    this.printAllDecryptingMap();
     HiLog.info(TAG, 'unLoadOpeningDialogAbnormal start');
-    this._isChargeOpeningDialog = false;
     await this.hideDialog();
   }
 

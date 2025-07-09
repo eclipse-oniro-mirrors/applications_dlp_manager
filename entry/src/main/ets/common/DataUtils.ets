@@ -25,7 +25,7 @@ async function clearDlpInfo(decryptContent: DecryptContent): Promise<void> {
   await deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
-  FileUtil.closeFdSync(decryptContent.dlpFd);
+  FileUtil.closeSync(decryptContent.dlpFd);
 }
 
 async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number): Promise<void> {

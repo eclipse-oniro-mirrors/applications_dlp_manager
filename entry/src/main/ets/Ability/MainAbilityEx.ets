@@ -350,7 +350,7 @@ export default class MainAbility extends UIExtensionAbility {
       } catch {
         HiLog.error(TAG, 'getFileFd error');
       } finally {
-        FileUtil.closeFdSync(dlpFd);
+        FileUtil.closeSync(dlpFd);
       }
     }
   }
