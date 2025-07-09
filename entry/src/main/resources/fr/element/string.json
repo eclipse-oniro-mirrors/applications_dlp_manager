@@ -699,6 +699,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"Contacts",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
