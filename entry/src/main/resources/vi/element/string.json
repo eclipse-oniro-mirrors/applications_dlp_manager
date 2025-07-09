@@ -699,6 +699,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"Danh bạ",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

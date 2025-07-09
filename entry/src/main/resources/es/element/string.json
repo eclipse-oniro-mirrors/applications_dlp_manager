@@ -93,7 +93,7 @@
         },
         {
             "name":"permission_status_readOnly",
-            "value":"Este archivo está protegido. Tienes permiso de «Solo lectura».",
+            "value":"Este archivo está protegido. Tienes permiso de “Solo lectura”.",
             "attr":{
                 "priority":"translate"
             }
@@ -149,7 +149,7 @@
         },
         {
             "name":"MESSAGE_DLP_ENCRYPTION",
-            "value":"«%s» se está cifrando actualmente. Vuelve a intentarlo más tarde.",
+            "value":"“%s” se está cifrando actualmente. Vuelve a intentarlo más tarde.",
             "attr":{
                 "priority":"translate"
             }
@@ -492,7 +492,7 @@
         },
         {
             "name":"permission_status_title",
-            "value":"Este archivo está protegido. Tienes permisos de «Solo lectura» y «Edición».",
+            "value":"Este archivo está protegido. Tienes permisos de “Solo lectura” y “Edición”.",
             "attr":{
                 "priority":"translate"
             }
@@ -696,6 +696,13 @@
         {
             "name":"file_opening",
             "value":"Abriendo…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"Contactos",
             "attr":{
                 "priority":"translate"
             }
