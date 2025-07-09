@@ -201,7 +201,7 @@ export default class Constants {
 
   public static TIPS_HEIGHT_ITEM = 20;
   public static TIPS_STAFF_WIDTH = 82;
-  public static TIPS_STAFF_MAX_WIDTH = 50;
+  public static TIPS_STAFF_MAX_LENGTH = 50;
   public static TIPS_SPACE_ZERO = '\u200B';
   public static TIPS_SPACE_EN = '\u2002';
   public static TIPS_SPACE_EM = '\u2003';

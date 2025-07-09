@@ -48,6 +48,7 @@ import AccountManager from '../manager/AccountManager';
 import CommonUtil from '../common/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import { promptAction } from '@kit.ArkUI';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'ModEnc';
 
@@ -271,11 +272,7 @@ struct changeEncryption {
       await this.recoverDLPFileHome(plainUri);
     } catch (err) {
       HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${JSON.stringify(err)}`);
-      try {
-        await fs.unlink(uriInfo!.path);
-      } catch (err) {
-        HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
-      }
+      await FileUtil.unlink(uriInfo!.path);
       let errorInfo =
         { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
       this.showErrorDialog(errorInfo.title as Resource, errorInfo.msg as Resource);
@@ -283,7 +280,7 @@ struct changeEncryption {
       return;
     } finally {
       if (file) {
-        fs.closeSync(file);
+        FileUtil.closeSync(file);
       }
     }
     await this.terminateSelfWithResult();

@@ -45,6 +45,7 @@ import { systemDateTime } from '@kit.BasicServicesKit';
 import taskpool from '@ohos.taskpool';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'encryptedSharing';
 
@@ -380,10 +381,10 @@ struct encryptedSharing {
           continue;
         }
         if (res.inFileFd !== -1) {
-          fs.closeSync(res.inFileFd);
+          FileUtil.closeSync(res.inFileFd);
         }
         if (res.dlpFileFd !== -1) {
-          fs.closeSync(res.dlpFileFd);
+          FileUtil.closeSync(res.dlpFileFd);
         }
       }
     }
@@ -626,11 +627,7 @@ struct encryptedSharing {
       filenames.forEach((item) => {
         let fileTime = Number(item);
         if (realTime < fileTime || realTime - fileTime >= Constants.CLEAN_DLP_FILE_IN_CACHE_TIMEOUT) {
-          try {
-            fs.rmdirSync(pathDir + `/${item}`);
-          } catch (error) {
-            HiLog.error(TAG, `remove file failed when judge time with error message: ${JSON.stringify(error)}`);
-          }
+          FileUtil.rmdirSync(pathDir + `/${item}`);
         }
       })
     }).catch((err: BusinessError) => {
@@ -642,11 +639,7 @@ struct encryptedSharing {
       if (filenamesLists.length > Constants.SHARE_TEMP_SAVE_FILE_NUMBER) {
         let deleteArray = filenamesLists.slice(0, filenamesLists.length - Constants.SHARE_TEMP_SAVE_FILE_NUMBER);
         deleteArray.forEach((item) => {
-          try {
-            fs.rmdirSync(pathDir + `/${item}`);
-          } catch (error) {
-            HiLog.error(TAG, `remove file failed when judge num with error message: ${JSON.stringify(error)}`);
-          }
+          FileUtil.rmdirSync(pathDir + `/${item}`);
         })
       }
     }).catch((err: BusinessError) => {

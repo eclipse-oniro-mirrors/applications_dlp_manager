@@ -17,7 +17,7 @@ import Result from '../../common/Result'
 import { ResultMsg } from '../../common/ResultMsg'
 import Constants from '../../common/constant';
 import fs, { ReadOptions } from '@ohos.file.fs';
-import { closeFile, deleteFile, getFileFd, removeDir } from '../../common/utils';
+import { getFileFd } from '../../common/utils';
 import { HiLog } from '../../common/HiLog';
 import { zlib } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';
@@ -88,9 +88,9 @@ class ZipParse extends FileParseBase {
       return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
     } finally {
       FileUtil.closeSync(file);
-      closeFile(ff);
-      deleteFile(filePath);
-      removeDir(dirPath);
+      FileUtil.closeSync(ff);
+      FileUtil.unlinkSync(filePath);
+      FileUtil.rmdirSync(dirPath);
     }
   }
 }
@@ -172,7 +172,7 @@ export class FileParseFactory {
       HiLog.error(TAG, 'detect failed');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }
-    FileUtil.closeFdSync(dlpFd);
+    FileUtil.closeSync(dlpFd);
     switch (format.result) {
       case FileParseType.ZIP:
         return ResultMsg.buildSuccess(new ZipParse());

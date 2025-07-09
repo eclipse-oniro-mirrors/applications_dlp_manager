@@ -73,6 +73,7 @@ const ERRCODE_MAP = new Map([
   [errCode.RESULT_ERROR, 'Unknown error'],
   [errCode.NAME_TOO_LONG, 'File name too long'],
 ]);
+
 export default class SaveAsAbility extends UIAbility {
   private result: ability.AbilityResult = {
     resultCode: -1,
@@ -189,7 +190,8 @@ export default class SaveAsAbility extends UIAbility {
         let accountFlag = await AccountManager.checkAccountInfo(contactAccount);
         if (!accountFlag) {
           await GetAlertMessage.requestModalUIExtension(this.context, {
-            code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
+            code: Constants.ERR_JS_APP_INSIDE_ERROR
+          } as BusinessError);
           reject();
         }
         await GetAlertMessage.requestModalUIExtension(this.context,
@@ -215,28 +217,6 @@ export default class SaveAsAbility extends UIAbility {
     })
   }
 
-  deleteFile(file:string) {
-    try {
-      let res = fs.accessSync(file);
-      if (res) {
-        fs.unlinkSync(file);
-      }
-    } catch (err) {
-      HiLog.error(TAG, `deleteFile: ${JSON.stringify(err)}`);
-    }
-  }
-
-  rmDir(file:string) {
-    try {
-      let res = fs.accessSync(file);
-      if (res) {
-        fs.rmdirSync(file);
-      }
-    } catch (err) {
-      HiLog.error(TAG, `rmdirSync: ${JSON.stringify(err)}`);
-    }
-  }
-
   async copyDlpHead(srcFd: number, dstFd: number) {
     return new Promise<boolean>(async (resolve, reject) => {
       let appDir = this.context.filesDir + '/';
@@ -253,12 +233,12 @@ export default class SaveAsAbility extends UIAbility {
         resolve(false);
       }
       if (this.zipFlag) {
-        this.deleteFile(this.dirPath + '/encrypted_data');
-        this.deleteFile(this.dirPath + '/dlp_general_info');
-        this.deleteFile(this.dirPath + '/dlp_cert');
-        this.rmDir(this.dirPath);
-        this.deleteFile(this.filePath);
-        this.deleteFile(this.zipName);
+        FileUtil.unlinkSync(this.dirPath + '/encrypted_data');
+        FileUtil.unlinkSync(this.dirPath + '/dlp_general_info');
+        FileUtil.unlinkSync(this.dirPath + '/dlp_cert');
+        FileUtil.rmdirSync(this.dirPath);
+        FileUtil.unlinkSync(this.filePath);
+        FileUtil.unlinkSync(this.zipName);
       }
     })
   }
@@ -308,8 +288,8 @@ export default class SaveAsAbility extends UIAbility {
         await fs.mkdir(this.dirPath);
         let options: zlib.Options = {
           level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
-          memLevel:zlib.MemLevel.MEM_LEVEL_DEFAULT,
-          strategy:zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
+          memLevel: zlib.MemLevel.MEM_LEVEL_DEFAULT,
+          strategy: zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
         };
         await zlib.decompressFile(this.filePath, this.dirPath, options);
         await fs.truncate(this.encFile);
@@ -321,8 +301,8 @@ export default class SaveAsAbility extends UIAbility {
         HiLog.error(TAG, `open failed: ${JSON.stringify(err)}`);
         resolve(false);
       } finally {
-        FileUtil.closeFileSync(openFile);
-        FileUtil.closeFileSync(openZipFile);
+        FileUtil.closeSync(openFile);
+        FileUtil.closeSync(openZipFile);
       }
     })
   }
@@ -348,7 +328,7 @@ export default class SaveAsAbility extends UIAbility {
       }
       return false;
     } finally {
-      FileUtil.closeFileSync(file);
+      FileUtil.closeSync(file);
     }
   }
 
@@ -422,8 +402,8 @@ export default class SaveAsAbility extends UIAbility {
     };
 
     if (((args as dialogRequest.RequestResult).result !== undefined &&
-        (args as dialogRequest.RequestResult).result === 0) ||
-        ((args as ability.AbilityResult).resultCode !== undefined &&
+      (args as dialogRequest.RequestResult).result === 0) ||
+      ((args as ability.AbilityResult).resultCode !== undefined &&
         (args as ability.AbilityResult).resultCode === 0)) {
       if (args.want && args.want.parameters) {
         if (args.want.parameters.pick_path_return) {
@@ -433,8 +413,8 @@ export default class SaveAsAbility extends UIAbility {
         }
       }
     } else if (((args as dialogRequest.RequestResult).result !== undefined &&
-        (args as dialogRequest.RequestResult).result === 0) ||
-        ((args as ability.AbilityResult).resultCode !== undefined &&
+      (args as dialogRequest.RequestResult).result === 0) ||
+      ((args as ability.AbilityResult).resultCode !== undefined &&
         (args as ability.AbilityResult).resultCode === -1)) {
       saveResult.data = [];
     } else {
@@ -446,7 +426,7 @@ export default class SaveAsAbility extends UIAbility {
   }
 
   getErr(errCode: number) {
-    return {code: errCode, message: ERRCODE_MAP.get(errCode)} as BusinessError;
+    return { code: errCode, message: ERRCODE_MAP.get(errCode) } as BusinessError;
   }
 
   async documentPickerSave(...args: Object[]): Promise<BusinessError | string[] | undefined> {
@@ -454,7 +434,7 @@ export default class SaveAsAbility extends UIAbility {
     let result: dialogRequest.RequestResult | ability.AbilityResult;
     try {
       config = await this.parseDocumentPickerSaveOption(args, ACTION.SAVE_ACTION);
-      result = await this.context.startAbilityForResult(config, {windowMode: 0});
+      result = await this.context.startAbilityForResult(config, { windowMode: 0 });
     } catch (error) {
       HiLog.error(TAG, `startAbilityForResult error: ${JSON.stringify(error)}`);
       return undefined;
@@ -513,7 +493,7 @@ export default class SaveAsAbility extends UIAbility {
       }
     } catch (err) {
       HiLog.error(TAG, `DocumentViewPicker failed: ${JSON.stringify(err)}`);
-      FileUtil.closeFileSync(this.file);
+      FileUtil.closeSync(this.file);
       FileUtil.unlinkSync(uri);
       this.isOK = false;
       await GetAlertMessage.requestModalUIExtension(this.context,
@@ -546,9 +526,9 @@ export default class SaveAsAbility extends UIAbility {
 
       let success = await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
       if (!success) {
-        FileUtil.closeFileSync(this.file);
+        FileUtil.closeSync(this.file);
         FileUtil.unlinkSync(uri);
-        FileUtil.closeFdSync(this.srcFdPicker);
+        FileUtil.closeSync(this.srcFdPicker);
         this.isOK = false;
         await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -558,9 +538,9 @@ export default class SaveAsAbility extends UIAbility {
         await this.openDLPFile(uri, want);
         await this.addDLPLinkFile(appId, uri);
       } catch {
-        FileUtil.closeFileSync(this.file);
+        FileUtil.closeSync(this.file);
         FileUtil.unlinkSync(uri);
-        FileUtil.closeFdSync(this.srcFdPicker);
+        FileUtil.closeSync(this.srcFdPicker);
         reject();
       }
       const linkFilePath = Constants.FUSE_PATH + this.linkFileName;
@@ -573,7 +553,7 @@ export default class SaveAsAbility extends UIAbility {
       this.resultUri = getFileUriByPath(linkFilePath);
       (this.result.want?.parameters?.pick_path_return as string[]).push(this.resultUri);
       this.result.resultCode = 0;
-      FileUtil.closeFdSync(this.srcFdPicker);
+      FileUtil.closeSync(this.srcFdPicker);
       resolve();
     })
   }
@@ -633,9 +613,9 @@ export default class SaveAsAbility extends UIAbility {
       } catch (err) {
         HiLog.error(TAG, `generateDlpFile: ${this.dstFdPicker}, failed: ${JSON.stringify(err)}`);
         await GetAlertMessage.requestModalUIExtension(this.context, err);
-        FileUtil.closeFileSync(this.file);
+        FileUtil.closeSync(this.file);
         FileUtil.unlinkSync(uri);
-        FileUtil.closeFdSync(this.srcFdPicker);
+        FileUtil.closeSync(this.srcFdPicker);
         reject();
       }
       resolve();
@@ -661,9 +641,9 @@ export default class SaveAsAbility extends UIAbility {
         } catch (err) {
           HiLog.error(TAG, `closeDlpFile failed: ${JSON.stringify(err)}`);
         }
-        FileUtil.closeFileSync(this.file);
+        FileUtil.closeSync(this.file);
         FileUtil.unlinkSync(uri);
-        FileUtil.closeFdSync(this.srcFdPicker);
+        FileUtil.closeSync(this.srcFdPicker);
         this.isOK = false;
         await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);

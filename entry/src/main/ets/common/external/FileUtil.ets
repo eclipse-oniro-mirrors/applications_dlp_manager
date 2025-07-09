@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,34 +20,21 @@ import { HiLog } from '../HiLog';
 const TAG = 'FileUtil';
 
 export default class FileUtil {
-
-  public static closeFileSync(file: fs.File | undefined): boolean {
+  public static closeSync(file: fs.File | number | undefined): void {
     if (!file) {
-      HiLog.error(TAG, 'param is invalid.');
-      return false;
+      HiLog.error(TAG, 'closeSync param is invalid.');
     }
-    return FileUtil.closeSync(file);
-  }
-
-  public static closeFdSync(file: number): boolean {
-    return FileUtil.closeSync(file);
-  }
-
-  public static closeSync(file: fs.File | undefined | number): boolean {
     try {
       fs.closeSync(file);
       HiLog.info(TAG, 'closeSync success.');
-    } catch (e) {
-      HiLog.error(TAG, `closeSync failed: ${JSON.stringify(e)}`);
-      return false;
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'closeSync failed');
     }
-    return true;
   }
 
-  public static unlinkSync(uri: string): boolean {
+  public static unlinkSync(uri: string): void {
     if (CommonUtil.isEmptyStr(uri)) {
-      HiLog.error(TAG, 'param is invalid.');
-      return false;
+      HiLog.error(TAG, 'unlinkSync param is invalid.');
     }
     try {
       const isExist = fs.accessSync(uri);
@@ -55,11 +42,33 @@ export default class FileUtil {
         fs.unlinkSync(uri);
       }
       HiLog.info(TAG, 'unlinkSync success.');
-    } catch (e) {
-      HiLog.error(TAG, `unlinkSync failed: ${JSON.stringify(e)}`);
-      return false;
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'unlinkSync failed');
     }
-    return true;
   }
 
+  public static rmdirSync(uri: string): void {
+    if (CommonUtil.isEmptyStr(uri)) {
+      HiLog.error(TAG, 'removeDir: param is invalid.');
+    }
+    try {
+      let res = fs.accessSync(uri);
+      if (res) {
+        fs.rmdirSync(uri);
+      }
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'rmdirSync failed');
+    }
+  }
+
+  public static async unlink(uri: string): Promise<void> {
+    if (CommonUtil.isEmptyStr(uri)) {
+      HiLog.error(TAG, 'unlink: param is invalid.');
+    }
+    try {
+      await fs.unlink(uri);
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'unlink failed');
+    }
+  }
 }

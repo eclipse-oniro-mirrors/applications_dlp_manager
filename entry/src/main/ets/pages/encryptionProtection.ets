@@ -56,6 +56,7 @@ import { HiLog } from '../common/HiLog';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
+import FileUtil from '../common/external/FileUtil';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {
@@ -217,7 +218,7 @@ struct DlpDialog {
       eventType: hiSysEvent.EventType.FAULT,
       params: {
         'CODE': code,
-        'REASON': reason
+        'REASON': reason ? reason : ''
       } as Record<string, number | string>
     };
 
@@ -312,7 +313,7 @@ struct DlpDialog {
       return;
     } finally {
       if (file) {
-        fs.closeSync(file);
+        FileUtil.closeSync(file);
       }
     }
     ;
@@ -321,7 +322,7 @@ struct DlpDialog {
       await new Promise<void>((resolve, reject) => {
         this.dlpRpcProxy?.recoverDlpFile(GlobalContext.load('uri'), filePathUri, async (err: number) => {
           if (err !== 0) {
-            fs.unlinkSync(filePath);
+            FileUtil.unlinkSync(filePath);
             HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
             let errorInfo =
               { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
@@ -357,11 +358,7 @@ struct DlpDialog {
     this.dlpRpcProxy?.genDlpFile(filePathUri, GlobalContext.load('uri'), _dlp, async (err: number) => {
       if (err !== 0) {
         HiLog.error(TAG, `generateDLPFile failed: ${err}`);
-        try {
-          fs.unlinkSync(filePath);
-        } catch (error) {
-          HiLog.error(TAG, `unlinkSync exception, error is ${JSON.stringify(error)}`);
-        }
+        FileUtil.unlinkSync(filePath);
         let errorInfo =
           { 'title': '', 'msg': $r('app.string.File_cannot_be_opened') } as Record<string, string | Resource>;
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -374,11 +371,7 @@ struct DlpDialog {
             }
           });
         }
-        try {
-          fs.unlinkSync(filePath);
-        } catch (error) {
-          HiLog.error(TAG, `unlinkSync exception, error is ${JSON.stringify(error)}`);
-        }
+        FileUtil.unlinkSync(filePath);
         await this.catchProcess();
         this.processing = false;
         GlobalContext.store('dlpFileName', this.srcFileName);
@@ -463,11 +456,7 @@ struct DlpDialog {
           this.processing = false;
           return;
         }
-        try {
-          await fs.unlink(uriInfo.path);
-        } catch (err) {
-          HiLog.error(TAG, `unlink fail: ${JSON.stringify(err)}`);
-        }
+        await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
         let errorInfo = GetAlertMessage.getAlertMessage({ code: err } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
