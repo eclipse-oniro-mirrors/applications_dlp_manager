@@ -229,7 +229,6 @@ export default class DecryptContent {
       this._linkUri = fileUri.getUriFromPath(linkFilePath);
       this._uriInfo = new fileUri.FileUri(this._openDlpFileData.uri);
       this._linkUriStat = fs.statSync(this._uriInfo.path);
-      HiLog.debug(TAG, `uriInfo.name: ${this._uriInfo.name}, uriInfo.path: ${JSON.stringify(this._uriInfo.path)}`)
       return ResultMsg.buildSuccess();
     } catch (error) {
       HiLog.wrapError(TAG, error, `open: ${this._openDlpFileData.uri} failed`);
