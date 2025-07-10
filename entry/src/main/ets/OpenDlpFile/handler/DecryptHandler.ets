@@ -41,8 +41,6 @@ interface DecryptInnerResult {
 }
 
 export default class DecryptHandler {
-  private static readonly DEFAULT_TIMEOUT = 10 * 1000;
-
   constructor() {
   }
 
@@ -204,8 +202,14 @@ export default class DecryptHandler {
 
   private async chargeOpenDLPFileError(err: BusinessError, decryptContent: DecryptContent):
     Promise<Result<dlpPermission.DLPFile>> {
-    HiLog.error(TAG, `openDLPFile: ${decodeURIComponent(decryptContent.fileName)}, failed: ${JSON.stringify(err)}`);
     DlpFileOpenReport.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, decryptContent, err);
+
+    // Not print sensitive information
+    if (err.code === Constants.ERR_JS_USER_NO_PERMISSION || err.code === Constants.ERR_JS_FILE_EXPIRATION) {
+      HiLog.error(TAG, `no permission or expiration, errcode is ${err.code}`);
+    } else {
+      HiLog.wrapError(TAG, err, 'openDLPFile error');
+    }
 
     // Domain account open files with no permission
     if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT &&
@@ -244,7 +248,6 @@ export default class DecryptHandler {
     } catch (error) {
       OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
       if (error) {
-        HiLog.wrapError(TAG, error, 'openDLPFile error');
         const busErr: BusinessError = error as BusinessError;
         return this.chargeOpenDLPFileError(busErr, decryptContent);
       }
