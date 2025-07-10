@@ -56,7 +56,6 @@ export default class AccountAssociationService {
 
   public async setAuthorizedAccount(authorizedAccount: string): Promise<void> {
     HiLog.info(TAG, 'Enter setAuthorizedAccount.');
-    HiLog.debug(TAG, `Authorized account: ${authorizedAccount}.`);
     let accountInfo: osAccount.OsAccountInfo | null = null;
     try {
       accountInfo = await getOsAccountInfo();
