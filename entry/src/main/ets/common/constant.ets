@@ -324,6 +324,7 @@ export default class Constants {
   public static readonly CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
   public static readonly NUMBER_ONE = 1;
   public static readonly NUMBER_TWO = 2;
+  public static readonly NUMBER_THREE = 3;
 
   // want params
   public static readonly PARAMS_BUNDLE_NAME: string = 'ohos.dlp.params.bundleName';

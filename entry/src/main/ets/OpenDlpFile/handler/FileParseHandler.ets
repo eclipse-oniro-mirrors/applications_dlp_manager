@@ -41,6 +41,71 @@ enum FileParseType {
   RAW = 2
 }
 
+const NUM_TO_TYPE_MAP = new Map<number, string>([
+  [1, 'txt'],
+  [2, 'pdf'],
+  [3, 'doc'],
+  [4, 'docx'],
+  [5, 'ppt'],
+  [6, 'pptx'],
+  [7, 'xls'],
+  [8, 'xlsx'],
+  [9, 'bmp'],
+  [10, 'bm'],
+  [11, 'dng'],
+  [12, 'gif'],
+  [13, 'heic'],
+  [14, 'heics'],
+  [15, 'heif'],
+  [16, 'heifs'],
+  [17, 'hif'],
+  [18, 'jpg'],
+  [19, 'jpeg'],
+  [20, 'jpe'],
+  [21, 'png'],
+  [22, 'webp'],
+  [23, 'cur'],
+  [24, 'raf'],
+  [25, 'ico'],
+  [26, 'nrw'],
+  [27, 'rw2'],
+  [28, 'pef'],
+  [29, 'srw'],
+  [30, 'svg'],
+  [31, 'arw'],
+  [32, '3gpp2'],
+  [33, '3gp2'],
+  [34, '3g2'],
+  [35, '3gpp'],
+  [36, '3gp'],
+  [37, 'avi'],
+  [38, 'm4v'],
+  [39, 'f4v'],
+  [40, 'mp4v'],
+  [41, 'mpeg4'],
+  [42, 'mp4'],
+  [43, 'm2ts'],
+  [44, 'mts'],
+  [45, 'ts'],
+  [46, 'vt'],
+  [47, 'wrf'],
+  [48, 'mpeg'],
+  [49, 'mpeg2'],
+  [50, 'mpv2'],
+  [51, 'mp2v'],
+  [52, 'm2v'],
+  [53, 'm2t'],
+  [54, 'mpeg1'],
+  [55, 'mpv1'],
+  [56, 'mp1v'],
+  [57, 'm1v'],
+  [58, 'mpg'],
+  [59, 'mov'],
+  [60, 'mkv'],
+  [61, 'webm'],
+  [62, 'h264'],
+]);
+
 abstract class FileParseBase {
   protected metaInfo?: FileMetaInfo;
 
@@ -123,7 +188,8 @@ class RawParse extends FileParseBase {
 
       this.metaInfo = {
         accountType: accountType,
-        fileType: '',
+        fileType: NUM_TO_TYPE_MAP.has(buf[Constants.NUMBER_THREE]) ?
+            NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
         ownerAccount: ''
       };
       return ResultMsg.buildSuccess(this.metaInfo);
