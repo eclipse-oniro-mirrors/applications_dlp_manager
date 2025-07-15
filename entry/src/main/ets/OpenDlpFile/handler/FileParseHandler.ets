@@ -151,10 +151,13 @@ class FileFormatDetector {
     if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
       HiLog.debug(TAG, 'FileFormatDetector zip');
       return ResultMsg.buildSuccess(FileParseType.ZIP);
-    } else {
+    }
+    if (buf && (buf[0] === Constants.DLP_RAW_MAGIC || buf[2] === Constants.DLP_RAW_MAGIC)) {
       HiLog.debug(TAG, 'FileFormatDetector raw');
       return ResultMsg.buildSuccess(FileParseType.RAW);
     }
+    HiLog.error(TAG, 'FileFormatDetector not dlp file');
+    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
   }
 }
 
@@ -170,14 +173,17 @@ export class FileParseFactory {
     const format = await FileFormatDetector.detect(dlpFd);
     if (format.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'detect failed');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
+      return ResultMsg.buildMsg(format.errcode, format.errmsg);
     }
     FileUtil.closeSync(dlpFd);
     switch (format.result) {
       case FileParseType.ZIP:
         return ResultMsg.buildSuccess(new ZipParse());
-      default:
+      case FileParseType.RAW:
         return ResultMsg.buildSuccess(new RawParse());
+      default:
+        HiLog.error(TAG, 'createFileParse error');
+        return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
     }
   }
 }

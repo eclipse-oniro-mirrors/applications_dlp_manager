@@ -193,6 +193,7 @@ export default class Constants {
   public static BUNDLE_LEN = 20;
 
   public static DLP_ZIP_MAGIC = 0x04034b50;
+  public static DLP_RAW_MAGIC = 0x087f4922;
 
   public static VALIDITY_IMAGE_WIDTH = 15;
   public static VALIDITY_IMAGE_HEIGHT = 40;
