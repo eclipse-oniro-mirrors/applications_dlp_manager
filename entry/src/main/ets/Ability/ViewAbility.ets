@@ -43,6 +43,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.info(TAG, `enter onRequest startId: ${startId}`);
+    AppStorage.setOrCreate('viewContext', this.context);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
     if (OpeningDialogManager.getInstance().getIsChargeOpeningDialog()) {
       return;

@@ -22,10 +22,6 @@ const TAG = 'DataAbility';
 
 export default class DataAbility extends ServiceExtensionAbility {
   private static isSubscriber = false;
-  private uninstallCallback: Callback<dlpPermission.DLPSandboxState> = async (data: dlpPermission.DLPSandboxState) => {
-    await clearDlpInfoBatch(data.bundleName, data.appIndex);
-  }
-
   onCreate(want: Want): void {
     HiLog.info(TAG, 'DataAbility onCreate');
   }
@@ -35,10 +31,13 @@ export default class DataAbility extends ServiceExtensionAbility {
     if (!DataAbility.isSubscriber) {
       HiLog.info(TAG, 'createSubscriber start');
       try {
-        dlpPermission.on('uninstallDLPSandbox', this.uninstallCallback);
+        dlpPermission.on('uninstallDLPSandbox', (data: dlpPermission.DLPSandboxState) => {
+          HiLog.info(TAG, 'uninstallDLPSandboxCallback');
+          clearDlpInfoBatch(data.bundleName, data.appIndex, this.context);
+        });
         DataAbility.isSubscriber = true;
       } catch (err) {
-        HiLog.error(TAG, `createSubscriber uninstallDLPSandbox failed: ${JSON.stringify(err)}`);
+        HiLog.wrapError(TAG, err, 'createSubscriber uninstallDLPSandbox error');
       }
     }
   }

@@ -143,7 +143,7 @@ export default class DecryptHandler {
     HiLog.info(TAG, 'start decryptDataAndSetStatus');
     const manager = OpenDlpFileManager.getInstance();
     const setStatusRet = await manager.setStatus(decryptContent.openDlpFileData.uri,
-      {state: DecryptState.DECRYPTING, startTime: getCurrentTime()});
+      { state: DecryptState.DECRYPTING, startTime: getCurrentTime() });
     if (setStatusRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'setStatus DECRYPTING failed');
       return ResultMsg.buildMsg(setStatusRet.errcode, setStatusRet.errmsg);
@@ -239,7 +239,6 @@ export default class DecryptHandler {
         timeoutPromise
       ]);
       HiLog.info(TAG, 'dlpPermission.openDLPFile success');
-      clearTimeout(timeout);
       return ResultMsg.buildSuccess(dlpFile);
     } catch (error) {
       OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
@@ -252,6 +251,7 @@ export default class DecryptHandler {
       return ResultMsg.getErrMsg(Constants.ERR_CODE_DECRYPT_TIME_OUT)
     } finally {
       HiLog.info(TAG, 'createDecryptTask finally');
+      clearTimeout(timeout);
       ApplyEfficiencyManager.getInstance().releaseEfficiency();
       await OpeningDialogManager.getInstance().HideOpeningDialog(decryptContent.openDlpFileData.requestId);
     }

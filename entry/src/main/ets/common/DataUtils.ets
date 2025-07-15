@@ -18,6 +18,8 @@ import { OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
 import DecryptContent from '../OpenDlpFile/data/DecryptContent';
 import Constants from './constant';
 import FileUtil from './external/FileUtil';
+import { common } from '@kit.AbilityKit';
+import TerminateView from '../OpenDlpFile/TerminateView';
 
 const TAG = 'DataUtils';
 
@@ -28,20 +30,42 @@ async function clearDlpInfo(decryptContent: DecryptContent): Promise<void> {
   FileUtil.closeSync(decryptContent.dlpFd);
 }
 
-async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number): Promise<void> {
+async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
+  context: common.ServiceExtensionContext): Promise<void> {
+  HiLog.debug(TAG, 'clearDlpInfoBatch start');
   const manager = OpenDlpFileManager.getInstance();
   const rmRet = await manager.removeByBundleNameAndAppIndex(bundleName, sandboxAppIndex);
-  if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-    HiLog.error(TAG, 'removeByBundleNameAndAppIndex error');
+  if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS || !rmRet.result) {
+    HiLog.error(TAG, 'clearDlpInfoBatch removeByBundleNameAndAppIndex error');
     return;
   }
   const decryptContents = rmRet.result;
-  if (!decryptContents) {
-    return;
-  }
   decryptContents.forEach(async decryptContent => {
+    HiLog.debug(TAG, `clearDlpInfo fileName ${decryptContent.fileName}`);
     await clearDlpInfo(decryptContent);
   });
+
+  const getRet = manager.getHasDecryptedSize();
+  const hasDecryptedNumber = getRet.result;
+  if (hasDecryptedNumber === 0) {
+    HiLog.info(TAG, 'sandbox2linkFile empty');
+    await terminateDataAbility(context);
+  }
+}
+
+async function terminateDataAbility(dataContext: common.ServiceExtensionContext): Promise<void> {
+  HiLog.info(TAG, 'terminateDataAbility start');
+  await terminateSelf(dataContext);
+  await TerminateView.terminate();
+}
+
+async function terminateSelf(context: common.ServiceExtensionContext): Promise<void> {
+  try {
+    await context.terminateSelf();
+    HiLog.info(TAG, 'DataAbility terminateSelf success');
+  } catch (error) {
+    HiLog.wrapError(TAG, error, 'DataAbility terminateSelf exception');
+  }
 }
 
 async function closeDlpFile(decryptContent: DecryptContent): Promise<void> {
@@ -68,8 +92,4 @@ async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> 
   }
 }
 
-export {
-  clearDlpInfo,
-  clearDlpInfoBatch,
-  closeDlpFile,
-};
+export { clearDlpInfo, clearDlpInfoBatch, closeDlpFile };
