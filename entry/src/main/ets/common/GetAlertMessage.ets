@@ -130,7 +130,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
         return {
           'title': $r('app.string.TITLE_APP_VERSION_LOWER'),
-          'msg': $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED')
+          'msg': $r('app.string.Share_File_System_Version_Low')
         } as Record<string, Resource>;
       default:
         return {
@@ -170,7 +170,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_USER_NO_PERMISSION:
         return $r('app.string.File_no_permission');
       case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
-        return $r('app.string.MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED');
+        return $r('app.string.Share_File_System_Version_Low');
       case Constants.ERR_JS_APP_CANNOT_OPEN:
         return $r('app.string.THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION');
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
