@@ -309,7 +309,7 @@ export default class MainAbility extends UIExtensionAbility {
     let fileName: string = (want.parameters?.fileName as Record<string, string>)?.name;
     let isDlpSuffix: boolean = false;
     try {
-      isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'));
+      isDlpSuffix = await FileUtils.isDLPFile(GlobalContext.load('uri'), this.context);
     } catch {
       this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
