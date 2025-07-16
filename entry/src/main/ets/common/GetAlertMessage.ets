@@ -20,31 +20,62 @@ import GlobalContext from './GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
 import { HiLog } from '../common/HiLog';
 import { UIContext } from '@kit.ArkUI';
+import TerminateView from '../OpenDlpFile/TerminateView';
 
 const TAG = 'AlertMessage';
 
 export class GetAlertMessage {
-  public static async phoneHandle(
-    context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
+  private static _viewAbilityPhoneToastCount: number = 0;
+
+  public static getViewAbilityPhoneToastCount(): number {
+    return GetAlertMessage._viewAbilityPhoneToastCount;
+  }
+
+  private static async showToast(
+    context: common.ServiceExtensionContext | common.UIAbilityContext | common.UIExtensionContext,
     error: BusinessError
-  ) {
+  ): Promise<void> {
     try {
-      let resource = GetAlertMessage.getToastMessage(error);
-      let toastMessage = await context.resourceManager.getStringValue(resource);
-      let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
+      const resource = GetAlertMessage.getToastMessage(error);
+      const toastMessage = await context.resourceManager.getStringValue(resource);
+      const uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
       uiContext.getPromptAction().showToast({
         message: toastMessage,
         duration: Constants.SHARE_SET_TIMEOUT
       });
-      HiLog.info(TAG, 'showToast end.');
-      UIContext.destroyUIContextWithoutWindow();
+      HiLog.info(TAG, 'showToast success');
     } catch (error) {
-      HiLog.error(TAG, `showToast error: ${JSON.stringify(error)}`);
-    } finally {
-      setTimeout(() => {
-        context.terminateSelf();
-      }, Constants.SHARE_SET_TIMEOUT);
+      HiLog.wrapError(TAG, error, 'showToast failed');
     }
+  }
+
+  public static async viewAbilityPhoneToast(
+    context: common.ServiceExtensionContext,
+    error: BusinessError
+  ): Promise<void> {
+    GetAlertMessage._viewAbilityPhoneToastCount++;
+    await GetAlertMessage.showToast(context, error);
+    setTimeout(async () => {
+      if (--GetAlertMessage._viewAbilityPhoneToastCount === 0) {
+        UIContext.destroyUIContextWithoutWindow();
+        await TerminateView.terminate();
+      }
+    }, Constants.SHARE_SET_TIMEOUT);
+  }
+
+  public static async phoneHandle(
+    context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
+    error: BusinessError
+  ): Promise<void> {
+    await GetAlertMessage.showToast(context, error);
+    setTimeout(async () => {
+      try {
+        UIContext.destroyUIContextWithoutWindow();
+        await context.terminateSelf();
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'phoneHandle terminateSelf error');
+      }
+    }, Constants.SHARE_SET_TIMEOUT);
   }
 
   public static getAlertMessage(err: BusinessError, defaultTitle?: Resource, defaultMessage?: Resource) {

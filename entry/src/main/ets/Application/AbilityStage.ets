@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import AbilityStage from '@ohos.app.ability.AbilityStage'
 import AppStorageConstant from '../common/AppStorageConstant';
 import AppStorageMgr from '../common/AppStorageMgr';
@@ -22,8 +23,12 @@ const TAG: string = 'MyAbilityStage';
 
 export default class MyAbilityStage extends AbilityStage {
   onCreate() {
-    HiLog.info(TAG, 'onCreate');
+    HiLog.info(TAG, 'MyAbilityStage onCreate');
     AppStorage.setOrCreate<number>(Constants.FONT_SIZE_SCALE_KEY, this.context.config.fontSizeScale);
     AppStorageMgr.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, this.context.getApplicationContext(), true);
+  }
+
+  onDestroy() {
+    HiLog.info(TAG, 'MyAbilityStage onDestroy');
   }
 }

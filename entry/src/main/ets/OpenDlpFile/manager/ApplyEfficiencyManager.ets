@@ -41,7 +41,7 @@ export default class ApplyEfficiencyManager {
 
   public releaseEfficiency() {
     HiLog.info(TAG, `releaseEfficiency applyCount ${ApplyEfficiencyManager.applyCount}`);
-    if (ApplyEfficiencyManager.applyCount-- === 0) {
+    if (--ApplyEfficiencyManager.applyCount === 0) {
       this.releaseEfficiencyResource();
     }
   }

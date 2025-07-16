@@ -21,16 +21,16 @@ import Constants from '../common/constant';
 import DecryptContent from './data/DecryptContent';
 import { AccountHandlerFactory } from './handler/AccountHandler';
 import DecryptHandler from './handler/DecryptHandler';
-import StartSandboxHandler from './handler/StartSandboxHandler';
 import { DecryptState, OpenDlpFileManager } from './manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { HiLog } from '../common/HiLog';
 import { ErrorHandlerFactory } from './handler/ErrorHandler';
 import { clearDlpInfo } from '../common/DataUtils';
-import { getCurrentTime } from '../common/utils';
 import CredConnectService from '../rpc/CredConnectService';
 import OpeningDialogManager from './manager/OpeningDialogManager';
 import StartSandboxManager from './manager/StartSandboxManager';
+import { BusinessError } from '@ohos.base';
+import TerminateView from './TerminateView';
 
 const TAG: string = 'OpenDlpFileProcessor';
 
@@ -40,7 +40,8 @@ export class OpenDlpFileProcessor {
     const proRet = await this.processOpenDlpFile(want, startId, context);
     if (proRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'processOpenDlpFile error');
-      return await this.processErrcode(context, proRet.errcode, proRet.errmsg, proRet.result);
+      const err = { code: proRet.errcode, message: proRet.errmsg ? proRet.errmsg : '' } as BusinessError;
+      return await this.processErrcode(context, err, proRet.result);
     }
     HiLog.debug(TAG, 'processOpenDlpFile success');
     return ResultMsg.buildSuccess();
@@ -135,38 +136,15 @@ export class OpenDlpFileProcessor {
     return ResultMsg.buildSuccess();
   }
 
-  public async processErrcode(context: common.ServiceExtensionContext, errcode: number, errmsg?: string,
+  public async processErrcode(context: common.ServiceExtensionContext, error: BusinessError,
     decryptContent?: DecryptContent): Promise<Result<void>> {
     if (decryptContent) {
       clearDlpInfo(decryptContent);
     }
     const errorHandle = ErrorHandlerFactory.createErrorHandle();
-    const hadRet = await errorHandle.handle(context, errcode, errmsg);
-    if (!hadRet.result) {
-      this.terminateViewAbility(context);
-    }
+    await errorHandle.handle(context, error);
+    await TerminateView.terminate();
     return ResultMsg.buildSuccess();
-  }
-
-  private async terminateViewAbility(context: common.ServiceExtensionContext): Promise<void> {
-    const manager = OpenDlpFileManager.getInstance();
-    const getSizeRet = manager.getHasDecryptedSize();
-    if (getSizeRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'terminateViewAbility getHasDecryptedSize error');
-      return;
-    }
-    const hasDecryptedSize = getSizeRet.result!;
-    const hasCallback = OpeningDialogManager.getInstance().getHasCallback();
-    const isDecrypting = OpeningDialogManager.getInstance().getIsDecrypting();
-    HiLog.info(TAG, `hasDecryptedSize: ${hasDecryptedSize},hasCallback: ${hasCallback},isDecrypting: ${isDecrypting}`);
-    if (hasDecryptedSize === 0 && hasCallback && !isDecrypting) {
-      try {
-        await context.terminateSelf();
-        HiLog.info(TAG, 'viewAbility terminateSelf success');
-      } catch (error) {
-        HiLog.wrapError(TAG, error, 'terminateSelf exception');
-      }
-    }
   }
 
   private batchRefresh(context: common.ServiceExtensionContext) {

@@ -19,6 +19,7 @@ import { common, Want } from '@kit.AbilityKit';
 import ViewAbilityService from '../../rpc/ViewAbilityService';
 import StartSandboxManager from './StartSandboxManager';
 import { OpenDlpFileManager } from './OpenDlpFileManager';
+import TerminateView from '../TerminateView';
 
 const TAG = 'OpeningDialogManager';
 
@@ -187,8 +188,9 @@ export default class OpeningDialogManager {
     this._hasCallback = true;
     const isDecrypting = this._decryptingMap.size > 0;
     const requestId = this.getDecryptingRequestId();
-    HiLog.error(TAG, `OpeningDialogManager checkShowDialogState showDialogState ${this._showDialogState},
-    isDecrypting ${isDecrypting}, requestId ${requestId}, isChargeOpeningDialog ${this._isChargeOpeningDialog} `);
+    HiLog.info(TAG, `OpeningDialogManager checkShowDialogState showDialogState ${this._showDialogState},
+    isDecrypting ${isDecrypting}, requestId ${requestId}, isChargeOpeningDialog ${this._isChargeOpeningDialog}`);
+    await TerminateView.terminate();
 
     if (!isDecrypting && !this._isChargeOpeningDialog) { // 没在处理弹框逻辑或解密逻辑，需要取消弹框
       await this.hideDialog();
@@ -200,6 +202,7 @@ export default class OpeningDialogManager {
       return;
     }
     if (isDecrypting && !this._showDialogState) { // 正在解密，且没拉起弹框，需要拉起弹框
+      this._showDialogState = true;
       await this.showDialog(requestId);
       return;
     }

@@ -17,47 +17,23 @@ import { common } from '@kit.AbilityKit';
 import { deviceInfo } from '@kit.BasicServicesKit';
 import { GetAlertMessage } from '../../common/GetAlertMessage';
 import { BusinessError } from '@ohos.base';
-import Result from '../../common/Result';
-import { ResultMsg } from '../../common/ResultMsg';
 import { HiLog } from '../../common/HiLog';
-import Constants from '../../common/constant';
 
 const TAG: string = 'ErrorHandler';
 
-class OpenDlpFileError {
-  public static readonly NOT_NEED_TOAST: Set<number> = new Set([
-    Constants.ERR_CODE_FILE_IS_DECRYPTING_ERROR,
-    Constants.ERR_JS_ACCOUNT_NOT_LOGIN,
-    Constants.ERR_CODE_USER_STOP_DIALOG,
-  ]);
-}
-
 abstract class ErrorHandler {
-  public abstract handle(context: common.ServiceExtensionContext, errcode: number, errmsg?: string):
-    Promise<Result<boolean>>;
+  public abstract handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void>;
 }
 
 class PhoneHandle extends ErrorHandler {
-  public async handle(context: common.ServiceExtensionContext, errcode: number,
-    errmsg?: string | undefined): Promise<Result<boolean>> {
-    if (OpenDlpFileError.NOT_NEED_TOAST.has(errcode)) {
-      return ResultMsg.buildSuccess(false);
-    }
-    await GetAlertMessage.requestModalUIExtension(context,
-      { code: errcode, message: errmsg ? errmsg : '' } as BusinessError);
-    return ResultMsg.buildSuccess(true);
+  public async handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void> {
+    await GetAlertMessage.viewAbilityPhoneToast(context, error);
   }
 }
 
 class PCHandle extends ErrorHandler {
-  public async handle(context: common.ServiceExtensionContext, errcode: number,
-    errmsg?: string | undefined): Promise<Result<boolean>> {
-    if (OpenDlpFileError.NOT_NEED_TOAST.has(errcode)) {
-      return ResultMsg.buildSuccess(false);
-    }
-    await GetAlertMessage.requestModalUIExtension(context,
-      { code: errcode, message: errmsg ? errmsg : '' } as BusinessError);
-    return ResultMsg.buildSuccess(true);
+  public async handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void> {
+    await GetAlertMessage.requestModalUIExtension(context, error);
   }
 }
 
