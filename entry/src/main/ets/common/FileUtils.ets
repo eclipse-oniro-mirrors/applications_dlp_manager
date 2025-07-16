@@ -13,12 +13,13 @@
  * limitations under the License.
  */
 
-import dlpPermission from '@ohos.dlpPermission';
-import fs from '@ohos.file.fs';
 import { HiLog } from '../common/HiLog';
-import FileUtil from './external/FileUtil';
+import { common } from '@kit.AbilityKit';
+import { FileParseFactory } from '../OpenDlpFile/handler/FileParseHandler';
+import Constants from './constant';
 
 const TAG = 'FileUtils';
+
 export interface FileMsg {
   fileName: string;
   filePath: string;
@@ -67,25 +68,25 @@ export default class FileUtils {
     return fileName;
   }
 
-  static isDLPFile(uri: string) {
+  static isDLPFile(uri: string, context: common.UIExtensionContext) {
     return new Promise<boolean>(async (resolve, reject) => {
-      let file: fs.File | undefined;
-      try {
-        file = fs.openSync(uri);
-        try {
-          let res = await dlpPermission.isDLPFile(file.fd);
-          resolve(res);
-        } catch (err) {
-          HiLog.error(TAG, `isDLPFile error: ${JSON.stringify(err)}`);
-          reject(err);
+      const fileParseRet = await FileParseFactory.createFileParse(uri);
+      if (fileParseRet.errcode !== Constants.ERR_CODE_SUCCESS || !fileParseRet.result) {
+        HiLog.error(TAG, 'createFileParse error');
+        if (fileParseRet.errcode === Constants.ERR_JS_NOT_DLP_FILE) {
+          resolve(false);
+        } else {
+          reject();
         }
-      } catch (err) {
-        HiLog.error(TAG, `openSync error: ${JSON.stringify(err)}`);
-        reject(err);
-      } finally {
-        if (file) {
-          FileUtil.closeSync(file);
-        }
+        return;
+      }
+      const fileMetaInfoRet = await fileParseRet.result.parse(uri, context.filesDir);
+      if (fileMetaInfoRet.errcode === Constants.ERR_CODE_SUCCESS) {
+        resolve(true);
+      } else if (fileMetaInfoRet.errcode === Constants.ERR_JS_NOT_DLP_FILE) {
+        resolve(false);
+      } else {
+        reject();
       }
     })
   }
