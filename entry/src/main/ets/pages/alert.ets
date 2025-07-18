@@ -107,9 +107,10 @@ struct Index {
       errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
     } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED].includes(messageCode)) {
       errInfo = GetAlertMessage.getAlertButtonMessage(errorMsg);
-    } else if ([Constants.ERR_JS_USER_NO_PERMISSION].includes(messageCode)) {
-      errInfo = accountType === dlpPermission.AccountType.CLOUD_ACCOUNT ?
-      GetAlertMessage.getAlertMessage(errorMsg) : GetAlertMessage.getAlertTitleMessage(errorMsg);
+    } else if ([Constants.ERR_JS_USER_NO_PERMISSION_2B].includes(messageCode)) {
+      errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
+    } else if ([Constants.ERR_JS_USER_NO_PERMISSION_2C].includes(messageCode)) {
+      errInfo = GetAlertMessage.getAlertMessage(errorMsg);
     } else {
       errInfo = GetAlertMessage.getAlertMessage(errorMsg);
     }
