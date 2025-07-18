@@ -285,6 +285,8 @@ export default class Constants {
   public static readonly ERR_CODE_FILE_IS_DECRYPTING_ERROR: number = -9;
   public static readonly ERR_CODE_USER_STOP_DIALOG: number = -10;
   public static readonly ERR_CODE_DECRYPT_TIME_OUT: number = -11;
+  public static readonly ERR_JS_USER_NO_PERMISSION_2B: number = -12;
+  public static readonly ERR_JS_USER_NO_PERMISSION_2C: number = -13;
 
   public static readonly COMMAND_SEARCH_USER_INFO = 1;
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
