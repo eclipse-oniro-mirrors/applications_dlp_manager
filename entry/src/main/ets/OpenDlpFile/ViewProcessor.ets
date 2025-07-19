@@ -78,6 +78,7 @@ export class OpenDlpFileProcessor {
 
     // 4. Handle account
     let decryptContent = new DecryptContent(fileMetaInfoRet.result!, openDlpFileData);
+    OpeningDialogManager.getInstance().loadOpeningDialog(context, decryptContent);
     const accountHandler = AccountHandlerFactory.createAccountHandler(decryptContent);
     const handleLoginRet = await accountHandler.handle(decryptContent, context);
     if (handleLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {

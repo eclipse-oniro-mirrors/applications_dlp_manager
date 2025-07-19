@@ -17,6 +17,7 @@ import rpc from '@ohos.rpc';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
 import { emitter } from '@kit.BasicServicesKit';
+import OpeningDialogService from './OpeningDialogService';
 
 const TAG = 'OpeningDialogStub';
 
@@ -47,7 +48,7 @@ export default class OpeningDialogStub extends rpc.RemoteObject {
     return true;
   }
 
-  onRemoteMessageRequest(code: number, data: rpc.MessageSequence): boolean {
+  async onRemoteMessageRequest(code: number, data: rpc.MessageSequence): Promise<boolean> {
     if (!this.checkParams(code, data)) {
       HiLog.error(TAG, 'onRemoteMessageRequest checkParams false');
       return false;
@@ -71,6 +72,11 @@ export default class OpeningDialogStub extends rpc.RemoteObject {
           }
         };
         emitter.emit(Constants.SHOW_DIALOG_EVENT, eventData);
+        return true;
+      }
+      case Constants.COMMAND_DISCONNECT: {
+        await OpeningDialogService.getInstance().disconnectViewAbility();
+        OpeningDialogService.getInstance().terminateOpeningDialog();
         return true;
       }
       default: {

@@ -68,4 +68,32 @@ export default class ViewAbilityService {
     }
     return true;
   }
+
+  public async sendDisconnectMsg(): Promise<boolean> {
+    HiLog.info(TAG, 'ViewAbilityService disconnect');
+    if (!this._remoteProxy) {
+      HiLog.error(TAG, 'disconnect remoteProxy is invalid');
+      return false;
+    }
+    let option = new rpc.MessageOption();
+    let data = new rpc.MessageSequence();
+    let reply = new rpc.MessageSequence();
+    try {
+      data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'disconnect prepare data exception');
+      return false;
+    }
+    try {
+      await this._remoteProxy.sendMessageRequest(Constants.COMMAND_DISCONNECT, data, reply, option);
+      HiLog.info(TAG, 'disconnect sendmsg success.');
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'disconnect sendmsg error');
+      return false;
+    } finally {
+      data.reclaim();
+      reply.reclaim();
+    }
+    return true;
+  }
 }

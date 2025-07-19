@@ -21,11 +21,13 @@ import deviceInfo from '@ohos.deviceInfo';
 import { HiLog } from '../common/HiLog';
 import { UIContext } from '@kit.ArkUI';
 import TerminateView from '../OpenDlpFile/TerminateView';
+import CounterLock from './CounterLock';
 
 const TAG = 'AlertMessage';
 
 export class GetAlertMessage {
   private static _viewAbilityPhoneToastCount: number = 0;
+  private static _counterLock: CounterLock = new CounterLock();
 
   public static getViewAbilityPhoneToastCount(): number {
     return GetAlertMessage._viewAbilityPhoneToastCount;
@@ -41,7 +43,8 @@ export class GetAlertMessage {
       const uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
       uiContext.getPromptAction().showToast({
         message: toastMessage,
-        duration: Constants.SHARE_SET_TIMEOUT
+        duration: Constants.SHARE_SET_TIMEOUT,
+        bottom: Constants.TOAST_BOTTOM
       });
       HiLog.info(TAG, 'showToast success');
     } catch (error) {
@@ -53,12 +56,19 @@ export class GetAlertMessage {
     context: common.ServiceExtensionContext,
     error: BusinessError
   ): Promise<void> {
+    await GetAlertMessage._counterLock.acquire();
     GetAlertMessage._viewAbilityPhoneToastCount++;
+    GetAlertMessage._counterLock.release();
     await GetAlertMessage.showToast(context, error);
     setTimeout(async () => {
-      if (--GetAlertMessage._viewAbilityPhoneToastCount === 0) {
-        UIContext.destroyUIContextWithoutWindow();
-        await TerminateView.terminate();
+      await GetAlertMessage._counterLock.acquire();
+      try {
+        if (--GetAlertMessage._viewAbilityPhoneToastCount === 0) {
+          UIContext.destroyUIContextWithoutWindow();
+          await TerminateView.terminate();
+        }
+      } finally {
+        GetAlertMessage._counterLock.release();
       }
     }, Constants.SHARE_SET_TIMEOUT);
   }

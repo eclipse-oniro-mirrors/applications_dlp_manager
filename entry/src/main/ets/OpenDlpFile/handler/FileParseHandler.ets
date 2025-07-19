@@ -124,6 +124,8 @@ class ZipParse extends FileParseBase {
     let ff: fs.File | undefined;
     try {
       file = fs.openSync(uri, fs.OpenMode.READ_ONLY);
+      const fileInfo = fs.statSync(file.fd);
+      const fileSize = fileInfo.size;
       ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
       await fs.copyFile(file.fd, ff.fd);
       await fs.mkdir(dirPath);
@@ -147,7 +149,8 @@ class ZipParse extends FileParseBase {
       this.metaInfo = {
         accountType: Number(type),
         fileType: realFileType,
-        ownerAccount: ''
+        ownerAccount: '',
+        fileSize: fileSize
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
@@ -167,6 +170,8 @@ class RawParse extends FileParseBase {
     let file: fs.File | undefined;
     try {
       file = fs.openSync(uri, fs.OpenMode.READ_ONLY);
+      const fileInfo = fs.statSync(file.fd);
+      const fileSize = fileInfo.size;
       let data = new ArrayBuffer(Constants.HEAD_LENGTH_IN_BYTE);
       let option: ReadOptions = { offset: 0, length: Constants.HEAD_LENGTH_IN_BYTE };
       fs.readSync(file.fd, data, option);
@@ -193,7 +198,8 @@ class RawParse extends FileParseBase {
         accountType: accountType,
         fileType: NUM_TO_TYPE_MAP.has(buf[Constants.NUMBER_THREE]) ?
             NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
-        ownerAccount: ''
+        ownerAccount: '',
+        fileSize: fileSize
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
