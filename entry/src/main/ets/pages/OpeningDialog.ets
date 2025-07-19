@@ -24,7 +24,8 @@ const TAG = 'OpeningDialog';
 @Entry()
 @Component
 struct Index {
-  private timeoutId: number | null = null;
+  private timeoutId250: number | null = null;
+  private timeoutId10: number | null = null;
   private shouldCloseAfterTimeout: boolean = true;
   private receivedCloseSignal: boolean = false;
   private requestId: string = '';
@@ -69,7 +70,7 @@ struct Index {
 
   private startTimeoutClose() {
     this.shouldCloseAfterTimeout = false;
-    this.timeoutId = setTimeout(() => {
+    this.timeoutId250 = setTimeout(() => {
       this.shouldCloseAfterTimeout = true;
       OpeningDialogService.getInstance().dialogTimeout(this.requestId);
       if (this.receivedCloseSignal) {
@@ -78,16 +79,21 @@ struct Index {
       }
     }, Constants.OPENING_DIALOG_TIMEOUT);
 
-    setTimeout(() => {
+    this.timeoutId10 = setTimeout(async () => {
       HiLog.error(TAG, 'closeDialog by decrypt timeout');
       this.closeDialog();
+      await OpeningDialogService.getInstance().terminateOpeningDialog();
     }, Constants.DECRYPT_TIMEOUT_TIME);
   }
 
   private closeDialog() {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
+    if (this.timeoutId250) {
+      clearTimeout(this.timeoutId250);
+      this.timeoutId250 = null;
+    }
+    if (this.timeoutId10) {
+      clearTimeout(this.timeoutId10);
+      this.timeoutId10 = null;
     }
     this.dlpAlertDialog.close();
     OpeningDialogService.getInstance().dialogDisappear(this.requestId);

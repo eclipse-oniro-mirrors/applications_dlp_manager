@@ -286,6 +286,7 @@ export default class OpeningDialogManager {
     }
     await this.hideDialog();
     await ViewAbilityService.getInstance().sendDisconnectMsg();
+    await TerminateView.terminate();
   }
 
   // viewAbility异常结束

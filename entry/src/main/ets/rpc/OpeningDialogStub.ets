@@ -76,7 +76,7 @@ export default class OpeningDialogStub extends rpc.RemoteObject {
       }
       case Constants.COMMAND_DISCONNECT: {
         await OpeningDialogService.getInstance().disconnectViewAbility();
-        OpeningDialogService.getInstance().terminateOpeningDialog();
+        await OpeningDialogService.getInstance().terminateOpeningDialog();
         return true;
       }
       default: {
