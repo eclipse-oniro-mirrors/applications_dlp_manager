@@ -112,7 +112,7 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.File_cannot_be_opened') } as Record<string, Resource>;
       case Constants.ERR_JS_NOT_DLP_FILE:
         return { 'msg': $r('app.string.File_damaged') } as Record<string, Resource>;
-      case Constants.ERR_JS_USER_NO_PERMISSION:
+      case Constants.ERR_JS_USER_NO_PERMISSION_2C:
         return { 'msg': $r('app.string.File_no_permission') } as Record<string, Resource>;
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
         return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
@@ -132,7 +132,7 @@ export class GetAlertMessage {
 
   public static getAlertTitleMessage(err: BusinessError) {
     switch (err && err.code) {
-      case Constants.ERR_JS_USER_NO_PERMISSION:
+      case Constants.ERR_JS_USER_NO_PERMISSION_2B:
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
           'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.message.split(', contact:')?.[1])
@@ -223,6 +223,10 @@ export class GetAlertMessage {
         return $r('app.string.MESSAGE_NO_SPACE_ERROR');
       case Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION:
         return $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION');
+      case Constants.ERR_JS_USER_NO_PERMISSION_2B:
+        return $r('app.string.MESSAGE_APP_NOT_HAVE_PERM');
+      case Constants.ERR_JS_USER_NO_PERMISSION_2C:
+        return $r('app.string.File_no_permission');
       default:
         return $r('app.string.File_cannot_be_opened');
     }

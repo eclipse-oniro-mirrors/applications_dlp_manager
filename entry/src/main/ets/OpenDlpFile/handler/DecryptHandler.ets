@@ -32,6 +32,7 @@ import { closeDlpFile } from '../../common/DataUtils';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';
 import { ObjectUtil } from '../../common/ObjectUtil';
+import GlobalContext from '../../common/GlobalContext';
 
 const TAG: string = 'DecryptHandler';
 
@@ -192,6 +193,7 @@ export default class DecryptHandler {
     let dlpFile = dlpFileRet.result;
     decryptContent.dlpFile = dlpFileRet.result;
     decryptContent.fileMetaInfo.accountType = dlpFile.dlpProperty.ownerAccountType;
+    GlobalContext.store('accountType', Number(dlpFile.dlpProperty.ownerAccountType));
     const setAuthPermRet = decryptContent.setDlpGetAuthPerm();
     if (setAuthPermRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'setDlpGetAuthPerm error');
@@ -220,6 +222,16 @@ export default class DecryptHandler {
         HiLog.error(TAG, 'checkAccountInfo error');
         return ResultMsg.getErrMsg(Constants.ERR_JS_APP_NETWORK_INVALID);
       }
+    }
+
+    // Error code conversion
+    if (err.code === Constants.ERR_JS_USER_NO_PERMISSION &&
+      decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+      return ResultMsg.buildMsg(Constants.ERR_JS_USER_NO_PERMISSION_2B, err.message);
+    }
+    if (err.code === Constants.ERR_JS_USER_NO_PERMISSION &&
+      decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.CLOUD_ACCOUNT) {
+      return ResultMsg.buildMsg(Constants.ERR_JS_USER_NO_PERMISSION_2C, err.message);
     }
     return ResultMsg.buildMsg(err.code, err.message);
   }

@@ -24,6 +24,7 @@ import { util } from '@kit.ArkTS';
 import FileUtil from '../../common/external/FileUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
+import GlobalContext from '../../common/GlobalContext';
 
 const TAG: string = 'FileParse';
 
@@ -144,6 +145,7 @@ class ZipParse extends FileParseBase {
         }
       }
 
+      GlobalContext.store('accountType', Number(type));
       this.metaInfo = {
         accountType: Number(type),
         fileType: realFileType,
@@ -191,6 +193,7 @@ class RawParse extends FileParseBase {
         return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
       }
 
+      GlobalContext.store('accountType', accountType);
       this.metaInfo = {
         accountType: accountType,
         fileType: NUM_TO_TYPE_MAP.has(buf[Constants.NUMBER_THREE]) ?
