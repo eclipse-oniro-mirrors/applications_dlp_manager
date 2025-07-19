@@ -13,9 +13,32 @@
  * limitations under the License.
  */
 
-export default interface FileMetaInfo {
-  accountType: number;
-  fileType: string;
-  ownerAccount: string;
-  fileSize: number;
+const TAG = 'CounterLock';
+
+export default class CounterLock {
+  private locked: boolean = false;
+  private queue: Array<() => void> = [];
+
+  async acquire(): Promise<void> {
+    return new Promise((resolve) => {
+      const tryAcquire = () => {
+        if (!this.locked) {
+          this.locked = true;
+          resolve();
+        } else {
+          this.queue.push(tryAcquire);
+        }
+      };
+      tryAcquire();
+    });
+  }
+
+  release(): void {
+    if (this.queue.length > 0) {
+      const next = this.queue.shift();
+      next?.();
+    } else {
+      this.locked = false;
+    }
+  }
 }

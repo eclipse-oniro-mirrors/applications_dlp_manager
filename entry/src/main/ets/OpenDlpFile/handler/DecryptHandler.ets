@@ -227,7 +227,7 @@ export default class DecryptHandler {
   private async createDecryptTask(callerAppId: string,
     decryptContent: DecryptContent): Promise<Result<dlpPermission.DLPFile>> {
     HiLog.info(TAG, 'start createDecryptTask');
-    await OpeningDialogManager.getInstance().ShowOpeningDialog(decryptContent.openDlpFileData.uri,
+    await OpeningDialogManager.getInstance().showOpeningDialog(decryptContent.openDlpFileData.uri,
       decryptContent.openDlpFileData.requestId);
     ApplyEfficiencyManager.getInstance().applyEfficiency();
     let timeout: number | undefined = undefined;
@@ -256,7 +256,7 @@ export default class DecryptHandler {
       HiLog.info(TAG, 'createDecryptTask finally');
       clearTimeout(timeout);
       ApplyEfficiencyManager.getInstance().releaseEfficiency();
-      await OpeningDialogManager.getInstance().HideOpeningDialog(decryptContent.openDlpFileData.requestId);
+      await OpeningDialogManager.getInstance().hideOpeningDialog(decryptContent.openDlpFileData.requestId);
     }
   }
 

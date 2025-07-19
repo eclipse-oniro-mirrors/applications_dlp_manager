@@ -45,10 +45,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
     HiLog.info(TAG, `enter onRequest startId: ${startId}`);
     AppStorage.setOrCreate('viewContext', this.context);
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
-    if (OpeningDialogManager.getInstance().getIsChargeOpeningDialog()) {
+    if (OpeningDialogManager.getInstance().getIsChargeDecrypting()) {
+      HiLog.error(TAG, 'ViewAbility isChargeDecrypting');
       return;
     }
-    OpeningDialogManager.getInstance().loadOpeningDialog(this.context);
+    OpeningDialogManager.getInstance().setIsChargeDecrypting(true);
     const processor = new OpenDlpFileProcessor();
     let processRet = await processor.process(want, startId, this.context);
     if (processRet.errcode !== Constants.ERR_CODE_SUCCESS) {

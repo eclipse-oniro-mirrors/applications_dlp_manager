@@ -15,7 +15,6 @@
 
 import { CustomContentDialog } from '@ohos.arkui.advanced.Dialog';
 import { HiLog } from '../common/HiLog';
-import { ability, common } from '@kit.AbilityKit';
 import Constants from '../common/constant';
 import { emitter } from '@kit.BasicServicesKit';
 import OpeningDialogService from '../rpc/OpeningDialogService';
@@ -63,8 +62,8 @@ struct Index {
 
     this.receivedCloseSignal = true;
     if (this.shouldCloseAfterTimeout) {
-      HiLog.info(TAG, 'closeDialogAndTerminate by event');
-      this.closeDialogAndTerminate();
+      HiLog.info(TAG, 'closeDialog by event');
+      this.closeDialog();
     }
   }
 
@@ -74,40 +73,24 @@ struct Index {
       this.shouldCloseAfterTimeout = true;
       OpeningDialogService.getInstance().dialogTimeout(this.requestId);
       if (this.receivedCloseSignal) {
-        HiLog.info(TAG, 'closeDialogAndTerminate by timeout');
-        this.closeDialogAndTerminate();
+        HiLog.info(TAG, 'closeDialog by timeout');
+        this.closeDialog();
       }
     }, Constants.OPENING_DIALOG_TIMEOUT);
 
     setTimeout(() => {
-      HiLog.error(TAG, 'closeDialogAndTerminate by decrypt timeout');
-      this.closeDialogAndTerminate();
+      HiLog.error(TAG, 'closeDialog by decrypt timeout');
+      this.closeDialog();
     }, Constants.DECRYPT_TIMEOUT_TIME);
   }
 
-  private closeDialogAndTerminate() {
+  private closeDialog() {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = null;
     }
     this.dlpAlertDialog.close();
     OpeningDialogService.getInstance().dialogDisappear(this.requestId);
-    this.terminateSelfWithResult();
-  }
-
-  private terminateSelfWithResult(): void {
-    HiLog.info(TAG, 'OpeningDialog terminateSelfWithResult');
-    let res: ability.AbilityResult = {
-      'resultCode': 0,
-      'want': {}
-    };
-    const uiContext = this.getUIContext();
-    try {
-      (uiContext.getHostContext() as common.UIAbilityContext).terminateSelfWithResult(res);
-      HiLog.info(TAG, 'terminateSelfWithResult success');
-    } catch (error) {
-      HiLog.error(TAG, 'terminateSelfWithResult error');
-    }
   }
 
   build() {
@@ -133,7 +116,7 @@ struct Index {
       .constraintSize({ minHeight: 48 })
       .onDisAppear(() => {
         HiLog.info(TAG, 'contentBuilder onDisAppear');
-        this.closeDialogAndTerminate();
+        this.closeDialog();
       })
     }
   }

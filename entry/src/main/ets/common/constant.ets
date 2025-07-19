@@ -326,6 +326,8 @@ export default class Constants {
   public static readonly NUMBER_ONE = 1;
   public static readonly NUMBER_TWO = 2;
   public static readonly NUMBER_THREE = 3;
+  public static readonly DIALOG_SHOW_SIZE = 200 * 1024 * 1024;
+  public static readonly TOAST_BOTTOM = 116;
 
   // want params
   public static readonly PARAMS_BUNDLE_NAME: string = 'ohos.dlp.params.bundleName';
@@ -339,6 +341,7 @@ export default class Constants {
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
   public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;
   public static readonly COMMAND_SHOW_DIALOG = 1;
+  public static readonly COMMAND_DISCONNECT = 2;
   public static readonly COMMAND_SET_REMOTE_OBJECT = 1;
   public static readonly COMMAND_DIALOG_DISAPPEAR = 2;
   public static readonly COMMAND_DIALOG_TIMEOUT = 3;
