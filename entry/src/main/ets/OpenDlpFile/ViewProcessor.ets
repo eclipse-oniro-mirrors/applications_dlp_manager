@@ -144,7 +144,6 @@ export class OpenDlpFileProcessor {
     }
     const errorHandle = ErrorHandlerFactory.createErrorHandle();
     await errorHandle.handle(context, error);
-    await TerminateView.terminate();
     return ResultMsg.buildSuccess();
   }
 
