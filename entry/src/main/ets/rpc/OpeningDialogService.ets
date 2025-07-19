@@ -28,6 +28,7 @@ export default class OpeningDialogService {
   private _context?: common.UIExtensionContext;
   private remoteProxy: rpc.IRemoteObject | null = null;
   private connectionId: number | undefined;
+  private _disconnectTimer: number | null = null;
   private connectOptions: common.ConnectOptions = {
     onConnect: (elementName, remoteProxy) => {
       HiLog.info(TAG, 'OpeningDialogService onConnect success');
@@ -35,7 +36,7 @@ export default class OpeningDialogService {
       this.setRemoteObject();
     },
     onDisconnect: (elementName) => {
-      HiLog.info(TAG, 'OpeningDialogService onConnect');
+      HiLog.info(TAG, 'OpeningDialogService onDisconnect');
     },
     onFailed: () => {
       HiLog.info(TAG, 'OpeningDialogService onFailed');
@@ -95,15 +96,34 @@ export default class OpeningDialogService {
 
   public async disconnectViewAbility(): Promise<void> {
     HiLog.info(TAG, 'disconnectViewAbility start');
+
     if (!this._context) {
       HiLog.error(TAG, 'disconnectViewAbility context is undefined');
       return;
     }
-    try {
-      await this._context.disconnectServiceExtensionAbility(this.connectionId);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'Failed to disconnectServiceExtensionAbility');
+
+    if (this._disconnectTimer) {
+      clearTimeout(this._disconnectTimer);
+      this._disconnectTimer = null;
     }
+
+    return new Promise<void>((resolve) => {
+      this._disconnectTimer = setTimeout(async () => {
+        try {
+          if (this._context) {
+            await this._context.disconnectServiceExtensionAbility(this.connectionId);
+            HiLog.info(TAG, 'disconnectViewAbility success');
+          } else {
+            HiLog.warn(TAG, 'disconnectViewAbility skipped - context destroyed');
+          }
+        } catch (error) {
+          HiLog.wrapError(TAG, error, 'Failed to disconnectServiceExtensionAbility');
+        } finally {
+          this._disconnectTimer = null;
+          resolve();
+        }
+      }, Constants.OPENING_DIALOG_TIMEOUT);
+    });
   }
 
   private setRemoteObject(): void {

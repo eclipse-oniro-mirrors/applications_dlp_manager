@@ -329,7 +329,7 @@ export default class Constants {
   public static readonly NUMBER_TWO = 2;
   public static readonly NUMBER_THREE = 3;
   public static readonly DIALOG_SHOW_SIZE = 200 * 1024 * 1024;
-  public static readonly TOAST_BOTTOM = 116;
+  public static readonly TOAST_BOTTOM = 142;
 
   // want params
   public static readonly PARAMS_BUNDLE_NAME: string = 'ohos.dlp.params.bundleName';

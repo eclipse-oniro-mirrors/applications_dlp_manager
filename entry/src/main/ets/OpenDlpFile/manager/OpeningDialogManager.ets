@@ -103,6 +103,10 @@ export default class OpeningDialogManager {
   public getNeedStartAbility(requestId: string): boolean {
     this.printAllDecryptingMap();
     const isDecrypting = this._decryptingMap.has(requestId);
+    if (!isDecrypting) {
+      HiLog.error(TAG, 'getNeedStartAbility not isDecrypting');
+      return false;
+    }
     const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
     const timeout = decryptingState.dialogTimeout;
 

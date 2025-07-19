@@ -69,7 +69,6 @@ export default class ViewAbilityService {
     return true;
   }
 
-  // TODO: 只有拉起沙箱之后才disconnect
   public async sendDisconnectMsg(): Promise<boolean> {
     HiLog.info(TAG, 'ViewAbilityService disconnect');
     if (!this._remoteProxy) {
