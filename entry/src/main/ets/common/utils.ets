@@ -122,6 +122,11 @@ interface DLPGeneralInfo {
   realFileType: string;
 }
 
+interface BundleNameInfo {
+  callerBundleName: string;
+  sandboxBundleName: string;
+}
+
 function getFileUriByPath(filePath: string): string {
   try {
     let uri = fileUri.getUriFromPath(filePath);
@@ -377,6 +382,14 @@ async function getDLPInfo(): Promise<Result<DLPInfo>> {
     HiLog.wrapError(TAG, err, 'getBundleInfoForSelf failed');
     return ResultMsg.getErrMsg(Constants.ERR_CODE_GET_BUNDLE_INFO_ERROR);
   }
+}
+
+function getBundleNameInfo(callerBundleName: string, openFileBundleName: string): string {
+  const bundleInfo: BundleNameInfo = {
+    callerBundleName: callerBundleName,
+    sandboxBundleName: openFileBundleName
+  };
+  return JSON.stringify(bundleInfo);
 }
 
 function sendDlpManagerAccountLogin(errorCode: number) {
@@ -791,6 +804,27 @@ function uint8ArrayToHexString(inputData: Uint8Array): string | null {
   return hexString;
 }
 
+function getCostTime(startTime: number | undefined): number | undefined {
+  HiLog.info(TAG, 'Start getting cost time.');
+  if (startTime === undefined || isNaN(startTime)) {
+    HiLog.error(TAG, 'The start time is invalid.');
+    return undefined;
+  }
+  return systemDateTime.getTime(false) - startTime;
+}
+
+function anonymizeUid(uid: string): string | undefined {
+  if (isInvalidStr(uid)) {
+    HiLog.error(TAG, 'The uid is invalid.');
+    return undefined;
+  }
+  let anonymizedUid: string = uid.substring(0, Constants.VALID_UID_PREFIX_LENGTH);
+  for (let i = 0; i < uid.length - Constants.VALID_UID_PREFIX_LENGTH; i++) {
+    anonymizedUid += '*';
+  }
+  return anonymizedUid;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -834,5 +868,8 @@ export {
   decodeByBase64,
   stringToUint8Array,
   uint8ArrayToString,
-  uint8ArrayToHexString
+  uint8ArrayToHexString,
+  getCostTime,
+  anonymizeUid,
+  getBundleNameInfo
 };

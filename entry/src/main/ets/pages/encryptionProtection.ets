@@ -316,7 +316,7 @@ struct DlpDialog {
         FileUtil.closeSync(file);
       }
     }
-    ;
+
     let filePathUri = getFileUriByPath(filePath);
     try {
       await new Promise<void>((resolve, reject) => {
@@ -332,7 +332,7 @@ struct DlpDialog {
           }
           resolve();
         });
-      })
+      });
     } catch {
       return;
     }
