@@ -25,6 +25,8 @@ import FileUtil from '../../common/external/FileUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
 import GlobalContext from '../../common/GlobalContext';
+import { FileParseType } from '../../bean/data/FileParseType';
+import { FileParseInfo } from '../../bean/data/FileParseInfo';
 
 const TAG: string = 'FileParse';
 
@@ -35,11 +37,6 @@ interface GeneralInfo {
 
 interface DlpCertInfo {
   accountType: string;
-}
-
-enum FileParseType {
-  ZIP = 1,
-  RAW = 2
 }
 
 const NUM_TO_TYPE_MAP = new Map<number, string>([
@@ -109,11 +106,22 @@ const NUM_TO_TYPE_MAP = new Map<number, string>([
 
 abstract class FileParseBase {
   protected metaInfo?: FileMetaInfo;
+  public fileSize: number = 0;
+  public parseType?: FileParseType;
+
+  constructor(fileSize: number) {
+    this.fileSize = fileSize;
+  }
 
   public abstract parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>>;
 }
 
 class ZipParse extends FileParseBase {
+  constructor(fileSize: number) {
+    super(fileSize);
+    this.parseType = FileParseType.ZIP;
+  }
+
   async parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>> {
     const tempRandom = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
     const filePath = ctxFilesDir + '/saveAs' + tempRandom;
@@ -125,7 +133,7 @@ class ZipParse extends FileParseBase {
     try {
       file = fs.openSync(uri, fs.OpenMode.READ_ONLY);
       const fileInfo = fs.statSync(file.fd);
-      const fileSize = fileInfo.size;
+      this.fileSize = fileInfo.size;
       ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
       await fs.copyFile(file.fd, ff.fd);
       await fs.mkdir(dirPath);
@@ -150,7 +158,7 @@ class ZipParse extends FileParseBase {
         accountType: Number(type),
         fileType: realFileType,
         ownerAccount: '',
-        fileSize: fileSize
+        fileSize: this.fileSize
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
@@ -166,12 +174,17 @@ class ZipParse extends FileParseBase {
 }
 
 class RawParse extends FileParseBase {
+  constructor(fileSize: number) {
+    super(fileSize);
+    this.parseType = FileParseType.RAW;
+  }
+
   async parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>> {
     let file: fs.File | undefined;
     try {
       file = fs.openSync(uri, fs.OpenMode.READ_ONLY);
       const fileInfo = fs.statSync(file.fd);
-      const fileSize = fileInfo.size;
+      this.fileSize = fileInfo.size;
       let data = new ArrayBuffer(Constants.HEAD_LENGTH_IN_BYTE);
       let option: ReadOptions = { offset: 0, length: Constants.HEAD_LENGTH_IN_BYTE };
       fs.readSync(file.fd, data, option);
@@ -197,9 +210,9 @@ class RawParse extends FileParseBase {
       this.metaInfo = {
         accountType: accountType,
         fileType: NUM_TO_TYPE_MAP.has(buf[Constants.NUMBER_THREE]) ?
-            NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
+          NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
         ownerAccount: '',
-        fileSize: fileSize
+        fileSize: this.fileSize
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
@@ -212,12 +225,15 @@ class RawParse extends FileParseBase {
 }
 
 class FileFormatDetector {
-  static async detect(fd: number): Promise<Result<FileParseType>> {
+  static async detect(fd: number): Promise<Result<FileParseInfo>> {
     HiLog.info(TAG, 'start detect');
     let data = new ArrayBuffer(Constants.HEAD_LENGTH_IN_BYTE);
     let option: ReadOptions = { offset: 0, length: Constants.HEAD_LENGTH_IN_BYTE };
+    let fileSize = 0;
     try {
       fs.readSync(fd, data, option);
+      const fileInfo = fs.statSync(fd);
+      fileSize = fileInfo.size;
     } catch (error) {
       HiLog.wrapError(TAG, error, 'FileFormatDetector error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
@@ -225,11 +241,13 @@ class FileFormatDetector {
     let buf = new Uint32Array(data, 0, Constants.HEAD_LENGTH_IN_U32);
     if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
       HiLog.debug(TAG, 'FileFormatDetector zip');
-      return ResultMsg.buildSuccess(FileParseType.ZIP);
+      const parseInfo: FileParseInfo = { parseType: FileParseType.ZIP, fileSize: fileSize };
+      return ResultMsg.buildSuccess(parseInfo);
     }
     if (buf && (buf[0] === Constants.DLP_RAW_MAGIC || buf[2] === Constants.DLP_RAW_MAGIC)) {
       HiLog.debug(TAG, 'FileFormatDetector raw');
-      return ResultMsg.buildSuccess(FileParseType.RAW);
+      const parseInfo: FileParseInfo = { parseType: FileParseType.RAW, fileSize: fileSize };
+      return ResultMsg.buildSuccess(parseInfo);
     }
     HiLog.error(TAG, 'FileFormatDetector not dlp file');
     return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
@@ -250,16 +268,16 @@ export class FileParseFactory {
     }
     let dlpFd = getFileFdRet.result!;
     const format = await FileFormatDetector.detect(dlpFd);
-    if (format.errcode !== Constants.ERR_CODE_SUCCESS) {
+    if (format.errcode !== Constants.ERR_CODE_SUCCESS || !format.result) {
       HiLog.error(TAG, 'detect failed');
       return ResultMsg.buildMsg(format.errcode, format.errmsg);
     }
     FileUtil.closeSync(dlpFd);
-    switch (format.result) {
+    switch (format.result.parseType) {
       case FileParseType.ZIP:
-        return ResultMsg.buildSuccess(new ZipParse());
+        return ResultMsg.buildSuccess(new ZipParse(format.result.fileSize));
       case FileParseType.RAW:
-        return ResultMsg.buildSuccess(new RawParse());
+        return ResultMsg.buildSuccess(new RawParse(format.result.fileSize));
       default:
         HiLog.error(TAG, 'createFileParse error');
         return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);

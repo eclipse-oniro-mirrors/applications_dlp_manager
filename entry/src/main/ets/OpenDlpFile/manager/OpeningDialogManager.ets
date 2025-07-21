@@ -18,10 +18,10 @@ import { HiLog } from '../../common/HiLog';
 import { common, Want } from '@kit.AbilityKit';
 import ViewAbilityService from '../../rpc/ViewAbilityService';
 import StartSandboxManager from './StartSandboxManager';
-import { OpenDlpFileManager } from './OpenDlpFileManager';
+import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
 import TerminateView from '../TerminateView';
-import DecryptContent from '../data/DecryptContent';
-import { dlpPermission } from '@kit.DataProtectionKit';
+import { FileParseType } from '../../bean/data/FileParseType';
+import OpenDlpFileData from '../data/OpenDlpFileData';
 
 const TAG = 'OpeningDialogManager';
 
@@ -143,6 +143,7 @@ export default class OpeningDialogManager {
       const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
       await OpenDlpFileManager.getInstance().deleteStatus(decryptingState.uri);
       this._decryptingMap.delete(requestId);
+      await TerminateView.terminate();
       this._isChargeDecrypting = false;
     }
   }
@@ -205,7 +206,7 @@ export default class OpeningDialogManager {
 
     if (!isDecrypting && !this._isChargeDecrypting) { // 没在处理弹框逻辑或解密逻辑，需要取消弹框
       await this.hideDialog();
-      await ViewAbilityService.getInstance().sendDisconnectMsg();
+      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
       return;
     }
 
@@ -220,10 +221,14 @@ export default class OpeningDialogManager {
     }
   }
 
-  // openDLPFile前调用
+  // openDLPFile前调用，或者zip格式提前调用
   public async showOpeningDialog(uri: string, requestId: string): Promise<void> {
     this.printAllDecryptingMap();
     HiLog.info(TAG, 'OpeningDialogManager showOpeningDialog');
+    if (this._decryptingMap.has(requestId)) {
+      HiLog.info(TAG, 'OpeningDialogManager showOpeningDialog is decrypting');
+      return;
+    }
     const decryptingState: DecryptingState = {
       uri: uri,
       dialogTimeout: false,
@@ -259,18 +264,40 @@ export default class OpeningDialogManager {
     await this.hideDialog();
   }
 
-  // 根据文件大小，文件类型判断是否拉起弹框
-  public async loadOpeningDialog(context: common.ServiceExtensionContext,
-    decryptContent: DecryptContent): Promise<void> {
-    const fileSize = decryptContent.fileMetaInfo.fileSize;
-    const accountType = decryptContent.fileMetaInfo.accountType;
-    HiLog.info(TAG, `OpeningDialogManager loadOpeningDialog fileSize: ${fileSize} accountType: ${accountType}`);
-    if (fileSize >= Constants.DIALOG_SHOW_SIZE && accountType === dlpPermission.AccountType.CLOUD_ACCOUNT) {
-      HiLog.info(TAG, `requestId: ${decryptContent.openDlpFileData.requestId} need show dialog`);
-      decryptContent.needShowToast = true;
+  // zip格式提前调用后因为各种原因失败
+  public async hideOpeningDialogByFailed(requestId: string): Promise<void> {
+    this.printAllDecryptingMap();
+    const isDecrypting = this._decryptingMap.has(requestId);
+    HiLog.info(TAG, `hideOpeningDialogByFailed requestId ${requestId}, isDecrypting ${isDecrypting}`);
+    if (!isDecrypting) {
+      HiLog.info(TAG, 'hideOpeningDialogByFailed uri is not decrypting');
+      return;
+    }
+    this._decryptingMap.delete(requestId);
+    HiLog.info(TAG, `hideOpeningDialogByFailed showDialogState ${this._showDialogState}`);
+    if (!this._showDialogState) {
+      return;
+    }
+    await this.hideDialog();
+    await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
+  }
+
+  // 根据文件打包类型，文件大小判断是否拉起弹框
+  public async loadOpeningDialog(context: common.ServiceExtensionContext, fileSize: number,
+    openDlpFileData: OpenDlpFileData, state: DecryptState, parseType?: FileParseType): Promise<void> {
+    HiLog.info(TAG, `OpeningDialogManager loadOpeningDialog fileSize: ${fileSize} parseType: ${parseType}`);
+    if ((parseType === FileParseType.ZIP && fileSize >= Constants.DIALOG_SHOW_SIZE_ZIP) ||
+      (parseType === FileParseType.RAW && fileSize >= Constants.DIALOG_SHOW_SIZE_RAW)) {
+      HiLog.info(TAG, 'need show opening dialog');
       this._hasCallback = false;
       await this.loadOpeningDialogUIExtAbility(context);
+      if (parseType === FileParseType.ZIP && state !== DecryptState.DECRYPTED) {
+        HiLog.info(TAG, 'zip type show opening dialog advance');
+        await this.showOpeningDialog(openDlpFileData.uri, openDlpFileData.requestId);
+      }
+      return;
     }
+    HiLog.info(TAG, 'no need show opening dialog');
     this._hasCallback = true;
   }
 
@@ -285,7 +312,7 @@ export default class OpeningDialogManager {
       return;
     }
     await this.hideDialog();
-    await ViewAbilityService.getInstance().sendDisconnectMsg();
+    await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
     await TerminateView.terminate();
   }
 

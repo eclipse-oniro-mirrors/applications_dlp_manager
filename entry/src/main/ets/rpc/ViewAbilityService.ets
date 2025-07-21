@@ -69,10 +69,10 @@ export default class ViewAbilityService {
     return true;
   }
 
-  public async sendDisconnectMsg(): Promise<boolean> {
-    HiLog.info(TAG, 'ViewAbilityService disconnect');
+  public async sendDisconnectMsgWithTimeout(): Promise<boolean> {
+    HiLog.info(TAG, 'ViewAbilityService sendDisconnectMsgWithTimeout');
     if (!this._remoteProxy) {
-      HiLog.error(TAG, 'disconnect remoteProxy is invalid');
+      HiLog.error(TAG, 'sendDisconnectMsgWithTimeout remoteProxy is invalid');
       return false;
     }
     let option = new rpc.MessageOption();
@@ -81,14 +81,42 @@ export default class ViewAbilityService {
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
     } catch (error) {
-      HiLog.wrapError(TAG, error, 'disconnect prepare data exception');
+      HiLog.wrapError(TAG, error, 'sendDisconnectMsgWithTimeout prepare data exception');
+      return false;
+    }
+    try {
+      await this._remoteProxy.sendMessageRequest(Constants.COMMAND_DISCONNECT_WITH_TIMEOUT, data, reply, option);
+      HiLog.info(TAG, 'sendDisconnectMsgWithTimeout sendmsg success.');
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'sendDisconnectMsgWithTimeout sendmsg error');
+      return false;
+    } finally {
+      data.reclaim();
+      reply.reclaim();
+    }
+    return true;
+  }
+
+  public async sendDisconnectMsg(): Promise<boolean> {
+    HiLog.info(TAG, 'ViewAbilityService sendDisconnectMsg');
+    if (!this._remoteProxy) {
+      HiLog.error(TAG, 'sendDisconnectMsg remoteProxy is invalid');
+      return false;
+    }
+    let option = new rpc.MessageOption();
+    let data = new rpc.MessageSequence();
+    let reply = new rpc.MessageSequence();
+    try {
+      data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'sendDisconnectMsg prepare data exception');
       return false;
     }
     try {
       await this._remoteProxy.sendMessageRequest(Constants.COMMAND_DISCONNECT, data, reply, option);
-      HiLog.info(TAG, 'disconnect sendmsg success.');
+      HiLog.info(TAG, 'sendDisconnectMsg sendmsg success.');
     } catch (error) {
-      HiLog.wrapError(TAG, error, 'disconnect sendmsg error');
+      HiLog.wrapError(TAG, error, 'sendDisconnectMsg sendmsg error');
       return false;
     } finally {
       data.reclaim();
