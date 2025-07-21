@@ -20,4 +20,6 @@ export default class AppStorageConstant {
   public static readonly ACCOUNT_VERIFY_SUCCESS_COUNT: string = 'hiAccountVerifySucc';
   public static readonly ACCOUNT_VERIFY_FAIL_COUNT: string = 'hiAccountVerifyFail';
   public static readonly APPLICATION_CONTEXT: string = 'APPLICATION_CONTEXT';
+
+  public static readonly DECRYPTION_START_TIME: string = 'DECRYPTION_START_TIME';
 }

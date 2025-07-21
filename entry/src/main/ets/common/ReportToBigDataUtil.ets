@@ -14,7 +14,7 @@
  */
 import { ValueType } from '@kit.ArkData';
 import { HiLog } from './HiLog';
-import { DLPInfo, getDLPInfo } from './utils';
+import { getDLPInfo } from './utils';
 import Constants from './constant';
 import { ObjectUtil } from './ObjectUtil';
 import hiSysEvent from '@ohos.hiSysEvent';
@@ -23,20 +23,28 @@ const TAG: string = 'ReportToBigDataUtil';
 
 export declare type BigDataMsg = Record<string, ValueType | undefined>;
 
+interface DlpBundleInfo {
+  PNAMEID: string;
+  PVERSIONID: string;
+}
+
 export class ReportToBigDataUtil {
   private static readonly DLP_UE_DOMAIN: string = 'DLP_UE';
-  private static currentBundleInfo: DLPInfo | undefined = undefined;
+  private static currentBundleInfo: DlpBundleInfo | undefined = undefined;
 
-  private static async loadBundleInfo(): Promise<DLPInfo> {
+  private static async loadBundleInfo(): Promise<DlpBundleInfo> {
     if (ReportToBigDataUtil.currentBundleInfo) {
       return ReportToBigDataUtil.currentBundleInfo;
     }
     const getDLPInfoRet = await getDLPInfo();
     if (getDLPInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'getDLPInfo failed');
-      return { name: '', versionCode: '' };
+      HiLog.error(TAG, 'get DLP bundle info failed');
+      return { PNAMEID: '', PVERSIONID: '' };
     }
-    ReportToBigDataUtil.currentBundleInfo = getDLPInfoRet.result;
+    ReportToBigDataUtil.currentBundleInfo = {
+      PNAMEID: getDLPInfoRet.result?.name ?? '',
+      PVERSIONID: getDLPInfoRet.result?.versionCode ?? ''
+    };
     return ReportToBigDataUtil.currentBundleInfo!;
   }
 

@@ -13,15 +13,17 @@
  * limitations under the License.
  */
 
-import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
-import Want from '@ohos.app.ability.Want';
-import hiTraceMeter from '@ohos.hiTraceMeter';
+import AppStorageConstant from '../common/AppStorageConstant';
 import Constants from '../common/constant';
-import rpc from '@ohos.rpc';
 import { HiLog } from '../common/HiLog';
+import hiTraceMeter from '@ohos.hiTraceMeter';
 import { OpenDlpFileProcessor } from '../OpenDlpFile/ViewProcessor';
 import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
+import rpc from '@ohos.rpc';
+import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
+import { systemDateTime } from '@kit.BasicServicesKit';
 import ViewAbilityStub from '../rpc/ViewAbilityStub';
+import Want from '@ohos.app.ability.Want';
 
 const TAG = 'View';
 
@@ -50,6 +52,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
     }
     OpeningDialogManager.getInstance().setIsChargeDecrypting(true);
+    AppStorage.setOrCreate(AppStorageConstant.DECRYPTION_START_TIME, systemDateTime.getTime(false));
     const processor = new OpenDlpFileProcessor();
     let processRet = await processor.process(want, startId, this.context);
     if (processRet.errcode !== Constants.ERR_CODE_SUCCESS) {

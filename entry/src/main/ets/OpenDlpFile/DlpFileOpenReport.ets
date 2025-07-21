@@ -16,27 +16,29 @@
 import { BigDataConstants, ReportToBigDataUtil } from '../common/ReportToBigDataUtil';
 import DecryptContent from './data/DecryptContent';
 import { BusinessError } from '@kit.BasicServicesKit';
+import { anonymizeUid, getBundleNameInfo, getCostTime } from '../common/utils';
+import AppStorageConstant from '../common/AppStorageConstant';
 
 const TAG: string = 'DlpFileOpenReport';
 
 export class DlpFileOpenReport {
   public static reportDlpFileOpenSuccess(code: number, decryptContent: DecryptContent) {
     const msg: Record<string, number | string | boolean> = {
-      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
-      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
       'ACCOUNT_TYPE': decryptContent.fileMetaInfo.accountType,
-      'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
+      'FILE_SIZE': decryptContent.fileMetaInfo.fileSize,
       'REAL_FILE_TYPE': decryptContent.fileMetaInfo.fileType,
-      'RECV_USER_ID': decryptContent.fileMetaInfo.ownerAccount.slice(0, 2) ?? -1,
+      'RECV_USER_ID': decryptContent.dlpFile.dlpProperty.authUserList ?
+        anonymizeUid(decryptContent.dlpFile.dlpProperty.authUserList[0].authAccount) ?? -1 : -1,
       'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'PACK_METHOD': -1,
       'OPERATION_COST': '',
-      'DECRYPTION_COST': 0,
+      'DECRYPTION_COST': getCostTime(AppStorage.get(AppStorageConstant.DECRYPTION_START_TIME)) ?? 0,
       'FVERSIONID': 0,
       'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
       'USER_ID': decryptContent.userId,
-      'SANDBOX_PKGNAME': decryptContent.openDlpFileData.sandboxBundleName,
+      'SANDBOX_PKGNAME': getBundleNameInfo(decryptContent.openDlpFileData.callerBundleName,
+        decryptContent.openDlpFileData.sandboxBundleName),
       'SANDBOX_INDEX': decryptContent.appInfo.appIndex,
     };
     ReportToBigDataUtil.report(BigDataConstants.DLP_FILE_OPEN_EVENT, msg);
@@ -44,21 +46,21 @@ export class DlpFileOpenReport {
 
   public static sendDlpFileOpenFault(code: number, decryptContent: DecryptContent, busErr?: BusinessError) {
     const msg: Record<string, number | string | boolean> = {
-      'PNAMEID': AppStorage.get('hiPNameId') ?? '',
-      'PVERSIONID': AppStorage.get('hiPVersionId') ?? '',
       'ACCOUNT_TYPE': decryptContent.fileMetaInfo.accountType,
-      'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
+      'FILE_SIZE': decryptContent.fileMetaInfo.fileSize,
       'REAL_FILE_TYPE': decryptContent.fileMetaInfo.fileType,
-      'RECV_USER_ID': decryptContent.fileMetaInfo.ownerAccount.slice(0, 2) ?? -1,
+      'RECV_USER_ID': decryptContent.dlpFile.dlpProperty.authUserList ?
+        anonymizeUid(decryptContent.dlpFile.dlpProperty.authUserList[0].authAccount) ?? -1 : -1,
       'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'PACK_METHOD': -1,
       'OPERATION_COST': '',
-      'DECRYPTION_COST': 0,
+      'DECRYPTION_COST': getCostTime(AppStorage.get(AppStorageConstant.DECRYPTION_START_TIME)) ?? 0,
       'FVERSIONID': 0,
       'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
       'USER_ID': decryptContent.userId,
-      'SANDBOX_PKGNAME': decryptContent.openDlpFileData.sandboxBundleName,
+      'SANDBOX_PKGNAME': getBundleNameInfo(decryptContent.openDlpFileData.callerBundleName,
+        decryptContent.openDlpFileData.sandboxBundleName),
       'SANDBOX_INDEX': decryptContent.appInfo.appIndex,
       'REASON': busErr ? `errcode is ${busErr.code}, message is ${busErr.message}, data is ${busErr.data}` : '',
     };
