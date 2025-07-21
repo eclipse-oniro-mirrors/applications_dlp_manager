@@ -21,7 +21,7 @@ import Constants from '../common/constant';
 import DecryptContent from './data/DecryptContent';
 import { AccountHandlerFactory } from './handler/AccountHandler';
 import DecryptHandler from './handler/DecryptHandler';
-import { DecryptState, OpenDlpFileManager } from './manager/OpenDlpFileManager';
+import { DecryptState, DecryptStatus, OpenDlpFileManager } from './manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { HiLog } from '../common/HiLog';
 import { ErrorHandlerFactory } from './handler/ErrorHandler';
@@ -31,6 +31,7 @@ import OpeningDialogManager from './manager/OpeningDialogManager';
 import StartSandboxManager from './manager/StartSandboxManager';
 import { BusinessError } from '@ohos.base';
 import TerminateView from './TerminateView';
+import ViewAbilityService from '../rpc/ViewAbilityService';
 
 const TAG: string = 'OpenDlpFileProcessor';
 
@@ -58,31 +59,34 @@ export class OpenDlpFileProcessor {
     }
 
     // 2. Check if uri in decrypting or encrypting
-    const checkRet = await this.checkAndSetState(openDlpFileData.uri);
-    if (checkRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    const checkRet = await this.checkAndGetState(openDlpFileData.uri);
+    if (checkRet.errcode !== Constants.ERR_CODE_SUCCESS || !checkRet.result) {
       HiLog.error(TAG, 'checkAndSetState error');
       return ResultMsg.buildMsg(checkRet.errcode, checkRet.errmsg);
     }
 
     // 3. Parse dlp file
     const fileParseRet = await FileParseFactory.createFileParse(openDlpFileData.uri);
-    if (fileParseRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    if (fileParseRet.errcode !== Constants.ERR_CODE_SUCCESS || !fileParseRet.result) {
       HiLog.error(TAG, 'createFileParse error');
       return ResultMsg.buildMsg(fileParseRet.errcode, fileParseRet.errmsg);
     }
+    OpeningDialogManager.getInstance().loadOpeningDialog(context, fileParseRet.result.fileSize, openDlpFileData,
+      checkRet.result, fileParseRet.result?.parseType);
     const fileMetaInfoRet = await fileParseRet.result!.parse(openDlpFileData.uri, context.filesDir);
     if (fileMetaInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'parse error');
+      await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(openDlpFileData.requestId);
       return ResultMsg.buildMsg(fileMetaInfoRet.errcode, fileMetaInfoRet.errmsg);
     }
 
     // 4. Handle account
     let decryptContent = new DecryptContent(fileMetaInfoRet.result!, openDlpFileData);
-    OpeningDialogManager.getInstance().loadOpeningDialog(context, decryptContent);
     const accountHandler = AccountHandlerFactory.createAccountHandler(decryptContent);
     const handleLoginRet = await accountHandler.handle(decryptContent, context);
     if (handleLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'handleLogin error');
+      await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
       return ResultMsg.buildMsg(handleLoginRet.errcode, handleLoginRet.errmsg);
     }
 
@@ -93,7 +97,8 @@ export class OpenDlpFileProcessor {
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', startId);
     if (getDecryptDataRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'getDecryptData error');
-      await OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
+      await OpenDlpFileManager.getInstance().deleteStatusButNotHasDecrypted(decryptContent.openDlpFileData.uri);
+      await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
       return ResultMsg.buildMsg(getDecryptDataRet.errcode, getDecryptDataRet.errmsg);
     }
 
@@ -101,6 +106,7 @@ export class OpenDlpFileProcessor {
     const startSandboxRet = await StartSandboxManager.getInstance().startSandbox(decryptContent, context);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandbox error');
+      await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
       return ResultMsg.buildMsg(startSandboxRet.errcode, startSandboxRet.errmsg);
     }
 
@@ -121,7 +127,7 @@ export class OpenDlpFileProcessor {
     return ResultMsg.buildSuccess();
   }
 
-  private async checkAndSetState(uri: string): Promise<Result<void>> {
+  private async checkAndGetState(uri: string): Promise<Result<DecryptState>> {
     const manager = OpenDlpFileManager.getInstance();
     const getStatusRet = manager.getStatus(uri);
     if (getStatusRet.errcode !== Constants.ERR_CODE_SUCCESS || !getStatusRet.result) {
@@ -134,7 +140,7 @@ export class OpenDlpFileProcessor {
       HiLog.error(TAG, 'checkIfContinue not continue');
       return ResultMsg.buildMsg(checkRet.errcode, checkRet.errmsg);
     }
-    return ResultMsg.buildSuccess();
+    return ResultMsg.buildSuccess(getStatusRet.result.state);
   }
 
   public async processErrcode(context: common.ServiceExtensionContext, error: BusinessError,

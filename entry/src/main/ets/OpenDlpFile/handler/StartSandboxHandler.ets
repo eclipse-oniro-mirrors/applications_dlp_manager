@@ -17,14 +17,16 @@ import Result from '../../common/Result'
 import { ResultMsg } from '../../common/ResultMsg'
 import DecryptContent from '../data/DecryptContent';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
-import { common, wantConstant } from '@kit.AbilityKit';
+import { common, CompletionHandler, StartOptions, wantConstant } from '@kit.AbilityKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { ObjectUtil } from '../../common/ObjectUtil';
 import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
 import { DlpFileOpenReport } from '../DlpFileOpenReport';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
+import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
+import type bundleManager from '@ohos.bundle.bundleManager';
+import ViewAbilityService from '../../rpc/ViewAbilityService';
 
 const TAG: string = 'StartSandboxHandler';
 
@@ -90,8 +92,17 @@ export default class StartSandboxHandler {
     HiLog.info(TAG, 'start sandbox begin');
     this.prepareWantParams(decryptContent);
     try {
-      await context.startAbility(decryptContent.openDlpFileData.want);
+      const completionHandler: CompletionHandler = {
+        onRequestSuccess: async (elementName: bundleManager.ElementName, message: string) => {
+          HiLog.info(TAG, `onRequestSuccess elementName: ${JSON.stringify(elementName)} message: ${message}`);
+        },
+        onRequestFailure: async (elementName: bundleManager.ElementName, message: string) => {
+          HiLog.info(TAG, `onRequestFailure elementName: ${JSON.stringify(elementName)} message: ${message}`);
+        },
+      }
+      await context.startAbility(decryptContent.openDlpFileData.want, { completionHandler: completionHandler });
       HiLog.info(TAG, 'startAbility success');
+      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
       await this.addDecryptData(decryptContent);
       DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_START_SANDBOX_SUCCESS, decryptContent);
       return ResultMsg.buildSuccess();

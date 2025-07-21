@@ -328,7 +328,8 @@ export default class Constants {
   public static readonly NUMBER_ONE = 1;
   public static readonly NUMBER_TWO = 2;
   public static readonly NUMBER_THREE = 3;
-  public static readonly DIALOG_SHOW_SIZE = 200 * 1024 * 1024;
+  public static readonly DIALOG_SHOW_SIZE_RAW = 200 * 1024 * 1024;
+  public static readonly DIALOG_SHOW_SIZE_ZIP = 10 * 1024 * 1024;
   public static readonly TOAST_BOTTOM = 142;
 
   // want params
@@ -343,11 +344,13 @@ export default class Constants {
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
   public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;
   public static readonly COMMAND_SHOW_DIALOG = 1;
-  public static readonly COMMAND_DISCONNECT = 2;
+  public static readonly COMMAND_DISCONNECT_WITH_TIMEOUT = 2;
+  public static readonly COMMAND_DISCONNECT = 3;
   public static readonly COMMAND_SET_REMOTE_OBJECT = 1;
   public static readonly COMMAND_DIALOG_DISAPPEAR = 2;
   public static readonly COMMAND_DIALOG_TIMEOUT = 3;
   public static readonly SHOW_DIALOG_EVENT: string = 'SHOW_DIALOG_EVENT';
   public static readonly CONNECT_VIEW_ABILITY: string = 'connectViewAbility';
   public static readonly STRING_DECRYPT_TIMEOUT: string = 'DECRYPT_TIMEOUT';
+  public static readonly DISCONNECT_VIEW_TIMEOUT: number = 1000;
 }

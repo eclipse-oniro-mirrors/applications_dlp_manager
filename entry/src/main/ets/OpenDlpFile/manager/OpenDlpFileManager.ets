@@ -85,6 +85,23 @@ export class OpenDlpFileManager {
     }
   }
 
+  public async deleteStatusButNotHasDecrypted(uri: string): Promise<Result<void>> {
+    HiLog.info(TAG, `deleteStatusButNotHasDecrypted: uri = ${uri}`);
+    try {
+      const status = this.statusMap.get(uri) || { state: DecryptState.NOT_STARTED };
+      if (status.state !== DecryptState.DECRYPTED) {
+        await this.lock.lockAsync(() => {
+          HiLog.info(TAG, `delete: uri = ${uri}`);
+          this.statusMap.delete(uri);
+        });
+      }
+      return ResultMsg.buildSuccess();
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'deleteStatus lockAsync error');
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_GET_LOCK_ASYNC_ERROR);
+    }
+  }
+
   public async addDecryptContent(uri: string, content: DecryptContent): Promise<Result<void>> {
     HiLog.info(TAG, `addDecryptContent uri: ${uri}`);
     try {

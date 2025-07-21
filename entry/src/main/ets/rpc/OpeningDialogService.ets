@@ -96,9 +96,23 @@ export default class OpeningDialogService {
 
   public async disconnectViewAbility(): Promise<void> {
     HiLog.info(TAG, 'disconnectViewAbility start');
-
     if (!this._context) {
       HiLog.error(TAG, 'disconnectViewAbility context is undefined');
+      return;
+    }
+    try {
+      await this._context.disconnectServiceExtensionAbility(this.connectionId);
+      HiLog.info(TAG, 'disconnectViewAbility success');
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'Failed to disconnectViewAbility');
+    }
+  }
+
+  public async disconnectViewAbilityWithTimeout(): Promise<void> {
+    HiLog.info(TAG, 'disconnectViewAbilityWithTimeout start');
+
+    if (!this._context) {
+      HiLog.error(TAG, 'disconnectViewAbilityWithTimeout context is undefined');
       return;
     }
 
@@ -112,17 +126,17 @@ export default class OpeningDialogService {
         try {
           if (this._context) {
             await this._context.disconnectServiceExtensionAbility(this.connectionId);
-            HiLog.info(TAG, 'disconnectViewAbility success');
+            HiLog.info(TAG, 'disconnectViewAbilityWithTimeout success');
           } else {
-            HiLog.warn(TAG, 'disconnectViewAbility skipped - context destroyed');
+            HiLog.warn(TAG, 'disconnectViewAbilityWithTimeout skipped - context destroyed');
           }
         } catch (error) {
-          HiLog.wrapError(TAG, error, 'Failed to disconnectServiceExtensionAbility');
+          HiLog.wrapError(TAG, error, 'Failed to disconnectViewAbilityWithTimeout');
         } finally {
           this._disconnectTimer = null;
           resolve();
         }
-      }, Constants.OPENING_DIALOG_TIMEOUT);
+      }, Constants.DISCONNECT_VIEW_TIMEOUT);
     });
   }
 
