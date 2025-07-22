@@ -24,10 +24,10 @@ const TAG: string = 'DlpFileOpenReport';
 export class DlpFileOpenReport {
   public static reportDlpFileOpenSuccess(code: number, decryptContent: DecryptContent) {
     const msg: Record<string, number | string | boolean> = {
-      'ACCOUNT_TYPE': decryptContent.fileMetaInfo.accountType,
-      'FILE_SIZE': decryptContent.fileMetaInfo.fileSize,
-      'REAL_FILE_TYPE': decryptContent.fileMetaInfo.fileType,
-      'RECV_USER_ID': decryptContent.dlpFile.dlpProperty.authUserList ?
+      'ACCOUNT_TYPE': decryptContent.fileMetaInfo?.accountType ?? -1,
+      'FILE_SIZE': decryptContent.fileMetaInfo?.fileSize ?? -1,
+      'REAL_FILE_TYPE': decryptContent.fileMetaInfo?.fileType ?? '',
+      'RECV_USER_ID': decryptContent.dlpFile?.dlpProperty?.authUserList?.[0]?.authAccount ?
         anonymizeUid(decryptContent.dlpFile.dlpProperty.authUserList[0].authAccount) ?? -1 : -1,
       'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'PACK_METHOD': -1,
@@ -36,20 +36,22 @@ export class DlpFileOpenReport {
       'FVERSIONID': 0,
       'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
-      'USER_ID': decryptContent.userId,
-      'SANDBOX_PKGNAME': getBundleNameInfo(decryptContent.openDlpFileData.callerBundleName,
-        decryptContent.openDlpFileData.sandboxBundleName),
-      'SANDBOX_INDEX': decryptContent.appInfo.appIndex,
+      'USER_ID': decryptContent.userId ?? -1,
+      'SANDBOX_PKGNAME': getBundleNameInfo(
+        decryptContent.openDlpFileData?.callerBundleName ?? '',
+        decryptContent.openDlpFileData?.sandboxBundleName ?? ''
+      ),
+      'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
     };
     ReportToBigDataUtil.report(BigDataConstants.DLP_FILE_OPEN_EVENT, msg);
   }
 
   public static sendDlpFileOpenFault(code: number, decryptContent: DecryptContent, busErr?: BusinessError) {
     const msg: Record<string, number | string | boolean> = {
-      'ACCOUNT_TYPE': decryptContent.fileMetaInfo.accountType,
-      'FILE_SIZE': decryptContent.fileMetaInfo.fileSize,
-      'REAL_FILE_TYPE': decryptContent.fileMetaInfo.fileType,
-      'RECV_USER_ID': decryptContent.dlpFile.dlpProperty.authUserList ?
+      'ACCOUNT_TYPE': decryptContent.fileMetaInfo?.accountType ?? -1,
+      'FILE_SIZE': decryptContent.fileMetaInfo?.fileSize ?? -1,
+      'REAL_FILE_TYPE': decryptContent.fileMetaInfo?.fileType ?? '',
+      'RECV_USER_ID': decryptContent.dlpFile?.dlpProperty?.authUserList?.[0]?.authAccount ?
         anonymizeUid(decryptContent.dlpFile.dlpProperty.authUserList[0].authAccount) ?? -1 : -1,
       'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'PACK_METHOD': -1,
@@ -58,10 +60,12 @@ export class DlpFileOpenReport {
       'FVERSIONID': 0,
       'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
-      'USER_ID': decryptContent.userId,
-      'SANDBOX_PKGNAME': getBundleNameInfo(decryptContent.openDlpFileData.callerBundleName,
-        decryptContent.openDlpFileData.sandboxBundleName),
-      'SANDBOX_INDEX': decryptContent.appInfo.appIndex,
+      'USER_ID': decryptContent.userId ?? -1,
+      'SANDBOX_PKGNAME': getBundleNameInfo(
+        decryptContent.openDlpFileData?.callerBundleName ?? '',
+        decryptContent.openDlpFileData?.sandboxBundleName ?? ''
+      ),
+      'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
       'REASON': busErr ? `errcode is ${busErr.code}, message is ${busErr.message}, data is ${busErr.data}` : '',
     };
     ReportToBigDataUtil.reportErrEvent(BigDataConstants.DLP_FILE_OPEN, msg);
