@@ -80,7 +80,7 @@ class CloudAccountHandle extends AccountHandlerBase {
     };
     if (!(await getConnectionStatus())) {
       HiLog.error(TAG, 'getConnectionStatus error');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_NETWORK_ERROR);
+      return ResultMsg.getErrMsg(Constants.ERR_JS_NETWORK_INVALID);
     }
     try {
       await context.startAbility(accountWant);
@@ -132,15 +132,21 @@ class PluginAccountHandle extends AccountHandlerBase {
 }
 
 export class AccountHandlerFactory {
-  static createAccountHandler(decryptContent: DecryptContent): AccountHandlerBase {
-    if (decryptContent.openDlpFileData.isFromPlugin) {
-      return new PluginAccountHandle();
+  static createAccountHandler(decryptContent: DecryptContent): Result<AccountHandlerBase> {
+    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.CLOUD_ACCOUNT) {
+      HiLog.info(TAG, 'create CloudAccountHandle');
+      return ResultMsg.buildSuccess(new CloudAccountHandle());
     }
-    switch (decryptContent.fileMetaInfo.accountType) {
-      case dlpPermission.AccountType.CLOUD_ACCOUNT:
-        return new CloudAccountHandle();
-      default:
-        return new DomainAccountHandle();
+    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT &&
+    decryptContent.openDlpFileData.isFromPlugin) {
+      HiLog.info(TAG, 'create PluginAccountHandle');
+      return ResultMsg.buildSuccess(new PluginAccountHandle());
     }
+    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+      HiLog.info(TAG, 'create DomainAccountHandle');
+      return ResultMsg.buildSuccess(new DomainAccountHandle());
+    }
+    HiLog.error(TAG, 'not found AccountHandler');
+    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
   }
 }

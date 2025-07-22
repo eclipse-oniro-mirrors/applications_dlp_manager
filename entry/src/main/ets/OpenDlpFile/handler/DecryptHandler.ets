@@ -208,6 +208,7 @@ export default class DecryptHandler {
 
   private async chargeOpenDLPFileError(err: BusinessError, decryptContent: DecryptContent):
     Promise<Result<dlpPermission.DLPFile>> {
+    HiLog.info(TAG, 'begin chargeOpenDLPFileError');
     DlpFileOpenReport.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, decryptContent, err);
 
     // Not print sensitive information
@@ -261,10 +262,11 @@ export default class DecryptHandler {
       HiLog.info(TAG, 'dlpPermission.openDLPFile success');
       return ResultMsg.buildSuccess(dlpFile);
     } catch (error) {
+      HiLog.error(TAG, 'dlpPermission.openDLPFile error');
       OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
       if (error) {
         const busErr: BusinessError = error as BusinessError;
-        return this.chargeOpenDLPFileError(busErr, decryptContent);
+        return await this.chargeOpenDLPFileError(busErr, decryptContent);
       }
       HiLog.error(TAG, 'openDLPFile error for timeout');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_DECRYPT_TIME_OUT)
