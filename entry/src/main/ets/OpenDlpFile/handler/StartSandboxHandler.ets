@@ -101,7 +101,7 @@ export default class StartSandboxHandler {
         },
       }
       await context.startAbility(decryptContent.openDlpFileData.want, { completionHandler: completionHandler });
-      HiLog.info(TAG, 'startAbility success');
+      HiLog.info(TAG, `startAbility success startId: ${decryptContent.openDlpFileData.startId}`);
       await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
       await this.addDecryptData(decryptContent);
       DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_START_SANDBOX_SUCCESS, decryptContent);

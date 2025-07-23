@@ -99,6 +99,8 @@ export default class DecryptHandler {
       }
     }
 
+    // 6. setNeedStartAbility
+    OpeningDialogManager.getInstance().setNeedStartAbility(decryptContent.openDlpFileData.requestId);
     return ResultMsg.buildSuccess();
   }
 
