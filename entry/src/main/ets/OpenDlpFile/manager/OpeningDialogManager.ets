@@ -29,12 +29,14 @@ interface DecryptingState {
   uri: string,
   dialogTimeout: boolean, // 弹框是否超过250ms，拉弹框之前状态设置未false，超时回调设置为true
   needStartAbility: boolean, // 弹框超时后，是否需要拉沙箱
+  hasDecrypted: boolean, // 用于判断是否是用户主动取消“正在打开弹框”场景
 }
 
 let defaultDecryptingState: DecryptingState = {
   uri: '',
   dialogTimeout: false,
-  needStartAbility: false
+  needStartAbility: false,
+  hasDecrypted: false
 }
 
 export default class OpeningDialogManager {
@@ -137,8 +139,8 @@ export default class OpeningDialogManager {
     this._showDialogState = false;
     const isDecrypting = this._decryptingMap.has(requestId);
     const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
-    const needStartAbility = decryptingState.needStartAbility;
-    if (isDecrypting && !needStartAbility) { // 如果正在解密且不需要拉弹框，是用户主动终止解密流程
+    const hasDecrypted = decryptingState.hasDecrypted;
+    if (isDecrypting && !hasDecrypted) { // 如果正在解密且不需要拉弹框，是用户主动终止解密流程
       HiLog.info(TAG, 'user close opening dialog');
       const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
       await OpenDlpFileManager.getInstance().deleteStatus(decryptingState.uri);
@@ -232,7 +234,8 @@ export default class OpeningDialogManager {
     const decryptingState: DecryptingState = {
       uri: uri,
       dialogTimeout: false,
-      needStartAbility: false
+      needStartAbility: false,
+      hasDecrypted: false
     }
     this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();
@@ -253,15 +256,30 @@ export default class OpeningDialogManager {
       return;
     }
     const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
-    decryptingState.needStartAbility = true;
+    decryptingState.hasDecrypted = true;
     this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();
     HiLog.info(TAG, `hideOpeningDialog showDialogState ${this._showDialogState}`);
     if (!this._showDialogState) {
       return;
     }
-    this._isChargeDecrypting = false;
     await this.hideDialog();
+  }
+
+  // 拉沙箱之前调用
+  public setNeedStartAbility(requestId: string): void {
+    this.printAllDecryptingMap();
+    const isDecrypting = this._decryptingMap.has(requestId);
+    HiLog.info(TAG, `OpeningDialogManager setNeedStartAbility requestId ${requestId}, isDecrypting ${isDecrypting}`);
+    if (!isDecrypting) {
+      HiLog.info(TAG, 'setNeedStartAbility uri is not decrypting');
+      return;
+    }
+    const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
+    decryptingState.needStartAbility = true;
+    this._decryptingMap.set(requestId, decryptingState);
+    this._isChargeDecrypting = false;
+    this.printAllDecryptingMap();
   }
 
   // zip格式提前调用后因为各种原因失败

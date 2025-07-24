@@ -30,8 +30,6 @@ import CredConnectService from '../rpc/CredConnectService';
 import OpeningDialogManager from './manager/OpeningDialogManager';
 import StartSandboxManager from './manager/StartSandboxManager';
 import { BusinessError } from '@ohos.base';
-import TerminateView from './TerminateView';
-import ViewAbilityService from '../rpc/ViewAbilityService';
 
 const TAG: string = 'OpenDlpFileProcessor';
 

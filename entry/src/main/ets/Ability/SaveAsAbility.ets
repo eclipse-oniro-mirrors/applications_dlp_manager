@@ -181,7 +181,7 @@ export default class SaveAsAbility extends UIAbility {
       const decryptedContent = getRet.result!;
       this.authPerm = decryptedContent.authPerm;
       let dlpFileInfo = decryptedContent.dlpFile;
-      let contactAccount = dlpFileInfo.dlpProperty.contactAccount as string;
+      let contactAccount = dlpFileInfo?.dlpProperty?.contactAccount ?? '';
       if (this.authPerm !== dlpPermission.DLPFileAccess.CONTENT_EDIT &&
         this.authPerm !== dlpPermission.DLPFileAccess.FULL_CONTROL) {
         HiLog.error(TAG, `invalid authPerm: ${this.authPerm}`);

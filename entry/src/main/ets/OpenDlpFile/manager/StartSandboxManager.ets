@@ -28,7 +28,6 @@ const TAG = 'StartSandboxManager';
 export default class StartSandboxManager {
   private static instance: StartSandboxManager;
   private _decryptContent?: DecryptContent;
-  private _context?: common.ServiceExtensionContext
 
   private constructor() {
   }
@@ -44,13 +43,16 @@ export default class StartSandboxManager {
   public async startSandbox(decryptContent?: DecryptContent, context?: common.ServiceExtensionContext):
     Promise<Result<DecryptContent>> {
     HiLog.info(TAG, 'start startSandbox');
-    if (decryptContent && context) {
+    if (decryptContent) {
       this._decryptContent = decryptContent;
-      this._context = context;
     }
-
-    if (!this._decryptContent || !this._context) {
-      HiLog.error(TAG, 'decryptContent and context null');
+    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
+    if (!this._decryptContent) {
+      HiLog.error(TAG, 'decryptContent null');
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+    }
+    if (!viewContext) {
+      HiLog.error(TAG, 'viewContext null');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
     }
 
@@ -71,13 +73,12 @@ export default class StartSandboxManager {
       return ResultMsg.buildSuccess(decryptContent);
     }
 
-    const startSandboxRet = await this.startSandboxInner(this._decryptContent, this._context);
+    const startSandboxRet = await this.startSandboxInner(this._decryptContent, viewContext);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'startSandboxInner');
+      HiLog.error(TAG, 'startSandboxInner error');
       await OpenDlpFileManager.getInstance().deleteStatus(this._decryptContent.openDlpFileData.uri);
     }
     this._decryptContent = undefined;
-    this._context = undefined;
     return startSandboxRet;
   }
 

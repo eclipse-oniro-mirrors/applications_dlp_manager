@@ -14,7 +14,7 @@
  */
 
 import { HiLog } from '../common/HiLog';
-import { OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
+import { DecryptState, OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
 import DecryptContent from '../OpenDlpFile/data/DecryptContent';
 import Constants from './constant';
 import FileUtil from './external/FileUtil';
@@ -24,6 +24,7 @@ import TerminateView from '../OpenDlpFile/TerminateView';
 const TAG = 'DataUtils';
 
 async function clearDlpInfo(decryptContent: DecryptContent): Promise<void> {
+  clearIsDecrypting(decryptContent);
   await deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
@@ -89,6 +90,15 @@ async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> 
   const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
   if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
     HiLog.error(TAG, 'deleteDecryptData failed');
+  }
+}
+
+function clearIsDecrypting(decryptContent: DecryptContent): void {
+  if (decryptContent.openDlpFileData?.uri) {
+    const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
+    if (getRet.errcode === Constants.ERR_CODE_SUCCESS && (getRet.result?.state === DecryptState.DECRYPTING)) {
+      OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
+    }
   }
 }
 

@@ -37,6 +37,7 @@ abstract class ErrorHandler {
 class PhoneHandle extends ErrorHandler {
   public async handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void> {
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
+      HiLog.info(TAG, 'PhoneHandle not need toast');
       return;
     }
     await GetAlertMessage.viewAbilityPhoneToast(context, error);
@@ -46,6 +47,7 @@ class PhoneHandle extends ErrorHandler {
 class PCHandle extends ErrorHandler {
   public async handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void> {
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
+      HiLog.info(TAG, 'PCHandle not need toast');
       return;
     }
     await GetAlertMessage.requestModalUIExtension(context, error);
