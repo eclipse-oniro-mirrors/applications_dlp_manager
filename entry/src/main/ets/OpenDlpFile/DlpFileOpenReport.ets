@@ -68,6 +68,6 @@ export class DlpFileOpenReport {
       'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
       'REASON': busErr ? `errcode is ${busErr.code}, message is ${busErr.message}, data is ${busErr.data}` : '',
     };
-    ReportToBigDataUtil.reportErrEvent(BigDataConstants.DLP_FILE_OPEN, msg);
+    ReportToBigDataUtil.report(BigDataConstants.DLP_FILE_OPEN_EVENT, msg);
   }
 }

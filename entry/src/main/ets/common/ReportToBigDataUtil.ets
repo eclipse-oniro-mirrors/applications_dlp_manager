@@ -30,6 +30,7 @@ interface DlpBundleInfo {
 
 export class ReportToBigDataUtil {
   private static readonly DLP_UE_DOMAIN: string = 'DLP_UE';
+  private static readonly DLP_DOMAIN: string = 'DLP';
   private static currentBundleInfo: DlpBundleInfo | undefined = undefined;
 
   private static async loadBundleInfo(): Promise<DlpBundleInfo> {
