@@ -93,7 +93,6 @@ async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> 
   }
 }
 
-// TODO：这里要看一下，如果另一个应用已经打开了，弹框是什么
 function clearIsDecrypting(decryptContent: DecryptContent): void {
   if (decryptContent.openDlpFileData?.uri) {
     const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
