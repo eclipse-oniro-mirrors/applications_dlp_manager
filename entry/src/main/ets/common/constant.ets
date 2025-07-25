@@ -354,4 +354,5 @@ export default class Constants {
   public static readonly CONNECT_VIEW_ABILITY: string = 'connectViewAbility';
   public static readonly STRING_DECRYPT_TIMEOUT: string = 'DECRYPT_TIMEOUT';
   public static readonly DISCONNECT_VIEW_TIMEOUT: number = 1000;
+  public static readonly NO_PERMISSION_OR_EXPIRATION: string = 'no permission or expiration';
 }

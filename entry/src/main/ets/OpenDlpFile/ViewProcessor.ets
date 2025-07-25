@@ -30,6 +30,7 @@ import CredConnectService from '../rpc/CredConnectService';
 import OpeningDialogManager from './manager/OpeningDialogManager';
 import StartSandboxManager from './manager/StartSandboxManager';
 import { BusinessError } from '@ohos.base';
+import { DlpFileOpenReport } from './DlpFileOpenReport';
 
 const TAG: string = 'OpenDlpFileProcessor';
 
@@ -84,13 +85,13 @@ export class OpenDlpFileProcessor {
     if (accountHandlerRet.errcode !== Constants.ERR_CODE_SUCCESS || !accountHandlerRet.result) {
       HiLog.error(TAG, 'createAccountHandler error');
       await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(openDlpFileData.requestId);
-      return ResultMsg.buildMsg(accountHandlerRet.errcode, accountHandlerRet.errmsg);
+      return ResultMsg.buildResult(accountHandlerRet.errcode, accountHandlerRet.errmsg, decryptContent);
     }
     const handleLoginRet = await accountHandlerRet.result.handle(decryptContent, context);
     if (handleLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'handleLogin error');
       await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
-      return ResultMsg.buildMsg(handleLoginRet.errcode, handleLoginRet.errmsg);
+      return ResultMsg.buildResult(handleLoginRet.errcode, handleLoginRet.errmsg, decryptContent);
     }
 
     // 5. decrypt and install sandbox
@@ -102,7 +103,7 @@ export class OpenDlpFileProcessor {
       HiLog.error(TAG, 'getDecryptData error');
       await OpenDlpFileManager.getInstance().deleteStatusButNotHasDecrypted(decryptContent.openDlpFileData.uri);
       await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
-      return ResultMsg.buildMsg(getDecryptDataRet.errcode, getDecryptDataRet.errmsg);
+      return ResultMsg.buildResult(getDecryptDataRet.errcode, getDecryptDataRet.errmsg, decryptContent);
     }
 
     // 6. start sandbox
@@ -110,7 +111,7 @@ export class OpenDlpFileProcessor {
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandbox error');
       await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
-      return ResultMsg.buildMsg(startSandboxRet.errcode, startSandboxRet.errmsg);
+      return ResultMsg.buildResult(startSandboxRet.errcode, startSandboxRet.errmsg, decryptContent);
     }
 
     return ResultMsg.buildSuccess(decryptContent);
@@ -150,6 +151,7 @@ export class OpenDlpFileProcessor {
     decryptContent?: DecryptContent): Promise<Result<void>> {
     if (decryptContent) {
       clearDlpInfo(decryptContent);
+      this.sendDlpFileOpenFault(error, decryptContent);
     }
     const errorHandle = ErrorHandlerFactory.createErrorHandle();
     await errorHandle.handle(context, error);
@@ -160,5 +162,15 @@ export class OpenDlpFileProcessor {
     HiLog.info(TAG, 'begin batchRefresh');
     const connectService: CredConnectService = new CredConnectService(context);
     connectService.connectServiceShareAbility(Constants.COMMAND_BATCH_REFRESH);
+  }
+
+  private sendDlpFileOpenFault(error: BusinessError, decryptContent: DecryptContent): void {
+    let err: BusinessError = {code: error.code, message: error.message, name: ''};
+    if (err.code === Constants.ERR_JS_USER_NO_PERMISSION_2B ||
+      err.code === Constants.ERR_JS_USER_NO_PERMISSION_2C ||
+      err.code === Constants.ERR_JS_FILE_EXPIRATION) {
+      err.message = Constants.NO_PERMISSION_OR_EXPIRATION;
+    }
+    DlpFileOpenReport.sendDlpFileOpenFault(err.code, decryptContent, err);
   }
 }

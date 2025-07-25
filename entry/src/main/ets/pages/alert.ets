@@ -178,5 +178,10 @@ struct Index {
     .margin({
       bottom: Constants.START_ABILITY_CUSTOM_CONTENT_MARGIN_BOTTOM
     })
+    .onDisAppear(() => {
+      HiLog.info(TAG, 'buildContent onDisAppear');
+      abilityResult.resultCode = 0;
+      (getContext(this) as common.UIExtensionContext).terminateSelfWithResult(abilityResult);
+    })
   }
 }
