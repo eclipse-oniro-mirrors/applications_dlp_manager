@@ -36,6 +36,7 @@ import zlib from '@ohos.zlib';
 import Result from './Result';
 import { ResultMsg } from './ResultMsg';
 import FileUtil from './external/FileUtil';
+import FileUtils from './FileUtils';
 
 const TAG = 'Utils';
 
@@ -141,7 +142,7 @@ function getFileFd(uri: string, mode?: number): Result<number> {
   mode = mode || fs.OpenMode.READ_ONLY;
   try {
     let file = fs.openSync(uri, mode);
-    HiLog.info(TAG, `open: ${uri}, as: ${file.fd}`);
+    HiLog.info(TAG, `open filename: ${FileUtils.getFileNameByUri(uri)}, as: ${file.fd}`);
     return ResultMsg.buildSuccess(file.fd);
   } catch (err) {
     HiLog.wrapError(TAG, err, 'openSync error');
@@ -344,7 +345,7 @@ async function getFileSizeByUri(uri: string): Promise<number> {
     HiLog.info(TAG, `get file info succeed, the size of file is: ${stat.size}`);
     return stat.size;
   } catch (err) {
-    HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(err)}`);
+    HiLog.error(TAG, `open filename: ${FileUtils.getFileNameByUri(uri)}, failed: ${JSON.stringify(err)}`);
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
@@ -360,7 +361,7 @@ function getFileSizeByUriSync(uri: string): number {
     let stat = fs.statSync(inFile.fd);
     return stat.size;
   } catch (err) {
-    HiLog.error(TAG, `openSync: ${uri}, failed: ${JSON.stringify(err)}`);
+    HiLog.error(TAG, `open Syncfilename: ${FileUtils.getFileNameByUri(uri)}, failed: ${JSON.stringify(err)}`);
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
