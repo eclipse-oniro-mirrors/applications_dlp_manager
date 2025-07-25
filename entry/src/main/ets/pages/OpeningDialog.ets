@@ -120,9 +120,10 @@ struct Index {
           .margin({ left: 12 })
       }
       .constraintSize({ minHeight: 48 })
-      .onDisAppear(() => {
+      .onDisAppear(async () => {
         HiLog.info(TAG, 'contentBuilder onDisAppear');
         this.closeDialog();
+        await OpeningDialogService.getInstance().terminateOpeningDialog();
       })
     }
   }

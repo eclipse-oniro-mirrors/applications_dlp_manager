@@ -22,6 +22,7 @@ import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
 import TerminateView from '../TerminateView';
 import { FileParseType } from '../../bean/data/FileParseType';
 import OpenDlpFileData from '../data/OpenDlpFileData';
+import { faceDetector } from '@kit.CoreVisionKit';
 
 const TAG = 'OpeningDialogManager';
 
@@ -48,6 +49,7 @@ export default class OpeningDialogManager {
   // 是否正在处理弹框逻辑
   private _isChargeDecrypting: boolean = false;
   private _decryptingMap: Map<string, DecryptingState>;
+  private _isTerminalSelf: boolean = false;
 
   private constructor() {
     this._decryptingMap = new Map<string, DecryptingState>();
@@ -76,6 +78,16 @@ export default class OpeningDialogManager {
   public getHasCallback(): boolean {
     HiLog.info(TAG, `getHasCallback ${this._hasCallback}`);
     return this._hasCallback;
+  }
+
+  public setIsTerminalSelf(value: boolean) {
+    HiLog.info(TAG, `setIsTerminalSelf ${value}`);
+    this._isTerminalSelf = value;
+  }
+
+  public getIsTerminalSelf(): boolean {
+    HiLog.info(TAG, `setIsTerminalSelf ${this._isTerminalSelf}`);
+    return this._isTerminalSelf;
   }
 
   public getIsDecrypting(): boolean {
