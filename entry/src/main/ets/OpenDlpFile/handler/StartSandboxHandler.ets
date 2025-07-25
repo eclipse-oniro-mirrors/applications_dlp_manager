@@ -109,9 +109,7 @@ export default class StartSandboxHandler {
     } catch (error) {
       HiLog.wrapError(TAG, error, 'startAbility failed');
       await OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
-      const busErr: BusinessError = error as BusinessError;
-      DlpFileOpenReport.sendDlpFileOpenFault(Constants.DLP_START_SANDBOX_ERROR, decryptContent, busErr);
-      return ResultMsg.getErrMsg(Constants.ERR_JS_APP_INSIDE_ERROR);
+      return ResultMsg.getErrMsg(error.code, error.message);
     }
   }
 

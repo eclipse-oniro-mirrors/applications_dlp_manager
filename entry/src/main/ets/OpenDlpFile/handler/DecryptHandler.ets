@@ -211,7 +211,6 @@ export default class DecryptHandler {
   private async chargeOpenDLPFileError(err: BusinessError, decryptContent: DecryptContent):
     Promise<Result<dlpPermission.DLPFile>> {
     HiLog.info(TAG, 'begin chargeOpenDLPFileError');
-    DlpFileOpenReport.sendDlpFileOpenFault(Constants.DLP_FILE_PARSE_ERROR, decryptContent, err);
 
     // Not print sensitive information
     if (err.code === Constants.ERR_JS_USER_NO_PERMISSION || err.code === Constants.ERR_JS_FILE_EXPIRATION) {
@@ -288,13 +287,10 @@ export default class DecryptHandler {
     try {
       let appInfo: dlpPermission.DLPSandboxInfo;
       appInfo = await dlpPermission.installDLPSandbox(sandboxBundleName, authPerm, userId, uri);
-      DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_INSTALL_SANDBOX_SUCCESS, decryptContent);
       return ResultMsg.buildSuccess(appInfo);
     } catch (error) {
       HiLog.wrapError(TAG, error, 'installDLPSandbox error');
-      const busErr: BusinessError = error as BusinessError;
-      DlpFileOpenReport.sendDlpFileOpenFault(Constants.DLP_INSTALL_SANDBOX_ERROR, decryptContent, busErr);
-      return ResultMsg.buildMsg(error.code);
+      return ResultMsg.buildMsg(error.code, error.message);
     }
   }
 
@@ -383,7 +379,7 @@ export async function decryptInner(callerAppId: string, dlpFd: number):
     const decryptInnerResult: DecryptInnerResult = {
       error: busErr,
     }
-    return ResultMsg.buildResult(error.code, decryptInnerResult);
+    return ResultMsg.buildResult(error.code, '', decryptInnerResult);
   }
 }
 

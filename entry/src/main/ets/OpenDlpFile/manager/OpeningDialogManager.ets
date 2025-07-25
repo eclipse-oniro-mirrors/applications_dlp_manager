@@ -22,6 +22,7 @@ import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
 import TerminateView from '../TerminateView';
 import { FileParseType } from '../../bean/data/FileParseType';
 import OpenDlpFileData from '../data/OpenDlpFileData';
+import FileUtils from '../../common/FileUtils';
 
 const TAG = 'OpeningDialogManager';
 
@@ -56,8 +57,8 @@ export default class OpeningDialogManager {
   private printAllDecryptingMap(): void {
     HiLog.debug(TAG, `printAllDecryptingMap ${this._decryptingMap.size}`);
     this._decryptingMap.forEach((value, key) => {
-      HiLog.debug(TAG, `key ${key}, uri ${value.uri}, dialogTimeout ${value.dialogTimeout},
-      needStartAbility ${value.needStartAbility}`);
+      HiLog.debug(TAG, `key ${FileUtils.getFileNameByUri(key)}, uri ${FileUtils.getFileNameByUri(value.uri)},
+      dialogTimeout ${value.dialogTimeout}, needStartAbility ${value.needStartAbility}`);
     });
   }
 
