@@ -19,6 +19,7 @@ import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
 import Want from '@ohos.app.ability.Want';
 import OpeningDialogService from '../rpc/OpeningDialogService';
+import CommonEventManager from '../common/CommonEventManager';
 
 const TAG = 'OpeningDialogUIExt';
 
@@ -28,6 +29,7 @@ export default class OpeningDialogUIExtAbility extends UIExtensionAbility {
     try {
       session.loadContent('pages/OpeningDialog');
       session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
+      CommonEventManager.getInstance().init();
     } catch (error) {
       HiLog.wrapError(TAG, error, 'loadContent failed');
     }

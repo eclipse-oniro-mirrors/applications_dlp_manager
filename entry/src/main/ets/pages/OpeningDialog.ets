@@ -45,17 +45,17 @@ struct Index {
     emitter.on(Constants.SHOW_DIALOG_EVENT, (eventData: emitter.EventData) => {
       this.handleShowDialogEvent(eventData.data?.showDialog, eventData.data?.requestId);
     });
+    emitter.on(Constants.SCREEN_OFF_EVENT, async () => {
+      HiLog.info(TAG, 'receive SCREEN_OFF_EVENT');
+      this.closeDialog();
+      await OpeningDialogService.getInstance().terminateOpeningDialog();
+    })
   }
 
   aboutToDisappear(): void {
     HiLog.info(TAG, 'OpeningDialog aboutToDisappear');
     emitter.off(Constants.SHOW_DIALOG_EVENT);
-  }
-
-  onPageHide(): void {
-    HiLog.info(TAG, 'OpeningDialog onPageHide');
-    emitter.off(Constants.SHOW_DIALOG_EVENT);
-    this.closeDialog();
+    emitter.off(Constants.SCREEN_OFF_EVENT);
   }
 
   handleShowDialogEvent(showDialog: boolean, requestId: string) {

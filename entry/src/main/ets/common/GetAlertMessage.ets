@@ -234,7 +234,7 @@ export class GetAlertMessage {
 
   public static async requestModalUIExtension(context: common.UIAbilityContext | common.ServiceExtensionContext,
     error: BusinessError) {
-    if (deviceInfo.deviceType !== '2in1') {
+    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1) {
       GetAlertMessage.phoneHandle(context, error);
       return;
     }

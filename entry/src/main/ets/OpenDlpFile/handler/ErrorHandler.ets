@@ -56,7 +56,7 @@ class PCHandle extends ErrorHandler {
 
 export class ErrorHandlerFactory {
   static createErrorHandle(): ErrorHandler {
-    if (deviceInfo.deviceType !== '2in1') {
+    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1) {
       HiLog.info(TAG, 'create PhoneHandle');
       return new PhoneHandle();
     }

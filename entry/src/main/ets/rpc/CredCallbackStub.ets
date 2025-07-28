@@ -98,6 +98,8 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       data.writeString(JSON.stringify({'phone': cloudPhone}));
     } catch (error) {
       HiLog.error(TAG, `prepare data exception, error is ${JSON.stringify(error)}`);
+      data.reclaim();
+      reply.reclaim();
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_SEARCH_USER_INFO, data, reply, option).then((result) => {
@@ -125,6 +127,8 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       data.writeRemoteObject(callback.asObject());
     } catch (error) {
       HiLog.error(TAG, `prepare data exception, error is ${JSON.stringify(error)}`);
+      data.reclaim();
+      reply.reclaim();
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_GET_ACCOUNT_INFO, data, reply, option).then((result) => {
@@ -152,6 +156,8 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       data.writeRemoteObject(callback.asObject());
     } catch (error) {
       HiLog.wrapError(TAG, error, 'batchRefresh prepare data exception');
+      data.reclaim();
+      reply.reclaim();
       return;
     }
     remote.sendMessageRequest(Constants.COMMAND_BATCH_REFRESH, data, reply, option).then((result) => {

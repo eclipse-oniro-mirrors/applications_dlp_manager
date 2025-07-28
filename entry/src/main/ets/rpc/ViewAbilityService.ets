@@ -52,11 +52,6 @@ export default class ViewAbilityService {
       data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
       data.writeBoolean(showDialog);
       data.writeString(requestId ? requestId : '');
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'showDialog prepare data exception');
-      return false;
-    }
-    try {
       await this._remoteProxy.sendMessageRequest(Constants.COMMAND_SHOW_DIALOG, data, reply, option);
       HiLog.info(TAG, 'showDialog sendmsg success.');
     } catch (error) {
@@ -80,11 +75,6 @@ export default class ViewAbilityService {
     let reply = new rpc.MessageSequence();
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'sendDisconnectMsgWithTimeout prepare data exception');
-      return false;
-    }
-    try {
       await this._remoteProxy.sendMessageRequest(Constants.COMMAND_DISCONNECT_WITH_TIMEOUT, data, reply, option);
       HiLog.info(TAG, 'sendDisconnectMsgWithTimeout sendmsg success.');
     } catch (error) {
@@ -108,11 +98,6 @@ export default class ViewAbilityService {
     let reply = new rpc.MessageSequence();
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'sendDisconnectMsg prepare data exception');
-      return false;
-    }
-    try {
       await this._remoteProxy.sendMessageRequest(Constants.COMMAND_DISCONNECT, data, reply, option);
       HiLog.info(TAG, 'sendDisconnectMsg sendmsg success.');
     } catch (error) {

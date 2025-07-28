@@ -153,11 +153,6 @@ export default class OpeningDialogService {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
       let callback: OpeningDialogStub = new OpeningDialogStub('OpeningDialogStub');
       data.writeRemoteObject(callback.asObject());
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'setRemoteObject prepare data exception');
-      return;
-    }
-    try {
       this.remoteProxy.sendMessageRequest(Constants.COMMAND_SET_REMOTE_OBJECT, data, reply, option);
       HiLog.info(TAG, 'setRemoteObject sendmsg success.');
     } catch (error) {
@@ -180,11 +175,6 @@ export default class OpeningDialogService {
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
       data.writeString(requestId);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'dialogDisappear prepare data exception');
-      return;
-    }
-    try {
       this.remoteProxy.sendMessageRequest(Constants.COMMAND_DIALOG_DISAPPEAR, data, reply, option);
       HiLog.info(TAG, 'dialogDisappear sendmsg success.');
     } catch (error) {
@@ -207,11 +197,6 @@ export default class OpeningDialogService {
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
       data.writeString(requestId);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'dialogTimeout prepare data exception');
-      return;
-    }
-    try {
       this.remoteProxy.sendMessageRequest(Constants.COMMAND_DIALOG_TIMEOUT, data, reply, option);
       HiLog.info(TAG, 'dialogTimeout sendmsg success.');
     } catch (error) {
