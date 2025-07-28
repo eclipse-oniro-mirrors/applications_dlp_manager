@@ -157,7 +157,7 @@ export default class DecryptHandler {
       HiLog.error(TAG, 'decryptData error');
       const deleteStatusRet = await manager.deleteStatus(decryptContent.openDlpFileData.uri);
       if (deleteStatusRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-        HiLog.error(TAG, 'setStatus NOT_STARTED failed');
+        HiLog.error(TAG, 'deleteStatus failed');
         return ResultMsg.buildMsg(deleteStatusRet.errcode, deleteStatusRet.errmsg);
       }
       return ResultMsg.buildMsg(decRet.errcode, decRet.errmsg);

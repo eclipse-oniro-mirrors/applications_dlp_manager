@@ -52,6 +52,12 @@ struct Index {
     emitter.off(Constants.SHOW_DIALOG_EVENT);
   }
 
+  onPageHide(): void {
+    HiLog.info(TAG, 'OpeningDialog onPageHide');
+    emitter.off(Constants.SHOW_DIALOG_EVENT);
+    this.closeDialog();
+  }
+
   handleShowDialogEvent(showDialog: boolean, requestId: string) {
     HiLog.info(TAG, `handleShowDialogEvent showDialog ${showDialog}, requestId ${requestId}`);
     if (showDialog) {
