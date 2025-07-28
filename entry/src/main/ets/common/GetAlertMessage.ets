@@ -57,12 +57,14 @@ export class GetAlertMessage {
     error: BusinessError
   ): Promise<void> {
     await GetAlertMessage._counterLock.acquire();
+    HiLog.debug(TAG, `showToast ++ ToastCount ${GetAlertMessage._viewAbilityPhoneToastCount}`);
     GetAlertMessage._viewAbilityPhoneToastCount++;
     GetAlertMessage._counterLock.release();
     await GetAlertMessage.showToast(context, error);
     setTimeout(async () => {
       await GetAlertMessage._counterLock.acquire();
       try {
+        HiLog.debug(TAG, `showToast -- ToastCount ${GetAlertMessage._viewAbilityPhoneToastCount}`);
         if (--GetAlertMessage._viewAbilityPhoneToastCount === 0) {
           UIContext.destroyUIContextWithoutWindow();
           await TerminateView.terminate();
