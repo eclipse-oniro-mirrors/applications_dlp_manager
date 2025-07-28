@@ -53,15 +53,16 @@ export class ResultMsg {
     };
   }
 
-  public static buildResult<T>(code: number, obj?: T): Result<T> {
+  public static buildResult<T>(code: number, msg?: string, obj?: T): Result<T> {
     return {
       errcode: code,
+      errmsg: msg,
       result: obj
     };
   }
 
   public static buildSuccess<T>(obj?: T): Result<T> {
-    return ResultMsg.buildResult(Constants.ERR_CODE_SUCCESS, obj);
+    return ResultMsg.buildResult(Constants.ERR_CODE_SUCCESS, '', obj);
   }
 
   private static readonly errMsgMap: Map<number, string> = new Map([

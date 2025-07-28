@@ -36,6 +36,7 @@ import FileUtil from '../common/external/FileUtil';
 import { OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
 import App from '@system.app';
 import DecryptContent from '../OpenDlpFile/data/DecryptContent';
+import FileUtils from '../common/FileUtils';
 
 const TAG = 'SaveAs';
 
@@ -587,7 +588,7 @@ export default class SaveAsAbility extends UIAbility {
         this.dstFdPicker = this.file.fd;
         resolve();
       } catch (err) {
-        HiLog.error(TAG, `open: ${uri}, failed: ${JSON.stringify(err)}`);
+        HiLog.error(TAG, `open filename: ${FileUtils.getFileNameByUri(uri)}, failed: ${JSON.stringify(err)}`);
         FileUtil.unlinkSync(uri);
         this.isOK = false;
         await GetAlertMessage.requestModalUIExtension(this.context,

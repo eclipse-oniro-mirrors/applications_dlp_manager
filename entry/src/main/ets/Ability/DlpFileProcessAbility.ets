@@ -39,6 +39,7 @@ import { HiLog } from '../common/HiLog';
 import FileUtil from '../common/external/FileUtil';
 import { DecryptState, OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
 import DecryptContent from '../OpenDlpFile/data/DecryptContent';
+import FileUtils from '../common/FileUtils';
 
 const TAG = 'DlpRpcServiceStub';
 
@@ -127,7 +128,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.inFile = await fs.open(inputUri, fs.OpenMode.READ_WRITE);
         inFileFd = this.inFile.fd;
       } catch (error) {
-        HiLog.error(TAG, `open: ${inputUri}, failed: ${JSON.stringify(error)}`);
+        HiLog.error(TAG, `open: ${FileUtils.getFileNameByUri(inputUri)}, failed: ${JSON.stringify(error)}`);
         reject((error as BusinessError).code);
         return;
       }
@@ -155,7 +156,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
-    HiLog.info(TAG, `openDlpFile start: ${srcUri}`);
+    HiLog.info(TAG, `openDlpFile start: ${FileUtils.getFileNameByUri(srcUri)}`);
     let inFile = await fs.open(srcUri, fs.OpenMode.READ_WRITE);
     let dlpFile: dlpPermission.DLPFile;
     let authUserListNew: IAuthUser[] = [];
@@ -201,12 +202,12 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async stopFuseLink(uri: string, callback: stopFuseLinkCallback): Promise<void> {
-    HiLog.info(TAG, `stopFuseLink start: ${uri}`);
+    HiLog.info(TAG, `stopFuseLink start filename: ${FileUtils.getFileNameByUri(uri)}`);
     let dlpFile: dlpPermission.DLPFile | null = await this.getOpeningFile(uri);
     if (dlpFile !== null) {
       await dlpFile.stopFuseLink();
     } else {
-      HiLog.error(TAG, `stopFuseLink not find: ${uri}`);
+      HiLog.error(TAG, `stopFuseLink not find filename: ${FileUtils.getFileNameByUri(uri)}`);
       callback(-1);
     }
   }
@@ -217,7 +218,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     if (dlpFile !== null) {
       await dlpFile.resumeFuseLink();
     } else {
-      HiLog.error(TAG, `resumeFuseLink not find: ${uri}`);
+      HiLog.error(TAG, `resumeFuseLink not findfilename: ${FileUtils.getFileNameByUri(uri)}`);
       callback(-1);
     }
   }
@@ -238,7 +239,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         HiLog.wrapError(TAG, error, 'replaceDLPLinkFile error');
       }
     } else {
-      HiLog.error(TAG, `replaceDLPLinkFile not find: ${srcUri}`);
+      HiLog.error(TAG, `replaceDLPLinkFile not find: ${FileUtils.getFileNameByUri(srcUri)}`);
       callback(-1);
     }
   }
@@ -257,7 +258,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         FileUtil.closeSync(inFile);
       }
     } else {
-      HiLog.error(TAG, `recoverDlpFile not find: ${srcUri}`);
+      HiLog.error(TAG, `recoverDlpFile not find: ${FileUtils.getFileNameByUri(srcUri)}`);
       callback(-1);
     }
   }
@@ -349,9 +350,9 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     const manager = OpenDlpFileManager.getInstance();
     const setRet = await manager.setStatus(uri, { state: DecryptState.ENCRYPTING });
     if (setRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, `addEncryptingState ${uri} failed.`);
+      HiLog.error(TAG, `addEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} failed.`);
     } else {
-      HiLog.info(TAG, `addEncryptingState ${uri} success.`);
+      HiLog.info(TAG, `addEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} success.`);
     }
   }
 
@@ -359,9 +360,9 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     const manager = OpenDlpFileManager.getInstance();
     const deleteRet = await manager.deleteStatus(uri);
     if (deleteRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, `deleteEncryptingState ${uri} failed.`);
+      HiLog.error(TAG, `deleteEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} failed.`);
     } else {
-      HiLog.info(TAG, `deleteEncryptingState ${uri} success.`);
+      HiLog.info(TAG, `deleteEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} success.`);
     }
   }
 }

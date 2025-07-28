@@ -94,4 +94,9 @@ export default class FileUtils {
   static removeFileTypeFirstDot(str: string) {
     return str.trim().replace(/^\./, '');
   }
+
+  static getFileNameByUri(uri: string): string {
+    const strArray: string[] = uri.split('/');
+    return strArray[strArray.length - 1];
+  }
 }

@@ -190,9 +190,12 @@ export default class OpenDlpFileData {
       return false;
     }
 
+    let strArray: string[] = this._uri.split('/');
+    this._fileName = strArray[strArray.length - 1];
+
     const tempRandom = Date.now() + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
-    this._requestId = this._uri + tempRandom;
-    HiLog.info(TAG, `checkAndSetWantParams uri ${this._uri} ${this._requestId}`);
+    this._requestId = this._fileName + tempRandom;
+    HiLog.info(TAG, `checkAndSetWantParams requestId ${this._requestId}`);
 
     this._callerBundleName = this._want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
     if (isInvalidStr(this._callerBundleName)) {
