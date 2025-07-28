@@ -74,7 +74,6 @@ export default class DecryptHandler {
       return ResultMsg.buildMsg(getAppInfoRet.errcode, getAppInfoRet.errmsg);
     }
     const appInfo = getAppInfoRet.result!;
-    decryptContent.appInfo = appInfo;
 
     // 4. If has decrypted, check appInfo consistent
     if (hasDecrypted) {
@@ -89,6 +88,7 @@ export default class DecryptHandler {
         }
       }
     }
+    decryptContent.appInfo = appInfo;
 
     // 5. Generate link info
     if (!hasDecrypted) {
@@ -120,7 +120,7 @@ export default class DecryptHandler {
       let getContentRet = manager.getHasDecryptedContent(decryptContent.openDlpFileData.uri);
       if (getContentRet.errcode !== Constants.ERR_CODE_SUCCESS || !getContentRet.result) {
         HiLog.error(TAG, 'getHasDecryptedContent error');
-        return ResultMsg.buildMsg(statusRet.errcode, statusRet.errmsg);
+        return ResultMsg.buildMsg(getContentRet.errcode, getContentRet.errmsg);
       }
       const decrypt = getContentRet.result;
       if (decrypt.openDlpFileData.sandboxBundleName !== decryptContent.openDlpFileData.sandboxBundleName) {
@@ -157,7 +157,7 @@ export default class DecryptHandler {
       HiLog.error(TAG, 'decryptData error');
       const deleteStatusRet = await manager.deleteStatus(decryptContent.openDlpFileData.uri);
       if (deleteStatusRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-        HiLog.error(TAG, 'setStatus NOT_STARTED failed');
+        HiLog.error(TAG, 'deleteStatus failed');
         return ResultMsg.buildMsg(deleteStatusRet.errcode, deleteStatusRet.errmsg);
       }
       return ResultMsg.buildMsg(decRet.errcode, decRet.errmsg);
@@ -324,8 +324,7 @@ export default class DecryptHandler {
     } catch (error) {
       HiLog.wrapError(TAG, error, 'addDLPLinkFile failed');
       await closeDlpFile(decryptContent);
-      let busErr = error as BusinessError;
-      return ResultMsg.getErrMsg(busErr.code);
+      return ResultMsg.buildResult(error.code, error.message);
     }
   }
 
