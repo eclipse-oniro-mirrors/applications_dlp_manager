@@ -89,7 +89,7 @@ struct Index {
       HiLog.error(TAG, 'closeDialog by decrypt timeout');
       this.closeDialog();
       await OpeningDialogService.getInstance().terminateOpeningDialog();
-    }, Constants.DECRYPT_TIMEOUT_TIME);
+    }, Constants.OPENING_DIALOG_TIMEOUT_TIME);
   }
 
   private closeDialog() {
