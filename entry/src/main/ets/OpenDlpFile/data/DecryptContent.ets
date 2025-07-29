@@ -23,6 +23,7 @@ import OpenDlpFileData from './OpenDlpFileData';
 import fs from '@ohos.file.fs';
 import { fileUri } from '@kit.CoreFileKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
+import FileUtils from '../../common/FileUtils';
 
 const TAG: string = 'DecryptContent';
 
@@ -241,7 +242,7 @@ export default class DecryptContent {
       this._linkUriStat = fs.statSync(this._uriInfo.path);
       return ResultMsg.buildSuccess();
     } catch (error) {
-      HiLog.wrapError(TAG, error, `open: ${this._openDlpFileData.uri} failed`);
+      HiLog.wrapError(TAG, error, `open: ${FileUtils.getFileNameByUri(this._openDlpFileData.uri)} failed`);
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR);
     }
   }

@@ -156,20 +156,17 @@ export class OpenDlpFileManager {
 
   private removeMatchingEntries(bundleName: string, sandboxAppIndex: number): Set<DecryptContent> {
     let decryptContents = new Set<DecryptContent>();
-    const iterator = this.contentMap.entries();
-    let entry = iterator.next();
-    while (!entry.done) {
-      const entryValue = entry.value;
-      const key = entryValue[0];
-      const value = entryValue[1];
+    const entries = Array.from(this.contentMap.entries());
+    entries.forEach(entry => {
+      const key = entry[0];
+      const value = entry[1];
       if (value.openDlpFileData.sandboxBundleName === bundleName &&
         value.appInfo.appIndex === sandboxAppIndex) {
         decryptContents.add(value);
         this.contentMap.delete(key);
         this.statusMap.delete(key);
       }
-      entry = iterator.next();
-    }
+    });
     return decryptContents;
   }
 

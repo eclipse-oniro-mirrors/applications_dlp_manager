@@ -36,11 +36,6 @@ import GlobalContext from '../../common/GlobalContext';
 
 const TAG: string = 'DecryptHandler';
 
-interface DecryptInnerResult {
-  dlpFile?: dlpPermission.DLPFile;
-  error?: BusinessError;
-}
-
 export default class DecryptHandler {
   constructor() {
   }
@@ -264,13 +259,17 @@ export default class DecryptHandler {
       return ResultMsg.buildSuccess(dlpFile);
     } catch (error) {
       HiLog.error(TAG, 'dlpPermission.openDLPFile error');
+      if (!OpeningDialogManager.getInstance().getIsDecryptingByRequestId(decryptContent.openDlpFileData.requestId)) {
+        HiLog.info(TAG, 'User stop Dialog');
+        return ResultMsg.getErrMsg(Constants.ERR_CODE_USER_STOP_DIALOG);
+      }
       OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
       if (error) {
         const busErr: BusinessError = error as BusinessError;
         return await this.chargeOpenDLPFileError(busErr, decryptContent);
       }
       HiLog.error(TAG, 'openDLPFile error for timeout');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_DECRYPT_TIME_OUT)
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_DECRYPT_TIME_OUT);
     } finally {
       HiLog.info(TAG, 'createDecryptTask finally');
       clearTimeout(timeout);
@@ -359,35 +358,5 @@ export default class DecryptHandler {
       return false;
     }
     return historyDistributedInfoId === nowDistributedInfoId;
-  }
-}
-
-@Concurrent
-export async function decryptInner(callerAppId: string, dlpFd: number):
-  Promise<Result<DecryptInnerResult>> {
-  const TAG: string = 'decryptInner';
-  try {
-    let dlpFile: dlpPermission.DLPFile = await dlpPermission.openDLPFile(dlpFd, callerAppId);
-    const decryptInnerResult: DecryptInnerResult = {
-      dlpFile: dlpFile,
-    }
-    return ResultMsg.buildSuccess(decryptInnerResult);
-  } catch (error) {
-    HiLog.wrapError(TAG, error, 'openDLPFile error');
-    const busErr: BusinessError = error as BusinessError;
-    const decryptInnerResult: DecryptInnerResult = {
-      error: busErr,
-    }
-    return ResultMsg.buildResult(error.code, '', decryptInnerResult);
-  }
-}
-
-@Concurrent
-export async function cancelDecryptTask(taskId: number) {
-  const TAG: string = 'cancelDecryptTask';
-  try {
-    taskpool.cancel(taskId);
-  } catch (error) {
-    HiLog.wrapError(TAG, error, 'taskpool cancel error');
   }
 }

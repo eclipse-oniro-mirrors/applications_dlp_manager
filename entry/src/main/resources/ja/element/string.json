@@ -4,7 +4,7 @@
             "name":"save",
             "value":"保存",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,21 +32,21 @@
             "name":"Timeout_is_not_supported",
             "value":"有効期限を過去の日付に設定できません。別の日付に設定してください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"自分のみ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"指定ユーザー",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -74,14 +74,14 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"このファイルを表示する権限がありません。権限を申請するには、%sにお問い合わせください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"従業員IDが無効です。再入力してください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,14 +109,14 @@
             "name":"screenshot",
             "value":"スクリーンショット",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"duplicate",
             "value":"コピー",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,7 +165,7 @@
             "name":"header_title_list",
             "value":"アクセス制限でファイルを保護します。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -179,14 +179,14 @@
             "name":"header_title_readonly_tips",
             "value":"読み取り専用のアクセス権限を持つユーザーは、このファイルを表示できますが、編集、コピー、または印刷することはできません。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"全員",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,28 +214,28 @@
             "name":"apply_for_the_permission",
             "value":"権限を要求するには、%sにお問い合わせてください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Appointed_day",
             "value":"指定日",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"保護を変更",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"print",
             "value":"印刷",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -249,7 +249,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"従業員IDを入力してEnterキーを押してください。例：a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -263,14 +263,14 @@
             "name":"perm_list_title_read_only",
             "value":"読み取り専用",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permanently",
             "value":"有効期限なし",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"network_invalid",
             "value":"ネットワークエラーです。後で再試行してください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"編集",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -326,21 +326,21 @@
             "name":"header_title_edit_content",
             "value":"編集",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Permission_has_expired_description",
             "value":"ファイル権限の有効期限が切れました。アクセスを回復するには、%sにお問い合わせください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"file_encrypted",
             "value":"ファイルを保護済み",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -354,7 +354,7 @@
             "name":"header_title",
             "value":"ファイル権限",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -368,14 +368,14 @@
             "name":"header_title_readonly",
             "value":"読み取り専用",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
             "value":"現在、この操作を実行できません。後で再試行してください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -389,7 +389,7 @@
             "name":"save_as",
             "value":"名前を付けて保存",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -431,21 +431,21 @@
             "name":"Permission_has_expired",
             "value":"権限の有効期限切れ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"スクリーン録画",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"完了",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -473,35 +473,35 @@
             "name":"stow_away",
             "value":"非表示",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"詳細を表示",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_title",
             "value":"このファイルは保護されています。「読み取り専用」と「編集」権限をお持ちです。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"da_button",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -522,7 +522,7 @@
             "name":"apply_for_the_subject",
             "value":"実際の権限はアプリによって異なる場合があります。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -536,35 +536,35 @@
             "name":"Document_valid_until",
             "value":"有効期限",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"画面共有",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"保護を取り消す",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"キャンセル",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"この権限を持つユーザーは、このファイルを表示、編集、コピー、スクリーン録画、保存、印刷することができます。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

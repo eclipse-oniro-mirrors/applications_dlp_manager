@@ -33,13 +33,6 @@ interface DecryptingState {
   hasDecrypted: boolean, // 用于判断是否是用户主动取消“正在打开弹框”场景
 }
 
-let defaultDecryptingState: DecryptingState = {
-  uri: '',
-  dialogTimeout: false,
-  needStartAbility: false,
-  hasDecrypted: false
-}
-
 export default class OpeningDialogManager {
   private static instance: OpeningDialogManager;
   // 是否正在弹框
@@ -90,10 +83,17 @@ export default class OpeningDialogManager {
     return this._isTerminalSelf;
   }
 
+  public getIsDecryptingByRequestId(requestId: string): boolean {
+    this.printAllDecryptingMap();
+    const isDecrypting = this._decryptingMap.has(requestId);
+    HiLog.info(TAG, `getIsDecryptingByRequestId isDecrypting ${isDecrypting}`);
+    return isDecrypting;
+  }
+
   public getIsDecrypting(): boolean {
     this.printAllDecryptingMap();
     const isDecrypting = this._decryptingMap.size > 0;
-    HiLog.info(TAG, `getIsDecrypting ${isDecrypting}`);
+    HiLog.info(TAG, `getIsDecrypting isDecrypting ${isDecrypting}`);
     return isDecrypting;
   }
 
@@ -116,22 +116,20 @@ export default class OpeningDialogManager {
   // 判断是否需要拉起沙箱，这次不需要就等timeout的回调
   public getNeedStartAbility(requestId: string): boolean {
     this.printAllDecryptingMap();
-    const isDecrypting = this._decryptingMap.has(requestId);
-    if (!isDecrypting) {
+    HiLog.info(TAG, `OpeningDialogManager setNeedStartAbility requestId ${requestId}`);
+    const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
+    if (!decryptingState) {
       HiLog.error(TAG, 'getNeedStartAbility not isDecrypting');
       return false;
     }
-    const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
     const timeout = decryptingState.dialogTimeout;
-
-    HiLog.info(TAG, `OpeningDialogManager getNeedStartAbility requestId ${requestId}, isDecrypting ${isDecrypting},
-    timeout ${timeout}, showDialogState ${this._showDialogState}`);
-    if (!this._showDialogState || (isDecrypting && timeout)) {
+    HiLog.info(TAG, `OpeningDialogManager getNeedStartAbility requestId ${requestId}, timeout ${timeout},
+    showDialogState ${this._showDialogState}`);
+    if (!this._showDialogState || timeout) {
       HiLog.info(TAG, 'can startAbility');
       return true;
     }
     decryptingState.needStartAbility = true;
-    this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();
     return false;
   }
@@ -149,12 +147,14 @@ export default class OpeningDialogManager {
     this.printAllDecryptingMap();
     HiLog.info(TAG, `OpeningDialogManager dialogDisappear requestId ${requestId}`);
     this._showDialogState = false;
-    const isDecrypting = this._decryptingMap.has(requestId);
-    const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
+    const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
+    if (!decryptingState) {
+      HiLog.info(TAG, 'dialogDisappear uri is not decrypting');
+      return;
+    }
     const hasDecrypted = decryptingState.hasDecrypted;
-    if (isDecrypting && !hasDecrypted) { // 如果正在解密且不需要拉弹框，是用户主动终止解密流程
+    if (!hasDecrypted) { // 如果正在解密且不需要拉弹框，是用户主动终止解密流程
       HiLog.info(TAG, 'user close opening dialog');
-      const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
       await OpenDlpFileManager.getInstance().deleteStatus(decryptingState.uri);
       this._decryptingMap.delete(requestId);
       this._isChargeDecrypting = false;
@@ -165,14 +165,12 @@ export default class OpeningDialogManager {
   public async dialogTimeout(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
     HiLog.info(TAG, `OpeningDialogManager dialogTimeout requestId ${requestId}`);
-    const isDecrypting = this._decryptingMap.has(requestId);
-    if (!isDecrypting) {
+    const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
+    if (!decryptingState) {
       HiLog.info(TAG, 'dialogTimeout uri is not decrypting');
       return;
     }
-    const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
     decryptingState.dialogTimeout = true;
-    this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();
     if (decryptingState.needStartAbility) { // 弹框超时，且需要拉起沙箱，就去拉沙箱
       const startSandboxRet = await StartSandboxManager.getInstance().startSandbox();
@@ -260,15 +258,13 @@ export default class OpeningDialogManager {
   // openDLPFile结束后调用
   public async hideOpeningDialog(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
-    const isDecrypting = this._decryptingMap.has(requestId);
-    HiLog.info(TAG, `OpeningDialogManager hideOpeningDialog requestId ${requestId}, isDecrypting ${isDecrypting}`);
-    if (!isDecrypting) { // 没在解密，就是用户主动取消的场景
+    HiLog.info(TAG, `OpeningDialogManager hideOpeningDialog requestId ${requestId}`);
+    const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
+    if (!decryptingState) {
       HiLog.info(TAG, 'hideOpeningDialog uri is not decrypting');
       return;
     }
-    const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
     decryptingState.hasDecrypted = true;
-    this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();
     HiLog.info(TAG, `hideOpeningDialog showDialogState ${this._showDialogState}`);
     if (!this._showDialogState) {
@@ -280,15 +276,13 @@ export default class OpeningDialogManager {
   // 拉沙箱之前调用
   public setNeedStartAbility(requestId: string): void {
     this.printAllDecryptingMap();
-    const isDecrypting = this._decryptingMap.has(requestId);
-    HiLog.info(TAG, `OpeningDialogManager setNeedStartAbility requestId ${requestId}, isDecrypting ${isDecrypting}`);
-    if (!isDecrypting) {
+    HiLog.info(TAG, `OpeningDialogManager setNeedStartAbility requestId ${requestId}`);
+    const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
+    if (!decryptingState) {
       HiLog.info(TAG, 'setNeedStartAbility uri is not decrypting');
       return;
     }
-    const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
     decryptingState.needStartAbility = true;
-    this._decryptingMap.set(requestId, decryptingState);
     this._isChargeDecrypting = false;
     this.printAllDecryptingMap();
   }
@@ -353,7 +347,7 @@ export default class OpeningDialogManager {
     await ViewAbilityService.getInstance().sendDisconnectMsg();
   }
 
-  private async loadOpeningDialogUIExtAbility(context: common.ServiceExtensionContext): Promise<Boolean> {
+  private async loadOpeningDialogUIExtAbility(context: common.ServiceExtensionContext): Promise<boolean> {
     HiLog.info(TAG, 'begin loadOpeningDialog');
     let uiExtWant: Want = {
       bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,

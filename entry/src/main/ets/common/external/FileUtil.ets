@@ -23,6 +23,7 @@ export default class FileUtil {
   public static closeSync(file: fs.File | number | undefined): void {
     if (!file) {
       HiLog.error(TAG, 'closeSync param is invalid.');
+      return;
     }
     try {
       fs.closeSync(file);
@@ -35,6 +36,7 @@ export default class FileUtil {
   public static unlinkSync(uri: string): void {
     if (CommonUtil.isEmptyStr(uri)) {
       HiLog.error(TAG, 'unlinkSync param is invalid.');
+      return;
     }
     try {
       const isExist = fs.accessSync(uri);
@@ -50,6 +52,7 @@ export default class FileUtil {
   public static rmdirSync(uri: string): void {
     if (CommonUtil.isEmptyStr(uri)) {
       HiLog.error(TAG, 'removeDir: param is invalid.');
+      return;
     }
     try {
       let res = fs.accessSync(uri);
@@ -64,6 +67,7 @@ export default class FileUtil {
   public static async unlink(uri: string): Promise<void> {
     if (CommonUtil.isEmptyStr(uri)) {
       HiLog.error(TAG, 'unlink: param is invalid.');
+      return;
     }
     try {
       await fs.unlink(uri);
