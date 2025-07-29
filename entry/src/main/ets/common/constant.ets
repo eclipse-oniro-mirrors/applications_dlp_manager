@@ -349,6 +349,7 @@ export default class Constants {
 
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
   public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;
+  public static readonly OPENING_DIALOG_TIMEOUT_TIME: number = 20 * 1000;
   public static readonly COMMAND_SHOW_DIALOG = 1;
   public static readonly COMMAND_DISCONNECT_WITH_TIMEOUT = 2;
   public static readonly COMMAND_DISCONNECT = 3;

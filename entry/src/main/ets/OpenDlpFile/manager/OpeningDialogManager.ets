@@ -157,7 +157,6 @@ export default class OpeningDialogManager {
       const decryptingState: DecryptingState = this._decryptingMap.get(requestId) || defaultDecryptingState;
       await OpenDlpFileManager.getInstance().deleteStatus(decryptingState.uri);
       this._decryptingMap.delete(requestId);
-      await TerminateView.terminate();
       this._isChargeDecrypting = false;
     }
   }
