@@ -45,6 +45,7 @@ export default class TerminateView {
     isDecrypting: ${isDecrypting}, toastSize: ${toastSize}`);
     if (hasDecryptedSize === 0 && hasCallback && !isDecrypting && toastSize === 0) {
       try {
+        OpeningDialogManager.getInstance().setIsTerminalSelf(true);
         await ViewAbilityService.getInstance().sendDisconnectMsg();
         await viewContext.terminateSelf();
         HiLog.info(TAG, 'viewAbility terminateSelf success');
