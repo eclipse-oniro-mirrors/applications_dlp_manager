@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { HiLog } from './HiLog';
 
 const TAG = 'CounterLock';
 
@@ -26,7 +27,14 @@ export default class CounterLock {
           this.locked = true;
           resolve();
         } else {
-          this.queue.push(tryAcquire);
+          this.queue.push(() => {
+            try {
+              tryAcquire();
+            } catch (err) {
+              HiLog.wrapError(TAG, err, 'Error occurred while tryAcquire');
+              this.release();
+            }
+          });
         }
       };
       tryAcquire();
@@ -36,7 +44,12 @@ export default class CounterLock {
   release(): void {
     if (this.queue.length > 0) {
       const next = this.queue.shift();
-      next?.();
+      try {
+        next?.();
+      } catch (err) {
+        HiLog.wrapError(TAG, err, 'Error occurred while executing task');
+        this.release();
+      }
     } else {
       this.locked = false;
     }

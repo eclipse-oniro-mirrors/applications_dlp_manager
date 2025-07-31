@@ -30,9 +30,9 @@
         },
         {
             "name":"Timeout_is_not_supported",
-            "value":"La fecha de caducidad no puede estar en el pasado. Configura otra fecha.",
+            "value":"La fecha de caducidad no puede ser anterior a la fecha actual. Configura otra fecha.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -522,7 +522,7 @@
             "name":"apply_for_the_subject",
             "value":"Los permisos reales pueden variar según la aplicación.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

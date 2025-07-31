@@ -331,9 +331,9 @@
         },
         {
             "name":"Permission_has_expired_description",
-            "value":"انتهت صلاحية الوصول للملفات الخاصة بك. يُرجى التواصل مع %s لاستعادة صلاحية الوصول.",
+            "value":"انتهت صلاحية أذونات ملفاتك. يُرجى التواصل مع %s لاستعادة صلاحية الوصول.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -387,9 +387,9 @@
         },
         {
             "name":"save_as",
-            "value":"حفظ كـ",
+            "value":"حفظ باسم",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -429,9 +429,9 @@
         },
         {
             "name":"Permission_has_expired",
-            "value":"انتهت صلاحية الوصول",
+            "value":"انتهت صلاحية الأذونات",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -562,9 +562,9 @@
         },
         {
             "name":"header_title_edit_tips",
-            "value":"يمكن للمستخدمين الحاصلين على هذا الإذن عرض هذا الملف وتعديله ونسخه وتسجيله على الشاشة وحفظه وطباعته",
+            "value":"يمكن للمستخدمين الحاصلين على هذا الإذن عرض هذا الملف وتعديله ونسخه وتسجيل شاشته وحفظه وطباعته",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -583,7 +583,7 @@
         },
         {
             "name":"File_cannot_be_opened",
-            "value":"يتعذر فتح هذا الملف. أعد المحاولة لاحقًا.",
+            "value":"يتعذر فتح هذا الملف. أعد المحاولة لاحقًا",
             "attr":{
                 "priority":"translate"
             }

@@ -79,9 +79,9 @@
         },
         {
             "name":"incorrect_work_ID",
-            "value":"L'ID d'employé n'est pas valide. Veuillez le saisir à nouveau.",
+            "value":"L'ID d'employé n'est pas valide. Veuillez saisir à nouveau.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -114,9 +114,9 @@
         },
         {
             "name":"duplicate",
-            "value":"Copier",
+            "value":"Copie",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -373,9 +373,9 @@
         },
         {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Ceci ne peut pas être fait maintenant. Veuillez réessayer ultérieurement.",
+            "value":"Ceci ne peut pas être fait pour l'instant. Veuillez réessayer ultérieurement.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -522,7 +522,7 @@
             "name":"apply_for_the_subject",
             "value":"Les autorisations réelles peuvent varier selon l'application.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -583,7 +583,7 @@
         },
         {
             "name":"File_cannot_be_opened",
-            "value":"Ce fichier ne peut pas être ouvert. Veuillez réessayer plus tard.",
+            "value":"L'ouverture de ce fichier a échoué. Veuillez réessayer ultérieurement.",
             "attr":{
                 "priority":"translate"
             }

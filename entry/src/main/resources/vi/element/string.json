@@ -373,9 +373,9 @@
         },
         {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Không thực hiện được việc này bây giờ. Hãy thử lại sau.",
+            "value":"Không thực hiện được thao tác này bây giờ. Hãy thử lại sau.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -562,9 +562,9 @@
         },
         {
             "name":"header_title_edit_tips",
-            "value":"Người dùng có quyền này có thể xem, chỉnh sửa, sao chép, ghi màn hình, lưu và in tệp tin này.",
+            "value":"Người dùng có quyền này có thể xem, chỉnh sửa, sao chép, quay phim màn hình, lưu và in tệp tin này.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

@@ -4,7 +4,7 @@
             "name":"save",
             "value":"Сохранить",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,21 +32,21 @@
             "name":"Timeout_is_not_supported",
             "value":"Срок действия должен быть позже текущей даты. Укажите другую дату.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"Только я",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"Указанные пользователи",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -74,14 +74,14 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"У вас нет права просмотра этого файла. Чтобы запросить право, свяжитесь с %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"Недействительный ID сотрудника. Введите повторно.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,14 +109,14 @@
             "name":"screenshot",
             "value":"Сделать скриншот",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"duplicate",
             "value":"Копировать",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,28 +165,28 @@
             "name":"header_title_list",
             "value":"Ограничьте доступ к файлу для его защиты.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"Срок действия",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"Пользователи с уровнем доступа Только чтение могут посмотреть этот файл, но не могут изменить, скопировать или напечатать его.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"Все",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,28 +214,28 @@
             "name":"apply_for_the_permission",
             "value":"Для запроса прав свяжитесь с %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Appointed_day",
             "value":"Указанная дата",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"Изменить защиту",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"print",
             "value":"Напечатать",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -249,7 +249,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"Введите ID сотрудника и нажмите Enter. Пример: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -263,14 +263,14 @@
             "name":"perm_list_title_read_only",
             "value":"Только чтение",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permanently",
             "value":"Бессрочно",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"network_invalid",
             "value":"Ошибка сети. Повторите попытку позже.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"Изменение",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -326,21 +326,21 @@
             "name":"header_title_edit_content",
             "value":"Изменить",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Permission_has_expired_description",
             "value":"Истек срок действия ваших прав на доступ к файлу. Чтобы восстановить доступ, свяжитесь с %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"file_encrypted",
             "value":"Файл защищен",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -354,7 +354,7 @@
             "name":"header_title",
             "value":"Права доступа к файлу",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -368,14 +368,14 @@
             "name":"header_title_readonly",
             "value":"Только чтение",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
             "value":"Это действие сейчас недоступно. Повторите попытку позже.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -389,7 +389,7 @@
             "name":"save_as",
             "value":"Сохранить как",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -431,21 +431,21 @@
             "name":"Permission_has_expired",
             "value":"Срок действия прав истек",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"Записать с экрана",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"Готово",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -473,35 +473,35 @@
             "name":"stow_away",
             "value":"Скрыть",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"Сведения",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_title",
             "value":"Этот файл защищен. У вас есть права Только чтение и Изменение.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"da_button",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -522,7 +522,7 @@
             "name":"apply_for_the_subject",
             "value":"Фактические права зависят от приложения.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -534,37 +534,37 @@
         },
         {
             "name":"Document_valid_until",
-            "value":"Срок действия истекает",
+            "value":"Срок действия",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"Показывать экран",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"Отменить защиту",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"Отмена",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"Пользователи с этим правом могут посмотреть, изменить, скопировать, сохранить, напечатать этот файл или записать его контент с экрана.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
