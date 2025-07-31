@@ -24,6 +24,7 @@ import { FileParseType } from '../../bean/data/FileParseType';
 import OpenDlpFileData from '../data/OpenDlpFileData';
 import FileUtils from '../../common/FileUtils';
 import ErrorManager from './ErrorManager';
+import { emitter } from '@kit.BasicServicesKit';
 
 const TAG = 'OpeningDialogManager';
 
@@ -44,9 +45,19 @@ export default class OpeningDialogManager {
   private _isChargeDecrypting: boolean = false;
   private _decryptingMap: Map<string, DecryptingState>;
   private _isTerminalSelf: boolean = false;
+  private checkShowDialogStateEvent = async () => {
+    HiLog.info(TAG, 'receive CHECK_SHOW_DIALOG_STATE');
+    this.checkShowDialogState();
+  };
 
   private constructor() {
     this._decryptingMap = new Map<string, DecryptingState>();
+    emitter.on(Constants.CHECK_SHOW_DIALOG_STATE, this.checkShowDialogStateEvent);
+  }
+
+  public unRegisterEmitEvent() {
+    HiLog.info(TAG, 'unRegisterEmitEvent');
+    emitter.off(Constants.CHECK_SHOW_DIALOG_STATE, this.checkShowDialogStateEvent);
   }
 
   private printAllDecryptingMap(): void {
@@ -116,11 +127,14 @@ export default class OpeningDialogManager {
 
   // 判断是否需要show toast，这次不需要就等timeout的回调
   public getCanShowToast(): boolean {
-    HiLog.info(TAG, `getCanShowToast showDialogState ${this._showDialogState}`);
-    if (this._showDialogState) {
-      return false;
+    const requestId = this.getDecryptingRequestId();
+    if (!requestId) {
+      HiLog.error(TAG, 'no DecryptingRequestId');
+      return true;
     }
-    return true;
+    const dialogTimeout = this._decryptingMap.get(requestId)?.dialogTimeout ?? true;
+    HiLog.info(TAG, `getCanShowToast dialogTimeout ${dialogTimeout}`);
+    return dialogTimeout;
   }
 
   // 判断是否需要拉起沙箱，这次不需要就等timeout的回调

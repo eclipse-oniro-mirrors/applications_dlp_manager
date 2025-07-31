@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../common/HiLog';
-import { DecryptState, OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
-import DecryptContent from '../OpenDlpFile/data/DecryptContent';
-import Constants from './constant';
-import FileUtil from './external/FileUtil';
+import { HiLog } from '../../common/HiLog';
+import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
+import DecryptContent from '../data/DecryptContent';
+import Constants from '../../common/constant';
+import FileUtil from '../../common/external/FileUtil';
 import { common } from '@kit.AbilityKit';
-import TerminateView from '../OpenDlpFile/TerminateView';
+import TerminateView from '../TerminateView';
 
 const TAG = 'DataUtils';
 
 async function clearDlpInfo(decryptContent: DecryptContent): Promise<void> {
+  HiLog.info(TAG, 'start clearDlpInfo');
   clearIsDecrypting(decryptContent);
-  await deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
   FileUtil.closeSync(decryptContent.dlpFd);
@@ -85,19 +85,11 @@ async function deleteDlpLinkFile(decryptContent: DecryptContent): Promise<void> 
   }
 }
 
-async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> {
-  const manager = OpenDlpFileManager.getInstance();
-  const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
-  if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-    HiLog.error(TAG, 'deleteDecryptData failed');
-  }
-}
-
 function clearIsDecrypting(decryptContent: DecryptContent): void {
   if (decryptContent.openDlpFileData?.uri) {
     const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
     if (getRet.errcode === Constants.ERR_CODE_SUCCESS && (getRet.result?.state === DecryptState.DECRYPTING)) {
-      OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
+      OpenDlpFileManager.getInstance().removeAllByUri(decryptContent.openDlpFileData.uri);
     }
   }
 }

@@ -58,7 +58,7 @@ export default class ErrorManager {
     HiLog.info(TAG, `startHandleError canShowToast ${canShowToast}`);
 
     if (!canShowToast) {
-      HiLog.error(TAG, 'CanStartAbility error');
+      HiLog.error(TAG, 'canShowToast error');
       return ResultMsg.buildSuccess();
     }
 

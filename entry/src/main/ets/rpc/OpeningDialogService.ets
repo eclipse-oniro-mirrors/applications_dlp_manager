@@ -69,6 +69,10 @@ export default class OpeningDialogService {
       return;
     }
     try {
+      if (this._disconnectTimer) {
+        clearTimeout(this._disconnectTimer);
+        this._disconnectTimer = null;
+      }
       await this._context.terminateSelf();
       HiLog.info(TAG, 'terminateOpeningDialog success');
     } catch (error) {

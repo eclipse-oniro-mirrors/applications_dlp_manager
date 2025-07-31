@@ -39,6 +39,7 @@ export default class OpeningDialogUIExtAbility extends UIExtensionAbility {
 
   onSessionDestroy(session: UIExtensionContentSession): void {
     HiLog.info(TAG, 'OpeningDialogUIExtAbility onSessionDestroy');
+    CommonEventManager.getInstance().unsubscribe();
     OpeningDialogService.getInstance().disconnectViewAbility();
   }
 

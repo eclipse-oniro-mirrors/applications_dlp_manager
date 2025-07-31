@@ -346,6 +346,7 @@ export default class Constants {
   // event
   public static readonly SHOW_DIALOG_EVENT: string = 'SHOW_DIALOG_EVENT';
   public static readonly SCREEN_OFF_EVENT: string = 'SCREEN_OFF_EVENT';
+  public static readonly CHECK_SHOW_DIALOG_STATE: string = 'CHECK_SHOW_DIALOG_STATE';
 
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
   public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;

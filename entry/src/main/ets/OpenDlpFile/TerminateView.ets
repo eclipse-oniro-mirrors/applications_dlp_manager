@@ -53,5 +53,6 @@ export default class TerminateView {
         HiLog.wrapError(TAG, error, 'terminateSelf exception');
       }
     }
+    OpeningDialogManager.getInstance().setIsTerminalSelf(false);
   }
 }

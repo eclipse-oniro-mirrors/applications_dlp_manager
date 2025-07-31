@@ -26,12 +26,13 @@ import { DecryptState, OpenDlpFileManager } from './manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { HiLog } from '../common/HiLog';
 import { ErrorHandlerFactory } from './handler/ErrorHandler';
-import { clearDlpInfo } from '../common/DataUtils';
+import { clearDlpInfo } from './common/DataUtils';
 import CredConnectService from '../rpc/CredConnectService';
 import OpeningDialogManager from './manager/OpeningDialogManager';
 import StartSandboxManager from './manager/StartSandboxManager';
 import { BusinessError } from '@ohos.base';
 import { DlpFileOpenReport } from './DlpFileOpenReport';
+import ErrorManager from './manager/ErrorManager';
 
 const TAG: string = 'OpenDlpFileProcessor';
 
@@ -153,8 +154,7 @@ export class OpenDlpFileProcessor {
       clearDlpInfo(decryptContent);
       this.sendDlpFileOpenFault(error, decryptContent);
     }
-    const errorHandle = ErrorHandlerFactory.createErrorHandle();
-    await errorHandle.handle(error);
+    await ErrorManager.getInstance().startHandleError(error);
     return ResultMsg.buildSuccess();
   }
 

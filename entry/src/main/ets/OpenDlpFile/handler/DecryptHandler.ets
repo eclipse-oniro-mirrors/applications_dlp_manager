@@ -23,11 +23,10 @@ import DecryptContent from '../data/DecryptContent';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import fs from '@ohos.file.fs';
-import taskpool from '@ohos.taskpool';
 import { BusinessError } from '@kit.BasicServicesKit';
 import AccountManager from '../../manager/AccountManager';
 import { common, uriPermissionManager, wantConstant } from '@kit.AbilityKit';
-import { closeDlpFile } from '../../common/DataUtils';
+import { closeDlpFile } from '../common/DataUtils';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';
 import { ObjectUtil } from '../../common/ObjectUtil';
@@ -121,7 +120,7 @@ export default class DecryptHandler {
         HiLog.error(TAG, 'other app is opening this file');
         return ResultMsg.getErrMsg(Constants.ERR_JS_OTHER_APP_OPEN_FILE);
       }
-      const checkIsSameUser = await this.checkDistributedInfoId(decryptContent);
+      const checkIsSameUser = await this.checkDistributedInfoId(decrypt);
       if (!checkIsSameUser) {
         HiLog.info(TAG, 'checkDistributedInfoId not same');
         hasDecrypted = false;
@@ -347,6 +346,10 @@ export default class DecryptHandler {
   }
 
   private async checkDistributedInfoId(decryptContent: DecryptContent): Promise<boolean> {
+    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+      HiLog.info(TAG, 'domain account no need to checkDistributedInfoId');
+      return true;
+    }
     let historyDistributedInfoId = decryptContent.distributedInfoId;
     let nowDistributedInfoId: string = '';
     try {

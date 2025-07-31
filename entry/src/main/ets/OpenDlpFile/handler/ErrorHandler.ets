@@ -31,11 +31,11 @@ class PhoneHandle extends ErrorHandler {
   public async handle(error: BusinessError): Promise<void> {
     const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
-      HiLog.info(TAG, 'PhoneHandle not need toast');
+      HiLog.info(TAG, `PhoneHandle not need toast, code ${error.code}`);
       return;
     }
     if (OpenDlpFileError.NEED_DIALOG.has(error.code)) {
-      HiLog.info(TAG, 'PhoneHandle need dialog');
+      HiLog.info(TAG, `PhoneHandle need dialog, code ${error.code}`);;
       await GetAlertMessage.requestModalUIExtension(viewContext, error);
       return;
     }
@@ -47,7 +47,7 @@ class PCHandle extends ErrorHandler {
   public async handle(error: BusinessError): Promise<void> {
     const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
-      HiLog.info(TAG, 'PCHandle not need toast');
+      HiLog.info(TAG, `PCHandle not need toast, code ${error.code}`);
       return;
     }
     await GetAlertMessage.requestModalUIExtension(viewContext, error);

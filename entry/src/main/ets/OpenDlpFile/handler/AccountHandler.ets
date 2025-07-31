@@ -52,12 +52,12 @@ class CloudAccountHandle extends AccountHandlerBase {
     hiTraceMeter.startTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     const getAccountInfoRet = await this.getAccountInfo();
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
-    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !this.accountInfo) {
       HiLog.error(TAG, 'CloudAccountHandle getAccountInfo error');
       return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
     }
-    if (this.accountInfo!.distributedInfo.name === 'ohosAnonymousName' &&
-      this.accountInfo!.distributedInfo.id === 'ohosAnonymousUid') {
+    if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
+      this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
       HiLog.info(TAG, 'Cloud account not login');
       const lunchLoginRet = await this.lunchLogin(context);
       if (lunchLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
@@ -68,7 +68,7 @@ class CloudAccountHandle extends AccountHandlerBase {
         return ResultMsg.getErrMsg(Constants.ERR_JS_ACCOUNT_NOT_LOGIN);
       }
     }
-    decryptContent.distributedInfoId = this.accountInfo!.distributedInfo.id;
+    decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.userId = this.userId;
     return ResultMsg.buildSuccess();
   }
@@ -99,17 +99,17 @@ class DomainAccountHandle extends AccountHandlerBase {
     hiTraceMeter.startTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     const getAccountInfoRet = await this.getAccountInfo();
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
-    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !this.accountInfo) {
       HiLog.error(TAG, 'DomainAccountHandle getAccountInfo error');
       return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
     }
-    let checkAccountRet = checkDomainAccountInfo(this.accountInfo!);
+    let checkAccountRet = checkDomainAccountInfo(this.accountInfo);
     if (checkAccountRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'checkDomainAccountInfo error');
       return ResultMsg.buildMsg(checkAccountRet.errcode, checkAccountRet.errmsg);
     }
-    decryptContent.distributedInfoId = this.accountInfo!.distributedInfo.id;
-    decryptContent.accountName = this.accountInfo!.domainInfo.accountName;
+    decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
+    decryptContent.accountName = this.accountInfo.domainInfo.accountName;
     decryptContent.userId = this.userId;
     return ResultMsg.buildSuccess();
   }
@@ -121,11 +121,11 @@ class PluginAccountHandle extends AccountHandlerBase {
     hiTraceMeter.startTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
     const getAccountInfoRet = await this.getAccountInfo();
     hiTraceMeter.finishTrace('DlpGetOsAccountJs', decryptContent.openDlpFileData.startId);
-    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !this.accountInfo) {
       HiLog.error(TAG, 'getAccountInfo error');
       return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
     }
-    decryptContent.distributedInfoId = this.accountInfo!.distributedInfo.id;
+    decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.userId = this.userId;
     return ResultMsg.buildSuccess();
   }

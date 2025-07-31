@@ -39,23 +39,25 @@ struct Index {
     customStyle: false,
     alignment: DialogAlignment.Center
   });
+  private handleShowDialog = (eventData: emitter.EventData) => {
+    this.handleShowDialogEvent(eventData.data?.showDialog, eventData.data?.requestId);
+  };
+  private handleScreenOff = async () => {
+    HiLog.info(TAG, 'receive SCREEN_OFF_EVENT');
+    this.closeDialog();
+    await OpeningDialogService.getInstance().terminateOpeningDialog();
+  };
 
   aboutToAppear(): void {
     HiLog.info(TAG, 'OpeningDialog aboutToAppear');
-    emitter.on(Constants.SHOW_DIALOG_EVENT, (eventData: emitter.EventData) => {
-      this.handleShowDialogEvent(eventData.data?.showDialog, eventData.data?.requestId);
-    });
-    emitter.on(Constants.SCREEN_OFF_EVENT, async () => {
-      HiLog.info(TAG, 'receive SCREEN_OFF_EVENT');
-      this.closeDialog();
-      await OpeningDialogService.getInstance().terminateOpeningDialog();
-    })
+    emitter.on(Constants.SHOW_DIALOG_EVENT, this.handleShowDialog);
+    emitter.on(Constants.SCREEN_OFF_EVENT, this.handleScreenOff);
   }
 
   aboutToDisappear(): void {
     HiLog.info(TAG, 'OpeningDialog aboutToDisappear');
-    emitter.off(Constants.SHOW_DIALOG_EVENT);
-    emitter.off(Constants.SCREEN_OFF_EVENT);
+    emitter.off(Constants.SHOW_DIALOG_EVENT, this.handleShowDialog);
+    emitter.off(Constants.SCREEN_OFF_EVENT, this.handleScreenOff);
     this.closeDialog();
   }
 
@@ -76,6 +78,14 @@ struct Index {
   }
 
   private startTimeoutClose() {
+    if (this.timeoutId250) {
+      clearTimeout(this.timeoutId250);
+      this.timeoutId250 = null;
+    }
+    if (this.timeoutId10) {
+      clearTimeout(this.timeoutId10);
+      this.timeoutId10 = null;
+    }
     this.shouldCloseAfterTimeout = false;
     this.timeoutId250 = setTimeout(() => {
       this.shouldCloseAfterTimeout = true;

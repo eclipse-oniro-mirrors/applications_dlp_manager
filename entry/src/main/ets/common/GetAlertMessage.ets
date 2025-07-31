@@ -237,7 +237,7 @@ export class GetAlertMessage {
 
   public static async requestModalUIExtension(context: common.UIAbilityContext | common.ServiceExtensionContext,
     error: BusinessError) {
-    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1 || !OpenDlpFileError.NEED_DIALOG.has(error.code)) {
+    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1 && !OpenDlpFileError.NEED_DIALOG.has(error.code)) {
       GetAlertMessage.phoneHandle(context, error);
       return;
     }

@@ -16,7 +16,9 @@
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
 import { rpc } from '@kit.IPCKit';
-import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
+import { emitter } from '@kit.BasicServicesKit';
+
+// import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
 
 const TAG = 'ViewAbilityService';
 
@@ -36,7 +38,8 @@ export default class ViewAbilityService {
 
   public async setRemoteProxy(value: rpc.IRemoteObject) {
     this._remoteProxy = value;
-    await OpeningDialogManager.getInstance().checkShowDialogState();
+    // await OpeningDialogManager.getInstance().checkShowDialogState();
+    emitter.emit(Constants.CHECK_SHOW_DIALOG_STATE);
   }
 
   public async showDialog(showDialog: boolean, requestId?: string): Promise<boolean> {
