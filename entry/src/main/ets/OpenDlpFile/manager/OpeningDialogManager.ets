@@ -15,7 +15,7 @@
 
 import Constants from '../../common/constant';
 import { HiLog } from '../../common/HiLog';
-import { common, Want } from '@kit.AbilityKit';
+import { common, errorManager, Want } from '@kit.AbilityKit';
 import ViewAbilityService from '../../rpc/ViewAbilityService';
 import StartSandboxManager from './StartSandboxManager';
 import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
@@ -23,6 +23,7 @@ import TerminateView from '../TerminateView';
 import { FileParseType } from '../../bean/data/FileParseType';
 import OpenDlpFileData from '../data/OpenDlpFileData';
 import FileUtils from '../../common/FileUtils';
+import ErrorManager from './ErrorManager';
 
 const TAG = 'OpeningDialogManager';
 
@@ -113,6 +114,15 @@ export default class OpeningDialogManager {
     this._decryptingMap.delete(requestId);
   }
 
+  // 判断是否需要show toast，这次不需要就等timeout的回调
+  public getCanShowToast(): boolean {
+    HiLog.info(TAG, `getCanShowToast showDialogState ${this._showDialogState}`);
+    if (this._showDialogState) {
+      return false;
+    }
+    return true;
+  }
+
   // 判断是否需要拉起沙箱，这次不需要就等timeout的回调
   public getNeedStartAbility(requestId: string): boolean {
     this.printAllDecryptingMap();
@@ -174,6 +184,7 @@ export default class OpeningDialogManager {
     decryptingState.dialogTimeout = true;
     this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();
+    ErrorManager.getInstance().startHandleError();
     if (decryptingState.needStartAbility) { // 弹框超时，且需要拉起沙箱，就去拉沙箱
       const startSandboxRet = await StartSandboxManager.getInstance().startSandbox();
       if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {

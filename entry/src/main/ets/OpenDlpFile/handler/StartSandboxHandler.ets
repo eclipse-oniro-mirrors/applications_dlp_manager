@@ -23,7 +23,6 @@ import { ObjectUtil } from '../../common/ObjectUtil';
 import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
 import { DlpFileOpenReport } from '../DlpFileOpenReport';
-import { BusinessError } from '@kit.BasicServicesKit';
 import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import type bundleManager from '@ohos.bundle.bundleManager';
 import ViewAbilityService from '../../rpc/ViewAbilityService';

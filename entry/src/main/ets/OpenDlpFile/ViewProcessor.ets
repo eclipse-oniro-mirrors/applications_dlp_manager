@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import Result from '../common/Result';
 import { ResultMsg } from '../common/ResultMsg';
 import { FileParseFactory } from './handler/FileParseHandler';
@@ -21,7 +22,7 @@ import Constants from '../common/constant';
 import DecryptContent from './data/DecryptContent';
 import { AccountHandlerFactory } from './handler/AccountHandler';
 import DecryptHandler from './handler/DecryptHandler';
-import { DecryptState, DecryptStatus, OpenDlpFileManager } from './manager/OpenDlpFileManager';
+import { DecryptState, OpenDlpFileManager } from './manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { HiLog } from '../common/HiLog';
 import { ErrorHandlerFactory } from './handler/ErrorHandler';
@@ -41,7 +42,7 @@ export class OpenDlpFileProcessor {
     if (proRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'processOpenDlpFile error');
       const err = { code: proRet.errcode, message: proRet.errmsg ? proRet.errmsg : '' } as BusinessError;
-      return await this.processErrcode(context, err, proRet.result);
+      return await this.processErrcode(err, proRet.result);
     }
     HiLog.debug(TAG, 'processOpenDlpFile success');
     return ResultMsg.buildSuccess();
@@ -147,14 +148,13 @@ export class OpenDlpFileProcessor {
     return ResultMsg.buildSuccess(getStatusRet.result.state);
   }
 
-  public async processErrcode(context: common.ServiceExtensionContext, error: BusinessError,
-    decryptContent?: DecryptContent): Promise<Result<void>> {
+  public async processErrcode(error: BusinessError, decryptContent?: DecryptContent): Promise<Result<void>> {
     if (decryptContent) {
       clearDlpInfo(decryptContent);
       this.sendDlpFileOpenFault(error, decryptContent);
     }
     const errorHandle = ErrorHandlerFactory.createErrorHandle();
-    await errorHandle.handle(context, error);
+    await errorHandle.handle(error);
     return ResultMsg.buildSuccess();
   }
 

@@ -27,7 +27,6 @@ import taskpool from '@ohos.taskpool';
 import { BusinessError } from '@kit.BasicServicesKit';
 import AccountManager from '../../manager/AccountManager';
 import { common, uriPermissionManager, wantConstant } from '@kit.AbilityKit';
-import { DlpFileOpenReport } from '../DlpFileOpenReport';
 import { closeDlpFile } from '../../common/DataUtils';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';

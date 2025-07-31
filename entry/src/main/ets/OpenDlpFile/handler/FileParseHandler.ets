@@ -30,15 +30,6 @@ import { FileParseInfo } from '../../bean/data/FileParseInfo';
 
 const TAG: string = 'FileParse';
 
-interface GeneralInfo {
-  ownerAccount: string;
-  realFileType?: string;
-}
-
-interface DlpCertInfo {
-  accountType: string;
-}
-
 const NUM_TO_TYPE_MAP = new Map<number, string>([
   [1, 'txt'],
   [2, 'pdf'],
