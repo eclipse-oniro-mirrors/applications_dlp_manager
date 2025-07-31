@@ -522,7 +522,7 @@
             "name":"apply_for_the_subject",
             "value":"실제 권한은 앱에 따라 다를 수 있습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

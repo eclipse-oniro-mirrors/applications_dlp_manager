@@ -500,7 +500,7 @@ function sendDlpFileOpenProperties() {
   }
 }
 
-function isValidPath(path: string): Boolean {
+function isValidPath(path: string): boolean {
   if (path.indexOf('./') !== -1 || path.indexOf('../') !== -1) {
     return false;
   }
@@ -751,7 +751,7 @@ function decodeByBase64(data: string): Uint8Array | null {
   try {
     return base64.decodeSync(data);
   } catch (err) {
-    HiLog.error(TAG, 'Decode data failed.');
+    HiLog.wrapError(TAG, err, 'Decode data failed.');
   }
   return null;
 }

@@ -91,15 +91,7 @@ export default class StartSandboxHandler {
     HiLog.info(TAG, 'start sandbox begin');
     this.prepareWantParams(decryptContent);
     try {
-      const completionHandler: CompletionHandler = {
-        onRequestSuccess: async (elementName: bundleManager.ElementName, message: string) => {
-          HiLog.info(TAG, `onRequestSuccess elementName: ${JSON.stringify(elementName)} message: ${message}`);
-        },
-        onRequestFailure: async (elementName: bundleManager.ElementName, message: string) => {
-          HiLog.info(TAG, `onRequestFailure elementName: ${JSON.stringify(elementName)} message: ${message}`);
-        },
-      }
-      await context.startAbility(decryptContent.openDlpFileData.want, { completionHandler: completionHandler });
+      await context.startAbility(decryptContent.openDlpFileData.want);
       HiLog.info(TAG, `startAbility success startId: ${decryptContent.openDlpFileData.startId}`);
       await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
       await this.addDecryptData(decryptContent);

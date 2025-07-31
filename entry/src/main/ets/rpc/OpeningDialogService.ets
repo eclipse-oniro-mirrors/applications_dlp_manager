@@ -36,6 +36,7 @@ export default class OpeningDialogService {
       this.setRemoteObject();
     },
     onDisconnect: (elementName) => {
+      this.remoteProxy = null;
       HiLog.info(TAG, 'OpeningDialogService onDisconnect');
     },
     onFailed: () => {
@@ -96,8 +97,8 @@ export default class OpeningDialogService {
 
   public async disconnectViewAbility(): Promise<void> {
     HiLog.info(TAG, 'disconnectViewAbility start');
-    if (!this._context) {
-      HiLog.error(TAG, 'disconnectViewAbility context is undefined');
+    if (!this._context || !this.connectionId) {
+      HiLog.error(TAG, 'disconnectViewAbility context or connectionId is null');
       return;
     }
     try {
