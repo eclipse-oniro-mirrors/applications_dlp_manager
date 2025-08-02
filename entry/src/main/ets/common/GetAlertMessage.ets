@@ -16,12 +16,13 @@
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
 import Constants from './constant';
+import CounterLock from './CounterLock';
 import GlobalContext from './GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
 import { HiLog } from '../common/HiLog';
-import { UIContext } from '@kit.ArkUI';
 import TerminateView from '../OpenDlpFile/TerminateView';
-import CounterLock from './CounterLock';
+import { UIContext } from '@kit.ArkUI';
+import UIContextUtil from './UIContextUtil';
 
 const TAG = 'AlertMessage';
 
@@ -40,7 +41,7 @@ export class GetAlertMessage {
     try {
       const resource = GetAlertMessage.getToastMessage(error);
       const toastMessage = await context.resourceManager.getStringValue(resource);
-      const uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
+      const uiContext = UIContextUtil.getInstance().getUIContext(context);
       uiContext.getPromptAction().showToast({
         message: toastMessage,
         duration: Constants.SHARE_SET_TIMEOUT,
