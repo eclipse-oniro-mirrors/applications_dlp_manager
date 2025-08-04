@@ -39,8 +39,8 @@ export default class ErrorManager {
   }
 
   // 弹框超过250ms，弹toast；弹框小于250ms，等待弹框250ms之后，弹toast
-  public async startHandleError(error?: BusinessError): Promise<Result<boolean>> {
-    HiLog.info(TAG, 'start startErrorHandler');
+  public async startHandleError(requestId: string, error?: BusinessError): Promise<Result<boolean>> {
+    HiLog.info(TAG, `start startErrorHandler requestId ${requestId}`);
     if (error) {
       this.errorInfo = error;
     }
@@ -59,8 +59,11 @@ export default class ErrorManager {
 
     if (!canShowToast) {
       HiLog.error(TAG, 'canShowToast error');
+      OpeningDialogManager.getInstance().setIsWaitingShowToast(true);
       return ResultMsg.buildSuccess();
     }
+    OpeningDialogManager.getInstance().deleteRequestId(requestId);
+    OpeningDialogManager.getInstance().setIsWaitingShowToast(false);
 
     await this.startHandleErrorInner(this.errorInfo);
     this.errorInfo = undefined;

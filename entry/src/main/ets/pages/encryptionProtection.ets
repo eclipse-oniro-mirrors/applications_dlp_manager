@@ -293,14 +293,10 @@ struct DlpDialog {
     let dlpFileName: string = GlobalContext.load('uri') as string;
     let srcFileMsg: FileMsg = FileUtils.getAllSuffixByUri(dlpFileName);
     let realFileType: string = GlobalContext.load('realFileType') ?? '';
-    HiLog.debug(TAG, `dlpFileName: ${dlpFileName}`);
-    HiLog.debug(TAG, `srcFileMsg fileType: ${srcFileMsg.fileType}`);
-    HiLog.debug(TAG, `realFileType: ${realFileType}`);
-
+    HiLog.debug(TAG, `dlpFileName: ${dlpFileName} fileType: ${srcFileMsg.fileType} realFileType: ${realFileType}`);
     if (isInvalidStr(realFileType)) {
       realFileType = srcFileMsg.fileType;
     }
-
     let filePath = this.getUIContext().getHostContext()?.filesDir + `/${new Date().getTime()}.${realFileType}`;
     let file: fs.File | undefined;
     try {
@@ -312,31 +308,32 @@ struct DlpDialog {
       await this.catchProcess();
       return;
     } finally {
-      if (file) {
-        FileUtil.closeSync(file);
-      }
+      FileUtil.closeSync(file);
     }
-
     let filePathUri = getFileUriByPath(filePath);
     try {
-      await new Promise<void>((resolve, reject) => {
-        this.dlpRpcProxy?.recoverDlpFile(GlobalContext.load('uri'), filePathUri, async (err: number) => {
-          if (err !== 0) {
-            FileUtil.unlinkSync(filePath);
-            HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
-            let errorInfo =
-              { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
-            this.showErrorDialog(errorInfo.title, errorInfo.msg);
-            await this.catchProcess();
-            reject();
-          }
-          resolve();
-        });
-      });
+      await this.recoverDlpFile(filePath, filePathUri);
     } catch {
       return;
     }
     this.changeToGenDlpFileHome(filePathUri, filePath);
+  }
+
+  private async recoverDlpFile(filePath: string, filePathUri: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.dlpRpcProxy?.recoverDlpFile(GlobalContext.load('uri'), filePathUri, async (err: number) => {
+        if (err !== 0) {
+          FileUtil.unlinkSync(filePath);
+          HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
+          let errorInfo =
+            { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
+          this.showErrorDialog(errorInfo.title, errorInfo.msg);
+          await this.catchProcess();
+          reject();
+        }
+        resolve();
+      });
+    });
   }
 
   stopFuseLinkHome() {
@@ -419,7 +416,6 @@ struct DlpDialog {
           this.processing = false;
           return;
         }
-        HiLog.info(TAG, `get uri success`);
         uri = saveRes[0];
         if (!isValidPath(uri)) {
           HiLog.error(TAG, `pick save uri is invalid`);
@@ -433,18 +429,21 @@ struct DlpDialog {
         }
         this.beginToGenDlpFileHome(srcFileUri, uri, uriInfo);
       }).catch((err: BusinessError) => {
-        HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(err)}`);
-        let errorInfo = GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
-          $r('app.string.File_cannot_be_opened'));
-        this.showErrorDialog(errorInfo.title, errorInfo.msg);
-        this.processing = false;
-        return;
+        return this.handlePickerError(err);
       });
     } catch (err) {
       HiLog.error(TAG, `DocumentViewPicker failed: ${JSON.stringify(err)}`);
       this.processing = false;
       return;
     }
+  }
+
+  private handlePickerError(err: BusinessError): void {
+    HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(err)}`);
+    let errorInfo = GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
+      $r('app.string.File_cannot_be_opened'));
+    this.showErrorDialog(errorInfo.title, errorInfo.msg);
+    this.processing = false;
   }
 
   beginToGenDlpFileHome(srcFileUri: string, uri: string, uriInfo: fileUri.FileUri) {

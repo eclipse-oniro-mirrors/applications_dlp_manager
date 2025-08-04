@@ -27,6 +27,7 @@ import FileMetaInfo from '../../bean/data/FileMetaInfo';
 import GlobalContext from '../../common/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
 import { FileParseInfo } from '../../bean/data/FileParseInfo';
+import OpenDlpFileData from '../data/OpenDlpFileData';
 
 const TAG: string = 'FileParse';
 
@@ -246,8 +247,9 @@ class FileFormatDetector {
 }
 
 export class FileParseFactory {
-  static async createFileParse(uri: string): Promise<Result<FileParseBase>> {
+  static async createFileParse(openDlpFileData: OpenDlpFileData): Promise<Result<FileParseBase>> {
     HiLog.debug(TAG, 'CreateFileParse');
+    const uri = openDlpFileData.uri;
     let getFileFdRet = getFileFd(uri, fs.OpenMode.READ_WRITE);
     if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.info(TAG, 'getFileFd with READ_WRITE failed, try to READ_ONLY.');
@@ -266,8 +268,10 @@ export class FileParseFactory {
     FileUtil.closeSync(dlpFd);
     switch (format.result.parseType) {
       case FileParseType.ZIP:
+        openDlpFileData.fileParse = FileParseType.ZIP;
         return ResultMsg.buildSuccess(new ZipParse(format.result.fileSize));
       case FileParseType.RAW:
+        openDlpFileData.fileParse = FileParseType.RAW;
         return ResultMsg.buildSuccess(new RawParse(format.result.fileSize));
       default:
         HiLog.error(TAG, 'createFileParse error');

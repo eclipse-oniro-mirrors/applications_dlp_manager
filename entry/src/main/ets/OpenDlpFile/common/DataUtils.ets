@@ -20,15 +20,32 @@ import Constants from '../../common/constant';
 import FileUtil from '../../common/external/FileUtil';
 import { common } from '@kit.AbilityKit';
 import TerminateView from '../TerminateView';
+import OpeningDialogManager from '../manager/OpeningDialogManager';
 
 const TAG = 'DataUtils';
 
-async function clearDlpInfo(decryptContent: DecryptContent): Promise<void> {
-  HiLog.info(TAG, 'start clearDlpInfo');
+async function clearDlpInfoByError(decryptContent: DecryptContent): Promise<void> {
+  HiLog.info(TAG, 'start clearDlpInfoByError');
   clearIsDecrypting(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
   FileUtil.closeSync(decryptContent.dlpFd);
+}
+
+async function clearDlpInfoByCancelSandbox(decryptContent: DecryptContent): Promise<void> {
+  HiLog.info(TAG, 'start clearDlpInfoByCancelSandbox');
+  deleteDecryptData(decryptContent);
+  await deleteDlpLinkFile(decryptContent);
+  await closeDlpFile(decryptContent);
+  FileUtil.closeSync(decryptContent.dlpFd);
+}
+
+async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> {
+  const manager = OpenDlpFileManager.getInstance();
+  const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
+  if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    HiLog.error(TAG, 'deleteDecryptData failed');
+  }
 }
 
 async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
@@ -42,8 +59,8 @@ async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
   }
   const decryptContents = rmRet.result;
   decryptContents.forEach(async decryptContent => {
-    HiLog.debug(TAG, `clearDlpInfo fileName ${decryptContent.fileName}`);
-    await clearDlpInfo(decryptContent);
+    HiLog.debug(TAG, `clearDlpInfoByCancelSandbox fileName ${decryptContent.fileName}`);
+    await clearDlpInfoByCancelSandbox(decryptContent);
   });
 
   const getRet = manager.getHasDecryptedSize();
@@ -89,9 +106,10 @@ function clearIsDecrypting(decryptContent: DecryptContent): void {
   if (decryptContent.openDlpFileData?.uri) {
     const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
     if (getRet.errcode === Constants.ERR_CODE_SUCCESS && (getRet.result?.state === DecryptState.DECRYPTING)) {
+      OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
       OpenDlpFileManager.getInstance().removeAllByUri(decryptContent.openDlpFileData.uri);
     }
   }
 }
 
-export { clearDlpInfo, clearDlpInfoBatch, closeDlpFile };
+export { clearDlpInfoByError, clearDlpInfoBatch, closeDlpFile };

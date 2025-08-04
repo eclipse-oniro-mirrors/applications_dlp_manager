@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 import Want from '@ohos.app.ability.Want';
+import { FileParseType } from '../../bean/data/FileParseType';
 import Constants from '../../common/constant';
 import { HiLog } from '../../common/HiLog';
 import { isInvalidStr, isValidPath } from '../../common/utils';
@@ -47,6 +48,8 @@ export default class OpenDlpFileData {
   private _sandboxModuleName: string = '';
   private _isFromPlugin: boolean = false;
   private _requestId: string = '';
+  private _needShowToast: boolean = false;
+  private _fileParse: FileParseType = FileParseType.ZIP;
 
   constructor(want: Want, startId: number) {
     this._want = want;
@@ -147,6 +150,22 @@ export default class OpenDlpFileData {
 
   public get requestId(): string {
     return this._requestId;
+  }
+
+  public set needShowToast(value: boolean) {
+    this._needShowToast = value;
+  }
+
+  public get needShowToast(): boolean {
+    return this._needShowToast;
+  }
+
+  public set fileParse(value: FileParseType) {
+    this._fileParse = value;
+  }
+
+  public get fileParse(): FileParseType {
+    return this._fileParse;
   }
 
   private checkPermissionWithPluginId(): boolean {

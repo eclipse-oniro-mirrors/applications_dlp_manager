@@ -21,7 +21,6 @@ export class OpenDlpFileError {
     Constants.ERR_JS_ACCOUNT_NOT_LOGIN,
     Constants.ERR_CODE_USER_STOP_DIALOG,
   ]);
-
   public static readonly NEED_DIALOG: Set<number> = new Set([
     Constants.ERR_JS_USER_NO_PERMISSION_2B,
     Constants.ERR_JS_USER_NO_PERMISSION_2C,

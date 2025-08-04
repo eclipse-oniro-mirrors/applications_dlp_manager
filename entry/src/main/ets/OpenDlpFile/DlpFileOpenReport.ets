@@ -45,7 +45,7 @@ export class DlpFileOpenReport {
       'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
     };
     return msg;
-	}
+  }
 
   public static reportDlpFileOpenSuccess(code: number, decryptContent: DecryptContent) {
     const msg: Record<string, number | string | boolean> = DlpFileOpenReport.getCommonMsg(code, decryptContent);

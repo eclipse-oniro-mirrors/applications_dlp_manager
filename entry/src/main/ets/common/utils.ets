@@ -521,68 +521,93 @@ function getAccountTypeAndRealFileType(
     }
     let buf = new Uint32Array(z, 0, Constants.HEAD_LENGTH_IN_U32);
     if (buf && buf[0] === Constants.DLP_ZIP_MAGIC) {
-      let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
-      let filePath = context.filesDir + '/saveAs' + random;
-      let dirPath = context.filesDir + '/saveAsUnzip' + random;
-      let fileName = dirPath + '/dlp_cert';
-      let generalInfoPath = dirPath + '/dlp_general_info';
-      let ff: fs.File | undefined;
-      try {
-        fs.readSync(fd, z, option);
-        ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
-        await fs.copyFile(fd, ff.fd);
-        await fs.mkdir(dirPath);
-        await zlib.decompressFile(filePath, dirPath);
-        let dlpInfo = fs.readTextSync(fileName);
-        let infoArray = dlpInfo.split('accountType');
-        let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
-        GlobalContext.store('accountType', Number(type));
-
-        let generalInfo = fs.readTextSync(generalInfoPath);
-        let generalInfoArray = generalInfo.split('realFileType');
-        let realFileType: string = '';
-        if (generalInfoArray.length === Constants.NUMBER_TWO) {
-          let realFileTypeStr = generalInfoArray[1].split('\"');
-          if (realFileTypeStr.length > Constants.NUMBER_TWO) {
-            realFileType = realFileTypeStr[Constants.NUMBER_TWO];
-          }
-        }
-
-        let result: DLPGeneralInfo = {
-          accountType: Number(type),
-          realFileType: realFileType,
-        }
-        resolve(result);
-      } catch (err) {
-        HiLog.error(TAG, `decompressFile: ${JSON.stringify(err)}`);
-        reject(err);
-      } finally {
-        FileUtil.closeSync(ff);
-        FileUtil.unlinkSync(filePath);
-        FileUtil.rmdirSync(dirPath);
-      }
-    } else {
-      let cert = new ArrayBuffer(buf[Constants.CERT_SIZE]);
-      let certOffset = Constants.CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
-      option = { offset: certOffset, length: buf[Constants.CERT_SIZE] };
-      try {
-        fs.readSync(fd, cert, option);
-        let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
-        let fdString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
-        let infoArray = fdString.split('accountType');
-        let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
-        GlobalContext.store('accountType', Number(type));
-        let result: DLPGeneralInfo = {
-          accountType: Number(type),
-          realFileType: '',
-        }
-        resolve(result);
-      } catch (err) {
-        HiLog.error(TAG, `getStringFromFd error: ${JSON.stringify(err)}`);
+      const handleZipFileRet = await handleZipFile(context, fd);
+      if (handleZipFileRet.errcode !== Constants.ERR_CODE_SUCCESS || !handleZipFileRet.result) {
+        HiLog.error(TAG, 'handleNonZipFile error');
         reject();
+        return;
       }
+      resolve(handleZipFileRet.result);
+      return;
+    } else {
+      const handleNonZipFileRet = await handleNonZipFile(fd, buf);
+      if (handleNonZipFileRet.errcode !== Constants.ERR_CODE_SUCCESS || !handleNonZipFileRet.result) {
+        HiLog.error(TAG, 'handleNonZipFile error');
+        reject();
+        return;
+      }
+      resolve(handleNonZipFileRet.result);
+      return;
     }
   })
+}
+
+async function handleZipFile(context: common.ServiceExtensionContext | common.UIExtensionContext,
+  fd: number): Promise<Result<DLPGeneralInfo>> {
+  let random = String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
+  let filePath = context.filesDir + '/saveAs' + random;
+  let dirPath = context.filesDir + '/saveAsUnzip' + random;
+  let fileName = dirPath + '/dlp_cert';
+  let generalInfoPath = dirPath + '/dlp_general_info';
+  let ff: fs.File | undefined;
+  try {
+    const z = new ArrayBuffer(Constants.HEAD_LENGTH_IN_BYTE);
+    const option: ChangeOption = { offset: 0, length: Constants.HEAD_LENGTH_IN_BYTE };
+    fs.readSync(fd, z, option);
+    ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+    await fs.copyFile(fd, ff.fd);
+    await fs.mkdir(dirPath);
+    await zlib.decompressFile(filePath, dirPath);
+    let dlpInfo = fs.readTextSync(fileName);
+    let infoArray = dlpInfo.split('accountType');
+    let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
+    GlobalContext.store('accountType', Number(type));
+
+    let generalInfo = fs.readTextSync(generalInfoPath);
+    let generalInfoArray = generalInfo.split('realFileType');
+    let realFileType: string = '';
+    if (generalInfoArray.length === Constants.NUMBER_TWO) {
+      let realFileTypeStr = generalInfoArray[1].split('\"');
+      if (realFileTypeStr.length > Constants.NUMBER_TWO) {
+        realFileType = realFileTypeStr[Constants.NUMBER_TWO];
+      }
+    }
+
+    let result: DLPGeneralInfo = {
+      accountType: Number(type),
+      realFileType: realFileType,
+    }
+    return ResultMsg.buildSuccess(result);
+  } catch (err) {
+    HiLog.wrapError(TAG, err, 'decompressFile error');
+    return ResultMsg.getErrMsg(err.code, err.message);
+  } finally {
+    FileUtil.closeSync(ff);
+    FileUtil.unlinkSync(filePath);
+    FileUtil.rmdirSync(dirPath);
+  }
+}
+
+async function handleNonZipFile(fd: number, buf: Uint32Array): Promise<Result<DLPGeneralInfo>> {
+  let cert = new ArrayBuffer(buf[Constants.CERT_SIZE]);
+  let certOffset = Constants.CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
+  const option: ChangeOption = { offset: certOffset, length: buf[Constants.CERT_SIZE] };
+  try {
+    fs.readSync(fd, cert, option);
+    let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
+    let fdString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
+    let infoArray = fdString.split('accountType');
+    let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
+    GlobalContext.store('accountType', Number(type));
+    let result: DLPGeneralInfo = {
+      accountType: Number(type),
+      realFileType: '',
+    }
+    return ResultMsg.buildSuccess(result);
+  } catch (err) {
+    HiLog.wrapError(TAG, err, 'getStringFromFd error');
+    return ResultMsg.getErrMsg(err.code, err.message);
+  }
 }
 
 function getCurrentTime(isNano: boolean = false): number {

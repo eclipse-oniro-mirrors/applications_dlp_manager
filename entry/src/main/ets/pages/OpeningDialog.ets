@@ -40,6 +40,7 @@ struct Index {
     alignment: DialogAlignment.Center
   });
   private handleShowDialog = (eventData: emitter.EventData) => {
+    HiLog.info(TAG, 'receive SHOW_DIALOG_EVENT');
     this.handleShowDialogEvent(eventData.data?.showDialog, eventData.data?.requestId);
   };
   private handleScreenOff = async () => {
@@ -87,9 +88,9 @@ struct Index {
       this.timeoutId10 = null;
     }
     this.shouldCloseAfterTimeout = false;
-    this.timeoutId250 = setTimeout(() => {
+    this.timeoutId250 = setTimeout(async () => {
       this.shouldCloseAfterTimeout = true;
-      OpeningDialogService.getInstance().dialogTimeout(this.requestId);
+      await OpeningDialogService.getInstance().dialogTimeout(this.requestId);
       if (this.receivedCloseSignal) {
         HiLog.info(TAG, 'closeDialog by timeout');
         this.closeDialog();
@@ -98,12 +99,12 @@ struct Index {
 
     this.timeoutId10 = setTimeout(async () => {
       HiLog.error(TAG, 'closeDialog by decrypt timeout');
-      this.closeDialog();
+      await this.closeDialog();
       await OpeningDialogService.getInstance().terminateOpeningDialog();
     }, Constants.OPENING_DIALOG_TIMEOUT_TIME);
   }
 
-  private closeDialog() {
+  private async closeDialog() {
     if (this.timeoutId250) {
       clearTimeout(this.timeoutId250);
       this.timeoutId250 = null;
@@ -113,7 +114,7 @@ struct Index {
       this.timeoutId10 = null;
     }
     this.dlpAlertDialog.close();
-    OpeningDialogService.getInstance().dialogDisappear(this.requestId);
+    await OpeningDialogService.getInstance().dialogDisappear(this.requestId);
   }
 
   build() {
