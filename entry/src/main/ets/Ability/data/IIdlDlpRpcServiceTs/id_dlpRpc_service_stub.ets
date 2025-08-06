@@ -40,17 +40,19 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
     super(des);
   }
 
-  async onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<boolean> {
-    HiLog.info(TAG, `onRemoteMessageRequest called, code: ${code}`);
+  private validateInterfaceToken(data: rpc.MessageSequence): boolean {
     try {
       if (data.readInterfaceToken() !== Constants.DLP_MGR_INTERFACE_TOKEN) {
         HiLog.error(TAG, `InterfaceToken unmatched.`);
         return false;
       }
+      return true;
     } catch (error) {
       HiLog.error(TAG, `read data exception, error is ${JSON.stringify(error)}`);
       return false;
     }
+  }
+  private async executeCommand(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<boolean> {
     switch (code) {
       case IDlpServiceCmdCode.COMMAND_GEN_DLP_FILE: {
         await this.genDlpFileInner(data, reply);
@@ -98,6 +100,14 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       }
     }
     return false;
+  }
+
+  async onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<boolean> {
+    HiLog.info(TAG, `onRemoteMessageRequest called, code: ${code}`);
+    if (!this.validateInterfaceToken(data)) {
+      return false;
+    }
+    return this.executeCommand(code, data, reply);
   }
 
   async genDlpFileInner(data: rpc.MessageSequence, reply: rpc.MessageSequence): Promise<void> {

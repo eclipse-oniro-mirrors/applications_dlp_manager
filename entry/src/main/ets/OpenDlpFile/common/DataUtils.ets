@@ -13,22 +13,39 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../common/HiLog';
-import { DecryptState, OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
-import DecryptContent from '../OpenDlpFile/data/DecryptContent';
-import Constants from './constant';
-import FileUtil from './external/FileUtil';
+import { HiLog } from '../../common/HiLog';
+import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
+import DecryptContent from '../data/DecryptContent';
+import Constants from '../../common/constant';
+import FileUtil from '../../common/external/FileUtil';
 import { common } from '@kit.AbilityKit';
-import TerminateView from '../OpenDlpFile/TerminateView';
+import TerminateView from '../TerminateView';
+import OpeningDialogManager from '../manager/OpeningDialogManager';
 
 const TAG = 'DataUtils';
 
-async function clearDlpInfo(decryptContent: DecryptContent): Promise<void> {
+async function clearDlpInfoByError(decryptContent: DecryptContent): Promise<void> {
+  HiLog.info(TAG, 'start clearDlpInfoByError');
   clearIsDecrypting(decryptContent);
-  await deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
   FileUtil.closeSync(decryptContent.dlpFd);
+}
+
+async function clearDlpInfoByCancelSandbox(decryptContent: DecryptContent): Promise<void> {
+  HiLog.info(TAG, 'start clearDlpInfoByCancelSandbox');
+  deleteDecryptData(decryptContent);
+  await deleteDlpLinkFile(decryptContent);
+  await closeDlpFile(decryptContent);
+  FileUtil.closeSync(decryptContent.dlpFd);
+}
+
+async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> {
+  const manager = OpenDlpFileManager.getInstance();
+  const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
+  if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    HiLog.error(TAG, 'deleteDecryptData failed');
+  }
 }
 
 async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
@@ -42,8 +59,8 @@ async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
   }
   const decryptContents = rmRet.result;
   decryptContents.forEach(async decryptContent => {
-    HiLog.debug(TAG, `clearDlpInfo fileName ${decryptContent.fileName}`);
-    await clearDlpInfo(decryptContent);
+    HiLog.debug(TAG, `clearDlpInfoByCancelSandbox fileName ${decryptContent.fileName}`);
+    await clearDlpInfoByCancelSandbox(decryptContent);
   });
 
   const getRet = manager.getHasDecryptedSize();
@@ -85,21 +102,14 @@ async function deleteDlpLinkFile(decryptContent: DecryptContent): Promise<void> 
   }
 }
 
-async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> {
-  const manager = OpenDlpFileManager.getInstance();
-  const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
-  if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-    HiLog.error(TAG, 'deleteDecryptData failed');
-  }
-}
-
 function clearIsDecrypting(decryptContent: DecryptContent): void {
   if (decryptContent.openDlpFileData?.uri) {
     const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
     if (getRet.errcode === Constants.ERR_CODE_SUCCESS && (getRet.result?.state === DecryptState.DECRYPTING)) {
-      OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
+      OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
+      OpenDlpFileManager.getInstance().removeAllByUri(decryptContent.openDlpFileData.uri);
     }
   }
 }
 
-export { clearDlpInfo, clearDlpInfoBatch, closeDlpFile };
+export { clearDlpInfoByError, clearDlpInfoBatch, closeDlpFile };

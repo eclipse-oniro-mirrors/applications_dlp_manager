@@ -19,38 +19,38 @@ import { GetAlertMessage } from '../../common/GetAlertMessage';
 import { BusinessError } from '@ohos.base';
 import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
+import { OpenDlpFileError } from '../common/OpenDlpFileError';
 
 const TAG: string = 'ErrorHandler';
 
-class OpenDlpFileError {
-  public static readonly NOT_NEED_TOAST: Set<number> = new Set([
-    Constants.ERR_CODE_FILE_IS_DECRYPTING_ERROR,
-    Constants.ERR_JS_ACCOUNT_NOT_LOGIN,
-    Constants.ERR_CODE_USER_STOP_DIALOG,
-  ]);
-}
-
 abstract class ErrorHandler {
-  public abstract handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void>;
+  public abstract handle(error: BusinessError): Promise<void>;
 }
 
 class PhoneHandle extends ErrorHandler {
-  public async handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void> {
+  public async handle(error: BusinessError): Promise<void> {
+    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
-      HiLog.info(TAG, 'PhoneHandle not need toast');
+      HiLog.info(TAG, `PhoneHandle not need toast, code ${error.code}`);
       return;
     }
-    await GetAlertMessage.viewAbilityPhoneToast(context, error);
+    if (OpenDlpFileError.NEED_DIALOG.has(error.code)) {
+      HiLog.info(TAG, `PhoneHandle need dialog, code ${error.code}`);;
+      await GetAlertMessage.requestModalUIExtension(viewContext, error);
+      return;
+    }
+    await GetAlertMessage.viewAbilityPhoneToast(viewContext, error);
   }
 }
 
 class PCHandle extends ErrorHandler {
-  public async handle(context: common.ServiceExtensionContext, error: BusinessError): Promise<void> {
+  public async handle(error: BusinessError): Promise<void> {
+    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
-      HiLog.info(TAG, 'PCHandle not need toast');
+      HiLog.info(TAG, `PCHandle not need toast, code ${error.code}`);
       return;
     }
-    await GetAlertMessage.requestModalUIExtension(context, error);
+    await GetAlertMessage.requestModalUIExtension(viewContext, error);
   }
 }
 

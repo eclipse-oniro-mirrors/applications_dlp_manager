@@ -82,7 +82,6 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 @Component
 struct encryptedSharing {
   static readonly GET_ACCOUNT_INFO_RESET = 'clear';
-
   private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
   private connectService: CredConnectService = new CredConnectService(this.context);
   private storage = this.getUIContext().getSharedLocalStorage() as LocalStorage;
@@ -96,7 +95,6 @@ struct encryptedSharing {
   private isFromContactsPicker: boolean = false;
   private tempInputValue: string = '';
   private allAssociationList: string[] = [];
-
   @State titlebarMargin: LocalizedMargin = {
     start: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
     end: LengthMetrics.vp(Constants.SHARE_TITLE_HEAD_MARGIN_RIGHT),
@@ -490,14 +488,12 @@ struct encryptedSharing {
       AppStorage.setOrCreate('commandSearchUserInfo', '');
       return false;
     }
-    let authUserList: AuthUserList[] = [
-      {
-        'authAccount': credentialCallBack.userIdCipher,
-        'authAccountType': 1,
-        'dlpFileAccess': 1,
-        'permExpiryTime': Date.UTC(9999, 1, 1),
-      }
-    ];
+    let authUserList: AuthUserList[] = [{
+      'authAccount': credentialCallBack.userIdCipher,
+      'authAccountType': 1,
+      'dlpFileAccess': 1,
+      'permExpiryTime': Date.UTC(9999, 1, 1),
+    }];
     this.dlpProperty = {
       'ownerAccount': this.ownerAccount,
       'ownerAccountID': this.ownerAccountID,

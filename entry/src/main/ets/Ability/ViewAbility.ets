@@ -66,6 +66,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async onDestroy(): Promise<void> {
     HiLog.info(TAG, 'ViewAbility onDestroy');
+    OpeningDialogManager.getInstance().unRegisterEmitEvent();
     await OpeningDialogManager.getInstance().unLoadOpeningDialogAbnormal();
   }
 }

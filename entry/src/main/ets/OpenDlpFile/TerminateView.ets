@@ -41,9 +41,10 @@ export default class TerminateView {
     const hasCallback = OpeningDialogManager.getInstance().getHasCallback();
     const isDecrypting = OpeningDialogManager.getInstance().getIsDecrypting();
     const toastSize = GetAlertMessage.getViewAbilityPhoneToastCount();
+    const isWaitingShowToast = OpeningDialogManager.getInstance().getIsWaitingShowToast();
     HiLog.info(TAG, `TerminateView hasDecryptedSize: ${hasDecryptedSize}, hasCallback: ${hasCallback},
-    isDecrypting: ${isDecrypting}, toastSize: ${toastSize}`);
-    if (hasDecryptedSize === 0 && hasCallback && !isDecrypting && toastSize === 0) {
+    isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast}`);
+    if (hasDecryptedSize === 0 && hasCallback && !isDecrypting && toastSize === 0 && !isWaitingShowToast) {
       try {
         OpeningDialogManager.getInstance().setIsTerminalSelf(true);
         await ViewAbilityService.getInstance().sendDisconnectMsg();
@@ -53,5 +54,6 @@ export default class TerminateView {
         HiLog.wrapError(TAG, error, 'terminateSelf exception');
       }
     }
+    OpeningDialogManager.getInstance().setIsTerminalSelf(false);
   }
 }

@@ -20,16 +20,12 @@ import Constants from './constant';
 
 const TAG = 'CommonEventManager';
 
-interface EventInfoParam {
-  events: string[],
-}
-
-const COMMON_EVENT_INFO: EventInfoParam = {
-  events: [commonEventManager.Support.COMMON_EVENT_SCREEN_OFF]
-}
-
 export default class CommonEventManager {
   private static instance: CommonEventManager;
+  private subscribe: commonEventManager.CommonEventSubscriber | undefined;
+  private subscribeInfo: commonEventManager.CommonEventSubscribeInfo = {
+    events: [commonEventManager.Support.COMMON_EVENT_SCREEN_OFF]
+  };
 
   private constructor() {
   }
@@ -43,8 +39,6 @@ export default class CommonEventManager {
 
   public async init(): Promise<void> {
     HiLog.info(TAG, 'CommonEventManager init');
-    let subscribe: commonEventManager.CommonEventSubscriber;
-    let subscribeInfo = COMMON_EVENT_INFO;
     let subscribeCB = (err: BusinessError, data: commonEventManager.CommonEventData): void => {
       if (err) {
         HiLog.wrapError(TAG, err, 'subscribeCB error');
@@ -66,9 +60,9 @@ export default class CommonEventManager {
         HiLog.wrapError(TAG, err, 'createCB failed');
       } else {
         HiLog.info(TAG, 'createCB data');
-        subscribe = commonEventSubscriber;
+        this.subscribe = commonEventSubscriber;
         try {
-          commonEventManager.subscribe(subscribe, subscribeCB);
+          commonEventManager.subscribe(this.subscribe, subscribeCB);
           HiLog.info(TAG, 'subscribe success');
         } catch (err) {
           HiLog.wrapError(TAG, err, 'subscribe failed');
@@ -77,10 +71,25 @@ export default class CommonEventManager {
     };
 
     try {
-      commonEventManager.createSubscriber(subscribeInfo, createCB);
+      commonEventManager.createSubscriber(this.subscribeInfo, createCB);
       HiLog.info(TAG, 'createSubscriber success');
     } catch (err) {
       HiLog.wrapError(TAG, err, 'createSubscriber failed');
+    }
+  }
+
+  public unsubscribe(): void {
+    try {
+      commonEventManager.unsubscribe(this.subscribe, (err: BusinessError) => {
+        if (err) {
+          HiLog.wrapError(TAG, err, 'unsubscribe error');
+          return;
+        }
+        this.subscribe = undefined;
+        HiLog.info(TAG, 'subscribe success');
+      });
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'Failed to unsubscribe');
     }
   }
 }

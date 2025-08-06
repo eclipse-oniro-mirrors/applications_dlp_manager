@@ -23,6 +23,7 @@ import { HiLog } from '../common/HiLog';
 import TerminateView from '../OpenDlpFile/TerminateView';
 import { UIContext } from '@kit.ArkUI';
 import UIContextUtil from './UIContextUtil';
+import { OpenDlpFileError } from '../OpenDlpFile/common/OpenDlpFileError';
 
 const TAG = 'AlertMessage';
 
@@ -237,7 +238,7 @@ export class GetAlertMessage {
 
   public static async requestModalUIExtension(context: common.UIAbilityContext | common.ServiceExtensionContext,
     error: BusinessError) {
-    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1) {
+    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1 && !OpenDlpFileError.NEED_DIALOG.has(error.code)) {
       GetAlertMessage.phoneHandle(context, error);
       return;
     }

@@ -17,15 +17,13 @@ import Result from '../../common/Result'
 import { ResultMsg } from '../../common/ResultMsg'
 import DecryptContent from '../data/DecryptContent';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
-import { common, CompletionHandler, StartOptions, wantConstant } from '@kit.AbilityKit';
+import { common, wantConstant } from '@kit.AbilityKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { ObjectUtil } from '../../common/ObjectUtil';
 import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
 import { DlpFileOpenReport } from '../DlpFileOpenReport';
-import { BusinessError } from '@kit.BasicServicesKit';
 import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
-import type bundleManager from '@ohos.bundle.bundleManager';
 import ViewAbilityService from '../../rpc/ViewAbilityService';
 
 const TAG: string = 'StartSandboxHandler';

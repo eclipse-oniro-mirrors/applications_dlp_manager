@@ -22,6 +22,7 @@ import OpeningDialogManager from './OpeningDialogManager';
 import StartSandboxHandler from '../handler/StartSandboxHandler';
 import { HiLog } from '../../common/HiLog';
 import { OpenDlpFileManager } from './OpenDlpFileManager';
+import { FileParseType } from '../../bean/data/FileParseType';
 
 const TAG = 'StartSandboxManager';
 
@@ -37,6 +38,17 @@ export default class StartSandboxManager {
       StartSandboxManager.instance = new StartSandboxManager();
     }
     return StartSandboxManager.instance;
+  }
+
+  private async prepareStartSandbox(decryptContent: DecryptContent,
+    context: common.ServiceExtensionContext): Promise<Result<DecryptContent>> {
+    const startSandboxRet = await this.startSandboxInner(decryptContent, context);
+    if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'startSandboxInner error');
+      await OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
+    }
+    this._decryptContent = undefined;
+    return startSandboxRet;
   }
 
   // 拉起沙箱：弹框超过250ms，拉起沙箱；弹框小于250ms，等待弹框250ms之后，拉起沙箱
@@ -56,30 +68,28 @@ export default class StartSandboxManager {
       return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
     }
 
-    const hasDecrypted = this._decryptContent.hasDecrypted;
     const canStartAbility =
       OpeningDialogManager.getInstance().getCanStartAbility(this._decryptContent.openDlpFileData.requestId);
     const needStartAbility =
       OpeningDialogManager.getInstance().getNeedStartAbility(this._decryptContent.openDlpFileData.requestId);
-    HiLog.info(TAG, `startSandbox canStartAbility ${canStartAbility}, needStartAbility ${hasDecrypted},
-    needStartAbility ${hasDecrypted}`);
+    const needShowDialog = this._decryptContent.openDlpFileData.needShowToast;
+    const isZip = this._decryptContent.openDlpFileData.fileParse === FileParseType.ZIP;
+    const hasDecrypt = this._decryptContent.hasDecrypted;
+    HiLog.info(TAG, `startSandbox canStartAbility ${canStartAbility}, needStartAbility ${needStartAbility},
+    needShowDialog ${needShowDialog}, isZip ${isZip}, hasDecrypt ${hasDecrypt}`);
 
-    if (!hasDecrypted && !canStartAbility) {
+    if (hasDecrypt && !isZip || !needShowDialog) {
+      return this.prepareStartSandbox(this._decryptContent, viewContext);
+    }
+    if (needShowDialog && !canStartAbility) {
       HiLog.error(TAG, 'CanStartAbility error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_USER_STOP_DIALOG);
     }
-    if (!hasDecrypted && !needStartAbility) {
+    if (needShowDialog && !needStartAbility) {
       HiLog.info(TAG, 'no need to start ability, wait timeout callback');
       return ResultMsg.buildSuccess(decryptContent);
     }
-
-    const startSandboxRet = await this.startSandboxInner(this._decryptContent, viewContext);
-    if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'startSandboxInner error');
-      await OpenDlpFileManager.getInstance().deleteStatus(this._decryptContent.openDlpFileData.uri);
-    }
-    this._decryptContent = undefined;
-    return startSandboxRet;
+    return this.prepareStartSandbox(this._decryptContent, viewContext);
   }
 
   private async startSandboxInner(decryptContent: DecryptContent, context: common.ServiceExtensionContext):

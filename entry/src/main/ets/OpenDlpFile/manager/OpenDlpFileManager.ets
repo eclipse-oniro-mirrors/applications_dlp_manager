@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import { HiLog } from '../../common/HiLog';
 import Result from '../../common/Result';
 import { ResultMsg } from '../../common/ResultMsg';
@@ -119,6 +120,10 @@ export class OpenDlpFileManager {
 
   public getHasDecryptedContent(uri: string): Result<DecryptContent> {
     let content = this.contentMap.get(uri);
+    if (!content) {
+      HiLog.error(TAG, 'getHasDecryptedContent error');
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+    }
     return ResultMsg.buildSuccess(content);
   }
 

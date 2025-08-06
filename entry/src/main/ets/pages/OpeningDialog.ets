@@ -39,23 +39,26 @@ struct Index {
     customStyle: false,
     alignment: DialogAlignment.Center
   });
+  private handleShowDialog = (eventData: emitter.EventData) => {
+    HiLog.info(TAG, 'receive SHOW_DIALOG_EVENT');
+    this.handleShowDialogEvent(eventData.data?.showDialog, eventData.data?.requestId);
+  };
+  private handleScreenOff = async () => {
+    HiLog.info(TAG, 'receive SCREEN_OFF_EVENT');
+    this.closeDialog();
+    await OpeningDialogService.getInstance().terminateOpeningDialog();
+  };
 
   aboutToAppear(): void {
     HiLog.info(TAG, 'OpeningDialog aboutToAppear');
-    emitter.on(Constants.SHOW_DIALOG_EVENT, (eventData: emitter.EventData) => {
-      this.handleShowDialogEvent(eventData.data?.showDialog, eventData.data?.requestId);
-    });
-    emitter.on(Constants.SCREEN_OFF_EVENT, async () => {
-      HiLog.info(TAG, 'receive SCREEN_OFF_EVENT');
-      this.closeDialog();
-      await OpeningDialogService.getInstance().terminateOpeningDialog();
-    })
+    emitter.on(Constants.SHOW_DIALOG_EVENT, this.handleShowDialog);
+    emitter.on(Constants.SCREEN_OFF_EVENT, this.handleScreenOff);
   }
 
   aboutToDisappear(): void {
     HiLog.info(TAG, 'OpeningDialog aboutToDisappear');
-    emitter.off(Constants.SHOW_DIALOG_EVENT);
-    emitter.off(Constants.SCREEN_OFF_EVENT);
+    emitter.off(Constants.SHOW_DIALOG_EVENT, this.handleShowDialog);
+    emitter.off(Constants.SCREEN_OFF_EVENT, this.handleScreenOff);
     this.closeDialog();
   }
 
@@ -76,10 +79,18 @@ struct Index {
   }
 
   private startTimeoutClose() {
+    if (this.timeoutId250) {
+      clearTimeout(this.timeoutId250);
+      this.timeoutId250 = null;
+    }
+    if (this.timeoutId10) {
+      clearTimeout(this.timeoutId10);
+      this.timeoutId10 = null;
+    }
     this.shouldCloseAfterTimeout = false;
-    this.timeoutId250 = setTimeout(() => {
+    this.timeoutId250 = setTimeout(async () => {
       this.shouldCloseAfterTimeout = true;
-      OpeningDialogService.getInstance().dialogTimeout(this.requestId);
+      await OpeningDialogService.getInstance().dialogTimeout(this.requestId);
       if (this.receivedCloseSignal) {
         HiLog.info(TAG, 'closeDialog by timeout');
         this.closeDialog();
@@ -88,12 +99,12 @@ struct Index {
 
     this.timeoutId10 = setTimeout(async () => {
       HiLog.error(TAG, 'closeDialog by decrypt timeout');
-      this.closeDialog();
+      await this.closeDialog();
       await OpeningDialogService.getInstance().terminateOpeningDialog();
     }, Constants.OPENING_DIALOG_TIMEOUT_TIME);
   }
 
-  private closeDialog() {
+  private async closeDialog() {
     if (this.timeoutId250) {
       clearTimeout(this.timeoutId250);
       this.timeoutId250 = null;
@@ -103,7 +114,7 @@ struct Index {
       this.timeoutId10 = null;
     }
     this.dlpAlertDialog.close();
-    OpeningDialogService.getInstance().dialogDisappear(this.requestId);
+    await OpeningDialogService.getInstance().dialogDisappear(this.requestId);
   }
 
   build() {

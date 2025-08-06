@@ -280,32 +280,41 @@ export default class SaveAsAbility extends UIAbility {
         }
       }
 
-      let openFile: fs.File | undefined;
-      let openZipFile: fs.File | undefined;
-      try {
-        this.zipFlag = true;
-        openFile = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
-        await fs.copyFile(srcFd, openFile.fd);
-        await fs.mkdir(this.dirPath);
-        let options: zlib.Options = {
-          level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
-          memLevel: zlib.MemLevel.MEM_LEVEL_DEFAULT,
-          strategy: zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
-        };
-        await zlib.decompressFile(this.filePath, this.dirPath, options);
-        await fs.truncate(this.encFile);
-        await zlib.compressFile(this.dirPath, this.zipPath, options);
-        openZipFile = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
-        await fs.copyFile(openZipFile.fd, dstFd);
+      const ret = await this.handleZipFile(srcFd, dstFd);
+      if (ret) {
         resolve(true);
-      } catch (err) {
-        HiLog.error(TAG, `open failed: ${JSON.stringify(err)}`);
+      } else {
         resolve(false);
-      } finally {
-        FileUtil.closeSync(openFile);
-        FileUtil.closeSync(openZipFile);
       }
     })
+  }
+
+  private async handleZipFile(srcFd: number, dstFd: number): Promise<boolean> {
+    let openFile: fs.File | undefined;
+    let openZipFile: fs.File | undefined;
+    try {
+      this.zipFlag = true;
+      openFile = await fs.open(this.filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+      await fs.copyFile(srcFd, openFile.fd);
+      await fs.mkdir(this.dirPath);
+      let options: zlib.Options = {
+        level: zlib.CompressLevel.COMPRESS_LEVEL_NO_COMPRESSION,
+        memLevel: zlib.MemLevel.MEM_LEVEL_DEFAULT,
+        strategy: zlib.CompressStrategy.COMPRESS_STRATEGY_DEFAULT_STRATEGY,
+      };
+      await zlib.decompressFile(this.filePath, this.dirPath, options);
+      await fs.truncate(this.encFile);
+      await zlib.compressFile(this.dirPath, this.zipPath, options);
+      openZipFile = await fs.open(this.zipName, fs.OpenMode.READ_WRITE);
+      await fs.copyFile(openZipFile.fd, dstFd);
+      return true;
+    } catch (err) {
+      HiLog.error(TAG, `open failed: ${JSON.stringify(err)}`);
+      return false;
+    } finally {
+      FileUtil.closeSync(openFile);
+      FileUtil.closeSync(openZipFile);
+    }
   }
 
   isValidDirUri(uri: string | undefined) {
@@ -503,6 +512,12 @@ export default class SaveAsAbility extends UIAbility {
     }
   }
 
+  cleanupResources(uri: string): void {
+    FileUtil.closeSync(this.file);
+    FileUtil.unlinkSync(uri);
+    FileUtil.closeSync(this.srcFdPicker);
+  }
+
   pickerDialog(uri: string, want: Want): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const manager = OpenDlpFileManager.getInstance();
@@ -527,9 +542,7 @@ export default class SaveAsAbility extends UIAbility {
 
       let success = await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
       if (!success) {
-        FileUtil.closeSync(this.file);
-        FileUtil.unlinkSync(uri);
-        FileUtil.closeSync(this.srcFdPicker);
+        this.cleanupResources(uri);
         this.isOK = false;
         await GetAlertMessage.requestModalUIExtension(this.context,
           { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -539,9 +552,7 @@ export default class SaveAsAbility extends UIAbility {
         await this.openDLPFile(uri, want);
         await this.addDLPLinkFile(appId, uri);
       } catch {
-        FileUtil.closeSync(this.file);
-        FileUtil.unlinkSync(uri);
-        FileUtil.closeSync(this.srcFdPicker);
+        this.cleanupResources(uri);
         reject();
       }
       const linkFilePath = Constants.FUSE_PATH + this.linkFileName;

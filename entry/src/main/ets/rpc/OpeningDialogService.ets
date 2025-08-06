@@ -30,10 +30,10 @@ export default class OpeningDialogService {
   private connectionId: number | undefined;
   private _disconnectTimer: number | null = null;
   private connectOptions: common.ConnectOptions = {
-    onConnect: (elementName, remoteProxy) => {
+    onConnect: async (elementName, remoteProxy) => {
       HiLog.info(TAG, 'OpeningDialogService onConnect success');
       this.remoteProxy = remoteProxy;
-      this.setRemoteObject();
+      await this.setRemoteObject();
     },
     onDisconnect: (elementName) => {
       this.remoteProxy = null;
@@ -69,6 +69,10 @@ export default class OpeningDialogService {
       return;
     }
     try {
+      if (this._disconnectTimer) {
+        clearTimeout(this._disconnectTimer);
+        this._disconnectTimer = null;
+      }
       await this._context.terminateSelf();
       HiLog.info(TAG, 'terminateOpeningDialog success');
     } catch (error) {
@@ -141,7 +145,7 @@ export default class OpeningDialogService {
     });
   }
 
-  private setRemoteObject(): void {
+  private async setRemoteObject(): Promise<void> {
     HiLog.info(TAG, `setRemoteObject start`);
     if (!this.remoteProxy) {
       HiLog.error(TAG, 'setRemoteObject remoteProxy is null');
@@ -154,7 +158,7 @@ export default class OpeningDialogService {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
       let callback: OpeningDialogStub = new OpeningDialogStub('OpeningDialogStub');
       data.writeRemoteObject(callback.asObject());
-      this.remoteProxy.sendMessageRequest(Constants.COMMAND_SET_REMOTE_OBJECT, data, reply, option);
+      await this.remoteProxy.sendMessageRequest(Constants.COMMAND_SET_REMOTE_OBJECT, data, reply, option);
       HiLog.info(TAG, 'setRemoteObject sendmsg success.');
     } catch (error) {
       HiLog.wrapError(TAG, error, 'setRemoteObject sendmsg error');
@@ -164,7 +168,7 @@ export default class OpeningDialogService {
     }
   }
 
-  public dialogDisappear(requestId: string): void {
+  public async dialogDisappear(requestId: string): Promise<void> {
     HiLog.info(TAG, `dialogDisappear requestId ${requestId}`);
     if (!this.remoteProxy) {
       HiLog.error(TAG, 'dialogDisappear remoteProxy is null');
@@ -176,7 +180,7 @@ export default class OpeningDialogService {
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
       data.writeString(requestId);
-      this.remoteProxy.sendMessageRequest(Constants.COMMAND_DIALOG_DISAPPEAR, data, reply, option);
+      await this.remoteProxy.sendMessageRequest(Constants.COMMAND_DIALOG_DISAPPEAR, data, reply, option);
       HiLog.info(TAG, 'dialogDisappear sendmsg success.');
     } catch (error) {
       HiLog.wrapError(TAG, error, 'dialogDisappear sendmsg error');
@@ -186,7 +190,7 @@ export default class OpeningDialogService {
     }
   }
 
-  public dialogTimeout(requestId: string): void {
+  public async dialogTimeout(requestId: string): Promise<void> {
     HiLog.info(TAG, `dialogTimeout requestId ${requestId}`);
     if (!this.remoteProxy) {
       HiLog.error(TAG, 'dialogTimeout remoteProxy is null');
@@ -198,7 +202,7 @@ export default class OpeningDialogService {
     try {
       data.writeInterfaceToken(Constants.DLP_MGR_OPENING_DIALOG_TOKEN);
       data.writeString(requestId);
-      this.remoteProxy.sendMessageRequest(Constants.COMMAND_DIALOG_TIMEOUT, data, reply, option);
+      await this.remoteProxy.sendMessageRequest(Constants.COMMAND_DIALOG_TIMEOUT, data, reply, option);
       HiLog.info(TAG, 'dialogTimeout sendmsg success.');
     } catch (error) {
       HiLog.wrapError(TAG, error, 'dialogTimeout sendmsg error');
