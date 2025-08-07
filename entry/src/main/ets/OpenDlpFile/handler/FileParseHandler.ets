@@ -94,6 +94,9 @@ const NUM_TO_TYPE_MAP = new Map<number, string>([
   [60, 'mkv'],
   [61, 'webm'],
   [62, 'h264'],
+  [63, 'wbmp'],
+  [64, 'nef'],
+  [65, 'cr2'],
 ]);
 
 abstract class FileParseBase {
