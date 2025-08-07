@@ -15,7 +15,7 @@
 
 import AccountAssociation from '../../bean/data/AccountAssociation';
 import AccountAssociationConvertor from '../../convertor/AccountAssociationConvertor';
-import AccountAssociationUtil from '../../common/AccountAssociationUtil';
+import AccountAssociationUtil from '../../common/AssocUtil/AccountAssociationUtil';
 import AppStorageMgr from '../../common/AppStorageMgr';
 import { common } from '@kit.AbilityKit';
 import Constants from '../../common/constant';

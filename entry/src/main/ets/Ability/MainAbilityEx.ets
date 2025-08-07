@@ -36,7 +36,7 @@ import {
   getAccountTypeAndRealFileType
 } from '../common/utils';
 import GlobalContext from '../common/GlobalContext';
-import { GetAlertMessage } from '../common/GetAlertMessage';
+import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import FileUtils from '../common/FileUtils';
 import AccountManager from '../manager/AccountManager';
@@ -103,9 +103,9 @@ export default class MainAbility extends UIExtensionAbility {
     }
     GlobalContext.store('session', session);
     let dlpInfoRet = await getDLPInfo();
-    if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS) {
-      AppStorage.setOrCreate('hiPNameId', dlpInfoRet.result!.name);
-      AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result!.versionCode);
+    if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS && dlpInfoRet.result) {
+      AppStorage.setOrCreate('hiPNameId', dlpInfoRet.result.name);
+      AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result.versionCode);
     }
     GlobalContext.store('abilityWant', want);
     GlobalContext.store('uri', want.uri ?? '');
@@ -333,11 +333,11 @@ export default class MainAbility extends UIExtensionAbility {
       let dlpFd: number = -1;
       try {
         let getFileFdRet = getFileFd(String(want.uri));
-        if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+        if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS || !getFileFdRet.result) {
           HiLog.error(TAG, 'getFileFd error')
           return;
         }
-        dlpFd = getFileFdRet.result!;
+        dlpFd = getFileFdRet.result;
 
         let dlpGeneralInfo: DLPGeneralInfo = await getAccountTypeAndRealFileType(this.context, dlpFd);
         GlobalContext.store('realFileType', dlpGeneralInfo.realFileType);

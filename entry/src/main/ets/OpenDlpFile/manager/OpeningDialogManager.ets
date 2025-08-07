@@ -19,7 +19,7 @@ import { common, Want } from '@kit.AbilityKit';
 import ViewAbilityService from '../../rpc/ViewAbilityService';
 import StartSandboxManager from './StartSandboxManager';
 import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
-import TerminateView from '../TerminateView';
+import TerminateView from '../TerminateView/TerminateView';
 import { FileParseType } from '../../bean/data/FileParseType';
 import OpenDlpFileData from '../data/OpenDlpFileData';
 import FileUtils from '../../common/FileUtils';

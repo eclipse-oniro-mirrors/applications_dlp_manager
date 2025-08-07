@@ -68,11 +68,11 @@ export default class DecryptHandler {
     hiTraceMeter.startTrace('DlpInstallSandboxJs', decryptContent.openDlpFileData.startId);
     const getAppInfoRet = await this.getAppInfo(decryptContent);
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', decryptContent.openDlpFileData.startId);
-    if (getAppInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    if (getAppInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !getAppInfoRet.result) {
       HiLog.error(TAG, 'getAppInfo error');
       return ResultMsg.buildMsg(getAppInfoRet.errcode, getAppInfoRet.errmsg);
     }
-    const appInfo = getAppInfoRet.result!;
+    const appInfo = getAppInfoRet.result;
 
     // 4. If has decrypted, check appInfo consistent
     if (hasDecrypted) {

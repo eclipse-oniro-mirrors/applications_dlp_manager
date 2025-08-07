@@ -18,7 +18,7 @@ import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
 import Constants from '../../common/constant';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
-import { GetAlertMessage } from '../../common/GetAlertMessage';
+import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
 import { DlpAlertDialog } from '../../common/components/dlp_alert_dialog';
 import { HiLog } from '../../common/HiLog';
 import { SystemUtils } from '../../common/systemUtils';

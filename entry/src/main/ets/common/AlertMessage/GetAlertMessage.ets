@@ -15,15 +15,15 @@
 
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
-import Constants from './constant';
-import CounterLock from './CounterLock';
-import GlobalContext from './GlobalContext';
+import Constants from '../constant';
+import CounterLock from '../CounterLock';
+import GlobalContext from '../GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
-import { HiLog } from '../common/HiLog';
-import TerminateView from '../OpenDlpFile/TerminateView';
+import { HiLog } from '../HiLog';
+import TerminateView from '../../OpenDlpFile/TerminateView/TerminateView';
 import { UIContext } from '@kit.ArkUI';
-import UIContextUtil from './UIContextUtil';
-import { OpenDlpFileError } from '../OpenDlpFile/common/OpenDlpFileError';
+import UIContextUtil from '../UIContextUtil';
+import { OpenDlpFileError } from '../../OpenDlpFile/common/OpenDlpFileError';
 
 const TAG = 'AlertMessage';
 

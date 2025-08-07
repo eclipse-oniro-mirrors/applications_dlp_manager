@@ -40,7 +40,7 @@ import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import { AccountTipsConfig } from '../component/AccountTipsConfig';
 import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
-import { GetAlertMessage } from '../common/GetAlertMessage';
+import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import { SystemUtils } from '../common/systemUtils';
 import FileUtils, { FileMsg } from '../common/FileUtils';

@@ -13,25 +13,25 @@
  * limitations under the License.
  */
 
-import Result from '../common/Result';
-import { ResultMsg } from '../common/ResultMsg';
-import { FileParseFactory } from './handler/FileParseHandler';
-import OpenDlpFileData from './data/OpenDlpFileData';
+import Result from '../../common/Result';
+import { ResultMsg } from '../../common/ResultMsg';
+import { FileParseFactory } from '../handler/FileParseHandler';
+import OpenDlpFileData from '../data/OpenDlpFileData';
 import common from '@ohos.app.ability.common';
-import Constants from '../common/constant';
-import DecryptContent from './data/DecryptContent';
-import { AccountHandlerFactory } from './handler/AccountHandler';
-import DecryptHandler from './handler/DecryptHandler';
-import { DecryptState, OpenDlpFileManager } from './manager/OpenDlpFileManager';
+import Constants from '../../common/constant';
+import DecryptContent from '../data/DecryptContent';
+import { AccountHandlerFactory } from '../handler/AccountHandler';
+import DecryptHandler from '../handler/DecryptHandler';
+import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
-import { HiLog } from '../common/HiLog';
-import { clearDlpInfoByError } from './common/DataUtils';
-import CredConnectService from '../rpc/CredConnectService';
-import OpeningDialogManager from './manager/OpeningDialogManager';
-import StartSandboxManager from './manager/StartSandboxManager';
+import { HiLog } from '../../common/HiLog';
+import { clearDlpInfoByError } from '../common/DataUtils';
+import CredConnectService from '../../rpc/CredConnectService';
+import OpeningDialogManager from '../manager/OpeningDialogManager';
+import StartSandboxManager from '../manager/StartSandboxManager';
 import { BusinessError } from '@ohos.base';
-import { DlpFileOpenReport } from './DlpFileOpenReport';
-import ErrorManager from './manager/ErrorManager';
+import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
+import ErrorManager from '../manager/ErrorManager';
 
 const TAG: string = 'OpenDlpFileProcessor';
 
@@ -111,7 +111,7 @@ export class OpenDlpFileProcessor {
     OpeningDialogManager.getInstance().loadOpeningDialog(context, fileParseRet.result.fileSize,
       openDlpFileData, state, fileParseRet.result?.parseType);
 
-    const fileMetaInfoRet = await fileParseRet.result!.parse(openDlpFileData.uri, context.filesDir);
+    const fileMetaInfoRet = await fileParseRet.result.parse(openDlpFileData.uri, context.filesDir);
     if (fileMetaInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'parse error');
       OpeningDialogManager.getInstance().hideOpeningDialogByFailed(openDlpFileData.requestId);

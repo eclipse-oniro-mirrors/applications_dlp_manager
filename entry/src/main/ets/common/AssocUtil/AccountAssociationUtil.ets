@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-import AccountAssociation from '../bean/data/AccountAssociation';
-import AssociationDecryptValidator from '../validator/AccountAssociation/AssociationDecryptValidator';
-import AssociationEncryptValidator from '../validator/AccountAssociation/AssociationEncryptValidator';
-import Constants from './constant';
-import { HiLog } from './HiLog';
-import StorageUtil from './StorageUtil';
-import { decodeByBase64, getSha256, isInvalidStr, uint8ArrayToHexString } from './utils';
+import AccountAssociation from '../../bean/data/AccountAssociation';
+import AssociationDecryptValidator from '../../validator/AccountAssociation/AssociationDecryptValidator';
+import AssociationEncryptValidator from '../../validator/AccountAssociation/AssociationEncryptValidator';
+import Constants from '../constant';
+import { HiLog } from '../HiLog';
+import StorageUtil from '../StorageUtil';
+import { decodeByBase64, getSha256, isInvalidStr, uint8ArrayToHexString } from '../utils';
 
 const TAG: string = 'AssocUtil';
 
