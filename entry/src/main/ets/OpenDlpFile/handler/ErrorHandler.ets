@@ -15,7 +15,7 @@
 
 import { common } from '@kit.AbilityKit';
 import { deviceInfo } from '@kit.BasicServicesKit';
-import { GetAlertMessage } from '../../common/GetAlertMessage';
+import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
 import { BusinessError } from '@ohos.base';
 import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';

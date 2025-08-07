@@ -46,7 +46,7 @@ export class ReportToBigDataUtil {
       PNAMEID: getDLPInfoRet.result?.name ?? '',
       PVERSIONID: getDLPInfoRet.result?.versionCode ?? ''
     };
-    return ReportToBigDataUtil.currentBundleInfo!;
+    return ReportToBigDataUtil.currentBundleInfo;
   }
 
   private static async constructEventMsg(eventMsg?: object | BigDataMsg): Promise<object | BigDataMsg> {

@@ -51,7 +51,7 @@ import { AddStaff } from '../component/encryptionComponents/AddStaff';
 import GlobalContext from '../common/GlobalContext';
 import IDLDLPProperty from '../common/dlpClass';
 import { IAuthUser } from '../common/dlpClass';
-import { GetAlertMessage } from '../common/GetAlertMessage';
+import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import FileUtils, { FileMsg } from '../common/FileUtils';
 import { SystemUtils } from '../common/systemUtils';

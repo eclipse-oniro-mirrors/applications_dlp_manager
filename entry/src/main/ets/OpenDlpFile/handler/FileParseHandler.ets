@@ -251,15 +251,15 @@ export class FileParseFactory {
     HiLog.debug(TAG, 'CreateFileParse');
     const uri = openDlpFileData.uri;
     let getFileFdRet = getFileFd(uri, fs.OpenMode.READ_WRITE);
-    if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+    if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS || !getFileFdRet.result) {
       HiLog.info(TAG, 'getFileFd with READ_WRITE failed, try to READ_ONLY.');
       getFileFdRet = getFileFd(uri, fs.OpenMode.READ_ONLY);
-      if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS || !getFileFdRet.result) {
         HiLog.error(TAG, 'getFileFd with READ_ONLY error.');
         return ResultMsg.buildMsg(getFileFdRet.errcode, getFileFdRet.errmsg);
       }
     }
-    let dlpFd = getFileFdRet.result!;
+    let dlpFd = getFileFdRet.result;
     const format = await FileFormatDetector.detect(dlpFd);
     if (format.errcode !== Constants.ERR_CODE_SUCCESS || !format.result) {
       HiLog.error(TAG, 'detect failed');

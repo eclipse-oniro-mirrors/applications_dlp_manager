@@ -22,7 +22,7 @@ import { dlpPermission } from '@kit.DataProtectionKit';
 import { ObjectUtil } from '../../common/ObjectUtil';
 import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
-import { DlpFileOpenReport } from '../DlpFileOpenReport';
+import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import ViewAbilityService from '../../rpc/ViewAbilityService';
 

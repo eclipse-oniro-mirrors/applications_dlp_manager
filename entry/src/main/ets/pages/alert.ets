@@ -16,7 +16,7 @@
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { CustomContentDialog, ButtonOptions } from '@ohos.arkui.advanced.Dialog';
 import GlobalContext from '../common/GlobalContext';
-import { GetAlertMessage } from '../common/GetAlertMessage';
+import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';

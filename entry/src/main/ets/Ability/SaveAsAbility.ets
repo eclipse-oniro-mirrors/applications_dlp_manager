@@ -28,7 +28,7 @@ import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile } fr
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
-import { GetAlertMessage } from '../common/GetAlertMessage';
+import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import dialogRequest from '@ohos.app.ability.dialogRequest';
 import AccountManager from '../manager/AccountManager';
@@ -178,8 +178,9 @@ export default class SaveAsAbility extends UIAbility {
       if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
         HiLog.error(TAG, 'getHasDecryptedContentByTokenId error');
         reject();
+        return;
       }
-      const decryptedContent = getRet.result!;
+      const decryptedContent = getRet.result;
       this.authPerm = decryptedContent.authPerm;
       let dlpFileInfo = decryptedContent.dlpFile;
       let contactAccount = dlpFileInfo?.dlpProperty?.contactAccount ?? '';
@@ -525,8 +526,9 @@ export default class SaveAsAbility extends UIAbility {
       if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
         HiLog.error(TAG, 'getHasDecryptedContent error');
         reject();
+        return;
       }
-      const decryptContent = getRet.result!;
+      const decryptContent = getRet.result;
 
       this.dlpFile = decryptContent.dlpFile;
       this.sandboxBundleName = decryptContent.openDlpFileData.sandboxBundleName;
@@ -534,11 +536,12 @@ export default class SaveAsAbility extends UIAbility {
 
       let srcUri: string = decryptContent.openDlpFileData.uri;
       let getFileFdRet = getFileFd(srcUri);
-      if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      if (getFileFdRet.errcode !== Constants.ERR_CODE_SUCCESS || !getFileFdRet.result) {
         HiLog.error(TAG, 'getFileFd error');
         reject();
+        return;
       }
-      this.srcFdPicker = getFileFdRet.result!;
+      this.srcFdPicker = getFileFdRet.result;
 
       let success = await this.copyDlpHead(this.srcFdPicker, this.dstFdPicker);
       if (!success) {

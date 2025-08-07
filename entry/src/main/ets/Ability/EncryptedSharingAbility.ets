@@ -125,9 +125,9 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     AppStorage.setOrCreate('hiPkgName', parameters[Constants.PARAMS_CALLER_BUNDLE_NAME]);
 
     let dlpInfoRet = await getDLPInfo();
-    if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS) {
-      AppStorage.setOrCreate('hiPNameId', dlpInfoRet.result!.name);
-      AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result!.versionCode);
+    if (dlpInfoRet.errcode === Constants.ERR_CODE_SUCCESS && dlpInfoRet.result) {
+      AppStorage.setOrCreate('hiPNameId', dlpInfoRet.result.name);
+      AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result.versionCode);
     }
 
     const storageParams: encryptedSharingParams = {

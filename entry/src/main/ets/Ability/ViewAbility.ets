@@ -17,7 +17,7 @@ import AppStorageConstant from '../common/AppStorageConstant';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
 import hiTraceMeter from '@ohos.hiTraceMeter';
-import { OpenDlpFileProcessor } from '../OpenDlpFile/ViewProcessor';
+import { OpenDlpFileProcessor } from '../OpenDlpFile/ViewProcessor/ViewProcessor';
 import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
 import rpc from '@ohos.rpc';
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';

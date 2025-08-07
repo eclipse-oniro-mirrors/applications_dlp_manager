@@ -14,7 +14,7 @@
  */
 
 import AccountAssociation from '../bean/data/AccountAssociation';
-import AccountAssociationUtil from '../common/AccountAssociationUtil';
+import AccountAssociationUtil from '../common/AssocUtil/AccountAssociationUtil';
 import AppStorageMgr from '../common/AppStorageMgr';
 import AuthorizedAccount from '../bean/data/AuthorizedAccount';
 import Constants from '../common/constant';
