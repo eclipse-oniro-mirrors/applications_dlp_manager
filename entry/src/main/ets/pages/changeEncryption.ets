@@ -35,7 +35,7 @@ import {
   getTime,
   isValidPath,
   sendDlpManagerFileConfiguration
-} from '../common/utils';
+} from '../common/FileUtils/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
 import { AccountTipsConfig } from '../component/AccountTipsConfig';
@@ -43,7 +43,7 @@ import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
 import { SystemUtils } from '../common/systemUtils';
-import FileUtils, { FileMsg } from '../common/FileUtils';
+import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import CommonUtil from '../common/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';

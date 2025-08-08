@@ -39,7 +39,7 @@ import { HiLog } from '../common/HiLog';
 import FileUtil from '../common/external/FileUtil';
 import { DecryptState, OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
 import DecryptContent from '../OpenDlpFile/data/DecryptContent';
-import FileUtils from '../common/FileUtils';
+import FileUtils from '../common/FileUtils/FileUtils';
 
 const TAG = 'DlpRpcServiceStub';
 

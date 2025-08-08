@@ -16,7 +16,7 @@ import Want from '@ohos.app.ability.Want';
 import { FileParseType } from '../../bean/data/FileParseType';
 import Constants from '../../common/constant';
 import { HiLog } from '../../common/HiLog';
-import { isInvalidStr, isValidPath } from '../../common/utils';
+import { isInvalidStr, isValidPath } from '../../common/FileUtils/utils';
 
 const TAG: string = 'OpenDlpFileData';
 const APPID_FOR_HOPE: string = '5765880207854533797';

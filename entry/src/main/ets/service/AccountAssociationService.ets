@@ -15,7 +15,7 @@
 
 import AccountAssociationManager from '../manager/AccountAssociationManager';
 import AuthorizedAccount from '../bean/data/AuthorizedAccount';
-import { getOsAccountInfo } from '../common/utils';
+import { getOsAccountInfo } from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
 import { osAccount } from '@kit.BasicServicesKit';
 import Singleton from '../common/Singleton';

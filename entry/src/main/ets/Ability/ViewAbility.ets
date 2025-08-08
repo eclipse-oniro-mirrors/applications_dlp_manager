@@ -22,8 +22,10 @@ import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
 import rpc from '@ohos.rpc';
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import { systemDateTime } from '@kit.BasicServicesKit';
-import ViewAbilityStub from '../rpc/ViewAbilityStub';
+import ViewAbilityStub from '../rpc/ViewAbility/stub/ViewAbilityStub';
 import Want from '@ohos.app.ability.Want';
+import TerminateView from '../OpenDlpFile/TerminateView/TerminateView';
+import ViewAbilityService from '../rpc/ViewAbility/service/ViewAbilityService';
 
 const TAG = 'View';
 
@@ -60,8 +62,12 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (processRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'process error');
     }
-    await OpeningDialogManager.getInstance().unLoadOpeningDialogNormal();
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
+    await OpeningDialogManager.getInstance().unLoadOpeningDialogNormal();
+    if (!OpeningDialogManager.getInstance().getIsWaitingShowToast()) {
+      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
+      await TerminateView.terminate();
+    }
   }
 
   async onDestroy(): Promise<void> {

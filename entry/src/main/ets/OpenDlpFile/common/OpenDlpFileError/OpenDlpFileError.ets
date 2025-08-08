@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import Constants from '../../common/constant';
+import Constants from '../../../common/constant';
 
 export class OpenDlpFileError {
   public static readonly NOT_NEED_TOAST: Set<number> = new Set([

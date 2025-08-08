@@ -16,7 +16,7 @@
 import { BigDataConstants, ReportToBigDataUtil } from '../../common/ReportToBigDataUtil';
 import DecryptContent from '../data/DecryptContent';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { anonymizeUid, getBundleNameInfo, getCostTime } from '../../common/utils';
+import { anonymizeUid, getBundleNameInfo, getCostTime } from '../../common/FileUtils/utils';
 import AppStorageConstant from '../../common/AppStorageConstant';
 
 const TAG: string = 'DlpFileOpenReport';

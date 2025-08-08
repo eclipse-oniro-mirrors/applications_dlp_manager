@@ -40,7 +40,7 @@ import {
   isValidPath,
   isInvalidStr,
   getFileSizeByUri
-} from '../common/utils';
+} from '../common/FileUtils/utils';
 import Constants from '../common/constant';
 import {
   permissionTypeSelect,
@@ -53,7 +53,7 @@ import IDLDLPProperty from '../common/dlpClass';
 import { IAuthUser } from '../common/dlpClass';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
-import FileUtils, { FileMsg } from '../common/FileUtils';
+import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import FileUtil from '../common/external/FileUtil';

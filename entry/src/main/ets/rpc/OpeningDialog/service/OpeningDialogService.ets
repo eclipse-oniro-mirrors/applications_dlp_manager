@@ -15,10 +15,10 @@
 
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
-import Constants from '../common/constant';
-import { HiLog } from '../common/HiLog';
+import Constants from '../../../common/constant';
+import { HiLog } from '../../../common/HiLog';
 import { rpc } from '@kit.IPCKit';
-import OpeningDialogStub from './OpeningDialogStub';
+import OpeningDialogStub from '../stub/OpeningDialogStub';
 import { ability } from '@kit.AbilityKit';
 
 const TAG = 'OpeningDialogService';

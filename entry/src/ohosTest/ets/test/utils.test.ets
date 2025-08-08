@@ -15,7 +15,7 @@
  
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect, TestType } from '@ohos/hypium'
 import { HiLog } from '../../../main/ets/common/HiLog';
-import { getFileFd } from '../../../main/ets/common/utils';
+import { getFileFd } from '../../../main/ets/common/FileUtils/utils';
 
 const TAG = 'UtilsTest';
 

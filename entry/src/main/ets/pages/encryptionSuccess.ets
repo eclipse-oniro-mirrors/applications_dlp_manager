@@ -26,7 +26,7 @@ import {
   toggleShow,
   directionStatus,
   getTime,
-} from '../common/utils';
+} from '../common/FileUtils/utils';
 import GlobalContext from '../common/GlobalContext';
 import { HiLog } from '../common/HiLog';
 import { SystemUtils } from '../common/systemUtils';

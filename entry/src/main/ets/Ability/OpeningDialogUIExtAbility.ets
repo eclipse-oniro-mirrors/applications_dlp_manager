@@ -18,7 +18,7 @@ import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
 import Want from '@ohos.app.ability.Want';
-import OpeningDialogService from '../rpc/OpeningDialogService';
+import OpeningDialogService from '../rpc/OpeningDialog/service/OpeningDialogService';
 import CommonEventManager from '../common/CommonEventManager';
 
 const TAG = 'OpeningDialogUIExt';

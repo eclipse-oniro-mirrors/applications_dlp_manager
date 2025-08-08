@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../../../common/HiLog';
 import rpc from '@ohos.rpc';
-import Constants from '../common/constant';
-import ViewAbilityService from './ViewAbilityService';
-import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
+import Constants from '../../../common/constant';
+import ViewAbilityService from '../service/ViewAbilityService';
+import OpeningDialogManager from '../../../OpenDlpFile/manager/OpeningDialogManager';
+import TerminateView from '../../../OpenDlpFile/TerminateView/TerminateView';
 
 const TAG = 'ViewAbilityStub';
 
@@ -85,7 +86,8 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
           HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
           return false;
         }
-        OpeningDialogManager.getInstance().dialogTimeout(resultVar);
+        await OpeningDialogManager.getInstance().dialogTimeout(resultVar);
+        await TerminateView.terminate();
         return true;
       }
       default: {

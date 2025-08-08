@@ -18,10 +18,12 @@ import AccountAssociationUtil from '../common/AssocUtil/AccountAssociationUtil';
 import AppStorageMgr from '../common/AppStorageMgr';
 import AuthorizedAccount from '../bean/data/AuthorizedAccount';
 import Constants from '../common/constant';
-import { getCurrentTime, isInvalidStr } from '../common/utils';
+import { getCurrentTime, isInvalidStr } from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
 import HuksCipherUtils from '../common/huks/HuksCipherUtil';
 import StorageUtil from '../common/StorageUtil';
+import AssociationDecryptValidator from '../validator/AccountAssociation/AssociationDecryptValidator';
+import AssociationEncryptValidator from '../validator/AccountAssociation/AssociationEncryptValidator';
 
 const TAG: string = 'AssociationMgr';
 
@@ -46,6 +48,23 @@ export default class AccountAssociationManager {
     return AccountAssociationManager.mInstance;
   }
 
+  private async getAssociationFromLocal(ownerAccountId: string): Promise<AccountAssociation | null> {
+    HiLog.info(TAG, 'Start getting account association data from local.');
+    if (isInvalidStr(ownerAccountId)) {
+      HiLog.error(TAG, 'Owner account ID is invalid');
+      return null;
+    }
+
+    const validator = AssociationDecryptValidator.getInstance();
+    let res: AccountAssociation | null = await validator.validate(ownerAccountId);
+    if (res) {
+      HiLog.info(TAG, 'Get account association data from local success.');
+      return res;
+    }
+    HiLog.error(TAG, 'Get account association data from local failed.');
+    return null;
+  }
+
   public async getAuthorizedAccount(ownerAccountId: string): Promise<AuthorizedAccount[]> {
     HiLog.info(TAG, 'Enter getAuthorizedAccount.');
 
@@ -53,7 +72,7 @@ export default class AccountAssociationManager {
       HiLog.error(TAG, `The ownerAccountId is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_GET_FAILED}`);
       return [];
     }
-    let accountAssociation = await AccountAssociationUtil.getAssociationFromLocal(ownerAccountId);
+    let accountAssociation = await this.getAssociationFromLocal(ownerAccountId);
     if (!accountAssociation) {
       HiLog.info(TAG, 'No account association data exists in this device. Create a new one.');
       accountAssociation = new AccountAssociation(ownerAccountId, []);
@@ -106,6 +125,28 @@ export default class AccountAssociationManager {
     return authorizedAccounts;
   }
 
+  private async encryptAndSaveAssociation(
+    storageUtil: StorageUtil | null,
+    association: AccountAssociation,
+    saveFileName: string
+  ): Promise<boolean> {
+    HiLog.info(TAG, 'Start encrypting and saving account association.');
+
+    if (!storageUtil) {
+      HiLog.error(TAG, 'Storage util is null.');
+      return false;
+    }
+
+    const validator = AssociationEncryptValidator.getInstance();
+    let res: boolean = await validator.validate(storageUtil, association, saveFileName);
+    if (!res) {
+      HiLog.error(TAG, 'EncryptAndSaveAssociation failed.');
+      return false;
+    }
+    HiLog.info(TAG, 'Encrypt and save account association data success.');
+    return true;
+  }
+
   public async setAuthorizedAccount(ownerAccountId: string, authorizedAccount: string): Promise<void> {
     HiLog.info(TAG, 'Enter setAuthorizedAccount.');
 
@@ -129,8 +170,7 @@ export default class AccountAssociationManager {
         return;
       }
 
-      let saveResult = await AccountAssociationUtil.encryptAndSaveAssociation(this.storageUtil, updatedAssociation,
-        associationFileName);
+      let saveResult = await this.encryptAndSaveAssociation(this.storageUtil, updatedAssociation, associationFileName);
       if (!saveResult) {
         HiLog.error(TAG, 'Storage authorized account failed.');
       }

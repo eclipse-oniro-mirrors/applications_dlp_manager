@@ -26,7 +26,7 @@ import { EditableTitleBar } from '@ohos.arkui.advanced.EditableTitleBar';
 import emitter from '@ohos.events.emitter';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
 import { EncryptSharingShowCodeEnum, EncryptSharingTerminateCode } from '../common/enum/EncryptSharingShowCodeEnum';
-import FileUtils, { FileMsg } from '../common/FileUtils';
+import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import fs from '@ohos.file.fs';
 import {
   getAppId,
@@ -37,7 +37,7 @@ import {
   sendDlpFileCreateProperties,
   sendDlpManagerAccountLogin,
   showToast
-} from '../common/utils';
+} from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
 import { LengthMetrics } from '@ohos.arkui.node';
 import { SystemUtils } from '../common/systemUtils';

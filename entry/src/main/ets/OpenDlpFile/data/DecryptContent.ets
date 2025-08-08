@@ -14,7 +14,7 @@
  */
 
 import { HiLog } from '../../common/HiLog';
-import { defaultAppInfo, defaultDlpFile, getAuthPerm } from '../../common/utils';
+import { defaultAppInfo, defaultDlpFile, getAuthPerm } from '../../common/FileUtils/utils';
 import Constants from '../../common/constant';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import Result from '../../common/Result';
@@ -23,7 +23,7 @@ import OpenDlpFileData from './OpenDlpFileData';
 import fs from '@ohos.file.fs';
 import { fileUri } from '@kit.CoreFileKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
-import FileUtils from '../../common/FileUtils';
+import FileUtils from '../../common/FileUtils/FileUtils';
 
 const TAG: string = 'DecryptContent';
 

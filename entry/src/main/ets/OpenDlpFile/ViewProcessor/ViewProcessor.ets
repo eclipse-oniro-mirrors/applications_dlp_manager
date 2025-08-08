@@ -25,13 +25,13 @@ import DecryptHandler from '../handler/DecryptHandler';
 import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { HiLog } from '../../common/HiLog';
-import { clearDlpInfoByError } from '../common/DataUtils';
+import { clearDlpInfoByError } from '../common/DataUtils/DataUtils';
 import CredConnectService from '../../rpc/CredConnectService';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
-import StartSandboxManager from '../manager/StartSandboxManager';
 import { BusinessError } from '@ohos.base';
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
-import ErrorManager from '../manager/ErrorManager';
+import ErrorManager from '../handler/ErrorHandler';
+import StartSandboxHandler from '../handler/StartSandboxHandler';
 
 const TAG: string = 'OpenDlpFileProcessor';
 
@@ -90,7 +90,7 @@ export class OpenDlpFileProcessor {
     }
 
     // 6. start sandbox
-    const startSandboxRet = await StartSandboxManager.getInstance().startSandbox(decryptContent, context);
+    const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox(decryptContent, context);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandbox error');
       await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);

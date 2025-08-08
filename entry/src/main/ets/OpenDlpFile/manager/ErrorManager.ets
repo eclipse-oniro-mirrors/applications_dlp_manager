@@ -14,65 +14,53 @@
  */
 
 import { common } from '@kit.AbilityKit';
-import Constants from '../../common/constant';
-import { ResultMsg } from '../../common/ResultMsg';
-import Result from '../../common/Result';
-import OpeningDialogManager from './OpeningDialogManager';
-import { HiLog } from '../../common/HiLog';
+import { deviceInfo } from '@kit.BasicServicesKit';
+import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
 import { BusinessError } from '@ohos.base';
-import { ErrorHandlerFactory } from '../handler/ErrorHandler';
+import { HiLog } from '../../common/HiLog';
+import Constants from '../../common/constant';
+import { OpenDlpFileError } from '../common/OpenDlpFileError/OpenDlpFileError';
 
-const TAG = 'ErrorManager';
+const TAG: string = 'ErrorManager';
 
-export default class ErrorManager {
-  private static instance: ErrorManager;
-  private errorInfo?: BusinessError;
+abstract class ErrorManager {
+  public abstract handle(error: BusinessError): Promise<void>;
+}
 
-  private constructor() {
-  }
-
-  static getInstance(): ErrorManager {
-    if (!ErrorManager.instance) {
-      ErrorManager.instance = new ErrorManager();
-    }
-    return ErrorManager.instance;
-  }
-
-  // 弹框超过250ms，弹toast；弹框小于250ms，等待弹框250ms之后，弹toast
-  public async startHandleError(requestId: string, error?: BusinessError): Promise<Result<boolean>> {
-    HiLog.info(TAG, `start startErrorHandler requestId ${requestId}`);
-    if (error) {
-      this.errorInfo = error;
-    }
-    if (!this.errorInfo) {
-      HiLog.error(TAG, 'errorInfo null');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
-    }
+class PhoneManager extends ErrorManager {
+  public async handle(error: BusinessError): Promise<void> {
     const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
-    if (!viewContext) {
-      HiLog.error(TAG, 'viewContext null');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+    if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
+      HiLog.info(TAG, `PhoneManager not need toast, code ${error.code}`);
+      return;
     }
-
-    const canShowToast = OpeningDialogManager.getInstance().getCanShowToast();
-    HiLog.info(TAG, `startHandleError canShowToast ${canShowToast}`);
-
-    if (!canShowToast) {
-      HiLog.error(TAG, 'canShowToast error');
-      OpeningDialogManager.getInstance().setIsWaitingShowToast(true);
-      return ResultMsg.buildSuccess();
+    if (OpenDlpFileError.NEED_DIALOG.has(error.code)) {
+      HiLog.info(TAG, `PhoneManager need dialog, code ${error.code}`);;
+      await GetAlertMessage.requestModalUIExtension(viewContext, error);
+      return;
     }
-    OpeningDialogManager.getInstance().deleteRequestId(requestId);
-    OpeningDialogManager.getInstance().setIsWaitingShowToast(false);
-
-    await this.startHandleErrorInner(this.errorInfo);
-    this.errorInfo = undefined;
-    return ResultMsg.buildSuccess();
+    await GetAlertMessage.viewAbilityPhoneToast(viewContext, error);
   }
+}
 
-  private async startHandleErrorInner(error: BusinessError): Promise<void> {
-    HiLog.info(TAG, 'startHandleErrorInner');
-    const errorHandle = ErrorHandlerFactory.createErrorHandle();
-    await errorHandle.handle(error);
+class PCManager extends ErrorManager {
+  public async handle(error: BusinessError): Promise<void> {
+    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
+    if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
+      HiLog.info(TAG, `PCManager not need toast, code ${error.code}`);
+      return;
+    }
+    await GetAlertMessage.requestModalUIExtension(viewContext, error);
+  }
+}
+
+export class ErrorHandlerFactory {
+  static createErrorHandle(): ErrorManager {
+    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1) {
+      HiLog.info(TAG, 'create PhoneHandle');
+      return new PhoneManager();
+    }
+    HiLog.info(TAG, 'create PCHandle');
+    return new PCManager();
   }
 }

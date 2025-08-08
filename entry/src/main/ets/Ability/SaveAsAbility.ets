@@ -24,7 +24,7 @@ import dlpPermission from '@ohos.dlpPermission';
 import fs from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
 import abilityManager from '@ohos.app.ability.abilityManager';
-import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile } from '../common/utils';
+import { getFileUriByPath, getFileFd, getAppId, isValidPath, defaultDlpFile } from '../common/FileUtils/utils';
 import Constants from '../common/constant';
 import GlobalContext from '../common/GlobalContext';
 import zlib from '@ohos.zlib';
@@ -36,7 +36,7 @@ import FileUtil from '../common/external/FileUtil';
 import { OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
 import App from '@system.app';
 import DecryptContent from '../OpenDlpFile/data/DecryptContent';
-import FileUtils from '../common/FileUtils';
+import FileUtils from '../common/FileUtils/FileUtils';
 
 const TAG = 'SaveAs';
 
