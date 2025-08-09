@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../common/HiLog';
-import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
-import DecryptContent from '../data/DecryptContent';
-import Constants from '../../common/constant';
-import FileUtil from '../../common/external/FileUtil';
+import { HiLog } from '../../../common/HiLog';
+import { DecryptState, OpenDlpFileManager } from '../../manager/OpenDlpFileManager';
+import DecryptContent from '../../data/DecryptContent';
+import Constants from '../../../common/constant';
+import FileUtil from '../../../common/external/FileUtil';
 import { common } from '@kit.AbilityKit';
-import TerminateView from '../TerminateView/TerminateView';
-import OpeningDialogManager from '../manager/OpeningDialogManager';
+import TerminateView from '../../TerminateView/TerminateView';
+import OpeningDialogManager from '../../manager/OpeningDialogManager';
 
 const TAG = 'DataUtils';
 

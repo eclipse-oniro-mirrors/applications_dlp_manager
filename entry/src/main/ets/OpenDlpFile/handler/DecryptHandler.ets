@@ -16,7 +16,7 @@
 import Result from '../../common/Result'
 import { ResultMsg } from '../../common/ResultMsg'
 import Constants from '../../common/constant';
-import { getFileFd, getAppIdWithUserId, getOsAccountInfo, getCurrentTime } from '../../common/utils';
+import { getFileFd, getAppIdWithUserId, getOsAccountInfo, getCurrentTime } from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import DecryptContent from '../data/DecryptContent';
@@ -26,7 +26,7 @@ import fs from '@ohos.file.fs';
 import { BusinessError } from '@kit.BasicServicesKit';
 import AccountManager from '../../manager/AccountManager';
 import { common, uriPermissionManager, wantConstant } from '@kit.AbilityKit';
-import { closeDlpFile } from '../common/DataUtils';
+import { closeDlpFile } from '../common/DataUtils/DataUtils';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';
 import { ObjectUtil } from '../../common/ObjectUtil';

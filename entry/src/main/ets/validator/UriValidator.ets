@@ -16,8 +16,8 @@
 import { EncryptSharingShowCodeEnum } from '../common/enum/EncryptSharingShowCodeEnum';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
 import Constants from '../common/constant';
-import FileUtils, { FileMsg } from '../common/FileUtils';
-import { getFileSizeByUriSync } from '../common/utils';
+import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
+import { getFileSizeByUriSync } from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
 import { SupportTypesConfig } from '../common/SupportTypesConfig';
 import Singleton from '../common/Singleton';

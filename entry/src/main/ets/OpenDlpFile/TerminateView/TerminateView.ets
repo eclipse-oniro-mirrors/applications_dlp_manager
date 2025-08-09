@@ -18,12 +18,22 @@ import Constants from '../../common/constant';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import { HiLog } from '../../common/HiLog';
 import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
-import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
-import ViewAbilityService from '../../rpc/ViewAbilityService';
+import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
 
 const TAG = 'TerminateView';
 
 export default class TerminateView {
+  private static _viewAbilityPhoneToastCount: number = 0;
+
+  public static setViewAbilityPhoneToastCount(value: number) {
+    HiLog.debug(TAG, `setViewAbilityPhoneToastCount ${value}`)
+    TerminateView._viewAbilityPhoneToastCount = value;
+  }
+
+  public static getViewAbilityPhoneToastCount(): number {
+    return TerminateView._viewAbilityPhoneToastCount;
+  }
+
   public static async terminate(): Promise<void> {
     HiLog.info(TAG, 'TerminateView terminate start');
     const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
@@ -33,14 +43,14 @@ export default class TerminateView {
     }
     const manager = OpenDlpFileManager.getInstance();
     const getSizeRet = manager.getHasDecryptedSize();
-    if (getSizeRet.errcode !== Constants.ERR_CODE_SUCCESS || !getSizeRet.result) {
+    if (getSizeRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'TerminateView getHasDecryptedSize error');
       return;
     }
     const hasDecryptedSize = getSizeRet.result;
     const hasCallback = OpeningDialogManager.getInstance().getHasCallback();
     const isDecrypting = OpeningDialogManager.getInstance().getIsDecrypting();
-    const toastSize = GetAlertMessage.getViewAbilityPhoneToastCount();
+    const toastSize = TerminateView._viewAbilityPhoneToastCount;
     const isWaitingShowToast = OpeningDialogManager.getInstance().getIsWaitingShowToast();
     HiLog.info(TAG, `TerminateView hasDecryptedSize: ${hasDecryptedSize}, hasCallback: ${hasCallback},
     isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast}`);

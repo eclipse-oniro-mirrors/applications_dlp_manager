@@ -24,7 +24,7 @@ import Constants from '../common/constant';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import dlpPermission from '@ohos.dlpPermission';
-import { sendDlpManagerAccountLogin, checkNetworkStatus } from '../common/utils';
+import { sendDlpManagerAccountLogin, checkNetworkStatus } from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
 
 const TAG = 'Alert';

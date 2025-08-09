@@ -14,10 +14,10 @@
  */
 
 import rpc from '@ohos.rpc';
-import { HiLog } from '../common/HiLog';
-import Constants from '../common/constant';
+import { HiLog } from '../../../common/HiLog';
+import Constants from '../../../common/constant';
 import { emitter } from '@kit.BasicServicesKit';
-import OpeningDialogService from './OpeningDialogService';
+import OpeningDialogService from '../service/OpeningDialogService';
 
 const TAG = 'OpeningDialogStub';
 

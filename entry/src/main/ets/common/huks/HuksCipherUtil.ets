@@ -14,7 +14,7 @@
  */
 
 import { HiLog } from '../HiLog';
-import { isInvalidStr } from '../utils';
+import { isInvalidStr } from '../FileUtils/utils';
 import { huks } from '@kit.UniversalKeystoreKit';
 
 const TAG: string = 'HuksCipherUtils';

@@ -16,15 +16,14 @@
 import Constants from '../../common/constant';
 import { HiLog } from '../../common/HiLog';
 import { common, Want } from '@kit.AbilityKit';
-import ViewAbilityService from '../../rpc/ViewAbilityService';
-import StartSandboxManager from './StartSandboxManager';
+import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
 import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
-import TerminateView from '../TerminateView/TerminateView';
 import { FileParseType } from '../../bean/data/FileParseType';
 import OpenDlpFileData from '../data/OpenDlpFileData';
-import FileUtils from '../../common/FileUtils';
-import ErrorManager from './ErrorManager';
+import FileUtils from '../../common/FileUtils/FileUtils';
+import ErrorManager from '../handler/ErrorHandler';
 import { emitter } from '@kit.BasicServicesKit';
+import StartSandboxHandler from '../handler/StartSandboxHandler';
 
 const TAG = 'OpeningDialogManager';
 
@@ -224,13 +223,12 @@ export default class OpeningDialogManager {
     await ErrorManager.getInstance().startHandleError(requestId);
     this.printAllDecryptingMap();
     if (decryptingState.needStartAbility) { // 弹框超时，且需要拉起沙箱，就去拉沙箱
-      const startSandboxRet = await StartSandboxManager.getInstance().startSandbox();
+      const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox();
       if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
         HiLog.error(TAG, 'OpeningDialogManager startSandbox error');
       }
       this._decryptingMap.delete(requestId);
     }
-    TerminateView.terminate();
   }
 
   private async showDialog(requestId: string): Promise<void> {
@@ -429,11 +427,6 @@ export default class OpeningDialogManager {
       return;
     }
     await this.hideDialog();
-    HiLog.info(TAG, `isWaitingShowToast ${this._isWaitingShowToast}`);
-    if (!this._isWaitingShowToast) {
-      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
-      await TerminateView.terminate();
-    }
   }
 
   // viewAbility异常结束

@@ -16,7 +16,7 @@
 import AccountAssociation from '../bean/data/AccountAssociation';
 import AuthorizedAccount from '../bean/data/AuthorizedAccount';
 import { HiLog } from '../common/HiLog';
-import { isInvalidStr } from '../common/utils';
+import { isInvalidStr } from '../common/FileUtils/utils';
 
 const TAG: string = 'AssocConvertor';
 

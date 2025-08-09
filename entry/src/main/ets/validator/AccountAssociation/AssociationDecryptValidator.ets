@@ -19,7 +19,7 @@ import AccountAssociationUtil from '../../common/AssocUtil/AccountAssociationUti
 import AppStorageMgr from '../../common/AppStorageMgr';
 import { common } from '@kit.AbilityKit';
 import Constants from '../../common/constant';
-import { decodeByBase64, isInvalidStr, stringToUint8Array, uint8ArrayToString } from '../../common/utils';
+import { decodeByBase64, isInvalidStr, stringToUint8Array, uint8ArrayToString } from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
 import HuksProperties from '../../common/huks/HuksProperties';

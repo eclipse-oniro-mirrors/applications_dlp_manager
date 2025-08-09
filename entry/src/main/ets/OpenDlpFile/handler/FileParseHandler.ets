@@ -17,7 +17,7 @@ import Result from '../../common/Result'
 import { ResultMsg } from '../../common/ResultMsg'
 import Constants from '../../common/constant';
 import fs, { ReadOptions } from '@ohos.file.fs';
-import { getFileFd } from '../../common/utils';
+import { getFileFd } from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import { zlib } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';

@@ -23,17 +23,12 @@ import { HiLog } from '../HiLog';
 import TerminateView from '../../OpenDlpFile/TerminateView/TerminateView';
 import { UIContext } from '@kit.ArkUI';
 import UIContextUtil from '../UIContextUtil';
-import { OpenDlpFileError } from '../../OpenDlpFile/common/OpenDlpFileError';
+import { OpenDlpFileError } from '../../OpenDlpFile/common/OpenDlpFileError/OpenDlpFileError';
 
 const TAG = 'AlertMessage';
 
 export class GetAlertMessage {
-  private static _viewAbilityPhoneToastCount: number = 0;
   private static _counterLock: CounterLock = new CounterLock();
-
-  public static getViewAbilityPhoneToastCount(): number {
-    return GetAlertMessage._viewAbilityPhoneToastCount;
-  }
 
   private static async showToast(
     context: common.ServiceExtensionContext | common.UIAbilityContext | common.UIExtensionContext,
@@ -59,15 +54,18 @@ export class GetAlertMessage {
     error: BusinessError
   ): Promise<void> {
     await GetAlertMessage._counterLock.acquire();
-    HiLog.debug(TAG, `showToast ++ ToastCount ${GetAlertMessage._viewAbilityPhoneToastCount}`);
-    GetAlertMessage._viewAbilityPhoneToastCount++;
+    let viewAbilityPhoneToastCount = TerminateView.getViewAbilityPhoneToastCount();
+    HiLog.debug(TAG, `showToast ++ ToastCount ${viewAbilityPhoneToastCount}`);
+    TerminateView.setViewAbilityPhoneToastCount(++viewAbilityPhoneToastCount);
     GetAlertMessage._counterLock.release();
     await GetAlertMessage.showToast(context, error);
     setTimeout(async () => {
       await GetAlertMessage._counterLock.acquire();
       try {
-        HiLog.debug(TAG, `showToast -- ToastCount ${GetAlertMessage._viewAbilityPhoneToastCount}`);
-        if (--GetAlertMessage._viewAbilityPhoneToastCount === 0) {
+        let viewAbilityPhoneToastCount = TerminateView.getViewAbilityPhoneToastCount();
+        HiLog.debug(TAG, `showToast -- ToastCount ${viewAbilityPhoneToastCount}`);
+        TerminateView.setViewAbilityPhoneToastCount(--viewAbilityPhoneToastCount);
+        if (viewAbilityPhoneToastCount === 0) {
           UIContext.destroyUIContextWithoutWindow();
           await TerminateView.terminate();
         }

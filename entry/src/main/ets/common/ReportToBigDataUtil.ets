@@ -14,7 +14,7 @@
  */
 import { ValueType } from '@kit.ArkData';
 import { HiLog } from './HiLog';
-import { getDLPInfo } from './utils';
+import { getDLPInfo } from './FileUtils/utils';
 import Constants from './constant';
 import { ObjectUtil } from './ObjectUtil';
 import hiSysEvent from '@ohos.hiSysEvent';

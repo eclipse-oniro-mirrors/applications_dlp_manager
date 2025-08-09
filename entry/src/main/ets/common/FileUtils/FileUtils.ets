@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../common/HiLog';
-import FileUtil from './external/FileUtil';
+import { HiLog } from '../HiLog';
+import FileUtil from '../external/FileUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import fs from '@ohos.file.fs';
 

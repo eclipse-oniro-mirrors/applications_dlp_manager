@@ -15,13 +15,13 @@
 
 import AccountAssociation from '../../bean/data/AccountAssociation';
 import Constants from '../../common/constant';
-import { encodeByBase64, generateRandom, isInvalidStr } from '../../common/utils';
+import { encodeByBase64, generateRandom, isInvalidStr } from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
 import HuksProperties from '../../common/huks/HuksProperties';
 import Singleton from '../../common/Singleton';
 import StorageUtil from '../../common/StorageUtil';
-import { stringToUint8Array } from '../../common/utils';
+import { stringToUint8Array } from '../../common/FileUtils/utils';
 
 const TAG: string = 'AssocEncValid';
 

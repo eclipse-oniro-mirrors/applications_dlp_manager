@@ -14,53 +14,65 @@
  */
 
 import { common } from '@kit.AbilityKit';
-import { deviceInfo } from '@kit.BasicServicesKit';
-import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
-import { BusinessError } from '@ohos.base';
-import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
-import { OpenDlpFileError } from '../common/OpenDlpFileError';
+import { ResultMsg } from '../../common/ResultMsg';
+import Result from '../../common/Result';
+import OpeningDialogManager from '../manager/OpeningDialogManager';
+import { HiLog } from '../../common/HiLog';
+import { BusinessError } from '@ohos.base';
+import { ErrorHandlerFactory } from '../manager/ErrorManager';
 
-const TAG: string = 'ErrorHandler';
+const TAG = 'ErrorHandler';
 
-abstract class ErrorHandler {
-  public abstract handle(error: BusinessError): Promise<void>;
-}
+export default class ErrorHandler {
+  private static instance: ErrorHandler;
+  private errorInfo?: BusinessError;
 
-class PhoneHandle extends ErrorHandler {
-  public async handle(error: BusinessError): Promise<void> {
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
-    if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
-      HiLog.info(TAG, `PhoneHandle not need toast, code ${error.code}`);
-      return;
-    }
-    if (OpenDlpFileError.NEED_DIALOG.has(error.code)) {
-      HiLog.info(TAG, `PhoneHandle need dialog, code ${error.code}`);;
-      await GetAlertMessage.requestModalUIExtension(viewContext, error);
-      return;
-    }
-    await GetAlertMessage.viewAbilityPhoneToast(viewContext, error);
+  private constructor() {
   }
-}
 
-class PCHandle extends ErrorHandler {
-  public async handle(error: BusinessError): Promise<void> {
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
-    if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
-      HiLog.info(TAG, `PCHandle not need toast, code ${error.code}`);
-      return;
+  static getInstance(): ErrorHandler {
+    if (!ErrorHandler.instance) {
+      ErrorHandler.instance = new ErrorHandler();
     }
-    await GetAlertMessage.requestModalUIExtension(viewContext, error);
+    return ErrorHandler.instance;
   }
-}
 
-export class ErrorHandlerFactory {
-  static createErrorHandle(): ErrorHandler {
-    if (deviceInfo.deviceType !== Constants.DEVICE_2IN1) {
-      HiLog.info(TAG, 'create PhoneHandle');
-      return new PhoneHandle();
+  // 弹框超过250ms，弹toast；弹框小于250ms，等待弹框250ms之后，弹toast
+  public async startHandleError(requestId: string, error?: BusinessError): Promise<Result<boolean>> {
+    HiLog.info(TAG, `start startErrorHandler requestId ${requestId}`);
+    if (error) {
+      this.errorInfo = error;
     }
-    HiLog.info(TAG, 'create PCHandle');
-    return new PCHandle();
+    if (!this.errorInfo) {
+      HiLog.error(TAG, 'errorInfo null');
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+    }
+    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
+    if (!viewContext) {
+      HiLog.error(TAG, 'viewContext null');
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+    }
+
+    const canShowToast = OpeningDialogManager.getInstance().getCanShowToast();
+    HiLog.info(TAG, `startHandleError canShowToast ${canShowToast}`);
+
+    if (!canShowToast) {
+      HiLog.error(TAG, 'canShowToast error');
+      OpeningDialogManager.getInstance().setIsWaitingShowToast(true);
+      return ResultMsg.buildSuccess();
+    }
+    OpeningDialogManager.getInstance().deleteRequestId(requestId);
+    OpeningDialogManager.getInstance().setIsWaitingShowToast(false);
+
+    await this.startHandleErrorInner(this.errorInfo);
+    this.errorInfo = undefined;
+    return ResultMsg.buildSuccess();
+  }
+
+  private async startHandleErrorInner(error: BusinessError): Promise<void> {
+    HiLog.info(TAG, 'startHandleErrorInner');
+    const errorHandle = ErrorHandlerFactory.createErrorHandle();
+    await errorHandle.handle(error);
   }
 }

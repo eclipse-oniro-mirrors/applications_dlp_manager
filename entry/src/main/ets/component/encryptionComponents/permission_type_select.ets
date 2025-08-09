@@ -14,7 +14,7 @@
  */
 
 import Constants from '../../common/constant';
-import { AuthAccount, PermissionType } from '../../common/utils';
+import { AuthAccount, PermissionType } from '../../common/FileUtils/utils';
 
 const TAG = 'Select';
 

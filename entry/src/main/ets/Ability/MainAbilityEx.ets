@@ -34,11 +34,11 @@ import {
   sendDlpManagerAccountLogin,
   isValidPath,
   getAccountTypeAndRealFileType
-} from '../common/utils';
+} from '../common/FileUtils/utils';
 import GlobalContext from '../common/GlobalContext';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import { HiLog } from '../common/HiLog';
-import FileUtils from '../common/FileUtils';
+import FileUtils from '../common/FileUtils/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import IdDlpRpcServiceProxy from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import common from '@ohos.app.ability.common';

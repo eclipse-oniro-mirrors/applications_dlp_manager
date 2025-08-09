@@ -17,7 +17,7 @@ import { CustomContentDialog } from '@ohos.arkui.advanced.Dialog';
 import { HiLog } from '../common/HiLog';
 import Constants from '../common/constant';
 import { emitter } from '@kit.BasicServicesKit';
-import OpeningDialogService from '../rpc/OpeningDialogService';
+import OpeningDialogService from '../rpc/OpeningDialog/service/OpeningDialogService';
 
 const TAG = 'OpeningDialog';
 
@@ -72,6 +72,7 @@ struct Index {
     }
 
     this.receivedCloseSignal = true;
+    HiLog.info(TAG, `handleShowDialogEvent receivedCloseSignal ${this.receivedCloseSignal}`);
     if (this.shouldCloseAfterTimeout) {
       HiLog.info(TAG, 'closeDialog by event');
       this.closeDialog();
@@ -90,11 +91,12 @@ struct Index {
     this.shouldCloseAfterTimeout = false;
     this.timeoutId250 = setTimeout(async () => {
       this.shouldCloseAfterTimeout = true;
-      await OpeningDialogService.getInstance().dialogTimeout(this.requestId);
+      HiLog.info(TAG, `timeout receivedCloseSignal ${this.receivedCloseSignal}`);
       if (this.receivedCloseSignal) {
         HiLog.info(TAG, 'closeDialog by timeout');
         this.closeDialog();
       }
+      await OpeningDialogService.getInstance().dialogTimeout(this.requestId);
     }, Constants.OPENING_DIALOG_TIMEOUT);
 
     this.timeoutId10 = setTimeout(async () => {
