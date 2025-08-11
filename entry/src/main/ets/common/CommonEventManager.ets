@@ -24,7 +24,7 @@ export default class CommonEventManager {
   private static instance: CommonEventManager;
   private subscribe: commonEventManager.CommonEventSubscriber | undefined;
   private subscribeInfo: commonEventManager.CommonEventSubscribeInfo = {
-    events: [commonEventManager.Support.COMMON_EVENT_SCREEN_OFF]
+    events: [commonEventManager.Support.COMMON_EVENT_SCREEN_LOCKED]
   };
 
   private constructor() {
@@ -45,8 +45,8 @@ export default class CommonEventManager {
       } else {
         HiLog.info(TAG, `subscribeCB data: ${JSON.stringify(data)}`);
         switch (data.event) {
-          case commonEventManager.Support.COMMON_EVENT_SCREEN_OFF:
-            HiLog.info(TAG, 'subscribeCB COMMON_EVENT_SCREEN_OFF');
+          case commonEventManager.Support.COMMON_EVENT_SCREEN_LOCKED:
+            HiLog.info(TAG, 'subscribeCB COMMON_EVENT_SCREEN_LOCKED');
             emitter.emit(Constants.SCREEN_OFF_EVENT);
             break;
           default:
