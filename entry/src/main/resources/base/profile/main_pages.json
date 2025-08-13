@@ -6,6 +6,7 @@
     "pages/changeEncryption",
     "pages/permissionStatus",
     "pages/encryptedSharing",
-    "pages/OpeningDialog"
+    "pages/OpeningDialog",
+    "pages/PhoneDialog"
   ]
 }

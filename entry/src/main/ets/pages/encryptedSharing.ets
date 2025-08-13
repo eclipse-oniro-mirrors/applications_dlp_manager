@@ -232,7 +232,7 @@ struct encryptedSharing {
   contactsAction = () => {
     if (this.isPhoneDevice) {
       contact.selectContacts({ isMultiSelect: false }).then((data) => {
-        HiLog.info(TAG, 'Succeeded in selecting Contacts.');
+        HiLog.info(TAG, 'success in selecting Contacts.');
         if (!data || !data.length) {
           HiLog.error(TAG, 'Contacts data is empty.');
           return;
@@ -274,7 +274,8 @@ struct encryptedSharing {
       let commandGetAccountInfoCallBack = JSON.parse(this.getAccountInfoResult) as Record<string, object>;
       HiLog.info(TAG, `getAccountInfoResult Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
       let res = commandGetAccountInfoCallBack.result as Record<string, string>;
-      if (Number(commandGetAccountInfoCallBack.errorCode) === Constants.ERR_CODE_SUCCESS && res?.uid) {
+      const errcode = commandGetAccountInfoCallBack.errorCode ?? -1;
+      if (Number(errcode) === Constants.ERR_CODE_SUCCESS && res?.uid) {
         this.ownerAccount = res?.uid;
         this.ownerAccountID = res?.uid;
         this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
@@ -618,7 +619,7 @@ struct encryptedSharing {
   clearHistoryDLPFile() {
     let pathDir = this.context.filesDir + '/Share';
     fs.listFile(pathDir).then((filenames: Array<string>) => {
-      HiLog.info(TAG, 'listFile succeed when judge time');
+      HiLog.info(TAG, 'listFile success when judge time');
       let realTime = Number(systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE, false));
       filenames.forEach((item) => {
         let fileTime = Number(item);
@@ -630,7 +631,7 @@ struct encryptedSharing {
       HiLog.error(TAG, `list file failed when judge time with error message: ${JSON.stringify(err)}`);
     });
     fs.listFile(pathDir).then((filenames: Array<string>) => {
-      HiLog.info(TAG, `listFile succeed when judge num`);
+      HiLog.info(TAG, `listFile success when judge num`);
       let filenamesLists = filenames.sort((a, b) => Number(a) - Number(b));
       if (filenamesLists.length > Constants.SHARE_TEMP_SAVE_FILE_NUMBER) {
         let deleteArray = filenamesLists.slice(0, filenamesLists.length - Constants.SHARE_TEMP_SAVE_FILE_NUMBER);

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ValueType } from '@kit.ArkData';
 import { HiLog } from './HiLog';
 import { getDLPInfo } from './FileUtils/utils';
 import Constants from './constant';
@@ -21,7 +20,7 @@ import hiSysEvent from '@ohos.hiSysEvent';
 
 const TAG: string = 'ReportToBigDataUtil';
 
-export declare type BigDataMsg = Record<string, ValueType | undefined>;
+export declare type BigDataMsg = Record<string, number | string | boolean | undefined>;
 
 interface DlpBundleInfo {
   PNAMEID: string;

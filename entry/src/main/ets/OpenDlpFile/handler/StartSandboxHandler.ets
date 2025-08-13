@@ -82,7 +82,7 @@ export default class StartSandboxHandler {
     HiLog.info(TAG, `startSandbox canStartAbility ${canStartAbility}, needStartAbility ${needStartAbility},
     needShowDialog ${needShowDialog}, isZip ${isZip}, hasDecrypt ${hasDecrypt}`);
 
-    if (hasDecrypt && !isZip || !needShowDialog) {
+    if ((hasDecrypt && !isZip) || !needShowDialog) {
       return this.prepareStartSandbox(this._decryptContent, viewContext);
     }
     if (needShowDialog && !canStartAbility) {

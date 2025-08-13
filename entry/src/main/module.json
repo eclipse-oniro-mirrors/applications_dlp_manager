@@ -92,6 +92,14 @@
         "type": "sys/commonUI",
         "exported": true,
         "srcEntry": "./ets/Ability/OpeningDialogUIExtAbility.ets"
+      },
+      {
+        "name": "PhoneDialogUIExtAbility",
+        "icon": "$media:icon",
+        "description": "PhoneDialogUIExtAbility",
+        "type": "sys/commonUI",
+        "exported": true,
+        "srcEntry": "./ets/Ability/PhoneDialogUIExtAbility.ets"
       }
     ],
     "requestPermissions": [

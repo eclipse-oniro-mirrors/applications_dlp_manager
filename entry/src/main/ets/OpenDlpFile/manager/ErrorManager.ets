@@ -28,6 +28,27 @@ abstract class ErrorManager {
 }
 
 class PhoneManager extends ErrorManager {
+  private async requestPhoneDialog(context: common.ServiceExtensionContext, error: BusinessError) {
+    let code = error.code;
+    let message = error.message;
+    let uiExtWant: Want = {
+      bundleName: Constants.DLP_MANAGER_BUNDLE_NAME,
+      abilityName: 'PhoneDialogUIExtAbility',
+      moduleName: 'entry',
+      parameters: {
+        'ability.want.params.uiExtensionType': 'sys/commonUI',
+        'errorCode': code,
+        'errorMessage': message,
+      }
+    };
+    try {
+      await context.requestModalUIExtension(uiExtWant);
+      HiLog.info(TAG, 'requestPhoneDialog success');
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'requestModalUIExtension failed');
+    }
+  }
+
   public async handle(error: BusinessError): Promise<void> {
     const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
@@ -36,7 +57,7 @@ class PhoneManager extends ErrorManager {
     }
     if (OpenDlpFileError.NEED_DIALOG.has(error.code)) {
       HiLog.info(TAG, `PhoneManager need dialog, code ${error.code}`);;
-      await GetAlertMessage.requestModalUIExtension(viewContext, error);
+      await this.requestPhoneDialog(viewContext, error);
       return;
     }
     await GetAlertMessage.viewAbilityPhoneToast(viewContext, error);

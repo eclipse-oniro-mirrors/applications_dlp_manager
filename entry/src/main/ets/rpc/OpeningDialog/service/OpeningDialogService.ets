@@ -129,11 +129,11 @@ export default class OpeningDialogService {
     return new Promise<void>((resolve) => {
       this._disconnectTimer = setTimeout(async () => {
         try {
-          if (this._context) {
+          if (this._context && this.connectionId) {
             await this._context.disconnectServiceExtensionAbility(this.connectionId);
             HiLog.info(TAG, 'disconnectViewAbilityWithTimeout success');
           } else {
-            HiLog.warn(TAG, 'disconnectViewAbilityWithTimeout skipped - context destroyed');
+            HiLog.warn(TAG, 'disconnectViewAbilityWithTimeout skipped context null or connectionId null');
           }
         } catch (error) {
           HiLog.wrapError(TAG, error, 'Failed to disconnectViewAbilityWithTimeout');

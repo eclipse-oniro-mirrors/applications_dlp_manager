@@ -245,9 +245,14 @@ let calculate = (newValue: Area, allNames: AuthAccount[]) => {
   let screenWidth = Number(newValue['width']);
   let nameChange = Constants.ENCRYPTION_STAFF_WIDTH_NAME;
   let rowNamesLen = Math.floor(screenWidth / (nameChange + Constants.ENCRYPTION_ADD_STAFF_MARGIN_RIGHT));
-  let showNamesArr = editLength > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
-    ? allNames.slice(0, 2 * rowNamesLen - 1)
-    : allNames.slice(0, 2 * rowNamesLen);
+  let showNamesArr: AuthAccount[];
+  if (rowNamesLen === 0) {
+    showNamesArr = [];
+  } else {
+    showNamesArr = editLength > Constants.ENCRYPTION_DOUBLED_NUMBER * rowNamesLen
+      ? allNames.slice(0, 2 * rowNamesLen - 1)
+      : allNames.slice(0, 2 * rowNamesLen);
+  }
   let hideNamesNum = editLength - showNamesArr.length > 0
     ? String(editLength - showNamesArr.length)
     : '0';
@@ -342,7 +347,7 @@ async function getFileSizeByUri(uri: string): Promise<number> {
   try {
     inFile = await fs.open(uri, fs.OpenMode.READ_ONLY);
     let stat = await fs.stat(inFile.fd);
-    HiLog.info(TAG, `get file info succeed, the size of file is: ${stat.size}`);
+    HiLog.info(TAG, `get file info success, the size of file is: ${stat.size}`);
     return stat.size;
   } catch (err) {
     HiLog.error(TAG, `open filename: ${FileUtils.getFileNameByUri(uri)}, failed: ${JSON.stringify(err)}`);
@@ -641,7 +646,7 @@ async function getConnectionStatus(exactly: boolean = true): Promise<boolean> {
     let net: connection.NetHandle = await connection.getDefaultNet();
 
     let capabilities: connection.NetCapabilities = await connection.getNetCapabilities(net);
-    HiLog.info(TAG, `Succeeded to get net capabilities, ${JSON.stringify(capabilities)}.`);
+    HiLog.info(TAG, `success to get net capabilities, ${JSON.stringify(capabilities)}.`);
     let networkCap = capabilities.networkCap;
 
     while (exactly && networkCap?.includes(NET_CAPABILITY_CHECKING_CONNECTIVITY)) {
@@ -680,7 +685,7 @@ function checkNetworkStatus(): Promise<void> {
           reject();
           return;
         }
-        HiLog.info(TAG, `network Succeeded to get data: ${JSON.stringify(data)}`);
+        HiLog.info(TAG, `network success to get data: ${JSON.stringify(data)}`);
         const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
           .every(element => data.networkCap?.includes(element));
         if (result) {

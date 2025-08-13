@@ -43,7 +43,6 @@ export default class CommonEventManager {
       if (err) {
         HiLog.wrapError(TAG, err, 'subscribeCB error');
       } else {
-        HiLog.info(TAG, `subscribeCB data: ${JSON.stringify(data)}`);
         switch (data.event) {
           case commonEventManager.Support.COMMON_EVENT_SCREEN_LOCKED:
             HiLog.info(TAG, 'subscribeCB COMMON_EVENT_SCREEN_LOCKED');
@@ -86,7 +85,7 @@ export default class CommonEventManager {
           return;
         }
         this.subscribe = undefined;
-        HiLog.info(TAG, 'subscribe success');
+        HiLog.info(TAG, 'subscribe unsubscribe');
       });
     } catch (error) {
       HiLog.wrapError(TAG, error, 'Failed to unsubscribe');
