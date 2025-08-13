@@ -348,7 +348,6 @@ export default class DecryptHandler {
     HiLog.info(TAG, 'createDecryptTask finally');
     clearTimeout(timeout10);
     clearTimeout(timeout500);
-    ApplyEfficiencyManager.getInstance().releaseEfficiency();
     await OpeningDialogManager.getInstance().hideOpeningDialog(decryptContent.openDlpFileData.requestId);
   }
 

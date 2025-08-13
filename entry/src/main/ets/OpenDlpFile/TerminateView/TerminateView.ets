@@ -19,6 +19,7 @@ import OpeningDialogManager from '../manager/OpeningDialogManager';
 import { HiLog } from '../../common/HiLog';
 import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
+import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';
 
 const TAG = 'TerminateView';
 
@@ -56,6 +57,7 @@ export default class TerminateView {
     isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast}`);
     if (hasDecryptedSize === 0 && hasCallback && !isDecrypting && toastSize === 0 && !isWaitingShowToast) {
       try {
+        ApplyEfficiencyManager.getInstance().releaseEfficiencyResource();
         OpeningDialogManager.getInstance().setIsTerminalSelf(true);
         await ViewAbilityService.getInstance().sendDisconnectMsg();
         await viewContext.terminateSelf();
