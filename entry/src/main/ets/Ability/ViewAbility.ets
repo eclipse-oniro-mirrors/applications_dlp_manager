@@ -52,6 +52,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
     if (OpeningDialogManager.getInstance().getIsChargeDecrypting() ||
     OpeningDialogManager.getInstance().getIsTerminalSelf()) {
       HiLog.error(TAG, 'ViewAbility isChargeDecrypting or isTerminalSelf');
+      hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       return;
     }
     OpeningDialogManager.getInstance().setIsChargeDecrypting(true);
