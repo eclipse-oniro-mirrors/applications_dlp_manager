@@ -59,7 +59,7 @@ class CloudAccountHandle extends AccountHandlerBase {
     if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
       this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
       HiLog.info(TAG, 'Cloud account not login');
-      const lunchLoginRet = await this.lunchLogin(context);
+      const lunchLoginRet = await this.launchLogin(context);
       if (lunchLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
         HiLog.error(TAG, 'lunchLogin error');
         return ResultMsg.buildMsg(lunchLoginRet.errcode, lunchLoginRet.errmsg);
@@ -73,7 +73,7 @@ class CloudAccountHandle extends AccountHandlerBase {
     return ResultMsg.buildSuccess();
   }
 
-  private async lunchLogin(context: common.ServiceExtensionContext): Promise<Result<void>> {
+  private async launchLogin(context: common.ServiceExtensionContext): Promise<Result<void>> {
     let accountWant: Want = {
       bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
       abilityName: Constants.DLP_CREDMGR_LOGIN_ABILITY_NAME,
