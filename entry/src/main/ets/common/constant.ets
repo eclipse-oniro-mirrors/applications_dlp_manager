@@ -348,6 +348,10 @@ export default class Constants {
   public static readonly SCREEN_OFF_EVENT: string = 'SCREEN_OFF_EVENT';
   public static readonly CHECK_SHOW_DIALOG_STATE: string = 'CHECK_SHOW_DIALOG_STATE';
 
+  // bundleName
+  public static readonly SHARE_BUNDLE: string = 'com.huawei.hmos.instantshare';
+  public static readonly OPEN_DIRECTORY_LINK: string = 'filemanager://openDirectory';
+
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
   public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;
   public static readonly DECRYPT_NO_NEED_SHOW_DIALOG_TIMEOUT: number = 500;

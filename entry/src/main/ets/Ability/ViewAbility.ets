@@ -26,6 +26,7 @@ import ViewAbilityStub from '../rpc/ViewAbility/stub/ViewAbilityStub';
 import Want from '@ohos.app.ability.Want';
 import TerminateView from '../OpenDlpFile/TerminateView/TerminateView';
 import ViewAbilityService from '../rpc/ViewAbility/service/ViewAbilityService';
+import { StartFileManager } from '../OpenDlpFile/manager/StartFileManager';
 
 const TAG = 'View';
 
@@ -48,6 +49,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.info(TAG, `enter onRequest startId: ${startId}`);
     AppStorage.setOrCreate('viewContext', this.context);
+    const callerBundleName: string = want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
+    if (callerBundleName === Constants.SHARE_BUNDLE) {
+      const startRet = await StartFileManager.startFileManager(want.uri);
+      if (startRet.errcode === Constants.ERR_CODE_SUCCESS) {
+        HiLog.error(TAG, 'ViewAbility start fileManager success');
+        return;
+      }
+    }
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
     if (OpeningDialogManager.getInstance().getIsChargeDecrypting() ||
     OpeningDialogManager.getInstance().getIsTerminalSelf()) {
