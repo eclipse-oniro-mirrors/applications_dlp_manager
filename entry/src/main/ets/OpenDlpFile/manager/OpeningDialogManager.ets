@@ -102,7 +102,7 @@ export default class OpeningDialogManager {
   }
 
   public getIsTerminalSelf(): boolean {
-    HiLog.debug(TAG, `setIsTerminalSelf ${this._isTerminalSelf}`);
+    HiLog.debug(TAG, `getIsTerminalSelf ${this._isTerminalSelf}`);
     return this._isTerminalSelf;
   }
 

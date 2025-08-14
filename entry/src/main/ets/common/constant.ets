@@ -367,4 +367,6 @@ export default class Constants {
   public static readonly DISCONNECT_VIEW_TIMEOUT: number = 1000;
   public static readonly NO_PERMISSION_OR_EXPIRATION: string = 'no permission or expiration';
   public static readonly DEVICE_2IN1: string = '2in1';
+
+  public static readonly DEFAULT_ERROR_CODE = -1;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,35 +14,21 @@
  */
 
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
-import GlobalContext from '../common/GlobalContext';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import { HiLog } from '../common/HiLog';
 import { AlertDialog } from '@kit.ArkUI';
+import Constants from '../common/constant';
 
 const TAG = 'PhoneDialog';
 
 @Entry()
 @Component
 struct Index {
-  private want: Want | undefined = GlobalContext.load('PhoneDialogUIExtWant');
-  private session: UIExtensionContentSession | undefined = GlobalContext.load('PhoneDialogUIExtSession');
-  private message: ResourceStr = '';
-  private errorDialog: CustomDialogController | null = new CustomDialogController({
-    builder: AlertDialog({
-      content: this.message,
-      primaryButton: {
-        value: $r('app.string.da_button'),
-        action: () => {
-          this.cancelAction();
-        }
-      }
-    }),
-    cancel: (() => {
-      this.cancelAction();
-    })
-  });
+  private want = AppStorage.get('PhoneDialogUIExtWant') as Want | undefined;
+  private session = AppStorage.get('PhoneDialogUIExtSession') as UIExtensionContentSession | undefined;
+  private errorDialog: CustomDialogController | null = null;
 
   private cancelAction(): void {
     HiLog.info(TAG, 'cancelAction');
@@ -50,30 +36,48 @@ struct Index {
       return;
     }
     try {
-      this.session.terminateSelfWithResult({
-        'resultCode': 0,
-      });
+      this.session.terminateSelfWithResult({ resultCode: 0 });
     } catch (error) {
       HiLog.wrapError(TAG, error, 'PhoneDialog terminateSelfWithResult failed');
+    }
+  }
+
+  private getDialogConfig(message: Resource): void {
+    if (!this.errorDialog) {
+      this.errorDialog = new CustomDialogController({
+        builder: AlertDialog({
+          content: message,
+          primaryButton: {
+            value: $r('app.string.da_button'),
+            action: () => {
+              this.cancelAction();
+            }
+          }
+        }),
+        cancel: () => {
+          this.cancelAction();
+        }
+      });
     }
   }
 
   private showErrorDialog(): void {
     try {
       let errorMsg = {} as BusinessError;
-      const errorCode = this.want?.parameters?.errorCode ?? -1;
+      const errorCode = this.want?.parameters?.errorCode ?? Constants.DEFAULT_ERROR_CODE;
       const errorMessage = this.want?.parameters?.errorMessage ?? '';
       errorMsg.code = errorCode as number;
       errorMsg.message = errorMessage as string;
       const errInfo: Record<string, Resource> = GetAlertMessage.getAlertMessage(errorMsg);
-      this.message = errInfo.msg;
+      this.getDialogConfig(errInfo.msg);
       this.errorDialog?.open();
     } catch (err) {
       HiLog.error(TAG, `showErrorDialog failed: ${JSON.stringify(err)}`);
+      this.cancelAction();
     }
   }
 
-  async aboutToAppear() {
+  aboutToAppear() {
     HiLog.info(TAG, 'PhoneDialog aboutToAppear');
     this.showErrorDialog();
   }
@@ -81,6 +85,7 @@ struct Index {
   aboutToDisappear() {
     HiLog.info(TAG, 'PhoneDialog aboutToDisappear');
     this.errorDialog?.close();
+    this.errorDialog = null;
   }
 
   build() {

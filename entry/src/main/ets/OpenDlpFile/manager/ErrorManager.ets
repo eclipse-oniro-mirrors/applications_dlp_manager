@@ -56,7 +56,7 @@ class PhoneManager extends ErrorManager {
       return;
     }
     if (OpenDlpFileError.NEED_DIALOG.has(error.code)) {
-      HiLog.info(TAG, `PhoneManager need dialog, code ${error.code}`);;
+      HiLog.info(TAG, `PhoneManager need dialog, code ${error.code}`);
       await this.requestPhoneDialog(viewContext, error);
       return;
     }

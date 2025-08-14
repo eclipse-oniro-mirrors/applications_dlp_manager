@@ -218,7 +218,7 @@ struct encryptedSharing {
             }
             this.isShowSheet = false;
           } catch (error) {
-            HiLog.error(TAG, `json parse exception, error is ${JSON.stringify(error)}`);
+            HiLog.wrapError(TAG, error, 'json parse exception');
           }
         })
         .width(Constants.CONTACTS_PICKER_WIDTH)
@@ -249,7 +249,7 @@ struct encryptedSharing {
           this.tempInputValue = phoneNumber;
         }
       }).catch((error: BusinessError) => {
-        HiLog.error(TAG, `Failed to select Contacts, Code: ${error.code}, message: ${error.message}`);
+        HiLog.wrapError(TAG, error, 'Failed to select Contacts');
       });
     } else {
       this.isShowSheet = !this.isShowSheet;
@@ -257,7 +257,7 @@ struct encryptedSharing {
   }
 
   private beginShareEncrypt() {
-    HiLog.info(TAG, `begin Share Encrypt start`);
+    HiLog.info(TAG, 'begin Share Encrypt start');
     if (this.isPhoneNumber(this.inputValue)) {
       this.isTextInputEnabled = false;
       this.isConfirmButtonEnabled = false;
@@ -269,7 +269,7 @@ struct encryptedSharing {
     if (this.getAccountInfoResult === encryptedSharing.GET_ACCOUNT_INFO_RESET) {
       return;
     }
-    HiLog.info(TAG, `checkGetAccountInfoResult start`);
+    HiLog.info(TAG, 'checkGetAccountInfoResult start');
     try {
       let commandGetAccountInfoCallBack = JSON.parse(this.getAccountInfoResult) as Record<string, object>;
       HiLog.info(TAG, `getAccountInfoResult Call Back errorCode: ${commandGetAccountInfoCallBack.errorCode}`);
@@ -297,7 +297,7 @@ struct encryptedSharing {
         return;
       }
     } catch (error) {
-      HiLog.error(TAG, `get account info failed: ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'get account info failed');
       showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
       this.enableComponents();
       this.recordSuccessUid = '';
@@ -400,7 +400,7 @@ struct encryptedSharing {
     try {
       await fs.mkdir(filePath, true);
     } catch (error) {
-      HiLog.error(TAG, `mkdir failed: ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'mkdir failed');
       showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
       this.enableComponents();
       return;
@@ -449,7 +449,7 @@ struct encryptedSharing {
             want: this.actionWant
           });
         } catch (error) {
-          HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed');
         }
       }, Constants.SHARE_SET_TIMEOUT);
     }
@@ -468,7 +468,7 @@ struct encryptedSharing {
     }
     HiLog.info(TAG, `credential Call Back errorCode: ${credentialCallBack.errorCode}`);
     if (!credentialCallBack.status && Number(credentialCallBack.errorCode) === Constants.ERR_CODE_SUCCESS) {
-      HiLog.info(TAG, `credentialCallBack msg`);
+      HiLog.info(TAG, 'credentialCallBack msg');
       let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'no_user');
       this.credentialCallBackMsg = str.length > 0 ? str : credentialCallBack.errorMsg;
       this.phoneFormatTips = true;
@@ -517,7 +517,7 @@ struct encryptedSharing {
   }
 
   async getLoginStatus() {
-    HiLog.info(TAG, `get login status start.`);
+    HiLog.info(TAG, 'get login status start.');
     if (!(await getConnectionStatus())) {
       showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.NETWORK_ERROR));
       this.enableComponents();
@@ -533,7 +533,7 @@ struct encryptedSharing {
       }
     } catch (err) {
       this.enableComponents();
-      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
     }
   }
 
@@ -559,8 +559,8 @@ struct encryptedSharing {
       } else {
         this.connectService.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
       }
-    } catch (err) {
-      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'getOsAccountInfo failed');
       showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.ENCRYPT_FAIL_ERROR));
       this.enableComponents();
     }
@@ -608,11 +608,11 @@ struct encryptedSharing {
           if (error === undefined || error === null) {
             this.contactPerson = value;
           } else {
-            HiLog.error(TAG, `error is ${JSON.stringify(error)}`);
+            HiLog.wrapError(TAG, error, 'getStringValue failed');
           }
         });
     } catch (error) {
-      HiLog.error(TAG, `callback getStringValue failed, error ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'callback getStringValue failed failed');
     }
   }
 
@@ -628,10 +628,10 @@ struct encryptedSharing {
         }
       })
     }).catch((err: BusinessError) => {
-      HiLog.error(TAG, `list file failed when judge time with error message: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'list file failed when judge time with error message');
     });
     fs.listFile(pathDir).then((filenames: Array<string>) => {
-      HiLog.info(TAG, `listFile success when judge num`);
+      HiLog.info(TAG, 'listFile success when judge num');
       let filenamesLists = filenames.sort((a, b) => Number(a) - Number(b));
       if (filenamesLists.length > Constants.SHARE_TEMP_SAVE_FILE_NUMBER) {
         let deleteArray = filenamesLists.slice(0, filenamesLists.length - Constants.SHARE_TEMP_SAVE_FILE_NUMBER);
@@ -640,7 +640,7 @@ struct encryptedSharing {
         })
       }
     }).catch((err: BusinessError) => {
-      HiLog.error(TAG, `list file failed when judge num with error message: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'list file failed');
     });
   }
 
@@ -653,10 +653,10 @@ struct encryptedSharing {
   textInputGetFocus() {
     setTimeout(() => {
       try {
-        HiLog.info(TAG, `delay requestFocus start`);
+        HiLog.info(TAG, 'delay requestFocus start');
         this.getUIContext().getFocusController().requestFocus('phoneInput');
       } catch (error) {
-        HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`);
+        HiLog.wrapError(TAG, error, 'requestFocus failed');
       }
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME);
   }
@@ -706,7 +706,7 @@ struct encryptedSharing {
                       'resultCode': EncryptSharingTerminateCode.CANCEL,
                     });
                   } catch (error) {
-                    HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+                    HiLog.wrapError(TAG, error, 'terminateSelfWithResult exception');
                   }
                 }
               }
@@ -720,7 +720,7 @@ struct encryptedSharing {
                   'resultCode': EncryptSharingTerminateCode.BACK,
                 });
               } catch (error) {
-                HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+                HiLog.wrapError(TAG, error, 'terminateSelfWithResult exception');
               }
             }
           },
@@ -852,10 +852,10 @@ struct encryptedSharing {
           .id('cloudAccountLoginUI')
           .onRemoteReady(() => {
             try {
-              HiLog.info(TAG, `cloudAccountLoginUI requestFocus start`);
+              HiLog.info(TAG, 'cloudAccountLoginUI requestFocus start');
               this.getUIContext().getFocusController().requestFocus('cloudAccountLoginUI');
             } catch (error) {
-              HiLog.error(TAG, `requestFocus failed. Cause: ${JSON.stringify(error)}`)
+              HiLog.wrapError(TAG, error, 'requestFocus failed');
             }
           })
           .onReceive((data) => {
@@ -917,7 +917,7 @@ async function generateDlpFile(newFilePath: string, inputUri: string,
     newFile = fs.openSync(newFilePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
     await dlpPermission.generateDLPFile(inFile.fd, newFile.fd, dlpProperty);
   } catch (err) {
-    HiLog.error(TAG, `generateDlpFile failed: ${JSON.stringify(err)}`);
+    HiLog.wrapError(TAG, error, 'generateDlpFile failed');
     error = err;
     if (newFile?.fd && newFile?.fd >= Constants.NORMAL_FD_MIN) {
       fs.closeSync(newFile.fd);
