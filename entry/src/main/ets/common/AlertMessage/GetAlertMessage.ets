@@ -257,7 +257,7 @@ export class GetAlertMessage {
     };
     try {
       await context.requestModalUIExtension(uiExtWant);
-      HiLog.info(TAG, 'requestModalUIExtension succeed');
+      HiLog.info(TAG, 'requestModalUIExtension success');
     } catch (err) {
       let code = (err as BusinessError).code;
       let message = (err as BusinessError).message;

@@ -131,7 +131,7 @@ class ZipParse extends FileParseBase {
       this.fileSize = fileInfo.size;
       ff = await fs.open(filePath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
       await fs.copyFile(file.fd, ff.fd);
-      await fs.mkdir(dirPath);
+      fs.mkdirSync(dirPath, true);
       await zlib.decompressFile(filePath, dirPath);
 
       let dlpInfo = fs.readTextSync(fileName);
@@ -239,7 +239,7 @@ class FileFormatDetector {
       const parseInfo: FileParseInfo = { parseType: FileParseType.ZIP, fileSize: fileSize };
       return ResultMsg.buildSuccess(parseInfo);
     }
-    if (buf && (buf[0] === Constants.DLP_RAW_MAGIC || buf[2] === Constants.DLP_RAW_MAGIC)) {
+    if (buf && (buf[0] === Constants.DLP_RAW_MAGIC || (buf.length >= 3 && buf[2] === Constants.DLP_RAW_MAGIC))) {
       HiLog.debug(TAG, 'FileFormatDetector raw');
       const parseInfo: FileParseInfo = { parseType: FileParseType.RAW, fileSize: fileSize };
       return ResultMsg.buildSuccess(parseInfo);

@@ -257,7 +257,11 @@ struct DlpDialog {
     this.processing = false;
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
       HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
-      this.dlpRpcProxy?.resumeFuseLink(GlobalContext.load('uri'), (err: number) => {
+      if (!this.dlpRpcProxy) {
+        HiLog.error(TAG, 'dlpRpcProxy null');
+        return;
+      }
+      this.dlpRpcProxy.resumeFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
         }
@@ -321,7 +325,12 @@ struct DlpDialog {
 
   private async recoverDlpFile(filePath: string, filePathUri: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.dlpRpcProxy?.recoverDlpFile(GlobalContext.load('uri'), filePathUri, async (err: number) => {
+      if (!this.dlpRpcProxy) {
+        HiLog.error(TAG, 'dlpRpcProxy null');
+        reject();
+        return;
+      }
+      this.dlpRpcProxy.recoverDlpFile(GlobalContext.load('uri'), filePathUri, async (err: number) => {
         if (err !== 0) {
           FileUtil.unlinkSync(filePath);
           HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
@@ -338,7 +347,12 @@ struct DlpDialog {
 
   stopFuseLinkHome() {
     return new Promise<void>((resolve, reject) => {
-      this.dlpRpcProxy?.stopFuseLink(GlobalContext.load('uri'), (err: number) => {
+      if (!this.dlpRpcProxy) {
+        HiLog.error(TAG, 'dlpRpcProxy null');
+        reject();
+        return;
+      }
+      this.dlpRpcProxy.stopFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `stopFuseLink failed: ${err}`);
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.File_cannot_be_opened'));
@@ -352,7 +366,11 @@ struct DlpDialog {
 
   changeToGenDlpFileHome(filePathUri: string, filePath: string) {
     let _dlp = this.tempData();
-    this.dlpRpcProxy?.genDlpFile(filePathUri, GlobalContext.load('uri'), _dlp, async (err: number) => {
+    if (!this.dlpRpcProxy) {
+      HiLog.error(TAG, 'dlpRpcProxy null');
+      return;
+    }
+    this.dlpRpcProxy.genDlpFile(filePathUri, GlobalContext.load('uri'), _dlp, async (err: number) => {
       if (err !== 0) {
         HiLog.error(TAG, `generateDLPFile failed: ${err}`);
         FileUtil.unlinkSync(filePath);
@@ -362,7 +380,11 @@ struct DlpDialog {
         await this.catchProcess();
       } else {
         if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-          this.dlpRpcProxy?.replaceDlpLinkFile(GlobalContext.load('uri'), this.linkFileName, (err: number) => {
+          if (!this.dlpRpcProxy) {
+            HiLog.error(TAG, 'dlpRpcProxy null');
+            return;
+          }
+          this.dlpRpcProxy.replaceDlpLinkFile(GlobalContext.load('uri'), this.linkFileName, (err: number) => {
             if (err !== 0) {
               HiLog.error(TAG, `replaceDLPLinkFile failed: ${err}`);
             }
@@ -448,7 +470,11 @@ struct DlpDialog {
 
   beginToGenDlpFileHome(srcFileUri: string, uri: string, uriInfo: fileUri.FileUri) {
     let _dlp = this.tempData();
-    this.dlpRpcProxy?.genDlpFile(srcFileUri, uri, _dlp, async (err: number) => {
+    if (!this.dlpRpcProxy) {
+      HiLog.error(TAG, 'dlpRpcProxy null');
+      return;
+    }
+    this.dlpRpcProxy.genDlpFile(srcFileUri, uri, _dlp, async (err: number) => {
       if (err !== 0) {
         if (err === 100) {
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.File_cannot_be_opened'));
@@ -886,7 +912,11 @@ struct DlpDialog {
               .controlSize(ControlSize.NORMAL)
               .onClick(async (event) => {
                 if (this.isDlpFile && !(GlobalContext.load('requestIsFromSandBox') as boolean)) {
-                  this.dlpRpcProxy?.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
+                  if (!this.dlpRpcProxy) {
+                    HiLog.error(TAG, 'dlpRpcProxy null');
+                    return;
+                  }
+                  this.dlpRpcProxy.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
                     if (err !== 0) {
                       HiLog.error(TAG, `closeDLPFile failed: ${err}`);
                     }

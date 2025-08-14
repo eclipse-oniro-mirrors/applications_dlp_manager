@@ -58,7 +58,7 @@ export default class OpeningDialogManager {
   }
 
   public unRegisterEmitEvent() {
-    HiLog.info(TAG, 'unRegisterEmitEvent');
+    HiLog.debug(TAG, 'unRegisterEmitEvent');
     emitter.off(Constants.CHECK_SHOW_DIALOG_STATE, this.checkShowDialogStateEvent);
   }
 
@@ -87,22 +87,22 @@ export default class OpeningDialogManager {
   }
 
   public getShowDialogState(): boolean {
-    HiLog.info(TAG, `getShowDialogState ${this._showDialogState}`);
+    HiLog.debug(TAG, `getShowDialogState ${this._showDialogState}`);
     return this._showDialogState;
   }
 
   public getHasCallback(): boolean {
-    HiLog.info(TAG, `getHasCallback ${this._hasCallback}`);
+    HiLog.debug(TAG, `getHasCallback ${this._hasCallback}`);
     return this._hasCallback;
   }
 
   public setIsTerminalSelf(value: boolean) {
-    HiLog.info(TAG, `setIsTerminalSelf ${value}`);
+    HiLog.debug(TAG, `setIsTerminalSelf ${value}`);
     this._isTerminalSelf = value;
   }
 
   public getIsTerminalSelf(): boolean {
-    HiLog.info(TAG, `setIsTerminalSelf ${this._isTerminalSelf}`);
+    HiLog.debug(TAG, `setIsTerminalSelf ${this._isTerminalSelf}`);
     return this._isTerminalSelf;
   }
 
@@ -449,7 +449,7 @@ export default class OpeningDialogManager {
     };
     try {
       await context.requestModalUIExtension(uiExtWant);
-      HiLog.info(TAG, 'requestModalUIExtension succeed');
+      HiLog.info(TAG, 'requestModalUIExtension success');
       return true;
     } catch (err) {
       HiLog.wrapError(TAG, err, 'requestModalUIExtension error');

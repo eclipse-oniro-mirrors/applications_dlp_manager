@@ -58,10 +58,10 @@ async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
     return;
   }
   const decryptContents = rmRet.result;
-  decryptContents.forEach(async decryptContent => {
+  for (const decryptContent of decryptContents) {
     HiLog.debug(TAG, `clearDlpInfoByCancelSandbox fileName ${decryptContent.fileName}`);
     await clearDlpInfoByCancelSandbox(decryptContent);
-  });
+  }
 
   const getRet = manager.getHasDecryptedSize();
   const hasDecryptedNumber = getRet.result;
