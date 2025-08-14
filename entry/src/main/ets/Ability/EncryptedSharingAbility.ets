@@ -20,7 +20,7 @@ import emitter from '@ohos.events.emitter';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
 import { EncryptSharingShowCodeEnum, EncryptSharingTerminateCode } from '../common/enum/EncryptSharingShowCodeEnum';
 import { EnvironmentCallback } from '@kit.AbilityKit';
-import { getDLPInfo, DLPInfo, logErrorShowToast } from '../common/FileUtils/utils';
+import { getDLPInfo, logErrorShowToast } from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import UriValidator from '../validator/UriValidator';

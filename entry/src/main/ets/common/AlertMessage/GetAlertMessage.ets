@@ -38,6 +38,10 @@ export class GetAlertMessage {
       const resource = GetAlertMessage.getToastMessage(error);
       const toastMessage = await context.resourceManager.getStringValue(resource);
       const uiContext = UIContextUtil.getInstance().getUIContext(context);
+      if (!uiContext) {
+        HiLog.error(TAG, 'Get UIContext failed.');
+        return;
+      }
       uiContext.getPromptAction().showToast({
         message: toastMessage,
         duration: Constants.SHARE_SET_TIMEOUT,
