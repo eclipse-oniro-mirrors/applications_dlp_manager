@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
+import Constants from '../common/constant';
 import { EncryptSharingShowCodeEnum } from '../common/enum/EncryptSharingShowCodeEnum';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
-import Constants from '../common/constant';
 import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
-import { getFileSizeByUriSync } from '../common/FileUtils/utils';
+import { getFileSizeByUriSync, isInvalidStr, isValidPath } from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
-import { SupportTypesConfig } from '../common/SupportTypesConfig';
 import Singleton from '../common/Singleton';
+import { SupportTypesConfig } from '../common/SupportTypesConfig';
 
 const TAG = 'UriValidator';
 const DLP_FILE_TYPE = 'dlp';
@@ -98,6 +98,22 @@ class FileCountValidator extends BaseValidator {
     if (context.uriList.length <= 0 || context.uriList.length > Constants.SHARE_MAX_SUPPORT_NUMBER) {
       context.errorCode = EncryptSharingShowCodeEnum.COUNT_ERROR;
       return false;
+    }
+    return super.handle(context);
+  }
+}
+
+class FilePathValidator extends BaseValidator {
+  handle(context: ValidationContext): boolean {
+    HiLog.info(TAG, 'Enter FilePathValidator.');
+    while (context.currentUri) {
+      if (isInvalidStr(context.currentUri) || !isValidPath(context.currentUri)) {
+        context.errorCode = EncryptSharingShowCodeEnum.FILE_PATH_ERROR;
+        return false;
+      }
+      if (!context.moveNext()) {
+        break;
+      }
     }
     return super.handle(context);
   }
@@ -189,11 +205,13 @@ export default class UriValidator {
     HiLog.info(TAG, 'Enter URI validation.');
     const context = new ValidationContext(uriList);
     const fileCountValidator = new FileCountValidator();
+    const filePathValidator = new FilePathValidator();
     const fileTypeValidator = new FileTypeValidator();
     const fileSizeValidator = new FileSizeValidator();
     const dataPersistHandler = new DataPersistHandler();
 
-    fileCountValidator.setNext(fileTypeValidator);
+    fileCountValidator.setNext(filePathValidator);
+    filePathValidator.setNext(fileTypeValidator);
     fileTypeValidator.setNext(fileSizeValidator);
     fileSizeValidator.setNext(dataPersistHandler);
 

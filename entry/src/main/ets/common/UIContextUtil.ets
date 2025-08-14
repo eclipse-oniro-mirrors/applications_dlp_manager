@@ -32,7 +32,7 @@ export default class UIContextUtil {
 
   public getUIContext(
     context: common.UIAbilityContext | common.UIExtensionContext | common.ServiceExtensionContext
-  ): UIContext {
+  ): UIContext | undefined {
     HiLog.info(TAG, 'Getting UIContext.');
     if (!UIContextUtil.uiContext) {
       UIContextUtil.locker.acquire();
@@ -41,6 +41,8 @@ export default class UIContextUtil {
           HiLog.info(TAG, 'UIContext is undefined. Creating UIContext without window.');
           UIContextUtil.uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
         }
+      } catch(error) {
+        HiLog.wrapError(TAG, error, 'Failed to create UIContext without window');
       } finally {
         UIContextUtil.locker.release();
       }
