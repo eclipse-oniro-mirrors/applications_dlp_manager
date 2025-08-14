@@ -49,11 +49,11 @@ export default class ApplyEfficiencyManager {
   private applyEfficiencyResource(): boolean {
     HiLog.info(TAG, 'applyEfficiencyResource');
     let request: backgroundTaskManager.EfficiencyResourcesRequest = {
-      resourceTypes: backgroundTaskManager.ResourceType.CPU, // 资源类型CPU，保证应用不被挂起
+      resourceTypes: backgroundTaskManager.ResourceType.CPU,
       isApply: true,
-      timeOut: Constants.DECRYPT_TIMEOUT_TIME, // 超时时间，超过超时时间后资源自动释放
+      timeOut: Constants.DECRYPT_TIMEOUT_TIME,
       reason: 'apply efficiency resource for open dlp file',
-      isPersist: false,
+      isPersist: true,
       isProcess: true
     };
     try {
@@ -66,7 +66,7 @@ export default class ApplyEfficiencyManager {
     }
   }
 
-  private releaseEfficiencyResource(): boolean {
+  public releaseEfficiencyResource(): boolean {
     HiLog.info(TAG, 'releaseEfficiencyResource');
     try {
       backgroundTaskManager.resetAllEfficiencyResources();
