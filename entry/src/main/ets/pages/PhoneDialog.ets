@@ -42,7 +42,7 @@ struct Index {
     }
   }
 
-  private getDialogConfig(message: Resource): void {
+  private getDialogConfig(message: Resource | string): void {
     if (!this.errorDialog) {
       this.errorDialog = new CustomDialogController({
         builder: AlertDialog({
@@ -69,10 +69,11 @@ struct Index {
       errorMsg.code = errorCode as number;
       errorMsg.message = errorMessage as string;
       const errInfo: Record<string, Resource> = GetAlertMessage.getAlertMessage(errorMsg);
-      this.getDialogConfig(errInfo.msg);
+      const msg = errInfo.msg ?? '';
+      this.getDialogConfig(msg);
       this.errorDialog?.open();
     } catch (err) {
-      HiLog.error(TAG, `showErrorDialog failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'showErrorDialog failed');
       this.cancelAction();
     }
   }

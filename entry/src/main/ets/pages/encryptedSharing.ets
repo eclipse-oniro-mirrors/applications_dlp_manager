@@ -917,7 +917,7 @@ async function generateDlpFile(newFilePath: string, inputUri: string,
     newFile = fs.openSync(newFilePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
     await dlpPermission.generateDLPFile(inFile.fd, newFile.fd, dlpProperty);
   } catch (err) {
-    HiLog.wrapError(TAG, error, 'generateDlpFile failed');
+    HiLog.wrapError(TAG, err, 'generateDlpFile failed');
     error = err;
     if (newFile?.fd && newFile?.fd >= Constants.NORMAL_FD_MIN) {
       fs.closeSync(newFile.fd);

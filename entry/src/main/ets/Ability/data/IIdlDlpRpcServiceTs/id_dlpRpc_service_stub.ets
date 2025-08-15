@@ -41,7 +41,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   private checkParams(code: number, data: rpc.MessageSequence): boolean {
-    if (!code || !data) {
+    if (code === null || code === undefined || !data) {
       HiLog.error(TAG, 'params is invalid');
       return false;
     }

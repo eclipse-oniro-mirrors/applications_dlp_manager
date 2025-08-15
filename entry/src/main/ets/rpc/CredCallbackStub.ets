@@ -32,7 +32,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
   }
 
   private checkParams(code: number, data: rpc.MessageSequence): boolean {
-    if (!code || !data) {
+    if (code === null || code === undefined || !data) {
       HiLog.error(TAG, 'ViewAbilityStub params is invalid');
       return false;
     }
