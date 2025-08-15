@@ -25,8 +25,8 @@ const TAG = 'PhoneDialogUIExtAbility';
 export default class PhoneDialogUIExtAbility extends UIExtensionAbility {
   async onSessionCreate(want: Want, session: UIExtensionContentSession): Promise<void> {
     HiLog.info(TAG, 'PhoneDialogUIExtAbility onSessionCreate start');
-    GlobalContext.store('PhoneDialogUIExtWant', want);
-    GlobalContext.store('PhoneDialogUIExtSession', session);
+    AppStorage.setOrCreate('PhoneDialogUIExtWant', want);
+    AppStorage.setOrCreate('PhoneDialogUIExtSession', session);
     try {
       session.loadContent('pages/PhoneDialog');
       session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
@@ -36,6 +36,8 @@ export default class PhoneDialogUIExtAbility extends UIExtensionAbility {
   }
 
   onSessionDestroy(session: UIExtensionContentSession): void {
+    AppStorage.delete('PhoneDialogUIExtWant');
+    AppStorage.delete('PhoneDialogUIExtSession');
     HiLog.info(TAG, 'PhoneDialogUIExtAbility onSessionDestroy');
   }
 

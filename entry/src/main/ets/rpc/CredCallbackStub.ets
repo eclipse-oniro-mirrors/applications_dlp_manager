@@ -31,8 +31,11 @@ export default class CredCallbackStub extends rpc.RemoteObject {
     return this;
   }
 
-  async onRemoteMessageRequest(code: number, data: rpc.MessageSequence): Promise<boolean> {
-    HiLog.info(TAG, `onRemoteMessageRequest called, code = ${code}`);
+  private checkParams(code: number, data: rpc.MessageSequence): boolean {
+    if (!code || !data) {
+      HiLog.error(TAG, 'ViewAbilityStub params is invalid');
+      return false;
+    }
     try {
       if (data.readInterfaceToken() !== Constants.DLP_CREDMGR_INTERFACE_TOKEN) {
         HiLog.error(TAG, 'InterfaceToken unmatched.');
@@ -42,6 +45,15 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       HiLog.error(TAG, `read data exception, error is ${JSON.stringify(error)}`);
       return false;
     }
+    return true;
+  }
+
+  async onRemoteMessageRequest(code: number, data: rpc.MessageSequence): Promise<boolean> {
+    if (!this.checkParams(code, data)) {
+      HiLog.error(TAG, 'onRemoteMessageRequest checkParams failed');
+      return false;
+    }
+    HiLog.info(TAG, `onRemoteMessageRequest called, code = ${code}`);
     switch (code) {
       case Constants.COMMAND_SEARCH_USER_INFO: {
         HiLog.info(TAG, 'onRemoteMessageRequest command search user info');
