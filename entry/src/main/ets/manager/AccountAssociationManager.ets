@@ -152,7 +152,7 @@ export default class AccountAssociationManager {
 
     if (isInvalidStr(ownerAccountId) || isInvalidStr(authorizedAccount)) {
       HiLog.error(TAG,
-        `Input owerAccountId or authorizedAccount is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_SET_FAILED}`);
+        `Input ownerAccountId or authorizedAccount is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_SET_FAILED}`);
       return;
     }
 
