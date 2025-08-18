@@ -73,75 +73,74 @@ export default class HuksCipherUtils {
     }
   }
 
-  public static async encrypt(keyAlias: string, plainData: Uint8Array,
-    params: huks.HuksParam[]): Promise<Uint8Array | undefined> {
+  private static checkHuksParams(keyAlias: string, data: Uint8Array, params: huks.HuksParam[]): boolean {
     if (isInvalidStr(keyAlias)) {
       HiLog.error(TAG, 'keyAlias is invalid.');
-      return undefined;
+      return false;
     }
-    if (!plainData || plainData.length === 0) {
-      HiLog.error(TAG, 'plainData is invalid.');
-      return undefined;
+    if (!data || data.length === 0) {
+      HiLog.error(TAG, 'data is invalid.');
+      return false;
     }
     if (!params) {
       HiLog.error(TAG, 'HuksParam is invalid.');
-      return undefined;
+      return false;
     }
-    let option: huks.HuksOptions = {
+    return true;
+  }
+
+  private static async createAndProcessSession(params: huks.HuksParam[], data: Uint8Array,
+    keyAlias: string): Promise<Uint8Array | undefined> {
+    const option: huks.HuksOptions = {
       properties: params,
-      inData: plainData
+      inData: data
     };
-    let handle: number | undefined;
-    let resultData: Uint8Array | undefined;
+    let handle: number | undefined = undefined;
+    let resultData: Uint8Array | undefined = undefined;
     try {
-      let sessionHandle = await huks.initSession(keyAlias, option);
+      HiLog.info(TAG, 'Init session.');
+      const sessionHandle = await huks.initSession(keyAlias, option);
       handle = sessionHandle.handle;
-      let sessionResult = await huks.finishSession(handle, option);
+      HiLog.info(TAG, 'Finish session.');
+      const sessionResult = await huks.finishSession(handle, option);
       resultData = sessionResult.outData;
     } catch (err) {
-      HiLog.error(TAG, `Encrypt data failed: ${JSON.stringify(err)}`);
+      HiLog.error(TAG, `Handle data failed: ${JSON.stringify(err)}`);
       if (handle) {
         HuksCipherUtils.abort(handle, option);
       }
     }
+    return resultData;
+  }
+
+  public static async encrypt(keyAlias: string, plainData: Uint8Array,
+    params: huks.HuksParam[]): Promise<Uint8Array | undefined> {
+    HiLog.info(TAG, 'HUKS data encryption.');
+    const res: boolean = HuksCipherUtils.checkHuksParams(keyAlias, plainData, params);
+    if (!res) {
+      HiLog.error(TAG, 'Check encryption parameters failed.');
+      return undefined;
+    }
+    const resultData = HuksCipherUtils.createAndProcessSession(params, plainData, keyAlias);
+    HiLog.info(TAG, 'Got encrypted data.');
     return resultData;
   }
 
   public static async decrypt(keyAlias: string, cipherData: Uint8Array,
     params: huks.HuksParam[]): Promise<Uint8Array | undefined> {
-    if (isInvalidStr(keyAlias)) {
-      HiLog.error(TAG, 'keyAlias is invalid.');
+    HiLog.info(TAG, 'HUKS data decryption.');
+    const res: boolean = HuksCipherUtils.checkHuksParams(keyAlias, cipherData, params);
+    if (!res) {
+      HiLog.error(TAG, 'Check decryption parameters failed.');
       return undefined;
     }
-    if (!cipherData || cipherData.length === 0) {
-      HiLog.error(TAG, 'cipherData is invalid.');
-      return undefined;
-    }
-    if (!params) {
-      HiLog.error(TAG, 'HuksParam is invalid.');
-      return undefined;
-    }
-    let option: huks.HuksOptions = {
-      properties: params,
-      inData: cipherData
-    };
-    let handle: number | undefined;
-    let resultData: Uint8Array | undefined;
-    try {
-      let sessionHandle = await huks.initSession(keyAlias, option);
-      handle = sessionHandle.handle;
-      let sessionResult = await huks.finishSession(handle, option);
-      resultData = sessionResult.outData;
-    } catch (err) {
-      HiLog.error(TAG, `Decrypt data failed: ${JSON.stringify(err)}`);
-      if (handle) {
-        HuksCipherUtils.abort(handle, option);
-      }
-    }
+    const resultData = HuksCipherUtils.createAndProcessSession(params, cipherData, keyAlias);
+    HiLog.info(TAG, 'Got decrypted data.');
     return resultData;
   }
 
   private static async abort(handle: number, options: huks.HuksOptions): Promise<void> {
+    HiLog.info(TAG, 'Abort session.');
     try {
       await huks.abortSession(handle, options);
     } catch (err) {
