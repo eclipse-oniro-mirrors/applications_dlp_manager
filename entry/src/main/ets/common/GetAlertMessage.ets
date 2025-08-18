@@ -104,6 +104,8 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.File_damaged') } as Record<string, Resource>;
       case Constants.ERR_JS_USER_NO_PERMISSION_2C:
         return { 'msg': $r('app.string.File_no_permission') } as Record<string, Resource>;
+      case Constants.ERR_JS_USER_NO_PERMISSION_2B:
+        return { 'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM') } as Record<string, Resource>;
       case Constants.ERR_JS_OTHER_APP_OPEN_FILE:
         return { 'msg': $r('app.string.This_File_is_Open_By_Other_App') } as Record<string, Resource>;
       case Constants.ERR_JS_OFFLINE:
