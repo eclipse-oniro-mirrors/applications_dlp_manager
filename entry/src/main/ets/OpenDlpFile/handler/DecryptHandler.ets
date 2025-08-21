@@ -321,7 +321,6 @@ export default class DecryptHandler {
 
   private async executeDecryption(callerAppId: string, decryptContent: DecryptContent,
     timeoutPromise: Promise<never>): Promise<dlpPermission.DLPFile> {
-    await new Promise<void>(resolve => setTimeout(resolve, 500));
     return Promise.race<Promise<dlpPermission.DLPFile | never>>([
       dlpPermission.openDLPFile(decryptContent.dlpFd, callerAppId),
       timeoutPromise
