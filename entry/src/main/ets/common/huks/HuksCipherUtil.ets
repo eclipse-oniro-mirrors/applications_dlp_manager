@@ -57,22 +57,6 @@ export default class HuksCipherUtils {
     return false;
   }
 
-  public static async deleteKey(keyAlias: string): Promise<void> {
-    if (isInvalidStr(keyAlias)) {
-      HiLog.error(TAG, 'keyAlias is invalid.');
-      return;
-    }
-    let emptyOptions: huks.HuksOptions = {
-      properties: []
-    };
-    try {
-      await huks.deleteKeyItem(keyAlias, emptyOptions);
-      HiLog.info(TAG, 'deleteKeyItem success.');
-    } catch (err) {
-      HiLog.error(TAG, `deleteKey failed: ${JSON.stringify(err)}`);
-    }
-  }
-
   private static checkHuksParams(keyAlias: string, data: Uint8Array, params: huks.HuksParam[]): boolean {
     if (isInvalidStr(keyAlias)) {
       HiLog.error(TAG, 'keyAlias is invalid.');
