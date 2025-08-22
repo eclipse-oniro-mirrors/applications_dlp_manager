@@ -506,10 +506,7 @@ function sendDlpFileOpenProperties() {
 }
 
 function isValidPath(path: string): boolean {
-  if (path.indexOf('./') !== -1 || path.indexOf('../') !== -1) {
-    return false;
-  }
-  return true;
+  return !isInvalidStr(path) && path.startsWith(Constants.VALID_URI_PREFIX);
 }
 
 function getAccountTypeAndRealFileType(

@@ -369,4 +369,5 @@ export default class Constants {
   public static readonly DEVICE_2IN1: string = '2in1';
 
   public static readonly DEFAULT_ERROR_CODE = -1;
+  public static readonly VALID_URI_PREFIX = 'file://';
 }
