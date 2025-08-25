@@ -25,7 +25,6 @@ import { FileParseType } from '../../bean/data/FileParseType';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { ObjectUtil } from '../../common/ObjectUtil';
-
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
 import FileUtils from '../../common/FileUtils/FileUtils';
