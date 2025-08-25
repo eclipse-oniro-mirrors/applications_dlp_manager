@@ -26,7 +26,7 @@ export interface FileMsg {
   fileType: string;
 }
 
-export default class FileUtils {
+export default class FileUtilsr {
   static getSuffixFileMsgByUri(uri: string): FileMsg {
     let strArray: string[] = uri.split('/');
     let len: number = strArray.length;
@@ -98,5 +98,11 @@ export default class FileUtils {
   static getFileNameByUri(uri: string): string {
     const strArray: string[] = uri.split('/');
     return strArray[strArray.length - 1];
+  }
+
+  static getFileSuffixByFileName(fileName: string): string {
+    let lastIndex: number = fileName.lastIndexOf('.');
+    let fileSuffix: string = fileName.substring(lastIndex + 1, fileName.length);
+    return fileSuffix;
   }
 }
