@@ -26,7 +26,7 @@ export interface FileMsg {
   fileType: string;
 }
 
-export default class FileUtilsr {
+export default class FileUtils {
   static getSuffixFileMsgByUri(uri: string): FileMsg {
     let strArray: string[] = uri.split('/');
     let len: number = strArray.length;
