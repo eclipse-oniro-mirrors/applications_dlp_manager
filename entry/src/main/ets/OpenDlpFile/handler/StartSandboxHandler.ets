@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,9 +25,10 @@ import { FileParseType } from '../../bean/data/FileParseType';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { ObjectUtil } from '../../common/ObjectUtil';
+
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
-import { FileUtils } from '../../common/FileUtils/FileUtils';
+import FileUtils from '../../common/FileUtils/FileUtils';
 
 const TAG = 'StartSandboxHandler';
 
