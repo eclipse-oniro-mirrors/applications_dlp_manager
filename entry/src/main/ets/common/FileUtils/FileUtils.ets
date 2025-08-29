@@ -99,4 +99,10 @@ export default class FileUtils {
     const strArray: string[] = uri.split('/');
     return strArray[strArray.length - 1];
   }
+
+  static getFileSuffixByFileName(fileName: string): string {
+    let lastIndex: number = fileName.lastIndexOf('.');
+    let fileSuffix: string = fileName.substring(lastIndex + 1, fileName.length);
+    return fileSuffix;
+  }
 }

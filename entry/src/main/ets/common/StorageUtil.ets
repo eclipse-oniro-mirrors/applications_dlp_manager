@@ -79,40 +79,4 @@ export default class StorageUtil {
     }
     return '';
   }
-
-  async deleteData(key: string, name: string): Promise<void> {
-    if (!this.appContext) {
-      HiLog.error(TAG, 'App context is null.');
-      return;
-    }
-    try {
-      let preference = await data_preferences.getPreferences(this.appContext, name);
-      if (!preference) {
-        HiLog.error(TAG, 'Preference is null.');
-        return;
-      }
-      await preference.delete(key);
-      HiLog.debug(TAG, 'Preference delete key success.');
-      await preference.flush();
-      HiLog.debug(TAG, 'Flush preference success.');
-      await data_preferences.removePreferencesFromCache(this.appContext, name);
-    } catch (err) {
-      HiLog.error(TAG, `Delete data failed: ${JSON.stringify(err)}`);
-      return;
-    }
-    HiLog.info(TAG, 'Delete data success.');
-  }
-
-  public async deleteFile(fileName: string): Promise<void> {
-    if (!this.appContext) {
-      HiLog.error(TAG, 'App context is null.');
-      return;
-    }
-    try {
-      data_preferences.deletePreferences(this.appContext, fileName);
-      HiLog.info(TAG, 'Delete preferences success.');
-    } catch (err) {
-      HiLog.error(TAG, `Delete file failed: ${JSON.stringify(err)}`);
-    }
-  }
 }

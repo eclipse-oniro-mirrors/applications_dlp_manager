@@ -27,8 +27,77 @@ import { dlpPermission } from '@kit.DataProtectionKit';
 import { ObjectUtil } from '../../common/ObjectUtil';
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
+import FileUtils from '../../common/FileUtils/FileUtils';
 
 const TAG = 'StartSandboxHandler';
+
+const suffixMimeTypeMap: Map<string, string> = new Map([
+  ['txt', 'text/plain'],
+  ['doc', 'application/msword'],
+  ['docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  ['pdf', 'application/pdf'],
+  ['ppt', 'application/vnd.ms-powerpoint'],
+  ['pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+  ['xls', 'application/vnd.ms-excel'],
+  ['xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+  ['bmp', 'image/bmp'],
+  ['bm', 'image/bmp'],
+  ['dng', 'image/x-adobe-dng'],
+  ['gif', 'image/gif'],
+  ['heic', 'image/heic'],
+  ['heics', 'image/heic'],
+  ['heif', 'image/heif'],
+  ['heifs', 'image/heif'],
+  ['hif', 'image/heif'],
+  ['jpg', 'image/jpeg'],
+  ['jpeg', 'image/jpeg'],
+  ['jpe', 'image/jpeg'],
+  ['png', 'image/png'],
+  ['webp', 'image/webp'],
+  ['cur', 'image/ico'],
+  ['raf', 'image/x-fuji-raf'],
+  ['ico', 'image/x-icon'],
+  ['nrw', 'image/x-nikon-nrw'],
+  ['rw2', 'image/x-panasonic-raw'],
+  ['pef', 'image/x-pentax-pef'],
+  ['srw', 'image/x-samsung-srw'],
+  ['svg', 'image/svg+xml'],
+  ['arw', 'image/x-sony-arw'],
+  ['3gpp2', 'video/3gpp2'],
+  ['3gp2', 'video/3gpp2'],
+  ['3g2', 'video/3gpp2'],
+  ['3gpp', 'video/3gpp'],
+  ['3gp', 'video/3gpp'],
+  ['avi', 'video/avi'],
+  ['m4v', 'video/mp4'],
+  ['f4v', 'video/mp4'],
+  ['mp4v', 'video/mp4'],
+  ['mpeg4', 'video/mp4'],
+  ['mp4', 'video/mp4'],
+  ['m2ts', 'video/mp2t'],
+  ['mts', 'video/mp2t'],
+  ['ts', 'video/mp2ts'],
+  ['vt', 'video/vnd.youtube.yt'],
+  ['wrf', 'video/x-webex'],
+  ['mpeg', 'video/mpeg'],
+  ['mpeg2', 'video/mpeg'],
+  ['mpv2', 'video/mpeg'],
+  ['mp2v', 'video/mpeg'],
+  ['m2v', 'video/mpeg'],
+  ['m2t', 'video/mpeg'],
+  ['mpeg1', 'video/mpeg'],
+  ['mpv1', 'video/mpeg'],
+  ['mp1v', 'video/mpeg'],
+  ['m1v', 'video/mpeg'],
+  ['mpg', 'video/mpeg'],
+  ['mov', 'video/quicktime'],
+  ['mkv', 'video/x-matroska'],
+  ['webm', 'video/webm'],
+  ['h264', 'video/H264'],
+  ['wbmp', 'image/vnd.wap.wbmp'],
+  ['nef', 'image/x-nikon-nef'],
+  ['cr2', 'image/x-canon-cr2'],
+]);
 
 export default class StartSandboxHandler {
   private static instance: StartSandboxHandler;
@@ -132,6 +201,10 @@ export default class StartSandboxHandler {
     want.uri = decryptContent.linkUri;
     want.flags = decryptContent.linkFileWriteable ?
     wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+    let fileSuffix: string = FileUtils.getFileSuffixByFileName(decryptContent.linkFileName);
+    if (want.type === 'dlp') {
+      want.type = suffixMimeTypeMap.get(fileSuffix);
+    }
     let dlpWant: Want = {
       parameters: {
         'linkFileName': {

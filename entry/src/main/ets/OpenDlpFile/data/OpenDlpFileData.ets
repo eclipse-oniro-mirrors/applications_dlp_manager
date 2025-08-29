@@ -204,7 +204,7 @@ export default class OpenDlpFileData {
     }
 
     this._uri = this._want.uri as string;
-    if (isInvalidStr(this._uri) && !isValidPath(this._uri) && !this.CheckSuffixByUri()) {
+    if (isInvalidStr(this._uri) || !isValidPath(this._uri) && !this.CheckSuffixByUri()) {
       HiLog.error(TAG, 'invalid uri in want.uri');
       return false;
     }

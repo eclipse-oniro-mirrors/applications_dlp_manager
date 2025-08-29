@@ -152,7 +152,7 @@ export default class AccountAssociationManager {
 
     if (isInvalidStr(ownerAccountId) || isInvalidStr(authorizedAccount)) {
       HiLog.error(TAG,
-        `Input owerAccountId or authorizedAccount is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_SET_FAILED}`);
+        `Input ownerAccountId or authorizedAccount is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_SET_FAILED}`);
       return;
     }
 
@@ -177,29 +177,5 @@ export default class AccountAssociationManager {
     } catch (error) {
       HiLog.error(TAG, `Set authorized account error: ${JSON.stringify(error)}`);
     }
-  }
-
-  public async deleteAuthorizedAccount(ownerAccountId: string): Promise<void> {
-    HiLog.info(TAG, 'Enter deleteAuthorizedAccount.');
-
-    if (isInvalidStr(ownerAccountId)) {
-      HiLog.error(TAG, `Input ownerAccountId is invalid. Code is ${Constants.ERR_CODE_ASSOCIATION_DELETE_FAILED}`);
-      return;
-    }
-    await HuksCipherUtils.deleteKey(Constants.ASSOCIATION_KEY_ALIAS);
-
-    let associationFileName = await AccountAssociationUtil.getAccountAssociationFileName(ownerAccountId);
-    if (!associationFileName) {
-      HiLog.error(TAG, 'Get association file name failed.');
-      return;
-    }
-    if (!this.storageUtil) {
-      HiLog.error(TAG, 'Get storage util failed.');
-      return;
-    }
-
-    await this.storageUtil.deleteData(Constants.ASSOCIATION_STORAGE_KEY, associationFileName);
-    await this.storageUtil.deleteData(Constants.AES_NONCE_KEY, associationFileName);
-    await this.storageUtil.deleteFile(associationFileName);
   }
 }

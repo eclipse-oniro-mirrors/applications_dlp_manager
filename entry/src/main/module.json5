@@ -32,17 +32,6 @@
         "value": "true"
       }
     ],
-    "abilities": [
-      {
-        "name": "SaveAsAbility",
-        "srcEntry": "./ets/Ability/SaveAsAbility.ets",
-        "description": "$string:MainAbility_desc",
-        "icon": "$media:icon",
-        "label": "$string:MainAbility_label",
-        "startWindowIcon": "$media:icon",
-        "startWindowBackground": "$color:white"
-      }
-    ],
     "extensionAbilities": [
       {
         "name": "DialogUIExtAbility",

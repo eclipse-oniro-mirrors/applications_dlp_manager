@@ -410,7 +410,7 @@ function sendDlpManagerAccountLogin(errorCode: number) {
       'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'LOGIN_FAIL_CODE': errorCode ?? -1,
       'PKG_NAME': AppStorage.get('hiPkgName') ?? '',
-    } as Record<string, number>
+    } as Record<string, number | string>
   };
 
   try {
@@ -436,7 +436,7 @@ function sendDlpManagerFileConfiguration() {
       'ACCOUNT_VERIFY_SUCC': AppStorage.get('hiAccountVerifySucc') ?? -1,
       'ACCOUNT_VERIFY_FAIL': AppStorage.get('hiAccountVerifyFail') ?? -1,
       'VALID_DATE': AppStorage.get('hiValidDate') ?? false,
-    } as Record<string, number>
+    } as Record<string, number | string | boolean>
   };
 
   try {
@@ -495,7 +495,7 @@ function sendDlpFileOpenProperties() {
       'ACCOUNT_TYPE': AppStorage.get('hiAccountType') ?? '',
       'FILE_SIZE': AppStorage.get('hiFileSize') ?? -1,
       'POLICY_SIZE_ENC': AppStorage.get('hiPolicySizeEnc') ?? -1,
-    } as Record<string, number>
+    } as Record<string, number | string>
   };
 
   try {
@@ -506,10 +506,7 @@ function sendDlpFileOpenProperties() {
 }
 
 function isValidPath(path: string): boolean {
-  if (path.indexOf('./') !== -1 || path.indexOf('../') !== -1) {
-    return false;
-  }
-  return true;
+  return !isInvalidStr(path) && path.startsWith(Constants.VALID_URI_PREFIX);
 }
 
 function getAccountTypeAndRealFileType(
@@ -701,7 +698,7 @@ function checkNetworkStatus(): Promise<void> {
 }
 
 function isInvalidStr(input: string | null | undefined): boolean {
-  return (input === null || input === undefined || input.trim() === '' || input.length === 0);
+  return !input || input.trim() === '';
 }
 
 function showToast(uiContext: UIContext, msg: Resource | string): void {
