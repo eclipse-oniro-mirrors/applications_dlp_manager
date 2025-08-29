@@ -59,7 +59,7 @@ struct Index {
   });
 
   async authWithPop(): Promise<void> {
-    HiLog.info(TAG, `authwithpop start`);
+    HiLog.info(TAG, 'authwithpop start');
     try {
       await checkNetworkStatus();
     } catch {
@@ -75,7 +75,7 @@ struct Index {
           (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
       }}];
       this.dialogControllerButton?.open();
-      HiLog.error(TAG, `network failed`);
+      HiLog.error(TAG, 'network failed');
       return;
     };
     try {
@@ -83,13 +83,12 @@ struct Index {
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
           sendDlpManagerAccountLogin(resultCode);
           HiLog.info(TAG, `auth resultCode: ${resultCode}`);
-          HiLog.info(TAG, `auth authResult: ${JSON.stringify(authResult)}`);
         }
       })
       abilityResult.resultCode = 0;
       (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
     } catch (err) {
-      HiLog.error(TAG, `auth exception: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'auth failed');
     }
   }
 
@@ -134,7 +133,7 @@ struct Index {
   }
 
   async aboutToAppear() {
-    HiLog.info(TAG, `alert aboutToAppear start`);
+    HiLog.info(TAG, 'alert aboutToAppear start');
     try {
       let messageCode = -1;
       let errorMsg = {} as BusinessError;
@@ -155,7 +154,7 @@ struct Index {
       }
       this.getErrInfo(messageCode, errorMsg, accountType);
     } catch (err) {
-      HiLog.error(TAG, `showErrorDialog failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'showErrorDialog failed');
     }
   }
 

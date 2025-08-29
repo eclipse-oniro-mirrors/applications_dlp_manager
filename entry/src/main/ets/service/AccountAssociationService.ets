@@ -36,7 +36,7 @@ export default class AccountAssociationService {
     try {
       accountInfo = await getOsAccountInfo();
     } catch (err) {
-      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
       return [];
     }
 
@@ -60,7 +60,7 @@ export default class AccountAssociationService {
     try {
       accountInfo = await getOsAccountInfo();
     } catch (err) {
-      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
       return;
     }
 

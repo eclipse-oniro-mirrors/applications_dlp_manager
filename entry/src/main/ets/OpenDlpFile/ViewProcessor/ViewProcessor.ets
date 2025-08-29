@@ -90,7 +90,7 @@ export class OpenDlpFileProcessor {
     }
 
     // 6. start sandbox
-    const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox(decryptContent, context);
+    const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox(decryptContent);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandbox error');
       await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);

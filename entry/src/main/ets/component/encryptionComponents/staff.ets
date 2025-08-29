@@ -128,7 +128,7 @@ struct staffItem {
       return (getContext(this) as common.UIAbilityContext).resourceManager.getNumber(
         $r('sys.float.font_weight_semibold'));
     } catch (error) {
-      HiLog.error(TAG, `getFontWeight callback getNumber failed: ${JSON.stringify(error)}.`);
+      HiLog.wrapError(TAG, error, 'getFontWeight callback getNumber failed');
       return FontWeight.Regular;
     }
   }
@@ -175,7 +175,7 @@ struct staffItem {
           item.value = accountInfo[item.key];
         })
       } catch (error) {
-        HiLog.error(TAG, `getFontWeight callback getNumber failed: ${JSON.stringify(error)}.`);
+        HiLog.wrapError(TAG, error, 'getFontWeight callback getNumber failed');
       }
     })
     .hitTestBehavior(HitTestMode.Block)

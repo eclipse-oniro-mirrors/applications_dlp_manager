@@ -57,12 +57,14 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
     switch (code) {
       case Constants.COMMAND_SET_REMOTE_OBJECT: {
         HiLog.info(TAG, 'command set remote object');
+        let proxy: rpc.IRemoteObject | undefined = undefined;
         try {
-          await ViewAbilityService.getInstance().setRemoteProxy(data.readRemoteObject());
+          proxy = data.readRemoteObject();
         } catch (error) {
           HiLog.wrapError(TAG, error, 'readRemoteObject error');
           return false;
         }
+        await ViewAbilityService.getInstance().setRemoteProxy(proxy);
         return true;
       }
       case Constants.COMMAND_DIALOG_DISAPPEAR: {
@@ -71,7 +73,7 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
         try {
           resultVar = data.readString();
         } catch (error) {
-          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'read string failed');
           return false;
         }
         await OpeningDialogManager.getInstance().dialogDisappear(resultVar);
@@ -83,7 +85,7 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
         try {
           resultVar = data.readString();
         } catch (error) {
-          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'read string failed');
           return false;
         }
         await OpeningDialogManager.getInstance().dialogTimeout(resultVar);
@@ -91,7 +93,7 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
         return true;
       }
       default: {
-        HiLog.error(TAG, `OpeningDialogStub invalid request code: ${code}`);
+        HiLog.error(TAG, `ViewAbilityStub invalid request code: ${code}`);
         break;
       }
     }

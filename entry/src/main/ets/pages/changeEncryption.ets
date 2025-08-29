@@ -236,21 +236,21 @@ struct changeEncryption {
       let documentPicker = new picker.DocumentViewPicker();
       documentPicker.save(documentSaveOptions).then(async (saveRes) => {
         if (saveRes === undefined || saveRes.length === 0) {
-          HiLog.error(TAG, `fail to get uri`);
+          HiLog.error(TAG, 'fail to get uri');
           await this.catchProcess();
           return;
         }
-        HiLog.info(TAG, `get uri success`);
+        HiLog.info(TAG, 'get uri success');
         try {
           await this.fileDecryption(saveRes);
         } catch {
           HiLog.error(TAG, `file decryption fail`);
         }
-      }).catch((err: number) => {
-        HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(err)}`);
+      }).catch((code: number) => {
+        HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(code)}`);
       });
     } catch (err) {
-      HiLog.error(TAG, `Decrypt DLP file: ${this.srcFileName}, failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, `Decrypt DLP file: ${this.srcFileName}, failed`);
     }
   }
 
@@ -265,13 +265,13 @@ struct changeEncryption {
     try {
       uriInfo = new fileUri.FileUri(plainUri);
     } catch (err) {
-      HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'fileUri failed');
     }
     try {
       file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
       await this.recoverDLPFileHome(plainUri);
     } catch (err) {
-      HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, `recoverDLPFile: ${this.srcFileName}, failed`);
       await FileUtil.unlink(uriInfo!.path);
       let errorInfo =
         { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
@@ -311,7 +311,7 @@ struct changeEncryption {
           },
         });
       } catch (error) {
-        HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+        HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed');
       }
     } else {
       if (GlobalContext.load('fileOpenHistoryFromMain')) {
@@ -322,7 +322,7 @@ struct changeEncryption {
       try {
         (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
       } catch (error) {
-        HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+        HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed');
       }
     }
   }
@@ -371,7 +371,7 @@ struct changeEncryption {
     try {
       await this.getRouterParams();
     } catch (err) {
-      HiLog.error(TAG, `fail to get routerParams`);
+      HiLog.error(TAG, 'fail to get routerParams');
     }
   }
 
@@ -429,7 +429,7 @@ struct changeEncryption {
     try {
       GlobalContext.store('accountInfo', await getOsAccountInfo());
     } catch (err) {
-      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);

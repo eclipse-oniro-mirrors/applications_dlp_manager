@@ -36,7 +36,7 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
         FileUtil.rmdirSync(pathDir + `/${item}`);
       })
     }).catch((err: BusinessError) => {
-      HiLog.error(TAG, `list delete dlp file failed with error: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'list delete dlp file failed');
     });
   }
 
@@ -53,7 +53,7 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
       }
       return true;
     } catch (error) {
-      HiLog.error(TAG, `check caller identity failed, error: ${error}`);
+      HiLog.wrapError(TAG, error, 'check caller identity failed');
     }
     return false
   }

@@ -125,21 +125,21 @@ export default class StartSandboxHandler {
   }
 
   // 拉起沙箱：弹框超过250ms，拉起沙箱；弹框小于250ms，等待弹框250ms之后，拉起沙箱
-  public async startSandbox(decryptContent?: DecryptContent, context?: common.ServiceExtensionContext):
-    Promise<Result<DecryptContent>> {
+  public async startSandbox(decryptContent?: DecryptContent): Promise<Result<DecryptContent>> {
     HiLog.info(TAG, 'start startSandbox');
     if (decryptContent) {
       this._decryptContent = decryptContent;
     }
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
     if (!this._decryptContent) {
       HiLog.error(TAG, 'decryptContent null');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
     }
-    if (!viewContext) {
-      HiLog.error(TAG, 'viewContext null');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+    const contextValue: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
+    if (!contextValue) {
+      HiLog.error(TAG, 'startFileManager viewContext null');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_APP_PARAM_ERROR);
     }
+    const viewContext = contextValue as common.ServiceExtensionContext;
 
     const canStartAbility =
       OpeningDialogManager.getInstance().getCanStartAbility(this._decryptContent.openDlpFileData.requestId);

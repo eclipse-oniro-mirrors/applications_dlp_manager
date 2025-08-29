@@ -105,7 +105,8 @@ async function deleteDlpLinkFile(decryptContent: DecryptContent): Promise<void> 
 function clearIsDecrypting(decryptContent: DecryptContent): void {
   if (decryptContent.openDlpFileData?.uri) {
     const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
-    if (getRet.errcode === Constants.ERR_CODE_SUCCESS && (getRet.result?.state === DecryptState.DECRYPTING)) {
+    if (getRet.errcode === Constants.ERR_CODE_SUCCESS &&
+      (getRet.result?.state === DecryptState.NOT_STARTED || getRet.result?.state === DecryptState.DECRYPTING)) {
       OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
       OpenDlpFileManager.getInstance().removeAllByUri(decryptContent.openDlpFileData.uri);
     }

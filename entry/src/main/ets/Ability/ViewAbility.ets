@@ -27,6 +27,7 @@ import Want from '@ohos.app.ability.Want';
 import TerminateView from '../OpenDlpFile/TerminateView/TerminateView';
 import ViewAbilityService from '../rpc/ViewAbility/service/ViewAbilityService';
 import { StartFileManager } from '../OpenDlpFile/manager/StartFileManager';
+import FileUtils from '../common/FileUtils/FileUtils';
 
 const TAG = 'View';
 
@@ -49,7 +50,8 @@ export default class ViewAbility extends ServiceExtensionAbility {
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.info(TAG, `enter onRequest startId: ${startId}`);
     AppStorage.setOrCreate('viewContext', this.context);
-    const callerBundleName: string = want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
+    let callerBundleName: string =
+      FileUtils.getParamOrDefault(want.parameters, Constants.PARAMS_CALLER_BUNDLE_NAME, '');
     if (callerBundleName === Constants.SHARE_BUNDLE) {
       const startRet = await StartFileManager.startFileManager(want.uri);
       if (startRet.errcode === Constants.ERR_CODE_SUCCESS) {

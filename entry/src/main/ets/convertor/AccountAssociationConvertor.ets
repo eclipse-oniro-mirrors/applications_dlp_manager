@@ -44,7 +44,7 @@ export default class AccountAssociationConvertor {
     try {
       accountAssociationJson = JSON.parse(origin);
     } catch (err) {
-      HiLog.error(TAG, `JSON parse error. ${err}`);
+      HiLog.wrapError(TAG, err, 'JSON parse error');
       return null;
     }
     if (!accountAssociationJson || !accountAssociationJson.accountId || !accountAssociationJson.authorizedAccounts) {

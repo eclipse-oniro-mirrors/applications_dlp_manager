@@ -24,6 +24,7 @@ import TerminateView from '../../OpenDlpFile/TerminateView/TerminateView';
 import { UIContext } from '@kit.ArkUI';
 import UIContextUtil from '../UIContextUtil';
 import { OpenDlpFileError } from '../../OpenDlpFile/common/OpenDlpFileError/OpenDlpFileError';
+import { getAccountNameFromErrMsg } from '../FileUtils/utils';
 
 const TAG = 'AlertMessage';
 
@@ -143,7 +144,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_USER_NO_PERMISSION_2B:
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
-          'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', err.message.split(', contact:')?.[1])
+          'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', getAccountNameFromErrMsg(err.message))
         } as Record<string, Resource>;
       case Constants.ERR_JS_APP_PARAM_ERROR:
         return {
@@ -169,7 +170,7 @@ export class GetAlertMessage {
       case Constants.ERR_JS_FILE_EXPIRATION:
         return {
           'title': $r('app.string.Permission_has_expired'),
-          'msg': $r('app.string.Permission_has_expired_description', err.message.split(', contact:')?.[1])
+          'msg': $r('app.string.Permission_has_expired_description', getAccountNameFromErrMsg(err.message))
         } as Record<string, Resource>;
       case Constants.ERR_JS_DLP_FILE_READ_ONLY:
         return {
@@ -265,9 +266,7 @@ export class GetAlertMessage {
       await context.requestModalUIExtension(uiExtWant);
       HiLog.info(TAG, 'requestModalUIExtension success');
     } catch (err) {
-      let code = (err as BusinessError).code;
-      let message = (err as BusinessError).message;
-      HiLog.error(TAG, `requestModalUIExtension failed. Cause: error code: ${code},error messagae:${message}`);
+      HiLog.wrapError(TAG, err, 'requestModalUIExtension failed');
     }
   }
 }

@@ -78,7 +78,7 @@ struct DlpAlertDialog {
               try {
                 (getContext(this) as common.UIAbilityContext).terminateSelf();
               } catch (error) {
-                HiLog.error(TAG, `terminateSelf exception, error is ${JSON.stringify(error)}`);
+                HiLog.wrapError(TAG, error, 'terminateSelf exception');
               }
             }
           })
@@ -98,7 +98,7 @@ struct DlpAlertDialog {
               try {
                 (getContext(this) as common.UIAbilityContext).terminateSelf();
               } catch (error) {
-                HiLog.error(TAG, `terminateSelf exception, error is ${JSON.stringify(error)}`);
+                HiLog.wrapError(TAG, error, 'terminateSelf exception');
               }
             })
             .margin({

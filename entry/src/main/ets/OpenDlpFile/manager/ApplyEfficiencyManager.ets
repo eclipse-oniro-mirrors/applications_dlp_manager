@@ -21,7 +21,7 @@ const TAG = 'ApplyEfficiencyManager';
 
 export default class ApplyEfficiencyManager {
   private static instance: ApplyEfficiencyManager;
-  private static applyCount: number = 0;
+  private static hasApply: boolean = false;
 
   private constructor() {
   }
@@ -34,15 +34,22 @@ export default class ApplyEfficiencyManager {
   }
 
   public applyEfficiency() {
-    HiLog.info(TAG, `applyEfficiency applyCount ${ApplyEfficiencyManager.applyCount}`);
-    ApplyEfficiencyManager.applyCount++;
-    this.applyEfficiencyResource();
+    HiLog.debug(TAG, `applyEfficiency hasApply ${ApplyEfficiencyManager.hasApply}`);
+    if (ApplyEfficiencyManager.hasApply) {
+      return;
+    }
+    if (this.applyEfficiencyResource()) {
+      ApplyEfficiencyManager.hasApply = true;
+      return;
+    }
+    ApplyEfficiencyManager.hasApply = false;
   }
 
   public releaseEfficiency() {
-    HiLog.info(TAG, `releaseEfficiency applyCount ${ApplyEfficiencyManager.applyCount}`);
-    if (--ApplyEfficiencyManager.applyCount === 0) {
-      this.releaseEfficiencyResource();
+    HiLog.debug(TAG, `releaseEfficiency hasApply ${ApplyEfficiencyManager.hasApply}`);
+    if (this.releaseEfficiencyResource()) {
+      ApplyEfficiencyManager.hasApply = false;
+      return;
     }
   }
 
@@ -66,7 +73,7 @@ export default class ApplyEfficiencyManager {
     }
   }
 
-  public releaseEfficiencyResource(): boolean {
+  private releaseEfficiencyResource(): boolean {
     HiLog.info(TAG, 'releaseEfficiencyResource');
     try {
       backgroundTaskManager.resetAllEfficiencyResources();
@@ -77,4 +84,4 @@ export default class ApplyEfficiencyManager {
       return false;
     }
   }
-};
+}

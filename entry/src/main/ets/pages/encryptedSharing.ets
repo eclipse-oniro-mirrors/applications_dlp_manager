@@ -463,7 +463,7 @@ struct encryptedSharing {
     try {
       credentialCallBack = JSON.parse(this.phoneNumSearchResult) as Record<string, string>;
     } catch (error) {
-      HiLog.error(TAG, `json parse exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'json parse failed');
       return false;
     }
     HiLog.info(TAG, `credential Call Back errorCode: ${credentialCallBack.errorCode}`);
@@ -532,8 +532,8 @@ struct encryptedSharing {
         this.enableComponents();
       }
     } catch (err) {
-      this.enableComponents();
       HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
+      this.enableComponents();
     }
   }
 

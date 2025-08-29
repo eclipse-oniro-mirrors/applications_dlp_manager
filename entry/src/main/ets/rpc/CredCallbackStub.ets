@@ -42,7 +42,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
         return false;
       }
     } catch (error) {
-      HiLog.error(TAG, `read data exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'read data exception');
       return false;
     }
     return true;
@@ -61,7 +61,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
         try {
           resultVar = data.readString();
         } catch (error) {
-          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'read string exception');
           return false;
         }
         AppStorage.setOrCreate('commandSearchUserInfo', resultVar);
@@ -74,7 +74,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
         try {
           resultVar = data.readString();
         } catch (error) {
-          HiLog.error(TAG, `read string exception, error is ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'read string exception');
           return false;
         }
         AppStorage.setOrCreate('commandGetAccountInfo', resultVar);
@@ -107,9 +107,9 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       data.writeInterfaceToken(Constants.DLP_CREDMGR_INTERFACE_TOKEN);
       let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
       data.writeRemoteObject(callback.asObject());
-      data.writeString(JSON.stringify({'phone': cloudPhone}));
+      data.writeString(JSON.stringify({ 'phone': cloudPhone }));
     } catch (error) {
-      HiLog.error(TAG, `prepare data exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'prepare data exception');
       data.reclaim();
       reply.reclaim();
       return;
@@ -138,7 +138,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
       data.writeRemoteObject(callback.asObject());
     } catch (error) {
-      HiLog.error(TAG, `prepare data exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'prepare data exception');
       data.reclaim();
       reply.reclaim();
       return;
@@ -190,7 +190,7 @@ export default class CredCallbackStub extends rpc.RemoteObject {
       context.disconnectServiceExtensionAbility(connectionId);
       HiLog.info(TAG, 'disconnectServiceExtensionAbility success.');
     } catch (error) {
-      HiLog.error(TAG, `disconnectServiceExtensionAbility failed. Error: ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'disconnectServiceExtensionAbility failed');
     }
   };
 }

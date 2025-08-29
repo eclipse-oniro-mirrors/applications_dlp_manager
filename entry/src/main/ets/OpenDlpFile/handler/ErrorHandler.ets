@@ -48,11 +48,6 @@ export default class ErrorHandler {
       HiLog.error(TAG, 'errorInfo null');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
     }
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
-    if (!viewContext) {
-      HiLog.error(TAG, 'viewContext null');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
-    }
 
     const canShowToast = OpeningDialogManager.getInstance().getCanShowToast();
     HiLog.info(TAG, `startHandleError canShowToast ${canShowToast}`);

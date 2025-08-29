@@ -229,7 +229,7 @@ struct DlpDialog {
         await hiSysEvent.write(event);
       }
     } catch (err) {
-      HiLog.error(TAG, `sendDlpFileCreateFault failed, err: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'sendDlpFileCreateFault failed');
     }
   }
 
@@ -249,7 +249,7 @@ struct DlpDialog {
         await hiSysEvent.write(event);
       }
     } catch (err) {
-      HiLog.error(TAG, `sendDlpFileCreateEvent, err: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'sendDlpFileCreateEvent failed');
     }
   }
 
@@ -307,7 +307,7 @@ struct DlpDialog {
       file = fs.openSync(filePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
       HiLog.info(TAG, `open temp file`);
     } catch (err) {
-      HiLog.error(TAG, `open temp failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'open temp failed');
       this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.File_cannot_be_opened'));
       await this.catchProcess();
       return;
@@ -447,21 +447,21 @@ struct DlpDialog {
         try {
           uriInfo = new fileUri.FileUri(uri);
         } catch (err) {
-          HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
+          HiLog.wrapError(TAG, err, 'fileUri failed');
         }
         this.beginToGenDlpFileHome(srcFileUri, uri, uriInfo);
       }).catch((err: BusinessError) => {
         return this.handlePickerError(err);
       });
     } catch (err) {
-      HiLog.error(TAG, `DocumentViewPicker failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'DocumentViewPicker failed');
       this.processing = false;
       return;
     }
   }
 
   private handlePickerError(err: BusinessError): void {
-    HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(err)}`);
+    HiLog.wrapError(TAG, err, 'DocumentViewPicker save failed');
     let errorInfo = GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
       $r('app.string.File_cannot_be_opened'));
     this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -608,7 +608,7 @@ struct DlpDialog {
         this.permissionDict[index].value =
           $r(await getContext(this).resourceManager.getStringValue(item.value.id));
       } catch (error) {
-        HiLog.error(TAG, `getStringValue exception, error is ${JSON.stringify(error)}`);
+        HiLog.wrapError(TAG, error, 'getStringValue failed');
       }
     })
     let readOnlyData: dlpPermission.AuthUser[] =
@@ -645,7 +645,7 @@ struct DlpDialog {
     try {
       GlobalContext.store('accountInfo', await getOsAccountInfo());
     } catch (err) {
-      HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);

@@ -16,7 +16,13 @@
 import Result from '../../common/Result'
 import { ResultMsg } from '../../common/ResultMsg'
 import Constants from '../../common/constant';
-import { getFileFd, getAppIdWithUserId, getOsAccountInfo, getCurrentTime } from '../../common/FileUtils/utils';
+import {
+  getFileFd,
+  getAppIdWithUserId,
+  getOsAccountInfo,
+  getCurrentTime,
+  getAccountNameFromErrMsg
+} from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import DecryptContent from '../data/DecryptContent';
@@ -32,6 +38,7 @@ import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';
 import { ObjectUtil } from '../../common/ObjectUtil';
 import GlobalContext from '../../common/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
+import CommonUtil from '../../common/CommonUtil';
 
 const TAG: string = 'DecryptHandler';
 
@@ -226,11 +233,13 @@ export default class DecryptHandler {
     // Domain account open files with no permission
     if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT &&
       err.code === Constants.ERR_JS_USER_NO_PERMISSION && !decryptContent.openDlpFileData.isFromPlugin) {
-      let accountName: string = err.message.split(', contact:')?.[1];
-      let accountFlag = await AccountManager.checkAccountInfo(accountName);
-      if (!accountFlag) {
-        HiLog.error(TAG, 'checkAccountInfo error');
-        return ResultMsg.getErrMsg(Constants.ERR_JS_APP_NETWORK_INVALID);
+      let accountName: string = getAccountNameFromErrMsg(err.message);
+      if (!CommonUtil.isEmptyStr(accountName)) {
+        let accountFlag = await AccountManager.checkAccountInfo(accountName);
+        if (!accountFlag) {
+          HiLog.error(TAG, 'checkAccountInfo error');
+          return ResultMsg.getErrMsg(Constants.ERR_JS_APP_NETWORK_INVALID);
+        }
       }
     }
 

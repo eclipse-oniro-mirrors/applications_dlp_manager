@@ -133,7 +133,7 @@ function getFileUriByPath(filePath: string): string {
     let uri = fileUri.getUriFromPath(filePath);
     return uri;
   } catch (err) {
-    HiLog.error(TAG, `getUriFromPath error: ${JSON.stringify(err)}`);
+    HiLog.wrapError(TAG, err, 'getUriFromPath error');
     return '';
   }
 }
@@ -205,14 +205,15 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
   try {
     (getContext() as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
   } catch (error) {
-    HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+    HiLog.wrapError(TAG, error, 'terminateSelfWithResult exception');
   }
 }
 
 function judgeIsSandBox(want: Want) {
   return new Promise<boolean>(async resolve => {
-    let callerToken: number = want.parameters?.[Constants.PARAMS_CALLER_TOKEN] as number;
-    let callerBundleName: string = want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
+    const callerToken: number = FileUtils.getParamOrDefault(want.parameters, Constants.PARAMS_CALLER_TOKEN, -1);
+    let callerBundleName: string =
+      FileUtils.getParamOrDefault(want.parameters, Constants.PARAMS_CALLER_BUNDLE_NAME, '');
     try {
       let applicationInfo = await bundleManager.getApplicationInfo(
         callerBundleName, bundleManager.ApplicationFlag.GET_APPLICATION_INFO_DEFAULT);
@@ -221,7 +222,7 @@ function judgeIsSandBox(want: Want) {
         return;
       }
     } catch (error) {
-      HiLog.error(TAG, `getApplicationInfo exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'getApplicationInfo exception');
       resolve(false);
       return;
     }
@@ -304,7 +305,7 @@ function getAppId(bundleName: string) {
       }
       reject();
     } catch (err) {
-      HiLog.error(TAG, `get appId failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'get appId failed');
       reject();
     }
   })
@@ -350,7 +351,7 @@ async function getFileSizeByUri(uri: string): Promise<number> {
     HiLog.info(TAG, `get file info success, the size of file is: ${stat.size}`);
     return stat.size;
   } catch (err) {
-    HiLog.error(TAG, `open filename: ${FileUtils.getFileNameByUri(uri)}, failed: ${JSON.stringify(err)}`);
+    HiLog.wrapError(TAG, err, `open filename: ${FileUtils.getFileNameByUri(uri)}, failed`);
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
@@ -366,7 +367,7 @@ function getFileSizeByUriSync(uri: string): number {
     let stat = fs.statSync(inFile.fd);
     return stat.size;
   } catch (err) {
-    HiLog.error(TAG, `open Syncfilename: ${FileUtils.getFileNameByUri(uri)}, failed: ${JSON.stringify(err)}`);
+    HiLog.wrapError(TAG, err, `open Syncfilename: ${FileUtils.getFileNameByUri(uri)}, failed`);
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
@@ -416,7 +417,7 @@ function sendDlpManagerAccountLogin(errorCode: number) {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    HiLog.error(TAG, 'sendDlpManagerAccountLogin failed');
+    HiLog.wrapError(TAG, err, 'sendDlpManagerAccountLogin failed');
   }
 }
 
@@ -442,7 +443,7 @@ function sendDlpManagerFileConfiguration() {
   try {
     hiSysEvent.write(event);
   } catch (err) {
-    HiLog.error(TAG, 'sendDlpManagerFileConfiguration failed');
+    HiLog.wrapError(TAG, err, 'sendDlpManagerFileConfiguration failed');
   }
 }
 
@@ -450,6 +451,11 @@ function sendDlpFileCreateProperties(accountType: number) {
   let srcFileTypeArray: string[] = AppStorage.get('hiFileTypeArray') ?? [];
   let srcFileSizeArray: string[] = AppStorage.get('hiFileSizeArray') ?? [];
   let dstFileSizeArray: string[] = AppStorage.get('hiPolicySizeEncArray') ?? [];
+
+  if (srcFileTypeArray.length !== srcFileSizeArray.length || srcFileTypeArray.length !== dstFileSizeArray.length) {
+    HiLog.error(TAG, 'Array length are inconsistent');
+    return;
+  }
 
   let hiPNameId: string = AppStorage.get('hiPNameId') ?? '';
   let hiPVersionId: string = AppStorage.get('hiPVersionId') ?? '';
@@ -476,7 +482,7 @@ function sendDlpFileCreateProperties(accountType: number) {
     try {
       hiSysEvent.write(event);
     } catch (err) {
-      HiLog.error(TAG, 'sendDlpFileCreateProperties failed');
+      HiLog.wrapError(TAG, err, 'sendDlpFileCreateProperties failed');
     }
   }
 }
@@ -517,7 +523,7 @@ function getAccountTypeAndRealFileType(
     try {
       fs.readSync(fd, z, option);
     } catch (error) {
-      HiLog.error(TAG, `readSync exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'readSync exception');
       reject();
       return;
     }
@@ -667,7 +673,7 @@ async function getConnectionStatus(exactly: boolean = true): Promise<boolean> {
       HiLog.error(TAG, 'Net connection is invalid.');
     }
   } catch (error) {
-    HiLog.error(TAG, `GetConnectionStatus failed: ${JSON.stringify(error)}`);
+    HiLog.wrapError(TAG, error, 'GetConnectionStatus failed');
   }
   return false;
 }
@@ -678,11 +684,11 @@ function checkNetworkStatus(): Promise<void> {
       let netHandle = connection.getDefaultNetSync();
       connection.getNetCapabilities(netHandle, (error: BusinessError, data: connection.NetCapabilities) => {
         if (error) {
-          HiLog.error(TAG, `checkNetworkStatus failed: ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'checkNetworkStatus failed');
           reject();
           return;
         }
-        HiLog.info(TAG, `network success to get data: ${JSON.stringify(data)}`);
+        HiLog.info(TAG, 'network success to get data');
         const result = [connection.NetCap.NET_CAPABILITY_INTERNET, connection.NetCap.NET_CAPABILITY_VALIDATED]
           .every(element => data.networkCap?.includes(element));
         if (result) {
@@ -692,6 +698,7 @@ function checkNetworkStatus(): Promise<void> {
         reject();
       })
     } catch (error) {
+      HiLog.wrapError(TAG, error, 'checkNetworkStatus error');
       reject();
     }
   })
@@ -735,7 +742,7 @@ async function getSha256(inputData: Uint8Array): Promise<Uint8Array | null> {
     });
     return (await messageDig.digest()).data;
   } catch (err) {
-    HiLog.error(TAG, `Generate sha256 failed: ${JSON.stringify(err)}`);
+    HiLog.wrapError(TAG, err, 'Generate sha256 failed');
   }
   return null;
 }
@@ -750,7 +757,7 @@ function generateRandom(length: number): Uint8Array | null {
     let result: cryptoFramework.DataBlob = rand.generateRandomSync(length);
     return result.data;
   } catch (err) {
-    HiLog.error(TAG, `generate random failed: ${JSON.stringify(err)}`);
+    HiLog.wrapError(TAG, err, 'generate random failed');
   }
   return null;
 }
@@ -853,6 +860,22 @@ function anonymizeUid(uid: string): string | undefined {
   return anonymizedUid;
 }
 
+function getAccountNameFromErrMsg(msg: string | undefined | null): string {
+  if (!msg) {
+    HiLog.error(TAG, 'getAccountNameFromErrMsg msg null');
+    return '';
+  }
+  if (!msg.includes(Constants.MSG_CONTACT)) {
+    HiLog.error(TAG, 'getAccountNameFromErrMsg msg not contain contact');
+    return '';
+  }
+  let parts: string[] = msg.split(Constants.MSG_CONTACT);
+  if (parts.length >= 2) {
+    return parts[1];
+  }
+  return '';
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -899,5 +922,6 @@ export {
   uint8ArrayToHexString,
   getCostTime,
   anonymizeUid,
-  getBundleNameInfo
+  getBundleNameInfo,
+  getAccountNameFromErrMsg
 };
