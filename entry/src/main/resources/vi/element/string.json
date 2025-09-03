@@ -578,14 +578,14 @@
             "name":"File_no_permission",
             "value":"Không được phép xem tệp tin này với ID HUAWEI hiện tại.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"Không mở được tệp tin này. Hãy thử lại sau.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

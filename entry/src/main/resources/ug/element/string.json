@@ -585,14 +585,14 @@
             "name":"File_no_permission",
             "value":"خۇاۋېي ھېسابىڭىزنىڭ بۇ ھۆججەتنى كۆرۈش ئىجازىتى يوق.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"بۇ ھۆججەت ئېچىلمىدى، كېيىنرەك قايتا سىناڭ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
