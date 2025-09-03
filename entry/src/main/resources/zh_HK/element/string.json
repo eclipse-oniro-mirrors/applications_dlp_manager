@@ -585,14 +585,14 @@
             "name":"File_no_permission",
             "value":"您的華為 ID 沒有權限檢視此檔案",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"無法開啟此檔案，請稍後再試",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

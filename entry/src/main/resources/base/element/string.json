@@ -605,7 +605,7 @@
             "name":"File_no_permission",
             "value":"Not authorized to view this file with the current HUAWEI ID.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -619,7 +619,7 @@
             "name":"File_cannot_be_opened",
             "value":"Unable to open this file. Try again later.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
