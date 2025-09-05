@@ -19,7 +19,7 @@ import { getCurrentTime, getFormatTimestamp } from './utils';
 
 const TAG: string = 'ReportSecurityEventUtil';
 
-export declare type SecurityEventMsg = Record<string, ValueType | undefined>;
+export declare type SecurityEventMsg = Record<string, number | string | boolean>;
 
 export class ReportSecurityEventUtil {
     public static reportSecurityEvent(eventId: number, eventMsg?: object | SecurityEventMsg ) : void {
@@ -36,10 +36,10 @@ export class ReportSecurityEventUtil {
             timestamp: timestamp
         }
         try {
-        securityGuard.reportSecurityEvent(info);
-        HiLog.info(TAG, `report security event success, auditInfo: ${JSON.stringify(info)}`);
+            securityGuard.reportSecurityEvent(info);
+            HiLog.info(TAG, `report security event success.`);
         } catch (err) {
-        HiLog.error(TAG, `report security event fail, err: ${JSON.stringify(err)}`);
+            HiLog.error(TAG, `report security event fail, err: ${JSON.stringify(err)}`);
         }
     }
 }
