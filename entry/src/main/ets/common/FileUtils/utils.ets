@@ -160,7 +160,7 @@ function checkDomainAccountInfo(accountInfo: account_osAccount.OsAccountInfo): R
   if (accountInfo.domainInfo.accountName === '' &&
     accountInfo.domainInfo.accountId === '') {
     AppStorage.setOrCreate('hiAccountStatus', 0);
-    return ResultMsg.getErrMsg(Constants.ERR_JS_APP_NO_ACCOUNT_ERROR);
+    return ResultMsg.getErrMsg(Constants.ERR_JS_DOMAIN_NO_ACCOUNT);
   }
   if (!accountInfo.domainInfo.isAuthenticated) {
     AppStorage.setOrCreate('hiAccountStatus', 0);
