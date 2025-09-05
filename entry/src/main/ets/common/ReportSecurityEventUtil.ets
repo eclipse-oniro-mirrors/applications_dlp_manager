@@ -36,10 +36,10 @@ export class ReportSecurityEventUtil {
             timestamp: timestamp
         }
         try {
-            securityGuard.reportSecurityEvent(info);
-            HiLog.info(TAG, 'report security event success, auditInfo: ${JSON.stringify(info)}');
+        securityGuard.reportSecurityEvent(info);
+        HiLog.info(TAG, `report security event success, auditInfo: ${JSON.stringify(info)}`);
         } catch (err) {
-            HiLog.error(TAG, 'report security event fail, err: ${JSON.stringify(err)}');
+        HiLog.error(TAG, `report security event fail, err: ${JSON.stringify(err)}`);
         }
     }
 }
