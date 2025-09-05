@@ -62,7 +62,7 @@ export class DlpFileOpenReport {
       'FILE_SIZE': decryptContent.fileMetaInfo?.fileSize ?? -1,
       'FILE_CONFIGURATION': decryptContent.authPerm,
       'DECRYPTION_COST': getCostTime(AppStorage.get(AppStorageConstant.DECRYPTION_START_TIME)) ?? 0,
-      'CODE': code,
+      'CODE': code
     };
     return msg;
   }
