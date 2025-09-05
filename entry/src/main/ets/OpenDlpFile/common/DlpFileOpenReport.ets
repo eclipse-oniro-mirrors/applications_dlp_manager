@@ -18,6 +18,7 @@ import DecryptContent from '../data/DecryptContent';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { anonymizeUid, getBundleNameInfo, getCostTime } from '../../common/FileUtils/utils';
 import AppStorageConstant from '../../common/AppStorageConstant';
+import { SecurityEventIdConstants, SecurityEventNameConstants, ReportSecurityEventUtil } from '../common/ReportSecurityEventUtil';
 
 const TAG: string = 'DlpFileOpenReport';
 
@@ -47,6 +48,25 @@ export class DlpFileOpenReport {
     return msg;
   }
 
+  private static getSecurityEventMsg(code: number, decryptContent: DecryptContent):
+    Record<string, number | string | boolean> {
+    const msg: Record<string, number | string | boolean> = {
+      'FILE_ID': 'testFileId',
+      'EVENT_TYPE': SecurityEventNameConstants.DLP_FILE_OPEN,
+      'SANDBOX_PKGNAME': getBundleNameInfo(
+        decryptContent.openDlpFileData?.callerBundleName ?? '',
+        decryptContent.openDlpFileData?.sandboxBundleName ?? ''
+      ),
+      'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
+      'REAL_FILE_TYPE': decryptContent.fileMetaInfo?.fileType ?? '',
+      'FILE_SIZE': decryptContent.fileMetaInfo?.fileSize ?? -1,
+      'FILE_CONFIGURATION': decryptContent.authPerm,
+      'DECRYPTION_COST': getCostTime(AppStorage.get(AppStorageConstant.DECRYPTION_START_TIME)) ?? 0,
+      'CODE': code,
+    };
+    return msg;
+  }
+
   public static reportDlpFileOpenSuccess(code: number, decryptContent: DecryptContent) {
     const msg: Record<string, number | string | boolean> = DlpFileOpenReport.getCommonMsg(code, decryptContent);
     ReportToBigDataUtil.report(BigDataConstants.DLP_FILE_OPEN_EVENT, msg);
@@ -56,5 +76,10 @@ export class DlpFileOpenReport {
     let msg: Record<string, number | string | boolean> = DlpFileOpenReport.getCommonMsg(code, decryptContent);
     msg['REASON'] = busErr ? `errcode is ${busErr.code}, message is ${busErr.message}, data is ${busErr.data}` : '';
     ReportToBigDataUtil.report(BigDataConstants.DLP_FILE_OPEN_EVENT, msg);
+  }
+
+  public static reportDlpFileOpenSecurityEvent(code: number, decryptContent: DecryptContent) {
+    const msg: Record<string, number | string | boolean> = DlpFileOpenReport.getSecurityEventMsg(code, decryptContent);
+    ReportSecurityEventUtil.reportSecurityEvent(SecurityEventIdConstants.DLP_FILE_OPEN, msg);
   }
 }
