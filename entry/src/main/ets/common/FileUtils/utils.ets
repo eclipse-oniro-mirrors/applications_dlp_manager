@@ -853,6 +853,18 @@ function anonymizeUid(uid: string): string | undefined {
   return anonymizedUid;
 }
 
+function getFormatTimestamp(timestamp: number): string {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(data.getMonth() + 1).padStart(2, '0');
+  const day = String(data.getDate()).padStart(2, '0');
+  const hours = String(data.getHours()).padStart(2, '0');
+  const minutes = String(data.getMinutes()).padStart(2, '0');
+  const seconds = String(data.getSeconds()).padStart(2, '0');
+  // timestamp, format is YYYYMMDDHHMMSS
+  return '${year}${month}${day}${hours}${minutes}${seconds}';
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -899,5 +911,6 @@ export {
   uint8ArrayToHexString,
   getCostTime,
   anonymizeUid,
-  getBundleNameInfo
+  getBundleNameInfo,
+  getFormatTimestamp
 };
