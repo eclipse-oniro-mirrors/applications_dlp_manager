@@ -18,7 +18,7 @@ import DecryptContent from '../data/DecryptContent';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { anonymizeUid, getBundleNameInfo, getCostTime } from '../../common/FileUtils/utils';
 import AppStorageConstant from '../../common/AppStorageConstant';
-import { SecurityEventIdConstants, SecurityEventNameConstants, ReportSecurityEventUtil } from '../common/ReportSecurityEventUtil';
+import { SecurityEventIdConstants, SecurityEventNameConstants, ReportSecurityEventUtil } from '../../common/ReportSecurityEventUtil';
 
 const TAG: string = 'DlpFileOpenReport';
 
