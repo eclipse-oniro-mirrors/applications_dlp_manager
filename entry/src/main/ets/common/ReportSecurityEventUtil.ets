@@ -25,15 +25,11 @@ export class ReportSecurityEventUtil {
     public static reportSecurityEvent(eventId: number, eventMsg?: object | SecurityEventMsg ) : void {
         let currentTimestamp: number = getCurrentTime(false);
         let formatTimestamp: string = getFormatTimestamp(currentTimestamp);
-        ReportSecurityEventUtil.reportByEventType(eventId, eventMsg, formatTimestamp);
-    }
-
-    private static reportByEventType(eventId: number, eventMsg?: object | SecurityEventMsg, timestamp?: string ) : void {
         let info: securityGuard.SecurityEvent = {
             eventId: eventId,
             version: '1.0.0',
             content: JSON.stringify(eventMsg),
-            timestamp: timestamp
+            timestamp: formatTimestamp
         }
         try {
             securityGuard.reportSecurityEvent(info);
