@@ -19,7 +19,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import { anonymizeUid, getBundleNameInfo, getCostTime } from '../../common/FileUtils/utils';
 import AppStorageConstant from '../../common/AppStorageConstant';
 import { SecurityEventIdConstants, SecurityEventNameConstants, ReportSecurityEventUtil } from '../../common/ReportSecurityEventUtil';
-import { Hilog } from '../../common/Hilog';
+import { HiLog } from '../../common/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 
 const TAG: string = 'DlpFileOpenReport';
@@ -82,7 +82,7 @@ export class DlpFileOpenReport {
 
   public static reportDlpFileOpenSecurityEvent(code: number, decryptContent: DecryptContent) {
     if (decryptContent.fileMetaInfo.accountType != dlpPermission.AccountType.DOMAIN_ACCOUNT) {
-        Hilog.info(TAG, 'report security event ignore.');
+        HiLog.info(TAG, 'report security event ignore.');
         return;
     }
     const msg: Record<string, number | string | boolean> = DlpFileOpenReport.getSecurityEventMsg(code, decryptContent);
