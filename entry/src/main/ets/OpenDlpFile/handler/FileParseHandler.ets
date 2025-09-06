@@ -196,7 +196,8 @@ class RawParse extends FileParseBase {
       const type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
       const accountType = Number(type);
       if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
-        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
+        accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
         HiLog.error(TAG, `Error accountType: ${accountType}`);
         return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
       }
