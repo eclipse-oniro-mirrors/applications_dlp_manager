@@ -81,7 +81,7 @@ export class DlpFileOpenReport {
   }
 
   public static reportDlpFileOpenSecurityEvent(code: number, decryptContent: DecryptContent) {
-    if (decryptContent.fileMetaInfo.accountType != dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+    if (decryptContent.fileMetaInfo?.accountType != dlpPermission.AccountType.DOMAIN_ACCOUNT) {
         HiLog.info(TAG, 'report security event ignore.');
         return;
     }
