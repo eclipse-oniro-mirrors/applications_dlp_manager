@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ValueType } from '@kit.ArkData';
 import { HiLog } from './HiLog';
 import { securityGuard } from '@kit.SecurityGuardKit';
 import { getCurrentTime, getFormatTimestamp } from './FileUtils/utils';
