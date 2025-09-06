@@ -578,14 +578,14 @@
             "name":"File_no_permission",
             "value":"現在のHUAWEI IDでは、このファイルを表示する権限がありません。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"このファイルを開けません。後で再試行してください。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

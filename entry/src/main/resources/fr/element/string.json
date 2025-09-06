@@ -578,7 +578,7 @@
             "name":"File_no_permission",
             "value":"La lecture de ce fichier n'est pas autorisée sur le Compte HUAWEI actuel.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -590,7 +590,7 @@
         },
         {
             "name":"Network_anomaly",
-            "value":"Erreur réseau. Impossible de vérifier votre Compte HUAWEI.",
+            "value":"Erreur réseau. La vérification de votre Compte HUAWEI a échoué.",
             "attr":{
                 "priority":"translate"
             }
