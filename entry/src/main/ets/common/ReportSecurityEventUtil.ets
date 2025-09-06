@@ -15,7 +15,7 @@
 import { ValueType } from '@kit.ArkData';
 import { HiLog } from './HiLog';
 import { securityGuard } from '@kit.SecurityGuardKit';
-import { getCurrentTime, getFormatTimestamp } from './utils';
+import { getCurrentTime, getFormatTimestamp } from './FileUtils/utils';
 
 const TAG: string = 'ReportSecurityEventUtil';
 
