@@ -51,7 +51,7 @@ export class DlpFileOpenReport {
   private static getSecurityEventMsg(code: number, decryptContent: DecryptContent):
     Record<string, number | string | boolean> {
     const msg: Record<string, number | string | boolean> = {
-      // 'FILE_ID': decryptContent.dlpFile?.dlpProperty?.fileId ?? '',
+      'FILE_ID': decryptContent.dlpFile?.dlpProperty?.fileId ?? '',
       'EVENT_TYPE': SecurityEventNameConstants.DLP_FILE_OPEN,
       'SANDBOX_PKGNAME': getBundleNameInfo(
         decryptContent.openDlpFileData?.callerBundleName ?? '',
