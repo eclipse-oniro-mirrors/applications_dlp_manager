@@ -693,13 +693,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"无法打开此文件，请通过其他应用打开",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
             "value":"存储空间不足，无法创建加密文件",
             "attr":{

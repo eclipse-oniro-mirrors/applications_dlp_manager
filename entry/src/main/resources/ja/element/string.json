@@ -617,13 +617,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"ファイルを開けません。別のアプリで開いてください。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
             "value":"ファイルの権限を取得できません。後で再試行してください。",
             "attr":{
