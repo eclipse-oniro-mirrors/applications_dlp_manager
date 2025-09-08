@@ -617,13 +617,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"L'ouverture du fichier a échoué. Veuillez essayer de l'ouvrir dans une autre application.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
             "value":"L'obtention de l'autorisation de fichier a échoué. Veuillez réessayer ultérieurement.",
             "attr":{

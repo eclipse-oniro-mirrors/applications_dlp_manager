@@ -617,13 +617,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"No se ha podido abrir el archivo. Prueba a abrirlo en otra aplicación.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
             "value":"No se ha podido obtener el permiso del archivo. Vuelve a intentarlo más tarde.",
             "attr":{
