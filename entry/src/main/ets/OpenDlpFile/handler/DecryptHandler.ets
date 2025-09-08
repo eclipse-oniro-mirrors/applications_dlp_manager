@@ -429,7 +429,8 @@ export default class DecryptHandler {
   }
 
   private async checkDistributedInfoId(decryptContent: DecryptContent): Promise<boolean> {
-    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT ||
+        decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
       HiLog.info(TAG, 'domain account no need to checkDistributedInfoId');
       return true;
     }

@@ -182,6 +182,11 @@ export class GetAlertMessage {
           'title': $r('app.string.TITLE_APP_VERSION_LOWER'),
           'msg': $r('app.string.Share_File_System_Version_Low')
         } as Record<string, Resource>;
+      case Constants.ERR_JS_DOMAIN_NO_ACCOUNT:
+        return {
+          'title': $r('app.string.header_title'),
+          'msg': $r('app.string.MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED')
+        } as Record<string, Resource>;
       default:
         return {
           'title': $r('app.string.header_title'),

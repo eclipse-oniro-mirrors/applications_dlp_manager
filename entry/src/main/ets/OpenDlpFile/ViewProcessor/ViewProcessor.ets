@@ -32,8 +32,11 @@ import { BusinessError } from '@ohos.base';
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import ErrorManager from '../handler/ErrorHandler';
 import StartSandboxHandler from '../handler/StartSandboxHandler';
+import { commonEventManager } from '@kit.BasicServicesKit';
 
 const TAG: string = 'OpenDlpFileProcessor';
+const COMMON_ENTERPRISE_EVENT: string =  'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
+const ENTERPRISE_ACCOUNT: number = 4;
 
 export class OpenDlpFileProcessor {
   public async process(want: Want, startId: number, context: common.ServiceExtensionContext): Promise<Result<void>> {
@@ -185,6 +188,21 @@ export class OpenDlpFileProcessor {
   }
 
   public async processErrcode(error: BusinessError, decryptContent?: DecryptContent): Promise<Result<void>> {
+    if (decryptContent?.fileMetaInfo.accountType == ENTERPRISE_ACCOUNT) {
+      let options: commonEventManager.CommonEventPublishData = {
+        bundleName: 'com.asiainfo_sec.aisedr_hm',
+        code: 1,
+        data: '',
+        subscriberPermissions: ['ohos.permission.ENTERPRISE_ACCESS_DLP_FILE'],
+        parameters: {'uri': decryptContent.openDlpFileData.uri, 'errcode': error.code, 'errMessage': error.message},
+      };
+      commonEventManager.publish(COMMON_ENTERPRISE_EVENT, options, (err: BusinessError) => {
+        if (err) {
+          HiLog.error(TAG, 'publish failed');
+        }
+      });
+      return ResultMsg.buildSuccess();
+    }
     await ErrorManager.getInstance().startHandleError(decryptContent?.openDlpFileData?.requestId ?? '', error);
     if (decryptContent) {
       clearDlpInfoByError(decryptContent);

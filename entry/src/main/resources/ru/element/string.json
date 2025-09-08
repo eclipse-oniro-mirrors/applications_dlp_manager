@@ -578,14 +578,14 @@
             "name":"File_no_permission",
             "value":"У текущего аккаунта HUAWEI нет права просмотра этого файла.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"Не удалось открыть этот файл. Повторите попытку позже.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

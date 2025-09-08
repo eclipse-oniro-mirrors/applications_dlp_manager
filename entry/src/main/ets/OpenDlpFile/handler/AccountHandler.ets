@@ -115,6 +115,14 @@ class DomainAccountHandle extends AccountHandlerBase {
   }
 }
 
+class EnterpriseAccountHandle extends AccountHandlerBase {
+  public async handle(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
+    Promise<Result<void>> {
+    decryptContent.userId = this.userId;
+    return ResultMsg.buildSuccess();
+  }
+}
+
 class PluginAccountHandle extends AccountHandlerBase {
   public async handle(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
@@ -145,6 +153,10 @@ export class AccountHandlerFactory {
     if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
       HiLog.info(TAG, 'create DomainAccountHandle');
       return ResultMsg.buildSuccess(new DomainAccountHandle());
+    }
+    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+      HiLog.info(TAG, 'create EnterpriseAccountHandle');
+      return ResultMsg.buildSuccess(new EnterpriseAccountHandle());
     }
     HiLog.error(TAG, 'not found AccountHandler');
     return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);

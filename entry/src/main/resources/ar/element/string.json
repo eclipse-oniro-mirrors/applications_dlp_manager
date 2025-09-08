@@ -578,14 +578,14 @@
             "name":"File_no_permission",
             "value":"لا يوجد تخويل لعرض هذا الملف باستخدام حساب هواوي الحالي.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"يتعذر فتح هذا الملف. أعد المحاولة لاحقًا",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -618,7 +618,7 @@
         },
         {
             "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"تعذّر فتح الملف، حاول فتحة في تطبيق آخر",
+            "value":"تعذّر فتح الملف، حاول فتحه في تطبيق آخر",
             "attr":{
                 "priority":"translate"
             }

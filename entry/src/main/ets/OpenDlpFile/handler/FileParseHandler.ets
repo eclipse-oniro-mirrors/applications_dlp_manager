@@ -144,7 +144,8 @@ class ZipParse extends FileParseBase {
       const certInfo: CertInfo = JSON.parse(certString) as CertInfo;
       accountType = Number(certInfo.accountType);
       if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
-        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
+        accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
         HiLog.error(TAG, `Error accountType: ${accountType}`);
         return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
       }
@@ -232,7 +233,8 @@ class RawParse extends FileParseBase {
       const certInfo: CertInfo = JSON.parse(certString) as CertInfo;
       const accountType = certInfo.accountType;
       if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
-        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT) {
+        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
+        accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
         HiLog.error(TAG, `Error accountType: ${accountType}`);
         return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
       }

@@ -578,14 +578,14 @@
             "name":"File_no_permission",
             "value":"No estás autorizado para ver este archivo con el ID de HUAWEI actual.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
-            "value":"No se puede abrir este archivo. Vuelve a intentar más tarde.",
+            "value":"No se puede abrir este archivo. Vuelve a intentarlo más tarde.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

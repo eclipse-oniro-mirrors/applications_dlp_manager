@@ -287,6 +287,7 @@ export default class Constants {
   public static readonly ERR_CODE_DECRYPT_TIME_OUT: number = -11;
   public static readonly ERR_JS_USER_NO_PERMISSION_2B: number = -12;
   public static readonly ERR_JS_USER_NO_PERMISSION_2C: number = -13;
+  public static readonly ERR_JS_DOMAIN_NO_ACCOUNT: number = -14;
 
   public static readonly COMMAND_SEARCH_USER_INFO = 1;
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
