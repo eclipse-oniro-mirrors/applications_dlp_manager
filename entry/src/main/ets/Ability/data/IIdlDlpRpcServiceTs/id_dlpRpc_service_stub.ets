@@ -41,7 +41,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
   }
 
   private checkParams(code: number, data: rpc.MessageSequence): boolean {
-    if (code === null || code === undefined || !data) {
+    if (Number.isNaN(code) || !data) {
       HiLog.error(TAG, 'params is invalid');
       return false;
     }
@@ -128,6 +128,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'genDlpFileInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -143,6 +144,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'openDlpFileInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -154,6 +156,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'stopFuseLinkInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -165,6 +168,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'resumeFuseLinkInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -177,6 +181,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'replaceDlpLinkFileInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -190,6 +195,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'recoverDlpFileInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -202,6 +208,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'closeDlpFileInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -218,6 +225,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'sandBoxLinkFileInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -230,6 +238,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'fileOpenHistoryInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
@@ -242,6 +251,7 @@ export default class IdDlpRpcServiceStub extends rpc.RemoteObject implements IId
       });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'linkSetInner failed');
+      reply.writeInt(err.errCode);
     }
   }
 
