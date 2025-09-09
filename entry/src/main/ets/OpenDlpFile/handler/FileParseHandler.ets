@@ -128,11 +128,12 @@ class ZipParse extends FileParseBase {
   }
 
   parseDlpCert(certSize: number, fileName: string): Result<CertInfo> {
+    let dlpCert: fs.File | undefined;
     try {
       let accountType: number = 0;
       let certString: string = '';
       if (certSize !== 0) { // 6.0之后的版本，生成的zip格式的dlp文件
-        const dlpCert = fs.openSync(fileName, fs.OpenMode.READ_ONLY);
+        dlpCert = fs.openSync(fileName, fs.OpenMode.READ_ONLY);
         let cert = new ArrayBuffer(certSize);
         const option: ReadOptions = { offset: 0, length: certSize };
         fs.readSync(dlpCert.fd, cert, option);
@@ -153,6 +154,8 @@ class ZipParse extends FileParseBase {
     } catch (error) {
       HiLog.error(TAG, 'parseDlpCert error');
       return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
+    } finally {
+      FileUtil.closeSync(dlpCert);
     }
   }
 

@@ -60,7 +60,7 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
 
   onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence,
     options: rpc.MessageOption): boolean {
-    if (code === null || code === undefined || !data || !reply) {
+    if (Number.isNaN(code) || !data || !reply) {
       HiLog.error(TAG, `Input params is invalid`);
       return false;
     }
