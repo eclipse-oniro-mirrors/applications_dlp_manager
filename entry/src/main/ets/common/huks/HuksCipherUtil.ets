@@ -33,7 +33,7 @@ export default class HuksCipherUtils {
       HiLog.info(TAG, `isKeyItemExist success, isKeyExist: ${isKeyExist}.`);
       return isKeyExist;
     } catch (err) {
-      HiLog.error(TAG, `IsKeyExist failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'IsKeyExist failed');
     }
     return false;
   }
@@ -52,7 +52,7 @@ export default class HuksCipherUtils {
       HiLog.info(TAG, 'Generate key success!');
       return true;
     } catch (err) {
-      HiLog.error(TAG, `generateKey failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'generateKey failed');
     }
     return false;
   }
@@ -89,7 +89,7 @@ export default class HuksCipherUtils {
       const sessionResult = await huks.finishSession(handle, option);
       resultData = sessionResult.outData;
     } catch (err) {
-      HiLog.error(TAG, `Handle data failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'Handle data failed');
       if (handle) {
         HuksCipherUtils.abort(handle, option);
       }
@@ -128,7 +128,7 @@ export default class HuksCipherUtils {
     try {
       await huks.abortSession(handle, options);
     } catch (err) {
-      HiLog.error(TAG, `Abort session failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'Abort session failed');
     }
   }
 }

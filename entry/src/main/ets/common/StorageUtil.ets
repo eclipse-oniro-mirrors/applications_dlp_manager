@@ -53,7 +53,7 @@ export default class StorageUtil {
       HiLog.info(TAG, 'Save data success.');
       return true;
     } catch (err) {
-      HiLog.error(TAG, `Save data failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'Save data failed');
     }
     return false;
   }
@@ -75,7 +75,7 @@ export default class StorageUtil {
       HiLog.info(TAG, 'Get data success.');
       return res;
     } catch (err) {
-      HiLog.error(TAG, `Get data failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'Get data failed');
     }
     return '';
   }

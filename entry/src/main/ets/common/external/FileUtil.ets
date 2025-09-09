@@ -21,7 +21,7 @@ const TAG = 'FileUtil';
 
 export default class FileUtil {
   public static closeSync(file: fs.File | number | undefined): void {
-    if (!file) {
+    if (file === null || file === undefined) {
       HiLog.error(TAG, 'closeSync param is invalid.');
       return;
     }

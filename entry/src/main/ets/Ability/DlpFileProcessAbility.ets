@@ -74,6 +74,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     try {
       result = await this.genDlpFileFd(inputUri, outputUri);
     } catch (error) {
+      HiLog.wrapError(TAG, error, 'genDlpFileFd error');
       callback(error);
       return;
     }
@@ -99,7 +100,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
           try {
             await rawDlpFile.closeDLPFile();
           } catch (err) {
-            HiLog.error(TAG, `closeDlpFile file: ${JSON.stringify(err)}`);
+            HiLog.wrapError(TAG, err, 'closeDlpFile file');
           }
         }
         this.dlpFileMap.delete(outputUri);
@@ -109,7 +110,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       }
       callback(0);
     } catch (err) {
-      HiLog.error(TAG, `genDlpFile file: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'genDlpFile file');
       await this.closeFile();
       callback((err as BusinessError).code);
     }
@@ -128,7 +129,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.inFile = await fs.open(inputUri, fs.OpenMode.READ_WRITE);
         inFileFd = this.inFile.fd;
       } catch (error) {
-        HiLog.error(TAG, `open: ${FileUtils.getFileNameByUri(inputUri)}, failed: ${JSON.stringify(error)}`);
+        HiLog.wrapError(TAG, error, `open failed: ${FileUtils.getFileNameByUri(inputUri)}`);
         reject((error as BusinessError).code);
         return;
       }
@@ -136,12 +137,13 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
       try {
         uriInfo = new fileUri.FileUri(outputUri);
       } catch (err) {
-        HiLog.error(TAG, `fileUri fail: ${JSON.stringify(err)}`);
+        HiLog.wrapError(TAG, err, 'fileUri fail');
       }
       try {
         this.outFile = await fs.open(outputUri, fs.OpenMode.READ_WRITE);
         outFileFd = this.outFile.fd;
       } catch (error) {
+        HiLog.wrapError(TAG, error, 'fs.open error');
         FileUtil.closeSync(this.inFile);
         FileUtil.unlinkSync(uriInfo.path);
         reject((error as BusinessError).code);
@@ -194,6 +196,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         AppStorage.setOrCreate('dlpFileMap', this.dlpFileMap);
       }
     } catch (err) {
+      HiLog.wrapError(TAG, err, 'openDLPFile error');
       let _dlp = new IDLDLPProperty('', '', 0, [], '', true, [], 0);
       callback((err as BusinessError).code, _dlp, (err as BusinessError).message);
     } finally {
@@ -252,7 +255,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         inFile = await fs.open(pathUri, fs.OpenMode.READ_WRITE);
         await dlpFile.recoverDLPFile(inFile.fd);
       } catch (err) {
-        HiLog.error(TAG, `recoverDlpFileInner4: ${JSON.stringify(err)}`);
+        HiLog.wrapError(TAG, err, 'recoverDlpFileInner4');
         callback((err as BusinessError).code);
       } finally {
         FileUtil.closeSync(inFile);
@@ -276,7 +279,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         }
         callback(0);
       } catch (err) {
-        HiLog.error(TAG, `closeDlpFile file: ${JSON.stringify(err)}`);
+        HiLog.wrapError(TAG, err, 'closeDlpFile file');
         callback((err as BusinessError).code);
       }
     }

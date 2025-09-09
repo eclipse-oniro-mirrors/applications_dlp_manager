@@ -77,11 +77,11 @@ export default class FileUtils {
           let res = await dlpPermission.isDLPFile(file.fd);
           resolve(res);
         } catch (err) {
-          HiLog.error(TAG, `isDLPFile error: ${JSON.stringify(err)}`);
+          HiLog.wrapError(TAG, err, 'isDLPFile error');
           reject(err);
         }
       } catch (err) {
-        HiLog.error(TAG, `openSync error: ${JSON.stringify(err)}`);
+        HiLog.wrapError(TAG, err, 'openSync error');
         reject(err);
       } finally {
         if (file) {
@@ -104,5 +104,14 @@ export default class FileUtils {
     let lastIndex: number = fileName.lastIndexOf('.');
     let fileSuffix: string = fileName.substring(lastIndex + 1, fileName.length);
     return fileSuffix;
+  }
+
+  static getParamOrDefault<T>(params: Record<string, Object> | undefined, key: string, defaultValue: T): T {
+    if (!params) {
+      HiLog.error(TAG, 'getParamOrDefault params null');
+      return defaultValue;
+    }
+    const value = params[key];
+    return (typeof value === typeof defaultValue) ? value as T : defaultValue;
   }
 }

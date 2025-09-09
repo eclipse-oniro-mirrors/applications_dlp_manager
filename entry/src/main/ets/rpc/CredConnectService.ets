@@ -33,7 +33,7 @@ export default class CredConnectService {
     this.context = context;
     this.optionsSearchUser = {
       onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success search account ${JSON.stringify(elementName)}`);
+        HiLog.info(TAG, 'onConnect success search account');
         this.service.searchUserInfo(remote, this.cloudPhone);
       },
       onDisconnect: () => {
@@ -45,7 +45,7 @@ export default class CredConnectService {
     }
     this.optionsGetAccount = {
       onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success get account ${JSON.stringify(elementName)}`);
+        HiLog.info(TAG, 'onConnect success get account');
         this.service.getLocalAccountInfo(remote);
       },
       onDisconnect: () => {
@@ -57,7 +57,7 @@ export default class CredConnectService {
     }
     this.optionsBatchRefresh = {
       onConnect: (elementName, remote) => {
-        HiLog.info(TAG, `onConnect success batch refresht ${JSON.stringify(elementName)}`);
+        HiLog.info(TAG, 'onConnect success batch refresht');
         this.service.batchRefresh(remote);
       },
       onDisconnect: () => {
@@ -105,7 +105,7 @@ export default class CredConnectService {
         HiLog.info(TAG, `connectServiceShareAbility result: ${connectionId}`);
       }
     } catch (err) {
-      HiLog.error(TAG, `connectServiceShareAbility failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'connectServiceShareAbility failed');
     }
   }
 }

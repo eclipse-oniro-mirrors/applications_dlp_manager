@@ -46,7 +46,7 @@ export class IAuthUser extends rpc.MessageSequence {
       dataOut.writeInt(this.dlpFileAccess);
       dataOut.writeLong(this.permExpiryTime);
     } catch (error) {
-      HiLog.error(TAG, `marshalling exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'marshalling exception');
       return false;
     }
     return true;
@@ -59,7 +59,7 @@ export class IAuthUser extends rpc.MessageSequence {
       this.dlpFileAccess = dataIn.readInt();
       this.permExpiryTime = dataIn.readLong();
     } catch (error) {
-      HiLog.error(TAG, `unmarshalling exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'unmarshalling exception');
       return false;
     }
     return true;
@@ -109,7 +109,7 @@ export default class IDLDLPProperty extends rpc.MessageSequence {
       dataOut.writeIntArray(this.everyoneAccessList);
       dataOut.writeLong(this.expireTime);
     } catch (error) {
-      HiLog.error(TAG, `marshalling exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'marshalling exception');
       return false;
     }
     return true;
@@ -133,7 +133,7 @@ export default class IDLDLPProperty extends rpc.MessageSequence {
       this.everyoneAccessList = dataIn.readIntArray();
       this.expireTime = dataIn.readLong();
     } catch (error) {
-      HiLog.error(TAG, `unmarshalling exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'unmarshalling exception');
       return false;
     }
     return true;

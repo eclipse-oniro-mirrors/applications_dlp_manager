@@ -47,7 +47,7 @@ export class AccountTipsConfig {
             AccountTipsConfig.configTipsArray = accountTipsArray;
             resolve(AccountTipsConfig.configTipsArray);
           }).catch((err: BusinessError) => {
-            HiLog.error(TAG, `getConfigTips failed, error: ${JSON.stringify(err)}`);
+            HiLog.wrapError(TAG, err, 'getConfigTips failed');
             reject(err);
           });
         } else {
@@ -55,7 +55,7 @@ export class AccountTipsConfig {
           resolve(accountTipsArray);
         }
       } catch (error) {
-        HiLog.error(TAG, `getConfigTips error: ${JSON.stringify(error)}`);
+        HiLog.wrapError(TAG, error, 'getConfigTips error');
         reject(error);
       }
     })
@@ -100,7 +100,7 @@ export class AccountTipsConfig {
         }
         resolve(accountTipsArray);
       } catch (error) {
-        HiLog.error(TAG, `loadCcmConfigs error: ${JSON.stringify(error)}`);
+        HiLog.wrapError(TAG, error, 'loadCcmConfigs error');
         reject(error);
       }
     });

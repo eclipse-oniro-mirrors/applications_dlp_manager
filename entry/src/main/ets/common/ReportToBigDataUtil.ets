@@ -75,7 +75,7 @@ export class ReportToBigDataUtil {
     }
     hiSysEvent.write(info, (err, val) => {
       if (err) {
-        HiLog.error(TAG, `report failed, err: ${JSON.stringify(err)}, val: ${JSON.stringify(val)}`);
+        HiLog.wrapError(TAG, err, 'report failed');
       } else {
         let msg: string[] = [];
         msg.push(`domain: ${info.domain}`);

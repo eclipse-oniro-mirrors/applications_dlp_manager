@@ -91,7 +91,7 @@ export default class AccountManager {
     try {
       return await getOsAccountInfo();
     } catch (error) {
-      HiLog.error(TAG, `getAccountInfo error: ${error}`);
+      HiLog.wrapError(TAG, error, 'getAccountInfo error');
     }
     return null;
   }
@@ -111,7 +111,7 @@ export default class AccountManager {
       });
       AppStorage.setOrCreate(AppStorageConstant.DOMAIN_ACCOUNT_MAP, domainAccountMap);
     } catch (error) {
-      HiLog.error(TAG, `dealDomainAccountMapCache error: ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'dealDomainAccountMapCache failed');
     }
   }
 }

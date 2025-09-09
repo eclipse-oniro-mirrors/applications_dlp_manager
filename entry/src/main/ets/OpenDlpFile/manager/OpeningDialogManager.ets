@@ -24,6 +24,7 @@ import FileUtils from '../../common/FileUtils/FileUtils';
 import ErrorManager from '../handler/ErrorHandler';
 import { emitter } from '@kit.BasicServicesKit';
 import StartSandboxHandler from '../handler/StartSandboxHandler';
+import TerminateView from '../TerminateView/TerminateView';
 
 const TAG = 'OpeningDialogManager';
 
@@ -229,6 +230,7 @@ export default class OpeningDialogManager {
       }
       this._decryptingMap.delete(requestId);
     }
+    await TerminateView.terminate();
   }
 
   private async showDialog(requestId: string): Promise<void> {
@@ -325,11 +327,12 @@ export default class OpeningDialogManager {
 
   // 根据大小不需要弹框，但是调用penDLPFile接口超过500ms都没返回，拉起“正在打开”弹框
   public async showOpeningDialogByTimeout(requestId: string): Promise<void> {
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
-    if (!viewContext) {
+    const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
+    if (!context) {
       HiLog.error(TAG, 'showOpeningDialogByTimeout viewContext null');
       return;
     }
+    const viewContext = context as common.ServiceExtensionContext;
     this.printAllDecryptingMap();
     HiLog.info(TAG, 'OpeningDialogManager showOpeningDialogByTimeout');
     const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);

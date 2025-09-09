@@ -39,7 +39,7 @@ export default class CommonUtil {
     try {
       return buffer.from(data, CommonUtil.UTF_8).toString(CommonUtil.BASE64);
     } catch (error) {
-      HiLog.error(TAG, `encodeByBase64 error: ${error}`);
+      HiLog.wrapError(TAG, error, 'encodeByBase64 error');
     }
     return '';
   }

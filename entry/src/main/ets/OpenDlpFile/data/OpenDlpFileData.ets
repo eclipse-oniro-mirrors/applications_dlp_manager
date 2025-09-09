@@ -17,6 +17,7 @@ import { FileParseType } from '../../bean/data/FileParseType';
 import Constants from '../../common/constant';
 import { HiLog } from '../../common/HiLog';
 import { isInvalidStr, isValidPath } from '../../common/FileUtils/utils';
+import FileUtils from '../../common/FileUtils/FileUtils';
 
 const TAG: string = 'OpenDlpFileData';
 const APPID_FOR_HOPE: string = '5765880207854533797';
@@ -197,14 +198,14 @@ export default class OpenDlpFileData {
   }
 
   public checkAndSetWantParams(): boolean {
-    this._sandboxBundleName = this._want.parameters?.[Constants.PARAMS_BUNDLE_NAME] as string;
+    this._sandboxBundleName = FileUtils.getParamOrDefault(this._want.parameters, Constants.PARAMS_BUNDLE_NAME, '');
     if (isInvalidStr(this._sandboxBundleName)) {
       HiLog.error(TAG, 'invalid bundleName in want.parameters');
       return false;
     }
 
     this._uri = this._want.uri as string;
-    if (isInvalidStr(this._uri) || !isValidPath(this._uri) && !this.CheckSuffixByUri()) {
+    if (isInvalidStr(this._uri) || !isValidPath(this._uri) || !this.CheckSuffixByUri()) {
       HiLog.error(TAG, 'invalid uri in want.uri');
       return false;
     }
@@ -216,7 +217,8 @@ export default class OpenDlpFileData {
     this._requestId = this._fileName + tempRandom;
     HiLog.info(TAG, `checkAndSetWantParams requestId ${this._requestId}`);
 
-    this._callerBundleName = this._want.parameters?.[Constants.PARAMS_CALLER_BUNDLE_NAME] as string;
+    this._callerBundleName =
+      FileUtils.getParamOrDefault(this._want.parameters, Constants.PARAMS_CALLER_BUNDLE_NAME, '');
     if (isInvalidStr(this._callerBundleName)) {
       HiLog.error(TAG, 'invalid callerBundleName');
       return false;
@@ -224,20 +226,21 @@ export default class OpenDlpFileData {
 
     this._pluginId =
       (this._want.parameters?.[Constants.PARAMS_DLP_CONNECTION_PLUGIN_ID] as DlpConnectionPluginIdObj)?.id;
-    this._callerAppId = this._want.parameters?.[Constants.PARAMS_CALLER_APP_IDENTIFIER] as string;
+
+    this._callerAppId = FileUtils.getParamOrDefault(this._want.parameters, Constants.PARAMS_CALLER_APP_IDENTIFIER, '');
     let checkPluginId: boolean = this.checkPermissionWithPluginId();
     if (!checkPluginId) {
       HiLog.error(TAG, 'checkPermissionWithPluginId failed');
       return false;
     }
 
-    this._sandboxAbilityName = this._want.parameters?.[Constants.PARAMS_ABILITY_NAME] as string;
+    this._sandboxAbilityName = FileUtils.getParamOrDefault(this._want.parameters, Constants.PARAMS_ABILITY_NAME, '');
     if (isInvalidStr(this._sandboxAbilityName)) {
       HiLog.error(TAG, 'invalid abilityName');
       return false;
     }
 
-    this._sandboxModuleName = this._want.parameters?.[Constants.PARAMS_MODULE_NAME] as string;
+    this._sandboxModuleName = FileUtils.getParamOrDefault(this._want.parameters, Constants.PARAMS_MODULE_NAME, '');
     return true;
   }
 }

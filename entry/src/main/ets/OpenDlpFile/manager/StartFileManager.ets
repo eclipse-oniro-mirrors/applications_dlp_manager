@@ -23,11 +23,12 @@ const TAG: string = 'StartFileManager';
 
 export class StartFileManager {
   public static async startFileManager(uri: string | undefined): Promise<Result<void>> {
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
-    if (!viewContext || !uri) {
+    const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
+    if (!context || !uri) {
       HiLog.error(TAG, 'startFileManager viewContext null');
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_PARAM_ERROR);
     }
+    const viewContext = context as common.ServiceExtensionContext;
     try {
       await viewContext.openLink(Constants.OPEN_DIRECTORY_LINK, {
         appLinkingOnly: false,

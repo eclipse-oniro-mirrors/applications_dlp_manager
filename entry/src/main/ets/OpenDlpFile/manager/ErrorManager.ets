@@ -50,7 +50,12 @@ class PhoneManager extends ErrorManager {
   }
 
   public async handle(error: BusinessError): Promise<void> {
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
+    const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
+    if (!context) {
+      HiLog.error(TAG, 'PhoneManager handle viewContext null');
+      return;
+    }
+    const viewContext = context as common.ServiceExtensionContext;
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
       HiLog.info(TAG, `PhoneManager not need toast, code ${error.code}`);
       return;
@@ -66,7 +71,12 @@ class PhoneManager extends ErrorManager {
 
 class PCManager extends ErrorManager {
   public async handle(error: BusinessError): Promise<void> {
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
+    const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
+    if (!context) {
+      HiLog.error(TAG, 'PCManager handle viewContext null');
+      return;
+    }
+    const viewContext = context as common.ServiceExtensionContext;
     if (OpenDlpFileError.NOT_NEED_TOAST.has(error.code)) {
       HiLog.info(TAG, `PCManager not need toast, code ${error.code}`);
       return;

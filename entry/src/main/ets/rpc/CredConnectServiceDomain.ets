@@ -75,7 +75,7 @@ export default class CredConnectServiceDomain {
         }
       }
     } catch (err) {
-      HiLog.error(TAG, `connectServiceAbility failed: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'connectServiceAbility failed');
     }
     AppStorage.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN_NUM, this.connectionNum);
     HiLog.info(TAG, `connectServiceAbility result: ${this.connectionNum}`);
@@ -115,7 +115,7 @@ export default class CredConnectServiceDomain {
       }
       result = DomainAccountConvertor.convertToDomainAccountResp(sendResult.reply.readString());
     } catch (error) {
-      HiLog.error(TAG, `getDomainAccountInfo result: ${error}`);
+      HiLog.wrapError(TAG, error, 'getDomainAccountInfo failed');
     } finally {
       data.reclaim();
       reply.reclaim();
@@ -134,7 +134,7 @@ export default class CredConnectServiceDomain {
     this.context.disconnectServiceExtensionAbility(connectionNum).then(() => {
       HiLog.info(TAG, `disconnectServiceAbility success.`);
     }).catch((error: BusinessError) => {
-      HiLog.error(TAG, `disconnectServiceAbility failed. Error: ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'disconnectServiceAbility failed');
     })
   };
 }

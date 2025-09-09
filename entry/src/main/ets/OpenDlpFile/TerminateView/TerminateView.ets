@@ -37,11 +37,12 @@ export default class TerminateView {
 
   public static async terminate(): Promise<void> {
     HiLog.info(TAG, 'TerminateView terminate start');
-    const viewContext = AppStorage.get('viewContext') as common.ServiceExtensionContext;
-    if (!viewContext) {
+    const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
+    if (!context) {
       HiLog.error(TAG, 'TerminateView viewContext null');
       return;
     }
+    const viewContext = context as common.ServiceExtensionContext;
     const manager = OpenDlpFileManager.getInstance();
     const getSizeRet = manager.getHasDecryptedSize();
     if (getSizeRet.errcode !== Constants.ERR_CODE_SUCCESS) {
@@ -57,7 +58,7 @@ export default class TerminateView {
     isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast}`);
     if (hasDecryptedSize === 0 && hasCallback && !isDecrypting && toastSize === 0 && !isWaitingShowToast) {
       try {
-        ApplyEfficiencyManager.getInstance().releaseEfficiencyResource();
+        ApplyEfficiencyManager.getInstance().releaseEfficiency();
         OpeningDialogManager.getInstance().setIsTerminalSelf(true);
         await ViewAbilityService.getInstance().sendDisconnectMsg();
         await viewContext.terminateSelf();

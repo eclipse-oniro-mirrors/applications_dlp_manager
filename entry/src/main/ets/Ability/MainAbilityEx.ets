@@ -33,7 +33,8 @@ import {
   getDLPInfo,
   sendDlpManagerAccountLogin,
   isValidPath,
-  getAccountTypeAndRealFileType
+  getAccountTypeAndRealFileType,
+  getAccountNameFromErrMsg
 } from '../common/FileUtils/utils';
 import GlobalContext from '../common/GlobalContext';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
@@ -43,6 +44,7 @@ import AccountManager from '../manager/AccountManager';
 import IdDlpRpcServiceProxy from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import common from '@ohos.app.ability.common';
 import FileUtil from '../common/external/FileUtil';
+import CommonUtil from '../common/CommonUtil';
 
 const TAG = 'MainEx';
 
@@ -71,7 +73,7 @@ export default class MainAbility extends UIExtensionAbility {
         HiLog.info(TAG, `${DLP_FILE_PROCESS_ABILITY_NAME}: onConnect success`);
         this.dlpRpcProxy = new IdDlpRpcServiceProxy(proxy);
         GlobalContext.store('dlpRpcProxy', this.dlpRpcProxy);
-        HiLog.info(TAG, `DLPManager IDL onConnect success: ${JSON.stringify(this.dlpRpcProxy)}`);
+        HiLog.info(TAG, 'DLPManager IDL onConnect success');
         this.getNewWantPage(want, session);
       },
       onDisconnect: () => {
@@ -87,7 +89,7 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         this.connectionNum = this.context.connectServiceExtensionAbility(newWant, options);
       } catch (err) {
-        HiLog.error(TAG, `connectDlpFileProcessAbility failed: ${JSON.stringify(err)}`);
+        HiLog.wrapError(TAG, err, 'connectDlpFileProcessAbility failed');
       }
     }
     HiLog.info(TAG, `connectDlpFileProcessAbility result: ${this.connectionNum}`);
@@ -173,8 +175,8 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         session.loadContent('pages/changeEncryption', storage);
         session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-      } catch (exception) {
-        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'Failed to loadContent or setWindowBackgroundColor');
       }
     } else {
       let storage: LocalStorage = new LocalStorage({
@@ -183,8 +185,8 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         session.loadContent('pages/permissionStatus', storage);
         session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-      } catch (exception) {
-        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'Failed to loadContent or setWindowBackgroundColor');
       }
     }
   }
@@ -254,7 +256,7 @@ export default class MainAbility extends UIExtensionAbility {
         AppStorage.setOrCreate('accountDomain', accountInfo.domainInfo.domain);
         resolve();
       } catch (err) {
-        HiLog.error(TAG, `getOsAccountInfo failed: ${JSON.stringify(err)}`);
+        HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
         this.gotoAlertPage(session, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         reject();
         return;
@@ -325,8 +327,8 @@ export default class MainAbility extends UIExtensionAbility {
       try {
         session.loadContent('pages/encryptionProtection', storage);
         session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-      } catch (exception) {
-        HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'Failed to set the background color');
       }
       return;
     } else {
@@ -383,8 +385,10 @@ export default class MainAbility extends UIExtensionAbility {
         }
         let accountFlag: boolean = true;
         if (err === Constants.ERR_JS_USER_NO_PERMISSION) {
-          let accountName: string = msg.split(', contact:')?.[1];
-          accountFlag = await AccountManager.checkAccountInfo(accountName);
+          let accountName: string = getAccountNameFromErrMsg(msg);
+          if (!CommonUtil.isEmptyStr(accountName)) {
+            accountFlag = await AccountManager.checkAccountInfo(accountName);
+          }
         }
         if (!accountFlag) {
           this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
@@ -431,8 +435,8 @@ export default class MainAbility extends UIExtensionAbility {
     try {
       session.loadContent('pages/alert', storage);
       session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-    } catch (exception) {
-      HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'Failed to set the background color');
     }
   }
 

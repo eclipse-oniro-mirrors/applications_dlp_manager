@@ -28,8 +28,8 @@ export default class DialogUIExtAbility extends UIExtensionAbility {
     try {
       session.loadContent('pages/alert');
       session.setWindowBackgroundColor(Constants.TRANSPARENT_BACKGROUND_COLOR);
-    } catch (exception) {
-      HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'Failed to loadContent or setWindowBackgroundColor');
     }
   }
 

@@ -99,6 +99,16 @@ const NUM_TO_TYPE_MAP = new Map<number, string>([
   [65, 'cr2'],
 ]);
 
+interface DlpGeneralInfo {
+  certSize?: number,
+  contactAccount: string,
+  realFileType?: string
+}
+
+interface CertInfo {
+  accountType: dlpPermission.AccountType
+}
+
 abstract class FileParseBase {
   protected metaInfo?: FileMetaInfo;
   public fileSize: number = 0;
@@ -115,6 +125,35 @@ class ZipParse extends FileParseBase {
   constructor(fileSize: number) {
     super(fileSize);
     this.parseType = FileParseType.ZIP;
+  }
+
+  parseDlpCert(certSize: number, fileName: string): Result<CertInfo> {
+    try {
+      let accountType: number = 0;
+      let certString: string = '';
+      if (certSize !== 0) { // 6.0之后的版本，生成的zip格式的dlp文件
+        const dlpCert = fs.openSync(fileName, fs.OpenMode.READ_ONLY);
+        let cert = new ArrayBuffer(certSize);
+        const option: ReadOptions = { offset: 0, length: certSize };
+        fs.readSync(dlpCert.fd, cert, option);
+        const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
+        certString = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
+      } else { // 6.0之前的版本
+        certString = fs.readTextSync(fileName);
+      }
+      const certInfo: CertInfo = JSON.parse(certString) as CertInfo;
+      accountType = Number(certInfo.accountType);
+      if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
+        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
+        accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+        HiLog.error(TAG, `Error accountType: ${accountType}`);
+        return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
+      }
+      return ResultMsg.buildSuccess(certInfo);
+    } catch (error) {
+      HiLog.error(TAG, 'parseDlpCert error');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
+    }
   }
 
   async parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>> {
@@ -134,25 +173,24 @@ class ZipParse extends FileParseBase {
       fs.mkdirSync(dirPath, true);
       await zlib.decompressFile(filePath, dirPath);
 
-      let dlpInfo = fs.readTextSync(fileName);
-      let infoArray = dlpInfo.split('accountType');
-      let type = infoArray[Constants.NUMBER_ONE].slice(Constants.TYPE_START, Constants.TYPE_END);
+      // dlp_general_info
+      const generalInfo = fs.readTextSync(generalInfoPath);
+      const dlpGeneralInfo: DlpGeneralInfo = JSON.parse(generalInfo) as DlpGeneralInfo;
+      const contactAccount: string = dlpGeneralInfo.contactAccount;
+      const realFileType: string = dlpGeneralInfo.realFileType ?? '';
+      const certSize: number = dlpGeneralInfo.certSize ? Number(dlpGeneralInfo.certSize) : 0;
 
-      let generalInfo = fs.readTextSync(generalInfoPath);
-      let generalInfoArray = generalInfo.split('realFileType');
-      let realFileType: string = '';
-      if (generalInfoArray.length === Constants.NUMBER_TWO) {
-        let realFileTypeStr = generalInfoArray[Constants.NUMBER_ONE].split('\"');
-        if (realFileTypeStr.length > Constants.NUMBER_TWO) {
-          realFileType = realFileTypeStr[Constants.NUMBER_TWO];
-        }
+      const parseDlpCertRet = this.parseDlpCert(certSize, fileName);
+      if (parseDlpCertRet.errcode !== Constants.ERR_CODE_SUCCESS || !parseDlpCertRet.result) {
+        HiLog.error(TAG, 'parseDlpCert failed');
+        return ResultMsg.buildMsg(parseDlpCertRet.errcode, parseDlpCertRet.errmsg);
       }
 
-      GlobalContext.store('accountType', Number(type));
+      GlobalContext.store('accountType', Number(parseDlpCertRet.result.accountType));
       this.metaInfo = {
-        accountType: Number(type),
+        accountType: Number(parseDlpCertRet.result.accountType),
         fileType: realFileType,
-        ownerAccount: '',
+        ownerAccount: contactAccount,
         fileSize: this.fileSize
       };
       return ResultMsg.buildSuccess(this.metaInfo);
@@ -191,10 +229,9 @@ class RawParse extends FileParseBase {
       fs.readSync(file.fd, cert, option);
 
       const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
-      const fdString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
-      const infoArray = fdString.split('accountType');
-      const type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
-      const accountType = Number(type);
+      const certString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
+      const certInfo: CertInfo = JSON.parse(certString) as CertInfo;
+      const accountType = certInfo.accountType;
       if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
         accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
         accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {

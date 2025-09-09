@@ -609,7 +609,7 @@ struct encryptionSuccess {
                           });
                         })
                       } catch (err) {
-                        HiLog.error(TAG, `closeDLPFile: ${dlpFileName}, failed: ${JSON.stringify(err)}`);
+                        HiLog.wrapError(TAG, err, `closeDLPFile: ${dlpFileName}, failed`);
                       }
                     }
                     if (this.session !== undefined) {

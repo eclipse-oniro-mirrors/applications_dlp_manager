@@ -175,7 +175,7 @@ export default class AccountAssociationManager {
         HiLog.error(TAG, 'Storage authorized account failed.');
       }
     } catch (error) {
-      HiLog.error(TAG, `Set authorized account error: ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'Set authorized account failed');
     }
   }
 }

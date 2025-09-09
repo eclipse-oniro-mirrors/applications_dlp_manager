@@ -44,7 +44,7 @@ export default class DomainAccountConvertor {
       result.setErrorMsg(obj.errorMsg);
       result.setData(obj.result);
     } catch (error) {
-      HiLog.error(TAG, `convertToDomainAccountResp result: ${error}`);
+      HiLog.wrapError(TAG, error, 'convertToDomainAccountResp result');
     }
     return result;
   }

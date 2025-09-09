@@ -99,7 +99,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
             resultCode: EncryptSharingTerminateCode.CHECK_URI_FAILED
           });
         } catch (error) {
-          HiLog.error(TAG, `terminateSelfWithResult exception, error is ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'terminateSelfWithResult exception');
         }
       }, Constants.SHARE_SET_TIMEOUT);
       return;
@@ -118,7 +118,7 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     try {
       this.callbackId = applicationContext.on('environment', envCallback);
     } catch (err) {
-      HiLog.error(TAG, `on environment error: ${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'on environment error');
     }
 
     let parameters = want.parameters as Record<string, Object>;
@@ -139,8 +139,8 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     try {
       session.loadContent('pages/encryptedSharing', storage);
       session.setWindowBackgroundColor(BG_COLOR);
-    } catch (exception) {
-      HiLog.error(TAG, `Failed to set the background color. Cause: ${JSON.stringify(exception)}`);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'Failed to loadContent or setWindowBackgroundColor');
     }
   }
 
@@ -154,13 +154,13 @@ export default class EncryptedSharingAbility extends ActionExtensionAbility {
     try {
       applicationContext.off('environment', this.callbackId, (error, data) => {
         if (error && error.code !== 0) {
-          HiLog.error(TAG, `off environment error: ${JSON.stringify(error)}`);
+          HiLog.wrapError(TAG, error, 'applicationContext off environment error');
         } else {
-          HiLog.info(TAG, `off environment success: ${JSON.stringify(data)}`);
+          HiLog.info(TAG, 'off environment success');
         }
       });
     } catch (err) {
-      HiLog.error(TAG, `off environment error:${JSON.stringify(err)}`);
+      HiLog.wrapError(TAG, err, 'off environment error');
     }
   }
 }

@@ -463,7 +463,7 @@ struct encryptedSharing {
     try {
       credentialCallBack = JSON.parse(this.phoneNumSearchResult) as Record<string, string>;
     } catch (error) {
-      HiLog.error(TAG, `json parse exception, error is ${JSON.stringify(error)}`);
+      HiLog.wrapError(TAG, error, 'json parse failed');
       return false;
     }
     HiLog.info(TAG, `credential Call Back errorCode: ${credentialCallBack.errorCode}`);
@@ -532,8 +532,8 @@ struct encryptedSharing {
         this.enableComponents();
       }
     } catch (err) {
-      this.enableComponents();
       HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
+      this.enableComponents();
     }
   }
 
@@ -917,7 +917,7 @@ async function generateDlpFile(newFilePath: string, inputUri: string,
     newFile = fs.openSync(newFilePath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
     await dlpPermission.generateDLPFile(inFile.fd, newFile.fd, dlpProperty);
   } catch (err) {
-    HiLog.wrapError(TAG, error, 'generateDlpFile failed');
+    HiLog.wrapError(TAG, err, 'generateDlpFile failed');
     error = err;
     if (newFile?.fd && newFile?.fd >= Constants.NORMAL_FD_MIN) {
       fs.closeSync(newFile.fd);

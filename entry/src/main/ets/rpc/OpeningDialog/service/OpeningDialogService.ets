@@ -101,7 +101,7 @@ export default class OpeningDialogService {
 
   public async disconnectViewAbility(): Promise<void> {
     HiLog.info(TAG, 'disconnectViewAbility start');
-    if (!this._context || !this.connectionId) {
+    if (!this._context || this.connectionId === undefined) {
       HiLog.error(TAG, 'disconnectViewAbility context or connectionId is null');
       return;
     }
