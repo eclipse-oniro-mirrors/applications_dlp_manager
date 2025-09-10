@@ -377,10 +377,6 @@
             "value":"[TS_1084969]_A maximum of %d files can be encrypted at a time"
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"[TS_1084973]_Unable to open file. Try opening in another app."
-        },
-        {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
             "value":"[TS_1084968]_Unable to obtain file permission. Try again later."
         },
