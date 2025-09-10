@@ -133,13 +133,18 @@ class ZipParse extends FileParseBase {
       let accountType: number = 0;
       let certString: string = '';
       if (certSize !== 0) { // 6.0之后的版本，生成的zip格式的dlp文件
+        HiLog.debug(TAG, 'openSync fileName');
         dlpCert = fs.openSync(fileName, fs.OpenMode.READ_ONLY);
         let cert = new ArrayBuffer(certSize);
         const option: ReadOptions = { offset: 0, length: certSize };
+        HiLog.debug(TAG, 'readSync dlpCert');
         fs.readSync(dlpCert.fd, cert, option);
+        HiLog.debug(TAG, 'TextDecoder create');
         const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
+        HiLog.debug(TAG, 'textDecoder decodeToString');
         certString = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
       } else { // 6.0之前的版本
+        HiLog.debug(TAG, 'readTextSync');
         certString = fs.readTextSync(fileName);
       }
       const certInfo: CertInfo = JSON.parse(certString) as CertInfo;
@@ -152,7 +157,7 @@ class ZipParse extends FileParseBase {
       }
       return ResultMsg.buildSuccess(certInfo);
     } catch (error) {
-      HiLog.error(TAG, 'parseDlpCert error');
+      HiLog.wrapError(TAG, error, 'parseDlpCert error');
       return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
     } finally {
       FileUtil.closeSync(dlpCert);
