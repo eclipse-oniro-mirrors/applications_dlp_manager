@@ -20,6 +20,7 @@ import { BusinessError } from '@ohos.base';
 import { HiLog } from '../common/HiLog';
 import { AlertDialog } from '@kit.ArkUI';
 import Constants from '../common/constant';
+import { common } from '@kit.AbilityKit';
 
 const TAG = 'PhoneDialog';
 
@@ -29,6 +30,52 @@ struct Index {
   private want = AppStorage.get('PhoneDialogUIExtWant') as Want | undefined;
   private session = AppStorage.get('PhoneDialogUIExtSession') as UIExtensionContentSession | undefined;
   private errorDialog: CustomDialogController | null = null;
+  private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
+  private loginDialogTitle: ResourceStr = '';
+  private loginButtonContent: ResourceStr = '';
+  private loginDialog: CustomDialogController = new CustomDialogController({
+    builder: AlertDialog({
+      primaryTitle: this.loginDialogTitle,
+      content: $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'),
+      primaryButton: {
+        value: $r('app.string.ban'),
+        action: async () => {
+          this.cancelAction();
+        },
+      },
+      secondaryButton: {
+        value: this.loginButtonContent,
+        action: async () => {
+          const ctx = this.getUIContext()?.getHostContext() as common.UIAbilityContext;
+          if (!ctx) {
+            return;
+          }
+          ctx.startAbility({
+            bundleName: 'com.huawei.hmos.settings',
+            abilityName: 'com.huawei.hmos.settings.MainAbility',
+            uri: 'hms_account_home_settings'
+          });
+          this.cancelAction();
+        }
+      },
+    }),
+    cancel: (() => {
+      this.cancelAction();
+    })
+  })
+
+  getExternalResourceString(bundle: string, module: string, resourceName: string): string {
+    try {
+      let ctx = this.context.createModuleContext(bundle, module);
+      HiLog.info(TAG, 'getExternalResourceString get context from: ' + ctx.applicationInfo.name);
+      let str = ctx.resourceManager.getStringByNameSync(resourceName);
+      return str;
+    } catch (e) {
+      let error = e as BusinessError;
+      HiLog.error(TAG, 'getExternalResourceString error: ' + error.code + ' ' + error.message);
+      return '';
+    }
+  }
 
   private cancelAction(): void {
     HiLog.info(TAG, 'cancelAction');
@@ -68,6 +115,10 @@ struct Index {
       const errorMessage = this.want?.parameters?.errorMessage ?? '';
       errorMsg.code = errorCode as number;
       errorMsg.message = errorMessage as string;
+      if (errorMsg.code === Constants.ERR_JS_ACCOUNT_NOT_LOGIN) {
+        this.loginDialog.open();
+        return;
+      }
       const errInfo: Record<string, Resource> = GetAlertMessage.getAlertMessage(errorMsg);
       const msg = errInfo.msg ?? '';
       this.getDialogConfig(msg);
@@ -81,6 +132,10 @@ struct Index {
   aboutToAppear() {
     HiLog.info(TAG, 'PhoneDialog aboutToAppear');
     this.showErrorDialog();
+    let str_1 = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_title');
+    this.loginDialogTitle = str_1.length > 0 ? str_1 : '';
+    let str_2 = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
+    this.loginButtonContent = str_2.length > 0 ? str_2 : '';
   }
 
   aboutToDisappear() {

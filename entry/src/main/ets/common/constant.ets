@@ -110,7 +110,6 @@ export default class Constants {
   public static DLP_MANAGER_BUNDLE_NAME = 'com.ohos.dlpmanager';
   public static DLP_CREDMGR_BUNDLE_NAME = 'com.huawei.hmos.dlpcredmgr';
   public static DLP_CREDMGR_DATA_ABILITY_NAME = 'DlpCredDataExtAbility';
-  public static DLP_CREDMGR_LOGIN_ABILITY_NAME = 'DlpCredLoginAbility';
   public static DLP_CREDMGR_ACCOUNT_ABILITY_NAME = 'DlpCredAccountAbility';
   public static DLP_CREDMGR_INTERFACE_TOKEN = 'OHOS.HapDlpCredAbilityServiceStub';
   public static DLP_MGR_INTERFACE_TOKEN = 'OHOS.HapDlpMgrAbilityServiceStub';
@@ -371,5 +370,4 @@ export default class Constants {
 
   public static readonly DEFAULT_ERROR_CODE = -1;
   public static readonly VALID_URI_PREFIX = 'file://';
-  public static readonly MSG_CONTACT = ', contact:';
 }
