@@ -59,7 +59,7 @@ class CloudAccountHandle extends AccountHandlerBase {
     if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
       this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
       HiLog.info(TAG, 'Cloud account not login');
-      return ResultMsg.buildMsg(Constants.ERR_JS_ACCOUNT_NOT_LOGIN);
+      return ResultMsg.buildMsg(Constants.ERR_JS_ACCOUNT_NOT_LOGIN, '');
     }
     decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.userId = this.userId;
