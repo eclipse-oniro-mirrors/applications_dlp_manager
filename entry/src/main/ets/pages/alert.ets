@@ -190,11 +190,11 @@ struct Index {
   }
 
   async aboutToAppear() {
-    HiLog.info(TAG, `alert aboutToAppear start`);
-    let str_1 = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_title');
-    this.loginDialogTitle = str_1.length > 0 ? str_1 : '';
-    let str_2 = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
-    this.loginButtonContent = str_2.length > 0 ? str_2 : '';
+    HiLog.info(TAG, 'alert aboutToAppear start');
+    let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_title');
+    this.loginDialogTitle = str.length > 0 ? str : '';
+    let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
+    this.loginButtonContent = str.length > 0 ? str : '';
     try {
       let messageCode = -1;
       let errorMsg = {} as BusinessError;
