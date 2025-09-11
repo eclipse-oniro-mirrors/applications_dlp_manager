@@ -17,7 +17,7 @@ import Result from '../../common/Result'
 import { ResultMsg } from '../../common/ResultMsg'
 import Constants from '../../common/constant';
 import fs, { ReadOptions } from '@ohos.file.fs';
-import { getFileFd } from '../../common/FileUtils/utils';
+import { checkValidAccountType, getFileFd } from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import { zlib } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';
@@ -127,41 +127,35 @@ class ZipParse extends FileParseBase {
     this.parseType = FileParseType.ZIP;
   }
 
-  parseDlpCert(certSize: number, fileName: string): Result<CertInfo> {
-    let dlpCert: fs.File | undefined;
-    try {
-      let accountType: number = 0;
-      let certString: string = '';
-      if (certSize !== 0) { // 6.0之后的版本，生成的zip格式的dlp文件
-        HiLog.debug(TAG, 'openSync fileName');
-        dlpCert = fs.openSync(fileName, fs.OpenMode.READ_ONLY);
-        let cert = new ArrayBuffer(certSize);
-        const option: ReadOptions = { offset: 0, length: certSize };
-        HiLog.debug(TAG, 'readSync dlpCert');
-        fs.readSync(dlpCert.fd, cert, option);
-        HiLog.debug(TAG, 'TextDecoder create');
-        const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
-        HiLog.debug(TAG, 'textDecoder decodeToString');
-        certString = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
-      } else { // 6.0之前的版本
-        HiLog.debug(TAG, 'readTextSync');
-        certString = fs.readTextSync(fileName);
-      }
-      const certInfo: CertInfo = JSON.parse(certString) as CertInfo;
-      accountType = Number(certInfo.accountType);
-      if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
-        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
-        accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
-        HiLog.error(TAG, `Error accountType: ${accountType}`);
-        return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
-      }
-      return ResultMsg.buildSuccess(certInfo);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'parseDlpCert error');
+  async parseAccountType(fileName: string): Promise<Result<number>> {
+    let dlpInfo = fs.readTextSync(fileName);
+    const infoArray = dlpInfo.split('accountType');
+    let accountType: number = 0;
+    if (infoArray.length === Constants.NUMBER_TWO) {
+      let type = infoArray[Constants.NUMBER_ONE].slice(Constants.TYPE_START, Constants.TYPE_END).trim();
+      accountType = Number(type);
+    } else {
+      HiLog.error(TAG, 'dlp file not contain accountType');
       return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
-    } finally {
-      FileUtil.closeSync(dlpCert);
     }
+    if (!checkValidAccountType(accountType)) {
+      HiLog.error(TAG, 'checkValidAccountType invalid');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
+    }
+    return ResultMsg.buildSuccess(accountType);
+  }
+
+  async parseRealFileType(generalInfoPath: string): Promise<string> {
+    const generalInfo = fs.readTextSync(generalInfoPath);
+    const generalInfoArray = generalInfo.split('realFileType');
+    let realFileType: string = '';
+    if (generalInfoArray.length === Constants.NUMBER_TWO) {
+      let realFileTypeStr = generalInfoArray[Constants.NUMBER_ONE].split('\"');
+      if (realFileTypeStr.length > Constants.NUMBER_TWO) {
+        realFileType = realFileTypeStr[Constants.NUMBER_TWO];
+      }
+    }
+    return realFileType;
   }
 
   async parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>> {
@@ -180,25 +174,18 @@ class ZipParse extends FileParseBase {
       await fs.copyFile(file.fd, ff.fd);
       fs.mkdirSync(dirPath, true);
       await zlib.decompressFile(filePath, dirPath);
-
-      // dlp_general_info
-      const generalInfo = fs.readTextSync(generalInfoPath);
-      const dlpGeneralInfo: DlpGeneralInfo = JSON.parse(generalInfo) as DlpGeneralInfo;
-      const contactAccount: string = dlpGeneralInfo.contactAccount;
-      const realFileType: string = dlpGeneralInfo.realFileType ?? '';
-      const certSize: number = dlpGeneralInfo.certSize ? Number(dlpGeneralInfo.certSize) : 0;
-
-      const parseDlpCertRet = this.parseDlpCert(certSize, fileName);
-      if (parseDlpCertRet.errcode !== Constants.ERR_CODE_SUCCESS || !parseDlpCertRet.result) {
-        HiLog.error(TAG, 'parseDlpCert failed');
-        return ResultMsg.buildMsg(parseDlpCertRet.errcode, parseDlpCertRet.errmsg);
+      const parseAccountTypeRet = await this.parseAccountType(fileName);
+      if (parseAccountTypeRet.errcode !== Constants.ERR_CODE_SUCCESS || !parseAccountTypeRet.result) {
+        HiLog.error(TAG, 'parseAccountType error');
+        return ResultMsg.buildMsg(parseAccountTypeRet.errcode, parseAccountTypeRet.errmsg);
       }
-
-      GlobalContext.store('accountType', Number(parseDlpCertRet.result.accountType));
+      const accountType = parseAccountTypeRet.result;
+      const realFileType = await this.parseRealFileType(generalInfoPath);
+      GlobalContext.store('accountType', accountType);
       this.metaInfo = {
-        accountType: Number(parseDlpCertRet.result.accountType),
+        accountType: accountType,
         fileType: realFileType,
-        ownerAccount: contactAccount,
+        ownerAccount: '',
         fileSize: this.fileSize
       };
       return ResultMsg.buildSuccess(this.metaInfo);
@@ -240,10 +227,8 @@ class RawParse extends FileParseBase {
       const certString: string = textDecoder.decodeToString(new Uint8Array(cert), { stream: false });
       const certInfo: CertInfo = JSON.parse(certString) as CertInfo;
       const accountType = certInfo.accountType;
-      if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
-        accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
-        accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
-        HiLog.error(TAG, `Error accountType: ${accountType}`);
+      if (!checkValidAccountType(accountType)) {
+        HiLog.error(TAG, 'checkValidAccountType invalid');
         return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
       }
 
