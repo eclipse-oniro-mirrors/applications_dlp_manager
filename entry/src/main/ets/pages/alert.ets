@@ -193,7 +193,7 @@ struct Index {
     HiLog.info(TAG, 'alert aboutToAppear start');
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_title');
     this.loginDialogTitle = str.length > 0 ? str : '';
-    let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
+    str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
     this.loginButtonContent = str.length > 0 ? str : '';
     try {
       let messageCode = -1;
