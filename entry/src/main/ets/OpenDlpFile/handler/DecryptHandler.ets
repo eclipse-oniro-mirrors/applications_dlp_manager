@@ -43,7 +43,7 @@ import CommonUtil from '../../common/CommonUtil';
 const TAG: string = 'DecryptHandler';
 
 interface TimeoutData {
-  timeout10: number | undefined;
+  timeout: number | undefined;
   timeoutPromise: Promise<never>;
 }
 
@@ -301,7 +301,7 @@ export default class DecryptHandler {
     } catch (error) {
       return await this.handleDecryptionError(error, decryptContent);
     } finally {
-      await this.cleanupResources(timeoutData.timeout10, timeout500, decryptContent);
+      await this.cleanupResources(timeoutData.timeout, timeout500, decryptContent);
     }
   }
 
@@ -313,7 +313,7 @@ export default class DecryptHandler {
         reject();
       }, Constants.DECRYPT_TIMEOUT_TIME);
     });
-    return { timeout10: timeout10, timeoutPromise: timeoutPromise };
+    return { timeout: timeout10, timeoutPromise: timeoutPromise };
   }
 
   private setupNoDialogTimeout(decryptContent: DecryptContent): number | undefined {
@@ -359,18 +359,45 @@ export default class DecryptHandler {
     await OpeningDialogManager.getInstance().hideOpeningDialog(decryptContent.openDlpFileData.requestId);
   }
 
+  private setupTimeoutForInstallSandbox(): TimeoutData {
+    let timeout5sec: number | undefined = undefined;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeout5sec = setTimeout(() => {
+        HiLog.error(TAG, 'installDLPSandbox operation timed out after 5 seconds');
+        reject();
+      }, Constants.INSTALL_TIMEOUT_TIME);
+    });
+    return { timeout: timeout5sec, timeoutPromise: timeoutPromise };
+  }
+
+  private async executeInstallDLPSandbox(sandboxBundleName: string, authPerm: dlpPermission.DLPFileAccess,
+    userId: number, uri: string, timeoutPromise: Promise<never>): Promise<dlpPermission.DLPSandboxInfo> {
+    return Promise.race<Promise<dlpPermission.DLPSandboxInfo | never>>([
+      dlpPermission.installDLPSandbox(sandboxBundleName, authPerm, userId, uri),
+      timeoutPromise
+    ]);
+  }
+
   private async getAppInfo(decryptContent: DecryptContent): Promise<Result<dlpPermission.DLPSandboxInfo>> {
     let sandboxBundleName = decryptContent.openDlpFileData.sandboxBundleName;
     let authPerm = decryptContent.authPerm;
     let userId = decryptContent.userId;
     let uri = decryptContent.openDlpFileData.uri;
+    const timeoutData = this.setupTimeoutForInstallSandbox();
     try {
-      let appInfo: dlpPermission.DLPSandboxInfo;
-      appInfo = await dlpPermission.installDLPSandbox(sandboxBundleName, authPerm, userId, uri);
+      HiLog.info(TAG, 'installDLPSandbox start')
+      const appInfo =
+        await this.executeInstallDLPSandbox(sandboxBundleName, authPerm, userId, uri, timeoutData.timeoutPromise);
       return ResultMsg.buildSuccess(appInfo);
     } catch (error) {
-      HiLog.wrapError(TAG, error, 'installDLPSandbox error');
-      return ResultMsg.buildMsg(error.code, error.message);
+      if (error) {
+        HiLog.error(TAG, 'installDLPSandbox error by permission');
+        return ResultMsg.buildMsg(error.code, error.message);
+      }
+      HiLog.error(TAG, 'installDLPSandbox error for timeout');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_INSTALL_SANDBOX_ERROR);
+    } finally {
+      clearTimeout(timeoutData.timeout);
     }
   }
 
@@ -430,7 +457,7 @@ export default class DecryptHandler {
 
   private async checkDistributedInfoId(decryptContent: DecryptContent): Promise<boolean> {
     if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT ||
-        decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+      decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
       HiLog.info(TAG, 'domain account no need to checkDistributedInfoId');
       return true;
     }
