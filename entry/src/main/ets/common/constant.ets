@@ -287,6 +287,7 @@ export default class Constants {
   public static readonly ERR_JS_USER_NO_PERMISSION_2B: number = -12;
   public static readonly ERR_JS_USER_NO_PERMISSION_2C: number = -13;
   public static readonly ERR_JS_DOMAIN_NO_ACCOUNT: number = -14;
+  public static readonly ERR_JS_INSTALL_SANDBOX_ERROR: number = -15;
 
   public static readonly COMMAND_SEARCH_USER_INFO = 1;
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
@@ -354,6 +355,7 @@ export default class Constants {
 
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
   public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;
+  public static readonly INSTALL_TIMEOUT_TIME: number = 5 * 1000;
   public static readonly DECRYPT_NO_NEED_SHOW_DIALOG_TIMEOUT: number = 500;
   public static readonly OPENING_DIALOG_TIMEOUT_TIME: number = 20 * 1000;
   public static readonly COMMAND_SHOW_DIALOG = 1;
