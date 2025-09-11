@@ -34,6 +34,7 @@ let abilityResult: ability.AbilityResult = {
 };
 
 let storage = LocalStorage.getShared();
+
 @Entry(storage)
 @Component
 struct Index {
@@ -45,7 +46,9 @@ struct Index {
   @State cancel: ResourceStr = '';
   @State actionButton: ResourceStr = '';
   @State buttonOptions: ButtonOptions[] = [];
-
+  private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
+  private loginDialogTitle: ResourceStr = '';
+  private loginButtonContent: ResourceStr = '';
   dialogControllerButton: CustomDialogController | null = new CustomDialogController({
     builder: CustomContentDialog({
       primaryTitle: this.title,
@@ -73,11 +76,13 @@ struct Index {
         background: $r('sys.color.ohos_id_color_button_normal'), action: () => {
           abilityResult.resultCode = 0;
           (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
-      }}];
+        }
+      }];
       this.dialogControllerButton?.open();
       HiLog.error(TAG, 'network failed');
       return;
-    };
+    }
+    ;
     try {
       account_osAccount.DomainAccountManager.authWithPopup({
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
@@ -111,6 +116,13 @@ struct Index {
       errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
     } else if ([Constants.ERR_JS_USER_NO_PERMISSION_2C].includes(messageCode)) {
       errInfo = GetAlertMessage.getAlertMessage(errorMsg);
+    } else if ([Constants.ERR_JS_ACCOUNT_NOT_LOGIN].includes(messageCode)) {
+      errInfo = {
+        'title': this.loginDialogTitle,
+        'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'),
+        'cancel': $r('app.string.ban'),
+        'ok': this.loginButtonContent
+      } as Record<string, Resource>;
     } else {
       errInfo = GetAlertMessage.getAlertMessage(errorMsg);
     }
@@ -123,18 +135,66 @@ struct Index {
       background: $r('sys.color.ohos_id_color_button_normal'), action: () => {
         abilityResult.resultCode = 0;
         (getContext(this) as common.UIExtensionContext).terminateSelfWithResult(abilityResult);
-      }}];
+      }
+    }];
     if (errInfo.ok) {
-      this.buttonOptions.push({ value: this.actionButton, background: $r('sys.color.ohos_id_color_text_primary_activated'),
-        fontColor: $r('sys.color.font_on_primary'), action: () => {
-          this.authWithPop();
-        }});
+      this.buttonOptions.push({
+        value: this.actionButton,
+        background: $r('sys.color.ohos_id_color_text_primary_activated'),
+        fontColor: $r('sys.color.font_on_primary'),
+        action: () => {
+          if ([Constants.ERR_JS_ACCOUNT_NOT_LOGIN].includes(messageCode)) {
+            const ctx = this.getUIContext()?.getHostContext() as common.UIAbilityContext;
+            if (!ctx) {
+              return;
+            }
+            ctx.startAbility({
+              bundleName: 'com.huawei.hmos.settings',
+              abilityName: 'com.huawei.hmos.settings.MainAbility',
+              uri: 'hms_account_home_settings'
+            });
+            this.cancelAction();
+          } else {
+            this.authWithPop();
+          }
+
+        }
+      });
     }
     this.dialogControllerButton?.open();
   }
 
+  private cancelAction(): void {
+    HiLog.info(TAG, 'cancelAction');
+    if (!this.session) {
+      return;
+    }
+    try {
+      this.session.terminateSelfWithResult({ resultCode: 0 });
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'alert terminateSelfWithResult failed');
+    }
+  }
+
+  getExternalResourceString(bundle: string, module: string, resourceName: string): string {
+    try {
+      let ctx = this.context.createModuleContext(bundle, module);
+      HiLog.info(TAG, 'getExternalResourceString get context from: ' + ctx.applicationInfo.name);
+      let str = ctx.resourceManager.getStringByNameSync(resourceName);
+      return str;
+    } catch (e) {
+      let error = e as BusinessError;
+      HiLog.error(TAG, 'getExternalResourceString error: ' + error.code + ' ' + error.message);
+      return '';
+    }
+  }
+
   async aboutToAppear() {
     HiLog.info(TAG, 'alert aboutToAppear start');
+    let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_title');
+    this.loginDialogTitle = str.length > 0 ? str : '';
+    str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
+    this.loginButtonContent = str.length > 0 ? str : '';
     try {
       let messageCode = -1;
       let errorMsg = {} as BusinessError;
