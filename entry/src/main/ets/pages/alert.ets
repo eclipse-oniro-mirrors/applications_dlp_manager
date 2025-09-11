@@ -82,7 +82,7 @@ struct Index {
       HiLog.error(TAG, 'network failed');
       return;
     }
-    ;
+
     try {
       account_osAccount.DomainAccountManager.authWithPopup({
         onResult: async (resultCode: number, authResult: account_osAccount.AuthResult) => {
@@ -157,7 +157,6 @@ struct Index {
           } else {
             this.authWithPop();
           }
-
         }
       });
     }

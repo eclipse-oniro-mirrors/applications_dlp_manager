@@ -59,9 +59,9 @@ struct Index {
         }
       },
     }),
-    cancel: (() => {
+    cancel: () => {
       this.cancelAction();
-    })
+    }
   })
 
   getExternalResourceString(bundle: string, module: string, resourceName: string): string {
@@ -131,11 +131,11 @@ struct Index {
 
   aboutToAppear() {
     HiLog.info(TAG, 'PhoneDialog aboutToAppear');
-    this.showErrorDialog();
     let str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_title');
     this.loginDialogTitle = str.length > 0 ? str : '';
     str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
     this.loginButtonContent = str.length > 0 ? str : '';
+    this.showErrorDialog();
   }
 
   aboutToDisappear() {
