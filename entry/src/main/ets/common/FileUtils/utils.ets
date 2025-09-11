@@ -888,6 +888,20 @@ function getFormatTimestamp(timestamp: number): string {
   return '${year}${month}${day}${hours}${minutes}${seconds}';
 }
 
+function checkValidAccountType(accountType: number): boolean {
+  if (Number.isNaN(accountType)) {
+    HiLog.error(TAG, 'AccountType NAN');
+    return false;
+  }
+  if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
+    accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
+    accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+    HiLog.error(TAG, `Error accountType: ${accountType}`);
+    return false;
+  }
+  return true;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -936,5 +950,6 @@ export {
   anonymizeUid,
   getBundleNameInfo,
   getAccountNameFromErrMsg,
+  checkValidAccountType,
   getFormatTimestamp
 };
