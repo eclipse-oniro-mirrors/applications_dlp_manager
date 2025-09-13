@@ -77,6 +77,7 @@ export default class ViewAbilityStub extends rpc.RemoteObject {
           return false;
         }
         await OpeningDialogManager.getInstance().dialogDisappear(resultVar);
+        await TerminateView.terminate();
         return true;
       }
       case Constants.COMMAND_DIALOG_TIMEOUT: {
