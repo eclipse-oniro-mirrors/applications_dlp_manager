@@ -693,13 +693,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"Unable to open file. Try opening in another app.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
             "value":"Insufficient storage. Unable to create encrypted file.",
             "attr":{
