@@ -28,6 +28,7 @@ import { ObjectUtil } from '../../common/ObjectUtil';
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
 import FileUtils from '../../common/FileUtils/FileUtils';
+import { SecurityEventIdConstants } from '../../common/ReportSecurityEventUtil';
 
 const TAG = 'StartSandboxHandler';
 
@@ -244,6 +245,7 @@ export default class StartSandboxHandler {
       await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
       await this.addDecryptData(decryptContent);
       DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_START_SANDBOX_SUCCESS, decryptContent);
+      DlpFileOpenReport.reportDlpFileOpenSecurityEvent(SecurityEventIdConstants.DLP_FILE_OPEN, decryptContent);
       return ResultMsg.buildSuccess();
     } catch (error) {
       HiLog.wrapError(TAG, error, 'startAbility failed');
