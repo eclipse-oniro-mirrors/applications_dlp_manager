@@ -115,6 +115,9 @@
       },
       {
         "name": "ohos.permission.EXEMPT_PRIVACY_SECURITY_CENTER"
+      },
+      {
+        "name": "ohos.permission.REPORT_SECURITY_EVENT"
       }
     ]
   }
