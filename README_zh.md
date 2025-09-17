@@ -89,4 +89,6 @@ hdc shell hilog -r && hdc hilog > log.txt
 
 ## 相关仓
 
-**applications_dlp_manager**
+[**DLP权限管理应用**](https://gitcode.com/openharmony/applications_dlp_manager)
+
+[DLP权限管理服务](https://gitcode.com/openharmony/security_dlp_permission_service)
