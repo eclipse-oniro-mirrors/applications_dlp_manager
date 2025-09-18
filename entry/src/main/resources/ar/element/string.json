@@ -617,13 +617,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"تعذّر فتح الملف، حاول فتحة في تطبيق آخر",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
             "value":"يتعذّر الحصول على إذن الملف، أعد المحاولة لاحقًا",
             "attr":{

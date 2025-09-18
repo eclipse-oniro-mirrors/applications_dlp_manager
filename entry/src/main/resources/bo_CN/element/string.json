@@ -624,13 +624,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ། ཉེར་སྤྱོད་གཞན་པས་ཁ་འབྱེད་རོགས།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
             "value":"ཡིག་ཆའི་དབང་ཚད་ལེན་མ་ཐུབ་པས། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།",
             "attr":{

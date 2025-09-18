@@ -624,13 +624,6 @@
             }
         },
         {
-            "name":"MESSAGE_TRY_OTHER_APP_OPEN",
-            "value":"بۇ ھۆججەت ئېچىلمايدۇ، باشقا ئەپتە ئېچىڭ.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
             "value":"ھۆججەت ئىجازىتى ئوقۇلمىدى، كېيىنرەك قايتا سىناڭ.",
             "attr":{
