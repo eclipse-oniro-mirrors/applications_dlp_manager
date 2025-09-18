@@ -331,7 +331,7 @@
         },
         {
             "name":"Permission_has_expired_description",
-            "value":"انتهت صلاحية أذونات ملفاتك. يُرجى التواصل مع %s لاستعادة صلاحية الوصول.",
+            "value":"انتهت صلاحية الوصول للملفات الخاصة بك. يُرجى التواصل مع %s لاستعادة صلاحية الوصول.",
             "attr":{
                 "priority":"LT"
             }
@@ -387,7 +387,7 @@
         },
         {
             "name":"save_as",
-            "value":"حفظ باسم",
+            "value":"حفظ كـ",
             "attr":{
                 "priority":"LT"
             }
@@ -429,7 +429,7 @@
         },
         {
             "name":"Permission_has_expired",
-            "value":"انتهت صلاحية الأذونات",
+            "value":"انتهت صلاحية الوصول",
             "attr":{
                 "priority":"LT"
             }
