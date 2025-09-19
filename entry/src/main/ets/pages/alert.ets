@@ -97,22 +97,6 @@ struct Index {
     }
   }
 
-  private contansMessageCode(messageCode: number): boolean {
-    if (![
-      Constants.ERR_JS_APP_PARAM_ERROR,
-      Constants.ERR_JS_APP_OPEN_REJECTED,
-      Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
-      Constants.ERR_JS_APP_ENCRYPTING,
-      Constants.ERR_JS_FILE_EXPIRATION,
-      Constants.ERR_JS_DLP_FILE_READ_ONLY,
-      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
-      Constants.ERR_JS_DOMAIN_NO_ACCOUNT
-    ].includes(messageCode)) {
-      return false;
-    }
-    return true;
-  }
-
   private messageCodeToErrinfo(messageCode: number, errorMsg: BusinessError): Record<string, Resource> {
     let errInfo: Record<string, Resource> = {};
     if ([
