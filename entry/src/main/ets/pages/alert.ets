@@ -97,9 +97,8 @@ struct Index {
     }
   }
 
-  getErrInfo(messageCode: number, errorMsg: BusinessError, accountType: number) {
-    let errInfo: Record<string, Resource> = {};
-    if ([
+  private contansMessageCode(messageCode: number): boolean {
+    if (![
       Constants.ERR_JS_APP_PARAM_ERROR,
       Constants.ERR_JS_APP_OPEN_REJECTED,
       Constants.ERR_JS_APP_ENCRYPTION_REJECTED,
@@ -108,6 +107,19 @@ struct Index {
       Constants.ERR_JS_DLP_FILE_READ_ONLY,
       Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
       Constants.ERR_JS_DOMAIN_NO_ACCOUNT
+    ].includes(messageCode)) {
+      return false;
+    }
+    return true;
+  }
+
+  private messageCodeToErrinfo(messageCode: number, errorMsg: BusinessError): Record<string, Resource> {
+    let errInfo: Record<string, Resource> = {};
+    if ([
+      Constants.ERR_JS_APP_PARAM_ERROR, Constants.ERR_JS_APP_OPEN_REJECTED,
+      Constants.ERR_JS_APP_ENCRYPTION_REJECTED, Constants.ERR_JS_APP_ENCRYPTING,
+      Constants.ERR_JS_FILE_EXPIRATION, Constants.ERR_JS_DLP_FILE_READ_ONLY,
+      Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED, Constants.ERR_JS_DOMAIN_NO_ACCOUNT
     ].includes(messageCode)) {
       errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
     } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED].includes(messageCode)) {
@@ -126,6 +138,12 @@ struct Index {
     } else {
       errInfo = GetAlertMessage.getAlertMessage(errorMsg);
     }
+    return errInfo;
+  }
+
+  getErrInfo(messageCode: number, errorMsg: BusinessError, accountType: number) {
+    let errInfo: Record<string, Resource> = {};
+    errInfo = this.messageCodeToErrinfo(messageCode, errorMsg);
     this.title = errInfo.title;
     this.message = errInfo.msg;
     this.cancel = errInfo.cancel;
