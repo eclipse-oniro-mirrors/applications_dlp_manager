@@ -141,27 +141,37 @@ export class GetAlertMessage {
     }
   }
 
+  private static ERROR_MESSAGE_TITLE_MAP: Map<number, Resource> = new Map([
+    [Constants.ERR_JS_APP_PARAM_ERROR, $r('app.string.TITLE_APP_ERROR')],
+    [Constants.ERR_JS_APP_OPEN_REJECTED, $r('app.string.header_title')],
+    [Constants.ERR_JS_APP_ENCRYPTION_REJECTED, $r('app.string.header_title')],
+    [Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED, $r('app.string.TITLE_APP_VERSION_LOWER')],
+    [Constants.ERR_JS_DOMAIN_NO_ACCOUNT, $r('app.string.header_title')],
+  ]);
+  private static ERROR_MESSAGE_MSG_MAP: Map<number, Resource> = new Map([
+    [Constants.ERR_JS_APP_PARAM_ERROR, $r('app.string.MESSAGE_APP_PARAM_ERROR')],
+    [Constants.ERR_JS_APP_OPEN_REJECTED, $r('app.string.MESSAGE_DLP_OPEN_REJECT')],
+    [Constants.ERR_JS_APP_ENCRYPTION_REJECTED, $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED')],
+    [Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED, $r('app.string.Share_File_System_Version_Low')],
+    [Constants.ERR_JS_DOMAIN_NO_ACCOUNT, $r('app.string.MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED')],
+  ]);
+
   public static getAlertTitleMessage(err: BusinessError) {
+    if (err && err.code) {
+      const titleResource = GetAlertMessage.ERROR_MESSAGE_TITLE_MAP.get((err.code));
+      const msgResource = GetAlertMessage.ERROR_MESSAGE_MSG_MAP.get((err.code));
+      if (titleResource && msgResource) {
+        return {
+          'title': titleResource,
+          'msg': msgResource
+        } as Record<string, Resource>;
+      }
+    }
     switch (err && err.code) {
       case Constants.ERR_JS_USER_NO_PERMISSION_2B:
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
           'msg': $r('app.string.MESSAGE_APP_NOT_HAVE_PERM_VISIT', getAccountNameFromErrMsg(err.message))
-        } as Record<string, Resource>;
-      case Constants.ERR_JS_APP_PARAM_ERROR:
-        return {
-          'title': $r('app.string.TITLE_APP_ERROR'),
-          'msg': $r('app.string.MESSAGE_APP_PARAM_ERROR')
-        } as Record<string, Resource>;
-      case Constants.ERR_JS_APP_OPEN_REJECTED:
-        return {
-          'title': $r('app.string.header_title'),
-          'msg': $r('app.string.MESSAGE_DLP_OPEN_REJECT')
-        } as Record<string, Resource>;
-      case Constants.ERR_JS_APP_ENCRYPTION_REJECTED:
-        return {
-          'title': $r('app.string.header_title'),
-          'msg': $r('app.string.MESSAGE_DLP_ENCRYPTION_REJECTED')
         } as Record<string, Resource>;
       case Constants.ERR_JS_APP_ENCRYPTING:
         // not available in dialog, only in Session error.
@@ -178,16 +188,6 @@ export class GetAlertMessage {
         return {
           'title': $r('app.string.TITLE_APP_VISIT_FILE_ERROR'),
           'msg': $r('app.string.MESSAGE_DLP_READ_ONLY', AppStorage.get('contactAccount'))
-        } as Record<string, Resource>;
-      case Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED:
-        return {
-          'title': $r('app.string.TITLE_APP_VERSION_LOWER'),
-          'msg': $r('app.string.Share_File_System_Version_Low')
-        } as Record<string, Resource>;
-      case Constants.ERR_JS_DOMAIN_NO_ACCOUNT:
-        return {
-          'title': $r('app.string.header_title'),
-          'msg': $r('app.string.MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED')
         } as Record<string, Resource>;
       default:
         return {

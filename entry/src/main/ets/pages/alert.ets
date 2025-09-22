@@ -97,7 +97,7 @@ struct Index {
     }
   }
 
-  getErrInfo(messageCode: number, errorMsg: BusinessError, accountType: number) {
+  private messageCodeToErrinfo(messageCode: number, errorMsg: BusinessError): Record<string, Resource> {
     let errInfo: Record<string, Resource> = {};
     if ([
       Constants.ERR_JS_APP_PARAM_ERROR,
@@ -126,6 +126,12 @@ struct Index {
     } else {
       errInfo = GetAlertMessage.getAlertMessage(errorMsg);
     }
+    return errInfo;
+  }
+
+  getErrInfo(messageCode: number, errorMsg: BusinessError, accountType: number) {
+    let errInfo: Record<string, Resource> = {};
+    errInfo = this.messageCodeToErrinfo(messageCode, errorMsg);
     this.title = errInfo.title;
     this.message = errInfo.msg;
     this.cancel = errInfo.cancel;

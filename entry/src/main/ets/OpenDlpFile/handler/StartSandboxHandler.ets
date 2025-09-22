@@ -226,6 +226,8 @@ export default class StartSandboxHandler {
         'fileName': {
           'name': decodeURIComponent(decryptContent.fileName)
         },
+        'accountType': decryptContent.fileMetaInfo.accountType,
+        'allowedOpenCount': decryptContent.dlpFile.dlpProperty.allowedOpenCount ?? 0,
         'ohos.dlp.params.index': decryptContent.appInfo.appIndex,
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
         'ohos.dlp.params.securityFlag': decryptContent.authPerm ===
