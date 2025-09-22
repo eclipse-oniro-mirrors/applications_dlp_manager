@@ -387,7 +387,7 @@
         },
         {
             "name":"save_as",
-            "value":"حفظ باسم",
+            "value":"حفظ كـ",
             "attr":{
                 "priority":"LT"
             }
