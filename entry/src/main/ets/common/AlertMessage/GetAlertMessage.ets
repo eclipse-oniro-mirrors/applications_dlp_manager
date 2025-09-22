@@ -130,6 +130,8 @@ export class GetAlertMessage {
       case Constants.SHARE_NO_SPACE_LEFT_ON_DEVICE:
       case Constants.ERR_JS_NO_SPACE:
         return { 'msg': $r('app.string.MESSAGE_NO_SPACE_ERROR') } as Record<string, Resource>;
+      case Constants.ERR_JS_DLP_ALLOWED_OPEN_COUNT_INVALID:
+        return { 'msg': $r('app.string.no_longer_have_permission_view_file') } as Record<string, Resource>;
       default:
         if (defaultTitle !== undefined && defaultMessage !== undefined) {
           return { 'title': defaultTitle, 'msg': defaultMessage } as Record<string, Resource>;
