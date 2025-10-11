@@ -22,9 +22,10 @@ export class SupportTypesConfig {
     ['3gpp2', '3gp2', '3g2', '3gpp', '3gp', 'avi', 'm4v', 'f4v', 'mp4v', 'mpeg4', 'mp4', 'm2ts', 'mts', 'ts', 'vt',
       'wrf', 'mpeg', 'mpeg2', 'mpv2', 'mp2v', 'm2v', 'm2t', 'mpeg1', 'mpv1', 'mp1v', 'm1v', 'mpg', 'mov', 'mkv', 'webm',
       'h264'];
+  private static audioTypes: string[] = ['mp3', 'flac', 'm4a', 'aac', 'wav', 'ogg', 'amr', 'm4b'];
   private static supportTypesSet: Set<string> =
     new Set<string>([...SupportTypesConfig.documentTypes, ...SupportTypesConfig.imageTypes,
-      ...SupportTypesConfig.videoTypes]);
+      ...SupportTypesConfig.videoTypes, ...SupportTypesConfig.audioTypes]);
 
   public static checkType(type: string): boolean {
     return SupportTypesConfig.supportTypesSet.has(type.trim().toLowerCase());
