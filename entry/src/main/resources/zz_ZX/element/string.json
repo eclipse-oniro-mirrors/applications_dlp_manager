@@ -419,6 +419,10 @@
         {
             "name":"file_opening",
             "value":"[TS_1091009]_Opening…"
+        },
+        {
+            "name":"no_longer_have_permission_view_file",
+            "value":"[TS_1129658]_You no longer have permission to view this file."
         }
     ]
 }

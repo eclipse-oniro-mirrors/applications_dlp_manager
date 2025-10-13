@@ -722,7 +722,10 @@
         },
         {
             "name":"no_longer_have_permission_view_file",
-            "value":"已无权限查看此文件"
+            "value":"已无权限查看此文件。",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
