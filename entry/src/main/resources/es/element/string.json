@@ -699,6 +699,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"no_longer_have_permission_view_file",
+            "value":"Ya no tienes permiso para ver este archivo.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

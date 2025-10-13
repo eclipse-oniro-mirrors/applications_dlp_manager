@@ -699,6 +699,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"no_longer_have_permission_view_file",
+            "value":"ཡིག་ཆ་དེར་བལྟ་བའི་དབང་ཚད་མེད།",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

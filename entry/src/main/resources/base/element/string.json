@@ -722,7 +722,10 @@
         },
         {
             "name":"no_longer_have_permission_view_file",
-            "value":"No longer have permission to view this file"
+            "value":"You no longer have permission to view this file.",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
