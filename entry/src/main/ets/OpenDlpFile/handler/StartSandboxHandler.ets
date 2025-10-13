@@ -213,7 +213,6 @@ export default class StartSandboxHandler {
     let fileSuffix: string = FileUtils.getFileSuffixByFileName(decryptContent.linkFileName);
     if (want.type === 'dlp') {
       want.type = suffixMimeTypeMap.get(fileSuffix);
-      HiLog.info(TAG, `mimeType in want: ${want.type}.`);
     }
     let dlpWant: Want = {
       parameters: {
