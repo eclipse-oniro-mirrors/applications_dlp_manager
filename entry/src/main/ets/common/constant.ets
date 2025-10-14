@@ -156,6 +156,7 @@ export default class Constants {
   public static readonly ERR_JS_FILE_EXPIRATION = 19100019;
   public static readonly ERR_JS_OFFLINE = 19100020;
   public static readonly ERR_JS_NO_SPACE = 19100021;
+  public static readonly ERR_JS_DLP_ALLOWED_OPEN_COUNT_INVALID = 19100022;
   public static ERR_JS_INVALID_PARAMETER = 12300002;
   public static ERR_JS_ACCOUNT_NOT_FOUND = 12300003;
   public static ERR_JS_NETWORK_INVALID = 12300013;
@@ -163,7 +164,8 @@ export default class Constants {
   public static DLP_FILE_PARSE_ERROR = 103;
   public static DLP_INSTALL_SANDBOX_SUCCESS = 202;
   public static DLP_START_SANDBOX_ERROR = 105;
-  public static DLP_START_SANDBOX_SUCCESS = 203;
+  public static DLP_START_SANDBOX_SUCCESS = 203; // 打开成功，未设置查看次数
+  public static DLP_START_SANDBOX_SUCCESS_WITH_READ_ONCE = 204; // 打开成功，设置了查看次数
   public static DLP_INSTALL_SANDBOX_ERROR = 104;
   public static ERR_JS_OTHER_APP_OPEN_FILE = 302;
 
@@ -354,7 +356,7 @@ export default class Constants {
   public static readonly OPEN_DIRECTORY_LINK: string = 'filemanager://openDirectory';
 
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
-  public static readonly DECRYPT_TIMEOUT_TIME: number = 10 * 1000;
+  public static readonly DECRYPT_TIMEOUT_TIME: number = 20 * 1000;
   public static readonly INSTALL_TIMEOUT_TIME: number = 5 * 1000;
   public static readonly DECRYPT_NO_NEED_SHOW_DIALOG_TIMEOUT: number = 500;
   public static readonly OPENING_DIALOG_TIMEOUT_TIME: number = 40 * 1000;

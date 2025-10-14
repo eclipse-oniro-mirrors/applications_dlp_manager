@@ -226,6 +226,8 @@ export default class StartSandboxHandler {
         'fileName': {
           'name': decodeURIComponent(decryptContent.fileName)
         },
+        'accountType': decryptContent.fileMetaInfo.accountType,
+        'allowedOpenCount': decryptContent.dlpFile.dlpProperty.allowedOpenCount ?? 0,
         'ohos.dlp.params.index': decryptContent.appInfo.appIndex,
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
         'ohos.dlp.params.securityFlag': decryptContent.authPerm ===
@@ -233,6 +235,16 @@ export default class StartSandboxHandler {
       }
     };
     ObjectUtil.Assign(want.parameters, dlpWant.parameters);
+  }
+
+  private async reportOpenSuccess(decryptContent: DecryptContent) {
+    if (decryptContent.dlpFile.dlpProperty.allowedOpenCount !== undefined &&
+      decryptContent.dlpFile.dlpProperty.allowedOpenCount >= 1) {
+      DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_START_SANDBOX_SUCCESS_WITH_READ_ONCE, decryptContent);
+    } else {
+      DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_START_SANDBOX_SUCCESS, decryptContent);
+    }
+    DlpFileOpenReport.reportDlpFileOpenSecurityEvent(SecurityEventIdConstants.DLP_FILE_OPEN, decryptContent);
   }
 
   private async startSandboxApp(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
@@ -244,8 +256,7 @@ export default class StartSandboxHandler {
       HiLog.info(TAG, `startAbility success startId: ${decryptContent.openDlpFileData.startId}`);
       await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
       await this.addDecryptData(decryptContent);
-      DlpFileOpenReport.reportDlpFileOpenSuccess(Constants.DLP_START_SANDBOX_SUCCESS, decryptContent);
-      DlpFileOpenReport.reportDlpFileOpenSecurityEvent(SecurityEventIdConstants.DLP_FILE_OPEN, decryptContent);
+      this.reportOpenSuccess(decryptContent);
       return ResultMsg.buildSuccess();
     } catch (error) {
       HiLog.wrapError(TAG, error, 'startAbility failed');

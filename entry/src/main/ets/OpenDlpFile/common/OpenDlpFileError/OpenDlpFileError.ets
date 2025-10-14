@@ -26,6 +26,7 @@ export class OpenDlpFileError {
     Constants.ERR_JS_NETWORK_INVALID,
     Constants.ERR_JS_APP_NETWORK_INVALID,
     Constants.ERR_JS_ACCOUNT_NOT_LOGIN,
-    Constants.ERR_JS_OFFLINE
+    Constants.ERR_JS_OFFLINE,
+    Constants.ERR_JS_DLP_ALLOWED_OPEN_COUNT_INVALID,
   ]);
 }
