@@ -34,6 +34,7 @@ export default class DecryptContent {
   private _dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   private _appInfo: dlpPermission.DLPSandboxInfo = defaultAppInfo;
   private _distributedInfoId: string = '';
+  private _distributedInfoName: string = '';
   private _linkUri: string = '';
   private _linkFileName: string = '';
   private _authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
@@ -59,6 +60,7 @@ export default class DecryptContent {
     clone.dlpFile = this._dlpFile;
     clone.appInfo = this._appInfo;
     clone.distributedInfoId = this._distributedInfoId;
+    clone.distributedInfoName = this._distributedInfoName;
     clone.linkUri = this._linkUri;
     clone.linkFileName = this._linkFileName;
     clone.authPerm = this._authPerm;
@@ -118,6 +120,14 @@ export default class DecryptContent {
 
   public get distributedInfoId(): string {
     return this._distributedInfoId;
+  }
+
+  public set distributedInfoName(value: string) {
+    this._distributedInfoName = value;
+  }
+
+  public get distributedInfoName(): string {
+    return this._distributedInfoName;
   }
 
   public set linkUri(value: string) {

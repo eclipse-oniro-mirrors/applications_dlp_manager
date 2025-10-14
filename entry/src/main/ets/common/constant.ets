@@ -335,6 +335,9 @@ export default class Constants {
   public static readonly DIALOG_SHOW_SIZE_ZIP = 10 * 1024 * 1024;
   public static readonly TOAST_BOTTOM = 142;
   public static readonly VALID_UID_PREFIX_LENGTH = 2;
+  public static readonly CONTACT_ACCOUNT_OFFSET = 8;
+  public static readonly CONTACT_ACCOUNT_SIZE = 9;
+  public static readonly FILE_ID_SIZE = 46;
 
   // want params
   public static readonly PARAMS_BUNDLE_NAME: string = 'ohos.dlp.params.bundleName';
