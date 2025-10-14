@@ -98,6 +98,14 @@ const suffixMimeTypeMap: Map<string, string> = new Map([
   ['wbmp', 'image/vnd.wap.wbmp'],
   ['nef', 'image/x-nikon-nef'],
   ['cr2', 'image/x-canon-cr2'],
+  ['mp3', 'audio/mp3'],
+  ['flac', 'audio/flac'],
+  ['m4a', 'audio/mpeg'],
+  ['aac', 'audio/aac'],
+  ['wav', 'audio/wav'],
+  ['ogg', 'audio/ogg'],
+  ['amr', 'audio/amr'],
+  ['m4b', 'audio/mpeg'],
 ]);
 
 export default class StartSandboxHandler {

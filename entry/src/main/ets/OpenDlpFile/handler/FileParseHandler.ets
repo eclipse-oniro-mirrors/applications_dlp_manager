@@ -97,6 +97,14 @@ const NUM_TO_TYPE_MAP = new Map<number, string>([
   [63, 'wbmp'],
   [64, 'nef'],
   [65, 'cr2'],
+  [66, 'mp3'],
+  [67, 'flac'],
+  [68, 'm4a'],
+  [69, 'aac'],
+  [70, 'wav'],
+  [71, 'ogg'],
+  [72, 'amr'],
+  [73, 'm4b'],
 ]);
 
 interface DlpGeneralInfo {
