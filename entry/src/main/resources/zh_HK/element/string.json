@@ -606,7 +606,7 @@
             "name":"File_damaged",
             "value":"檔案已損壞，無法開啟",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -683,7 +683,7 @@
             "name":"Share_File_System_Version_Low",
             "value":"系統版本過舊，無法開啟此檔案",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -697,7 +697,7 @@
             "name":"file_opening",
             "value":"開啟中…",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

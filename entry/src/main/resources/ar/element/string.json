@@ -4,7 +4,7 @@
             "name":"save",
             "value":"حفظ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -32,21 +32,21 @@
             "name":"Timeout_is_not_supported",
             "value":"لا يمكن أن يكون تاريخ انتهاء الصلاحية أقدم من التاريخ الحالي. يُرجى تعيين تاريخ آخر.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"أنا فقط",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"مستخدمون محددون",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -74,14 +74,14 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"ليس لديك الإذن لعرض هذا الملف. لطلب الإذن، يُرجى التواصل مع %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"رقم هوية الموظف غير صالح. يُرجى إعادة الإدخال.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,21 +102,21 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"مساحة التخزين غير كافية، احذف الملفات التي لا تحتاجها لتفريع مساحة",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"لقطة شاشة",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"duplicate",
             "value":"نسخ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,28 +165,28 @@
             "name":"header_title_list",
             "value":"حماية الملف مع تقييد الوصول إليه.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"فترة الصلاحية",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"يمكن للمستخدمين الذين لديهم صلاحية القراءة فقط عرض هذا الملف، ولكن لا يمكنهم تعديله أو نسخه أو طباعته",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"الكل",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,28 +214,28 @@
             "name":"apply_for_the_permission",
             "value":"لطلب الأذونات، يُرجى التواصل مع %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Appointed_day",
             "value":"تاريخ محدد",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"تغيير الحماية",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"print",
             "value":"طباعة",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -249,7 +249,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"أدخل رقم هوية الموظف واضغط على زر Enter. على سبيل المثال: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -263,14 +263,14 @@
             "name":"perm_list_title_read_only",
             "value":"القراءة فقط",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permanently",
             "value":"مدى الحياة",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"network_invalid",
             "value":"مشكلة في الشبكة. يُرجى إعادة المحاولة لاحقًا.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"تعديل",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -326,7 +326,7 @@
             "name":"header_title_edit_content",
             "value":"تعديل",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -340,7 +340,7 @@
             "name":"file_encrypted",
             "value":"الملف محمي",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -354,7 +354,7 @@
             "name":"header_title",
             "value":"أذونات الملف",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -368,14 +368,14 @@
             "name":"header_title_readonly",
             "value":"القراءة فقط",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
             "value":"يتعذر إجراء هذا الآن. يُرجى إعادة المحاولة لاحقًا.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,14 +438,14 @@
             "name":"screen_recording",
             "value":"تسجيل الشاشة",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"تم",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -473,35 +473,35 @@
             "name":"stow_away",
             "value":"إخفاء",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"عرض التفاصيل",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"موافق",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_title",
             "value":"هذا الملف محمي. لديك صلاحية \"القراءة فقط\" و\"التعديل\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"da_button",
             "value":"حسنًا",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -522,7 +522,7 @@
             "name":"apply_for_the_subject",
             "value":"قد تختلف الأذونات الفعلية باختلاف التطبيق.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -536,28 +536,28 @@
             "name":"Document_valid_until",
             "value":"تاريخ انتهاء الصلاحية",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"مشاركة الشاشة",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"إلغاء الحماية",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"إلغاء",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -583,7 +583,7 @@
         },
         {
             "name":"File_cannot_be_opened",
-            "value":"يتعذر فتح هذا الملف. أعد المحاولة لاحقًا",
+            "value":"يتعذر فتح هذا الملف، أعد المحاولة لاحقًا",
             "attr":{
                 "priority":"LT"
             }
@@ -597,9 +597,9 @@
         },
         {
             "name":"File_damaged",
-            "value":"هذا الملف تالف ولا يمكن فتحه.",
+            "value":"هذا الملف تالف ولا يمكن فتحه",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -676,7 +676,7 @@
             "name":"Share_File_System_Version_Low",
             "value":"يتعذّر فتح هذا الملف لأن إصدار النظام قديم جدًا",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -690,7 +690,7 @@
             "name":"file_opening",
             "value":"جارٍ الفتح…",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

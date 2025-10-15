@@ -102,7 +102,7 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"Almacenamiento insuficiente. Elimina archivos que no necesites para liberar espacio.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -599,7 +599,7 @@
             "name":"File_damaged",
             "value":"Este archivo está dañado y no se puede abrir.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -676,7 +676,7 @@
             "name":"Share_File_System_Version_Low",
             "value":"La versión del sistema es demasiado antigua para abrir este archivo.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -690,7 +690,7 @@
             "name":"file_opening",
             "value":"Abriendo…",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

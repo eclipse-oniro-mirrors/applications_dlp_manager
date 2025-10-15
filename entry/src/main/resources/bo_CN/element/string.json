@@ -606,7 +606,7 @@
             "name":"File_damaged",
             "value":"ཡིག་ཆར་སྐྱོན་ཤོར། ཁ་འབྱེད་མི་ཐུབ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -683,7 +683,7 @@
             "name":"Share_File_System_Version_Low",
             "value":"རྒྱུད་ཁོངས་ཀྱི་པར་གཞི་དམའ་དྲགས། ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -697,7 +697,7 @@
             "name":"file_opening",
             "value":"ཁ་འབྱེད་བཞིན་པ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

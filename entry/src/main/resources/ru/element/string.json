@@ -102,7 +102,7 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"Недостаточно памяти. Чтобы освободить место, удалите ненужные файлы.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -599,7 +599,7 @@
             "name":"File_damaged",
             "value":"Сбой открытия. Файл поврежден.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -676,7 +676,7 @@
             "name":"Share_File_System_Version_Low",
             "value":"Версия системы устарела. Невозможно открыть файл.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -690,7 +690,7 @@
             "name":"file_opening",
             "value":"Открытие...",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
