@@ -102,7 +102,7 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"저장 공간이 부족합니다. 필요 없는 파일을 삭제하여 공간을 확보하십시오.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -599,7 +599,7 @@
             "name":"File_damaged",
             "value":"이 파일은 손상되어 열 수 없습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -676,7 +676,7 @@
             "name":"Share_File_System_Version_Low",
             "value":"시스템 버전이 너무 오래되어 이 파일을 열 수 없습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -690,7 +690,7 @@
             "name":"file_opening",
             "value":"여는 중…",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

@@ -102,7 +102,7 @@
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"Espace de stockage insuffisant. Veuillez supprimer les fichiers dont vous n'avez pas besoin pour libérer de l'espace.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -585,7 +585,7 @@
             "name":"File_cannot_be_opened",
             "value":"L'ouverture de ce fichier a échoué. Veuillez réessayer ultérieurement.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -599,7 +599,7 @@
             "name":"File_damaged",
             "value":"Ce fichier est endommagé et ne peut pas être ouvert.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -676,7 +676,7 @@
             "name":"Share_File_System_Version_Low",
             "value":"La version du système est trop ancienne pour ouvrir ce fichier.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -690,7 +690,7 @@
             "name":"file_opening",
             "value":"Ouverture en cours.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
