@@ -612,7 +612,7 @@
             "name":"File_damaged",
             "value":"This file is damaged and can't be opened.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -710,14 +710,14 @@
             "name":"Share_File_System_Version_Low",
             "value":"System version is too old to open this file.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"file_opening",
             "value":"Opening…",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

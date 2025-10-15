@@ -28,6 +28,7 @@ import TerminateView from '../OpenDlpFile/TerminateView/TerminateView';
 import ViewAbilityService from '../rpc/ViewAbility/service/ViewAbilityService';
 import { StartFileManager } from '../OpenDlpFile/manager/StartFileManager';
 import FileUtils from '../common/FileUtils/FileUtils';
+import FileIdHandler from '../OpenDlpFile/handler/FileIdHandler';
 
 const TAG = 'View';
 
@@ -86,5 +87,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     HiLog.info(TAG, 'ViewAbility onDestroy');
     OpeningDialogManager.getInstance().unRegisterEmitEvent();
     await OpeningDialogManager.getInstance().unLoadOpeningDialogAbnormal();
+    FileIdHandler.getInstance().disConnectAbility();
   }
 }

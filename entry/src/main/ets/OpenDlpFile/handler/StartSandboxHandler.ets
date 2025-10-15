@@ -98,6 +98,14 @@ const suffixMimeTypeMap: Map<string, string> = new Map([
   ['wbmp', 'image/vnd.wap.wbmp'],
   ['nef', 'image/x-nikon-nef'],
   ['cr2', 'image/x-canon-cr2'],
+  ['mp3', 'audio/mp3'],
+  ['flac', 'audio/flac'],
+  ['m4a', 'audio/mpeg'],
+  ['aac', 'audio/aac'],
+  ['wav', 'audio/wav'],
+  ['ogg', 'audio/ogg'],
+  ['amr', 'audio/amr'],
+  ['m4b', 'audio/mpeg'],
 ]);
 
 export default class StartSandboxHandler {
@@ -203,8 +211,6 @@ export default class StartSandboxHandler {
     want.flags = decryptContent.linkFileWriteable ?
     wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
     let fileSuffix: string = FileUtils.getFileSuffixByFileName(decryptContent.linkFileName);
-    HiLog.error(TAG, `bsx decryptContent.fileMetaInfo.ownerAccount ${decryptContent.fileMetaInfo.ownerAccount}`)
-    HiLog.error(TAG, `bsx String(decryptContent.distributedInfoName) ${decryptContent.distributedInfoName}`)
     const isOwner: boolean = decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName;
     if (want.type === 'dlp') {
       want.type = suffixMimeTypeMap.get(fileSuffix);

@@ -24,6 +24,7 @@ import fs from '@ohos.file.fs';
 import { fileUri } from '@kit.CoreFileKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
 import FileUtils from '../../common/FileUtils/FileUtils';
+import CommonUtil from '../../common/CommonUtil';
 
 const TAG: string = 'DecryptContent';
 
@@ -260,5 +261,17 @@ export default class DecryptContent {
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }
     return ResultMsg.buildSuccess();
+  }
+
+  public static isNotOwnerAndReadOnce(decryptContent: DecryptContent): boolean {
+    if (CommonUtil.isEmptyStr(decryptContent.fileMetaInfo.fileId)) { // 不是仅查看一次
+      HiLog.debug(TAG, 'isOwnerAndReadOnce fileId is empty');
+      return false;
+    }
+    if (decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName) { // 是owner
+      HiLog.debug(TAG, 'isOwnerAndReadOnce isOwner');
+      return false;
+    }
+    return true;
   }
 }

@@ -25,6 +25,7 @@ import ErrorManager from '../handler/ErrorHandler';
 import { emitter } from '@kit.BasicServicesKit';
 import StartSandboxHandler from '../handler/StartSandboxHandler';
 import TerminateView from '../TerminateView/TerminateView';
+import FileIdHandler from '../handler/FileIdHandler';
 
 const TAG = 'OpeningDialogManager';
 
@@ -192,6 +193,7 @@ export default class OpeningDialogManager {
   public async dialogDisappear(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
     HiLog.info(TAG, `OpeningDialogManager dialogDisappear requestId ${requestId}`);
+    FileIdHandler.getInstance().dialogCancel(requestId);
     this._showDialogState = false;
     const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
     if (!decryptingState) {
@@ -268,7 +270,6 @@ export default class OpeningDialogManager {
     return undefined;
   }
 
-
   // 根据解密状态，校验是否需要拉起弹框
   public async checkShowDialogState(): Promise<void> {
     this.printAllDecryptingMap();
@@ -310,7 +311,7 @@ export default class OpeningDialogManager {
       needStartAbility: false,
       hasDecrypted: false,
       needShowDialog: needShowDialog,
-      isZip: isZip ?? false,
+      isZip: isZip ?? false
     }
     this._decryptingMap.set(requestId, decryptingState);
     this.printAllDecryptingMap();

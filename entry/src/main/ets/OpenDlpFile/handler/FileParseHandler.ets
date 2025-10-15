@@ -97,6 +97,14 @@ const NUM_TO_TYPE_MAP = new Map<number, string>([
   [63, 'wbmp'],
   [64, 'nef'],
   [65, 'cr2'],
+  [66, 'mp3'],
+  [67, 'flac'],
+  [68, 'm4a'],
+  [69, 'aac'],
+  [70, 'wav'],
+  [71, 'ogg'],
+  [72, 'amr'],
+  [73, 'm4b'],
 ]);
 
 interface DlpGeneralInfo {
@@ -240,13 +248,11 @@ class RawParse extends FileParseBase {
     fs.readSync(file.fd, contactAccount, option);
     const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
     const contactString: string = textDecoder.decodeToString(new Uint8Array(contactAccount), { stream: false });
-    HiLog.error(TAG, `bsx contactString ${contactString}`);
 
     let fileId = new ArrayBuffer(Constants.FILE_ID_SIZE);
     option = { offset: this.fileSize - Constants.FILE_ID_SIZE, length: Constants.FILE_ID_SIZE };
     fs.readSync(file.fd, fileId, option);
     const fileIdString: string = textDecoder.decodeToString(new Uint8Array(fileId), { stream: false });
-    HiLog.error(TAG, `bsx fileIdString ${fileIdString}`);
 
     const dlpGeneralInfo: DlpGeneralInfo = {
       contactAccount: contactString ?? '',

@@ -86,6 +86,10 @@ export default class CredCallbackStub extends rpc.RemoteObject {
         this.disconnectServiceShareAbility(`connection_${Constants.COMMAND_BATCH_REFRESH}`);
         return true;
       }
+      case Constants.COMMAND_USER_CANCEL_DECRYPT: {
+        HiLog.info(TAG, 'onRemoteMessageRequest command user cancel callback');
+        return true;
+      }
       default: {
         HiLog.error(TAG, `invalid request code: ${code}`);
         break;

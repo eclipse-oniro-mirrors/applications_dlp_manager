@@ -39,6 +39,7 @@ import { ObjectUtil } from '../../common/ObjectUtil';
 import GlobalContext from '../../common/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
 import CommonUtil from '../../common/CommonUtil';
+import FileIdHandler from './FileIdHandler';
 
 const TAG: string = 'DecryptHandler';
 
@@ -295,8 +296,12 @@ export default class DecryptHandler {
     const timeoutData = this.setupTimeoutPromise();
     const timeout500 = this.setupNoDialogTimeout(decryptContent);
     try {
+      FileIdHandler.getInstance().saveFileId(decryptContent);
       const dlpFile = await this.executeDecryption(callerAppId, decryptContent, timeoutData.timeoutPromise);
       HiLog.info(TAG, 'dlpPermission.openDLPFile success');
+      // 解密成功删除
+      FileIdHandler.getInstance().deleteFileId(decryptContent.openDlpFileData.requestId,
+        decryptContent.fileMetaInfo.fileId);
       return ResultMsg.buildSuccess(dlpFile);
     } catch (error) {
       return await this.handleDecryptionError(error, decryptContent);
@@ -343,11 +348,17 @@ export default class DecryptHandler {
       HiLog.info(TAG, 'User stop Dialog');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_USER_STOP_DIALOG);
     }
-    if (error) {
+    if (error) { // 有error是调用openDlpFile报错
+      // 解密失败删除
+      FileIdHandler.getInstance().deleteFileId(decryptContent.openDlpFileData.requestId,
+        decryptContent.fileMetaInfo.fileId);
       const busErr: BusinessError = error as BusinessError;
       return await this.chargeOpenDLPFileError(busErr, decryptContent);
     }
+    // 没有error是解密时间总时长超过20秒
     HiLog.error(TAG, 'openDLPFile error for timeout');
+    FileIdHandler.getInstance().dialogCancel(decryptContent.openDlpFileData.requestId,
+      decryptContent.fileMetaInfo.fileId);
     return ResultMsg.getErrMsg(Constants.ERR_CODE_DECRYPT_TIME_OUT);
   }
 
