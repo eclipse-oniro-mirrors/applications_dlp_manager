@@ -59,6 +59,7 @@ struct AddStaff {
   @State inputArray: string[] = [];
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
+  private matchSuccess: boolean = false;
 
   private shardingCount: number = 0;
   @State @Watch('onErrorStyleChange') showFlag: boolean = false;
@@ -124,9 +125,6 @@ struct AddStaff {
       let searchArray: string[] = this.inputArray.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
       let accountResponse: DomainAccountResponse | undefined =
         await AccountManager.getDomainAccountByAccountNames(searchArray);
-      if (i === Constants.ENCRYPTION_FIRST_QUERY_BATCH) {
-        this.deleteBuildSpan(startOffset, endOffset);
-      }
       this.dealAccountResponse(searchArray, accountResponse, startOffset, endOffset);
 
       startLine = (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
@@ -155,6 +153,7 @@ struct AddStaff {
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
           this.deleteBuildSpan(startOffset, endOffset);
         }
+        this.matchSuccess = true;
         this.succ = CommonUtil.increaseByAppStorageKey(AppStorageConstant.ACCOUNT_VERIFY_SUCCESS_COUNT, 1);
         this.addBuildSpan(accountName, matchAccount[this.textContent]);
       } else {
@@ -163,6 +162,10 @@ struct AddStaff {
         this.showCode = EncryptProtectionShowCodeEnum.INPUT_ERROR;
       }
     })
+    if (this.matchSuccess && this.inputArray.length !== Constants.RICH_EDITOR_FIRST) {
+      this.deleteBuildSpan(startOffset, endOffset);
+      this.matchSuccess = false;
+    }
   }
 
   private getBusinessCode(accountResponse: DomainAccountResponse | undefined): number {
