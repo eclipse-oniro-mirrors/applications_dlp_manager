@@ -61,6 +61,7 @@ class CloudAccountHandle extends AccountHandlerBase {
       HiLog.info(TAG, 'Cloud account not login');
       return ResultMsg.buildMsg(Constants.ERR_JS_ACCOUNT_NOT_LOGIN, '');
     }
+    decryptContent.distributedInfoName = this.accountInfo.distributedInfo.name;
     decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.userId = this.userId;
     return ResultMsg.buildSuccess();
@@ -83,6 +84,7 @@ class DomainAccountHandle extends AccountHandlerBase {
       HiLog.error(TAG, 'checkDomainAccountInfo error');
       return ResultMsg.buildMsg(checkAccountRet.errcode, checkAccountRet.errmsg);
     }
+    decryptContent.distributedInfoName = this.accountInfo.distributedInfo.name;
     decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.accountName = this.accountInfo.domainInfo.accountName;
     decryptContent.userId = this.userId;
@@ -108,6 +110,7 @@ class PluginAccountHandle extends AccountHandlerBase {
       HiLog.error(TAG, 'getAccountInfo error');
       return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
     }
+    decryptContent.distributedInfoName = this.accountInfo.distributedInfo.name;
     decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.userId = this.userId;
     return ResultMsg.buildSuccess();

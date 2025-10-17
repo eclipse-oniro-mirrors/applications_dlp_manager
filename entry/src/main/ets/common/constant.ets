@@ -295,6 +295,7 @@ export default class Constants {
   public static readonly COMMAND_GET_ACCOUNT_INFO = 2;
   public static readonly COMMAND_GET_DOMAIN_ACCOUNT_INFO = 3;
   public static readonly COMMAND_BATCH_REFRESH = 4;
+  public static readonly COMMAND_USER_CANCEL_DECRYPT = 5;
 
   public static readonly GET_SETTING_ITEM_XXL1 = 8;
   public static readonly GET_SETTING_ITEM_XXL2 = 18;
@@ -335,6 +336,9 @@ export default class Constants {
   public static readonly DIALOG_SHOW_SIZE_ZIP = 10 * 1024 * 1024;
   public static readonly TOAST_BOTTOM = 142;
   public static readonly VALID_UID_PREFIX_LENGTH = 2;
+  public static readonly CONTACT_ACCOUNT_OFFSET = 8;
+  public static readonly CONTACT_ACCOUNT_SIZE = 9;
+  public static readonly FILE_ID_SIZE = 46;
 
   // want params
   public static readonly PARAMS_BUNDLE_NAME: string = 'ohos.dlp.params.bundleName';

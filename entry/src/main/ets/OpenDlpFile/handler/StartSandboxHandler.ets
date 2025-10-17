@@ -211,6 +211,7 @@ export default class StartSandboxHandler {
     want.flags = decryptContent.linkFileWriteable ?
     wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
     let fileSuffix: string = FileUtils.getFileSuffixByFileName(decryptContent.linkFileName);
+    const isOwner: boolean = decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName;
     if (want.type === 'dlp') {
       want.type = suffixMimeTypeMap.get(fileSuffix);
     }
@@ -235,7 +236,8 @@ export default class StartSandboxHandler {
           'name': decodeURIComponent(decryptContent.fileName)
         },
         'accountType': decryptContent.fileMetaInfo.accountType,
-        'allowedOpenCount': decryptContent.dlpFile.dlpProperty.allowedOpenCount ?? 0,
+        'allowedOpenCount': (decryptContent.dlpFile.dlpProperty.allowedOpenCount && !isOwner) ?
+        decryptContent.dlpFile.dlpProperty.allowedOpenCount : 0,
         'ohos.dlp.params.index': decryptContent.appInfo.appIndex,
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
         'ohos.dlp.params.securityFlag': decryptContent.authPerm ===

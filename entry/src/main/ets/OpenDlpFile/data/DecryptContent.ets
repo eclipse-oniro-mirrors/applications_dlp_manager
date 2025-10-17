@@ -24,6 +24,7 @@ import fs from '@ohos.file.fs';
 import { fileUri } from '@kit.CoreFileKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
 import FileUtils from '../../common/FileUtils/FileUtils';
+import CommonUtil from '../../common/CommonUtil';
 
 const TAG: string = 'DecryptContent';
 
@@ -34,6 +35,7 @@ export default class DecryptContent {
   private _dlpFile: dlpPermission.DLPFile = defaultDlpFile;
   private _appInfo: dlpPermission.DLPSandboxInfo = defaultAppInfo;
   private _distributedInfoId: string = '';
+  private _distributedInfoName: string = '';
   private _linkUri: string = '';
   private _linkFileName: string = '';
   private _authPerm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
@@ -59,6 +61,7 @@ export default class DecryptContent {
     clone.dlpFile = this._dlpFile;
     clone.appInfo = this._appInfo;
     clone.distributedInfoId = this._distributedInfoId;
+    clone.distributedInfoName = this._distributedInfoName;
     clone.linkUri = this._linkUri;
     clone.linkFileName = this._linkFileName;
     clone.authPerm = this._authPerm;
@@ -118,6 +121,14 @@ export default class DecryptContent {
 
   public get distributedInfoId(): string {
     return this._distributedInfoId;
+  }
+
+  public set distributedInfoName(value: string) {
+    this._distributedInfoName = value;
+  }
+
+  public get distributedInfoName(): string {
+    return this._distributedInfoName;
   }
 
   public set linkUri(value: string) {
@@ -250,5 +261,17 @@ export default class DecryptContent {
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }
     return ResultMsg.buildSuccess();
+  }
+
+  public static isNotOwnerAndReadOnce(decryptContent: DecryptContent): boolean {
+    if (CommonUtil.isEmptyStr(decryptContent.fileMetaInfo.fileId)) { // 不是仅查看一次
+      HiLog.debug(TAG, 'isOwnerAndReadOnce fileId is empty');
+      return false;
+    }
+    if (decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName) { // 是owner
+      HiLog.debug(TAG, 'isOwnerAndReadOnce isOwner');
+      return false;
+    }
+    return true;
   }
 }

@@ -18,4 +18,5 @@ export default interface FileMetaInfo {
   fileType: string;
   ownerAccount: string;
   fileSize: number;
+  fileId: string;
 }

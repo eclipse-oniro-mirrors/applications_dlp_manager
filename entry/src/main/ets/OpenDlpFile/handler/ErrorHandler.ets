@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import { common } from '@kit.AbilityKit';
 import Constants from '../../common/constant';
 import { ResultMsg } from '../../common/ResultMsg';
 import Result from '../../common/Result';

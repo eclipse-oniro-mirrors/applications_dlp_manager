@@ -110,7 +110,8 @@ const NUM_TO_TYPE_MAP = new Map<number, string>([
 interface DlpGeneralInfo {
   certSize?: number,
   contactAccount: string,
-  realFileType?: string
+  realFileType: string,
+  fileId: string,
 }
 
 interface CertInfo {
@@ -153,17 +154,41 @@ class ZipParse extends FileParseBase {
     return ResultMsg.buildSuccess(accountType);
   }
 
-  async parseRealFileType(generalInfoPath: string): Promise<string> {
+  async parseDlpGeneralInfo(generalInfoPath: string): Promise<DlpGeneralInfo> {
     const generalInfo = fs.readTextSync(generalInfoPath);
-    const generalInfoArray = generalInfo.split('realFileType');
+    const realFileTypeInfoArray = generalInfo.split('realFileType');
     let realFileType: string = '';
-    if (generalInfoArray.length === Constants.NUMBER_TWO) {
-      let realFileTypeStr = generalInfoArray[Constants.NUMBER_ONE].split('\"');
+    if (realFileTypeInfoArray.length === Constants.NUMBER_TWO) {
+      let realFileTypeStr = realFileTypeInfoArray[Constants.NUMBER_ONE].split('\"');
       if (realFileTypeStr.length > Constants.NUMBER_TWO) {
         realFileType = realFileTypeStr[Constants.NUMBER_TWO];
       }
     }
-    return realFileType;
+
+    const contactAccountInfoArray = generalInfo.split('contactAccount');
+    let contactAccount: string = '';
+    if (contactAccountInfoArray.length === Constants.NUMBER_TWO) {
+      let contactAccountStr = contactAccountInfoArray[Constants.NUMBER_ONE].split('\"');
+      if (contactAccountStr.length > Constants.NUMBER_TWO) {
+        contactAccount = contactAccountStr[Constants.NUMBER_TWO];
+      }
+    }
+
+    const fileIdInfoArray = generalInfo.split('fileId');
+    let fileId: string = '';
+    if (fileIdInfoArray.length === Constants.NUMBER_TWO) {
+      let fileIdStr = fileIdInfoArray[Constants.NUMBER_ONE].split('\"');
+      if (fileIdStr.length > Constants.NUMBER_TWO) {
+        fileId = fileIdStr[Constants.NUMBER_TWO];
+      }
+    }
+
+    const dlpGeneralInfo: DlpGeneralInfo = {
+      contactAccount: contactAccount,
+      realFileType: realFileType,
+      fileId: fileId,
+    }
+    return dlpGeneralInfo;
   }
 
   async parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>> {
@@ -188,13 +213,14 @@ class ZipParse extends FileParseBase {
         return ResultMsg.buildMsg(parseAccountTypeRet.errcode, parseAccountTypeRet.errmsg);
       }
       const accountType = parseAccountTypeRet.result;
-      const realFileType = await this.parseRealFileType(generalInfoPath);
       GlobalContext.store('accountType', accountType);
+      const dlpGeneralInfo: DlpGeneralInfo = await this.parseDlpGeneralInfo(generalInfoPath);
       this.metaInfo = {
         accountType: accountType,
-        fileType: realFileType,
-        ownerAccount: '',
-        fileSize: this.fileSize
+        fileType: dlpGeneralInfo.realFileType,
+        ownerAccount: dlpGeneralInfo.contactAccount,
+        fileSize: this.fileSize,
+        fileId: dlpGeneralInfo.fileId
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
@@ -213,6 +239,28 @@ class RawParse extends FileParseBase {
   constructor(fileSize: number) {
     super(fileSize);
     this.parseType = FileParseType.RAW;
+  }
+
+  async parseDlpGeneralInfo(buf: Uint32Array, file: fs.File): Promise<DlpGeneralInfo> {
+    let contactAccount = new ArrayBuffer(buf[Constants.CONTACT_ACCOUNT_SIZE]);
+    let option: ReadOptions =
+      { offset: buf[Constants.CONTACT_ACCOUNT_OFFSET], length: buf[Constants.CONTACT_ACCOUNT_SIZE] };
+    fs.readSync(file.fd, contactAccount, option);
+    const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
+    const contactString: string = textDecoder.decodeToString(new Uint8Array(contactAccount), { stream: false });
+
+    let fileId = new ArrayBuffer(Constants.FILE_ID_SIZE);
+    option = { offset: this.fileSize - Constants.FILE_ID_SIZE, length: Constants.FILE_ID_SIZE };
+    fs.readSync(file.fd, fileId, option);
+    const fileIdString: string = textDecoder.decodeToString(new Uint8Array(fileId), { stream: false });
+
+    const dlpGeneralInfo: DlpGeneralInfo = {
+      contactAccount: contactString ?? '',
+      realFileType: NUM_TO_TYPE_MAP.has(buf[Constants.NUMBER_THREE]) ?
+        NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
+      fileId: fileIdString ?? '',
+    }
+    return dlpGeneralInfo;
   }
 
   async parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>> {
@@ -239,14 +287,15 @@ class RawParse extends FileParseBase {
         HiLog.error(TAG, 'checkValidAccountType invalid');
         return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
       }
-
       GlobalContext.store('accountType', accountType);
+
+      const dlpGeneralInfo: DlpGeneralInfo = await this.parseDlpGeneralInfo(buf, file);
       this.metaInfo = {
         accountType: accountType,
-        fileType: NUM_TO_TYPE_MAP.has(buf[Constants.NUMBER_THREE]) ?
-          NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
-        ownerAccount: '',
-        fileSize: this.fileSize
+        fileType: dlpGeneralInfo.realFileType,
+        ownerAccount: dlpGeneralInfo.contactAccount,
+        fileSize: this.fileSize,
+        fileId: dlpGeneralInfo.fileId
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {

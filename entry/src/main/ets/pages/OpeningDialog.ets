@@ -59,7 +59,6 @@ struct Index {
     HiLog.info(TAG, 'OpeningDialog aboutToDisappear');
     emitter.off(Constants.SHOW_DIALOG_EVENT, this.handleShowDialog);
     emitter.off(Constants.SCREEN_OFF_EVENT, this.handleScreenOff);
-    this.closeDialog();
   }
 
   handleShowDialogEvent(showDialog: boolean, requestId: string) {

@@ -18,6 +18,7 @@ import Want from '@ohos.app.ability.Want';
 import CredCallbackStub from './CredCallbackStub';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
+import { rpc } from '@kit.IPCKit';
 
 const TAG = 'CredConnectService';
 
@@ -29,48 +30,63 @@ export default class CredConnectService {
   private optionsBatchRefresh: common.ConnectOptions;
   private cloudPhone: string = '';
 
+  setCloudPhone(cloudPhone: string) {
+    this.cloudPhone = cloudPhone;
+  }
+
   constructor(context: common.UIExtensionContext | common.ServiceExtensionContext) {
     this.context = context;
-    this.optionsSearchUser = {
+    this.optionsSearchUser = this.createSearchUserOptions();
+    this.optionsGetAccount = this.createGetAccountOptions();
+    this.optionsBatchRefresh = this.createBatchRefreshOptions();
+  }
+
+  private createSearchUserOptions(): common.ConnectOptions {
+    const operationName: string = 'SearchUser';
+    return {
       onConnect: (elementName, remote) => {
-        HiLog.info(TAG, 'onConnect success search account');
+        HiLog.info(TAG, `onConnect success ${operationName}`);
         this.service.searchUserInfo(remote, this.cloudPhone);
       },
       onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect: SearchUser`);
+        HiLog.info(TAG, `onDisconnect: ${operationName}`);
       },
       onFailed: () => {
-        HiLog.info(TAG, `onFailed: SearchUser`);
-      }
-    }
-    this.optionsGetAccount = {
-      onConnect: (elementName, remote) => {
-        HiLog.info(TAG, 'onConnect success get account');
-        this.service.getLocalAccountInfo(remote);
-      },
-      onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect: GetAccount`);
-      },
-      onFailed: () => {
-        HiLog.info(TAG, `onFailed: GetAccount`);
-      }
-    }
-    this.optionsBatchRefresh = {
-      onConnect: (elementName, remote) => {
-        HiLog.info(TAG, 'onConnect success batch refresht');
-        this.service.batchRefresh(remote);
-      },
-      onDisconnect: () => {
-        HiLog.info(TAG, `onDisconnect: BatchRefresh`);
-      },
-      onFailed: () => {
-        HiLog.info(TAG, `onFailed: BatchRefresh`);
+        HiLog.info(TAG, `onFailed: ${operationName}`);
       }
     }
   }
 
-  setCloudPhone(cloudPhone: string) {
-    this.cloudPhone = cloudPhone;
+  private createGetAccountOptions(): common.ConnectOptions {
+    const operationName: string = 'GetAccount';
+    return {
+      onConnect: (elementName, remote) => {
+        HiLog.info(TAG, `onConnect success ${operationName}`);
+        this.service.getLocalAccountInfo(remote);
+      },
+      onDisconnect: () => {
+        HiLog.info(TAG, `onDisconnect: ${operationName}`);
+      },
+      onFailed: () => {
+        HiLog.info(TAG, `onFailed: ${operationName}`);
+      }
+    }
+  }
+
+  private createBatchRefreshOptions(): common.ConnectOptions {
+    const operationName: string = 'BatchRefresh';
+    return {
+      onConnect: (elementName, remote) => {
+        HiLog.info(TAG, `onConnect success ${operationName}`);
+        this.service.batchRefresh(remote);
+      },
+      onDisconnect: () => {
+        HiLog.info(TAG, `onDisconnect: ${operationName}`);
+      },
+      onFailed: () => {
+        HiLog.info(TAG, `onFailed: ${operationName}`);
+      }
+    }
   }
 
   connectServiceShareAbility(code: number) {
