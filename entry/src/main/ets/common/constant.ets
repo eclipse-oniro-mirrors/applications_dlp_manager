@@ -120,6 +120,7 @@ export default class Constants {
   public static DLP_VIEW_SERVICE = 'ViewAbility';
   public static DLP_OPENING_DIALOG_UI_EXT_ABILITY = 'OpeningDialogUIExtAbility';
 
+  public static HI_PREVIEW_TOKEN = 'OHOS.HapHiPreviewAbilityServiceStub';
   public static SA_INTERFACE_TOKEN = 'OHOS.Security.DlpCredentialAbility';
   public static TRANSPARENT_BACKGROUND_COLOR = '#00000000';
   public static START_ABILITY_CUSTOM_CONTENT_DIALOG_WIDTH = 400;
@@ -296,6 +297,8 @@ export default class Constants {
   public static readonly COMMAND_GET_DOMAIN_ACCOUNT_INFO = 3;
   public static readonly COMMAND_BATCH_REFRESH = 4;
   public static readonly COMMAND_USER_CANCEL_DECRYPT = 5;
+
+  public static readonly COMMAND_CLEAR_DLP_CACHE = 1;
 
   public static readonly GET_SETTING_ITEM_XXL1 = 8;
   public static readonly GET_SETTING_ITEM_XXL2 = 18;
