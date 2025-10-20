@@ -1,0 +1,620 @@
+{
+    "string":[
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"ဤအက်ပ်က ဤဖိုင်ကို မဖွင့်နိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"DLP အက်ပ် ဖွင့်၍ မရခဲ့ပါ။ သင့်သတ်မှတ်ချက်များကို စစ်ဆေးပြီး ထပ်ကြိုးစားကြည့်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"ဖိုင် ကုဒ်ပြောင်းဝှက်နေဆဲ…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"မိမိတစ်ဦးတည်း",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"ကုဒ်ပြောင်းဝှက်ထားသော ဝေမျှမှု",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"ဤဖိုင်ကို ကာကွယ်ထားပါသည်။ သင့်တွင် \"ဖတ်ရန်သီးသန့်\" ခွင့်ပြုချက် ရှိပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"သိုလှောင်မှု မလုံလောက်ပါ။ နေရာလွတ် ရရှိစေရန် မလိုအပ်သည့် ဖိုင်များကို ဖျက်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"duplicate",
+            "value":"ကူးယူရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"ဖိုင်ကို အောင်မြင်စွာ ကုဒ်ပြောင်းဝှက်ပြီး။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"ဝင်ရောက်မှုဆိုင်ရာ အချက်အလက်ကို ခွဲခြားဖော်ထုတ်နိုင်ခြင်း မရှိပါ။ ဆက်လက်လုပ်ဆောင်ရန် သင့်အလုပ်အကောင့်တွင်း ဝင်ရောက်ပေးပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"လက်ရှိ၌ \"%s\" ကို ကုဒ်ပြောင်းဝှက်နေပါသည်။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_list",
+            "value":"ကန့်သတ်ထားသော ဝင်ရောက်သုံးစွဲခွင့်ဖြင့် ဖိုင်ကို ကာကွယ်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid",
+            "value":"သက်တမ်းရှိကာလ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"ဖတ်ရန်သီးသန့် ဝင်ရောက်သုံးစွဲခွင့် ရထားသည့် သုံးစွဲသူများက ဤဖိုင်ကို ကြည့်နိုင်သော်လည်း တည်းဖြတ်ခြင်း၊ ကူးယူခြင်း သို့မဟုတ် ပရင့်ထုတ်ခြင်း လုပ်နိုင်မည် မဟုတ်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"အဆက်အသွယ်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"print",
+            "value":"ပရင့်ထုတ်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"သုံးစွဲသူ ပေါင်းထည့်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"ဤဖိုင်ကို အခြားအက်ပ်တွင် ဖွင့်ထားပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permanently",
+            "value":"သက်တမ်းမကုန်ပါ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"ဝင်ရောက်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"ဤဖိုင်ကို ကာကွယ်ထားပါသည်၊ သတ်မှတ်ထားသော သုံးစွဲသူများသာ ဝင်ရောက်သုံးစွဲနိုင်ပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_encrypted",
+            "value":"ဖိုင်ကို ကာကွယ်ထားပြီး",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"တစ်ကြိမ်လျှင် အများဆုံး ဖိုင် %d ဖိုင် ကုဒ်ပြောင်းဝှက်နိုင်ပါသည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"ဖတ်ရန်သီးသန့်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save_as",
+            "value":"ဖော်ပြပါအဖြစ် သိမ်းရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"finished",
+            "value":"အဆုံးသတ်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_damaged",
+            "value":"ဤဖိုင် ပျက်စီးသွားသဖြင့် ဖွင့်၍ မရနိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stow_away",
+            "value":"ဝှက်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"ဤဖိုင်ကို ဖွင့်၍ မရနိုင်ပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"အသေးစိတ် ကြည့်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"sure",
+            "value":"အိုကေ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"ဖိုင် ခွင့်ပြုချက် ရယူ၍ မရနိုင်ပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"da_button",
+            "value":"အိုကေ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"no_longer_have_permission_view_file",
+            "value":"ဤဖိုင်ကို ကြည့်ရန် ခွင့်ပြုချက် မရှိတော့ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"အမှန်တကယ် ခွင့်ပြုချက်များသည် အက်ပ်အလိုက် ကွဲပြားနိုင်ပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"unencrypted",
+            "value":"အကာအကွယ် ပြန်ရုပ်သိမ်းရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ban",
+            "value":"ပယ်ဖျက်မည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"ဤခွင့်ပြုချက် ရထားသည့် သုံးစွဲသူများက ဤဖိုင်ကို ကြည့်ခြင်း၊ တည်းဖြတ်ခြင်း၊ ကူးယူခြင်း၊ မျက်နှာပြင် မှတ်တမ်းတင်ခြင်း၊ သိမ်းဆည်းခြင်းနှင့် ပရင့်ထုတ်ခြင်းများ လုပ်ဆောင်နိုင်ပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"%s ကိုသာ ကုဒ်ပြောင်းဝှက်နိုင်ပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save",
+            "value":"သိမ်းရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"ကွန်ရက် ချို့ယွင်းချက်။ သင့် HUAWEI ID ကို အတည်ပြု၍ မရနိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"ဤဖိုင်ကို ကုဒ်ပြောင်းဝှက်ထားပြီး ဖြစ်ပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"ဤဖိုင်ကို အခြားအက်ပ်တွင် ဖွင့်ထားပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"သက်တမ်းကုန်ဆုံးသည့် နေ့သည် ပြီးခဲ့သော ရက်စွဲ မဖြစ်ရပါ။ အခြားရက်တစ်ခု သတ်မှတ်ပေးပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"သတ်မှတ်ထားသော သုံးစွဲသူများ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"သိုလှောင်မှု မလုံလောက်ပါ။ ကုဒ်ပြောင်းဝှက်ထားသည့် ဖိုင်ကို ဖန်တီး၍ မရနိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"%d MB ထက်ကြီးသည့် ဖိုင်များကို ကုဒ်ပြောင်းဝှက်၍ မရနိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"ဤဖိုင်ကို ကုဒ်ပြောင်းမဝှက်မီ ပိတ်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"ဝန်ထမ်း ID မှားယွင်းနေပါသည်။ ပြန်ရိုက်ထည့်ပေးပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"လက်ရှိ HUAWEI ID ဖြင့် ဤဖိုင်ကို ကြည့်ခွင့် မရှိပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screenshot",
+            "value":"စခရင်ရှော့(တ်)",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"အကောင့် အချက်အလက် ရယူ၍ မရနိုင်ပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"loading_title",
+            "value":"လုပ်ဆောင်နေဆဲ…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"လူတိုင်း",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"သင့်တွင် ဤဖိုင်ကို နောက်ထပ်မိတ္တူပွားသိမ်းခွင့် မရှိပါ။ ခွင့်ပြုချက် တောင်းရန် %s ထံ ဆက်သွယ်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"မိုဘိုင်း နံပါတ်များသာ ကုဒ်ပြောင်းဝှက်ထားသည့် ဖိုင်များကို %s သို့မဟုတ် ၎င်းနောက်ပိုင်း လုပ်ဆောင်နေသည့် စက်များတွင် ကြည့်နိုင်ပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"ခွင့်ပြုချက်များ တောင်းရန် %s ထံ ဆက်သွယ်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"ဖိုင် ရှိမနေပါ သို့မဟုတ် ဝင်ရောက်သုံးစွဲနိုင်ခြင်း မရှိပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Appointed_day",
+            "value":"သတ်မှတ်ထားသည့် ရက်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"change_encryption",
+            "value":"အကာအကွယ် ပြောင်းရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"%d GB ထက်ကြီးသည့် ဖိုင်များကို ကုဒ်ပြောင်းဝှက်၍ မရနိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_opening",
+            "value":"ဖွင့်နေဆဲ…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"ဝန်ထမ်း ID ကို ရိုက်ထည့်ပြီး Enter ကို နှိပ်ပါ။ ဥပမာ- a00123456",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"ဤဖိုင်ကို ဖွင့်ရန် စနစ် ဗားရှင်း ဟောင်းလွန်းနေပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"စာရွက်စာတမ်းများ၊ ပုံများနှင့် ဗီဒီယိုများ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"ဖတ်ရန်သီးသန့်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"အက်ပ် ချို့ယွင်းချက်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"လက်ရှိ၌ ဤဖိုင်ကို ကုဒ်ပြောင်းဝှက်နေပါသည်။ ကုဒ်ပြောင်းဝှက်မှု ပြီးစီးအောင် စောင့်ဆိုင်းပြီး ထပ်ကြိုးစားကြည့်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"network_invalid",
+            "value":"ကွန်ရက် ချို့ယွင်းချက်။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit",
+            "value":"တည်းဖြတ်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"တည်းဖြတ်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"သင့်ဖိုင်ခွင့်ပြုချက်များ သက်တမ်းကုန်သွားပါပြီ။ ဝင်ရောက်သုံးစွဲခွင့် ပြန်ရယူရန် %s ထံ ဆက်သွယ်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"ကုဒ်ပြောင်းဝှက်မှုကို ပြောင်း၍ မရနိုင်ပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title",
+            "value":"ဖိုင် ခွင့်ပြုချက်များ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"၎င်းကို ယခုလုပ်၍ မရနိုင်ပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"ဤဖိုင်ကို ကုဒ်ပြောင်းဝှက်၍ မရနိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"ဝင်ရောက်သုံးစွဲခွင့်ကို ပိတ်ပင်ထားသည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"အကောင့် မရှိပါ။ ပြန်ရိုက်ထည့်ပေးပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"စနစ် အပ်ဒိတ် လိုအပ်ပါသည်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"သင့်အကောင့်တွင်း ဝင်ရောက်ပြီး ထပ်ကြိုးစားကြည့်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"ခွင့်ပြုချက်များ သက်တမ်းကုန်သွားပါပြီ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screen_recording",
+            "value":"မျက်နှာပြင် မှတ်တမ်းတင်ရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"ကုဒ်ပြောင်းဝှက်ထားသည့် ဖိုင်များကို နောက်ပိုင်းထွက် စနစ်ဗားရှင်းအသစ်တွင် ဖွင့်၍ မရနိုင်ပါ။ သင့်စနစ်ဆော့ဖ်ဝဲကို အပ်ဒိတ်လုပ်ပြီး ထပ်ကြိုးစားကြည့်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_title",
+            "value":"ဤဖိုင်ကို ကာကွယ်ထားပါသည်။ သင့်တွင် \"ဖတ်ရန်သီးသန့်\" နှင့် \"တည်းဖြတ်ရန်\" ခွင့်ပြုချက်များ ရှိပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"ကုဒ်ပြောင်းဝှက်၍ မရနိုင်ပါ။ ဖိုင်နာမည် ရှည်လွန်းပါသည်။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"ခွင့်ပြုချက် ရယူ၍ မရနိုင်ပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"သက်တမ်းကုန်ချိန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"share_the_screen",
+            "value":"စက်မျက်နှာပြင် ဝေမျှရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}
