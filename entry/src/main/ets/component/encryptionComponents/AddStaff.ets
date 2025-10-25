@@ -250,7 +250,7 @@ struct AddStaff {
     this.deleteBuildSpan(startOffset, endOffset);
     this.showErrInput(inputId, startOffset, endOffset);
     this.controller.addTextSpan(this.errInput.join(';'));
-    this.showCode = EncryptProtectionShowCodeEnum.DEFAULT_ERROR;
+    this.showCode = EncryptProtectionShowCodeEnum.INPUT_ERROR;
     this.showFlag = true;
   }
 
