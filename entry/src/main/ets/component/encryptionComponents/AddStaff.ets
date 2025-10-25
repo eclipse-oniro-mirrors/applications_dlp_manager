@@ -155,7 +155,6 @@ struct AddStaff {
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
           this.deleteBuildSpan(startOffset, endOffset);
         }
-
         this.succ = CommonUtil.increaseByAppStorageKey(AppStorageConstant.ACCOUNT_VERIFY_SUCCESS_COUNT, 1);
         this.addBuildSpan(accountName, matchAccount[this.textContent]);
       } else {
