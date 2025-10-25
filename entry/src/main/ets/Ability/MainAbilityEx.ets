@@ -419,6 +419,7 @@ export default class MainAbility extends UIExtensionAbility {
     return new Promise<void>((resolve, reject) => {
       this.dlpRpcProxy?.fileOpenHistory(uri, async (err: number) => {
         if (err === 0) {
+          GlobalContext.store('uri', '');
           this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_OPEN_REJECTED } as BusinessError);
           reject();
         }
