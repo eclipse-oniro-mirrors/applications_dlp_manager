@@ -135,6 +135,9 @@ struct AddStaff {
     startOffset: number[], endOffset: number[]) {
     let businessCode = this.getBusinessCode(accountResponse);
     if (businessCode !== Constants.INTERFACE_SUCCESS) {
+      if (searchArray.length !== Constants.RICH_EDITOR_FIRST) {
+        this.deleteBuildSpan(startOffset, endOffset);
+      }
       this.batchDealError(searchArray, startOffset, endOffset);
       this.showCode = EncryptProtectionHelper.convertErrorCodeToShowCode(businessCode);
       return;
