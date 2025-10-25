@@ -59,7 +59,6 @@ struct AddStaff {
   @State inputArray: string[] = [];
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
-  private matchSuccess: boolean = false;
 
   private shardingCount: number = 0;
   @State @Watch('onErrorStyleChange') showFlag: boolean = false;
@@ -153,7 +152,7 @@ struct AddStaff {
         if (this.inputArray.length === Constants.RICH_EDITOR_FIRST) {
           this.deleteBuildSpan(startOffset, endOffset);
         }
-        this.matchSuccess = true;
+
         this.succ = CommonUtil.increaseByAppStorageKey(AppStorageConstant.ACCOUNT_VERIFY_SUCCESS_COUNT, 1);
         this.addBuildSpan(accountName, matchAccount[this.textContent]);
       } else {
@@ -162,9 +161,8 @@ struct AddStaff {
         this.showCode = EncryptProtectionShowCodeEnum.INPUT_ERROR;
       }
     })
-    if (this.matchSuccess && this.inputArray.length !== Constants.RICH_EDITOR_FIRST) {
+    if (this.inputArray.length !== Constants.RICH_EDITOR_FIRST) {
       this.deleteBuildSpan(startOffset, endOffset);
-      this.matchSuccess = false;
     }
   }
 
