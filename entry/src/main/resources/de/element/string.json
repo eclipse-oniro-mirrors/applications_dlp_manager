@@ -1,0 +1,620 @@
+{
+    "string":[
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"Diese App kann diese Datei nicht öffnen.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"DLP-App nicht gestartet. Überprüfen Sie Ihre Parameter und versuchen Sie es erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"Datei verschlüsseln ...",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"Nur ich selbst",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"Verschlüsselte Freigabe",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"Diese Datei ist geschützt. Sie haben die Berechtigung „Schreibgeschützt“.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"Nicht genügend Speicherplatz. Löschen Sie Dateien, die Sie nicht benötigen, um Speicherplatz freizugeben.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"duplicate",
+            "value":"Kopieren",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"Datei erfolgreich verschlüsselt.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"Anmeldeinformationen konnten nicht identifiziert werden. Zum Fortfahren melden Sie sich bei Ihrem Arbeitskonto an.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"„%s“ wird jetzt verschlüsselt. Versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_list",
+            "value":"Datei mit eingeschränktem Zugriff schützen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid",
+            "value":"Gültigkeit",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"Nutzer mit schreibgeschütztem Zugriff können diese Datei anzeigen, aber nicht bearbeiten, kopieren oder drucken.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"Kontakte",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"print",
+            "value":"Drucken",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"Nutzer hinzufügen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"Diese Datei ist in einer anderen App geöffnet.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permanently",
+            "value":"Läuft nie ab",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"Anmelden",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"Diese Datei ist geschützt und nur bestimmten Nutzern zugänglich.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_encrypted",
+            "value":"Datei geschützt",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"Es können maximal %d Dateien gleichzeitig verschlüsselt werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"Schreibgeschützt",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save_as",
+            "value":"Speichern als",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"finished",
+            "value":"Fertig",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_damaged",
+            "value":"Diese Datei ist beschädigt und kann nicht geöffnet werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stow_away",
+            "value":"Ausblenden",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"Öffnen dieser Datei nicht möglich, versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"Details anzeigen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"sure",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"Abrufen der Dateiberechtigung nicht möglich, versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"da_button",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"no_longer_have_permission_view_file",
+            "value":"Sie sind nicht mehr berechtigt, diese Datei anzuzeigen.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"Die tatsächlichen Berechtigungen können je nach App variieren.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"unencrypted",
+            "value":"Schutz aufheben",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ban",
+            "value":"Abbrechen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"Nutzer mit dieser Berechtigung können diese Datei anzeigen, bearbeiten, kopieren, auf dem Bildschirm aufzeichnen, speichern und drucken.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"Nur %s können verschlüsselt werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save",
+            "value":"Speichern",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"Netzwerkfehler, Bestätigung Ihrer HUAWEI ID nicht möglich.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"Diese Datei wurde bereits verschlüsselt.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"Diese Datei ist in einer anderen App geöffnet.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"Das Ablaufdatum darf nicht in der Vergangenheit liegen. Legen Sie ein anderes Datum fest.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"Angegebene Nutzer",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"Nicht genügend Speicherplatz, Erstellen von verschlüsselter Datei nicht möglich.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"Dateien größer als %d MB können nicht verschlüsselt werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"Schließen Sie diese Datei, bevor Sie sie verschlüsseln.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"Ungültige Mitarbeiter-ID, erneut eingeben.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"Sie sind nicht autorisiert, diese Datei mit der aktuellen HUAWEI ID anzuzeigen.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screenshot",
+            "value":"Screenshot",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"Abrufen der Kontoinformationen nicht möglich, versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"loading_title",
+            "value":"Laden ...",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"Alle",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"Sie haben keine Berechtigung, eine weitere Kopie dieser Datei zu speichern. Um die Berechtigung zu beantragen, wenden Sie sich an %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"Nur Mobiltelefonnummern. Verschlüsselte Dateien können auf Geräten mit %s oder höher angezeigt werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"Um Berechtigungen zu beantragen, wenden Sie sich an %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"Die Datei existiert nicht oder es kann nicht darauf zugegriffen werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Appointed_day",
+            "value":"Angegebenes Datum",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"change_encryption",
+            "value":"Schutz ändern",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"Dateien größer als %d GB können nicht verschlüsselt werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_opening",
+            "value":"Öffnen ...",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"Geben Sie die Mitarbeiter-ID ein und drücken Sie die Eingabetaste. Beispiel: a00123456",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"Die Systemversion ist zu alt, um diese Datei zu öffnen.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"Dokumente, Bilder und Videos",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"Schreibgeschützt",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"App-Fehler",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"Diese Datei wird jetzt verschlüsselt. Warten Sie, bis die Verschlüsselung abgeschlossen ist, und versuchen Sie es erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"network_invalid",
+            "value":"Netzwerkfehler, versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit",
+            "value":"Bearbeiten",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"Bearbeiten",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"Ihre Dateiberechtigungen sind abgelaufen. Um den Zugriff erneut zu beantragen, wenden Sie sich an %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"Ändern der Verschlüsselung nicht möglich, versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title",
+            "value":"Dateiberechtigungen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"Vorgang jetzt nicht möglich, versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"Diese Datei kann nicht verschlüsselt werden.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"Zugriff verweigert",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"Das Konto existiert nicht. Geben Sie ein neues ein.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"Systemaktualisierung erforderlich",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"Melden Sie sich bei Ihrem Konto an und versuchen Sie es erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"Berechtigungen abgelaufen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screen_recording",
+            "value":"Bildschirm aufnehmen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"Dateien, die in einer neueren Systemversion verschlüsselt wurden, können nicht geöffnet werden. Aktualisieren Sie Ihre Systemsoftware und versuchen Sie es erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_title",
+            "value":"Diese Datei ist geschützt. Sie haben die Berechtigungen „Schreibgeschützt“ und „Bearbeiten“.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"Verschlüsseln nicht möglich. Dateiname zu lang.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"Abrufen der Berechtigung nicht möglich, versuchen Sie es später erneut.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"Gültig bis",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"share_the_screen",
+            "value":"Bildschirm freigeben",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

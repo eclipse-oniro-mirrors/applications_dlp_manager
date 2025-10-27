@@ -1,0 +1,620 @@
+{
+    "string":[
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"Ta aplikacje nie może otworzyć tego pliku.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"Nie uruchomiono aplikacji DLP. Sprawdź parametry i spróbuj ponownie.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"Szyfrowanie pliku…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"Tylko ja",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"Szyfrowane udostępnianie",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"Ten plik jest zabezpieczony. Masz uprawnienie Tylko do odczytu.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"Za mało miejsca w pamięci. Usuń niepotrzebne pliki i zwolnij miejsce.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"duplicate",
+            "value":"Kopiuj",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"Zaszyfrowano plik.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"Nie udało się zidentyfikować danych logowania. Zaloguj się na konto służbowe, aby kontynuować.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"Plik %s jest szyfrowany. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_list",
+            "value":"Chroń plik za pomocą ograniczonego dostępu.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid",
+            "value":"Okres ważności",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"Użytkownicy z uprawnieniem dostępu Tylko do odczytu mogą wyświetlać ten plik, ale nie mogą go edytować, kopiować ani drukować.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"Kontakty",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"print",
+            "value":"Drukuj",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"Dodaj użytkownika",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"Ten plik jest otwarty w innej aplikacji.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permanently",
+            "value":"Nie wygasa",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"Zaloguj się",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"Ten plik jest zabezpieczony. Dostęp do niego mogą uzyskać tylko określeni użytkownicy.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_encrypted",
+            "value":"Plik jest zabezpieczony",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"Równocześnie można szyfrować %d plików",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"Tylko do odczytu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save_as",
+            "value":"Zapisz jako",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"finished",
+            "value":"Zakończ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_damaged",
+            "value":"Ten plik jest uszkodzony i nie można go otworzyć.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stow_away",
+            "value":"Ukryj",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"Nie można otworzyć tego pliku. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"Wyświetl szczegóły",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"sure",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"Nie można uzyskać uprawnienia pliku. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"da_button",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"no_longer_have_permission_view_file",
+            "value":"Już nie masz uprawnienia do wyświetlenia tego pliku.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"Rzeczywiste uprawnienia mogą się różnić w zależności od aplikacji.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"unencrypted",
+            "value":"Usuń zabezpieczenia",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ban",
+            "value":"Anuluj",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"Użytkownicy z tym uprawnieniem mogą wyświetlać, edytować, kopiować, nagrywać ekran, zapisywać i drukować ten plik.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"Szyfrować można tylko %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save",
+            "value":"Zapisz",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"Błąd sieci. Nie można zweryfikować ID HUAWEI.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"Ten plik jest już zaszyfrowany.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"Ten plik jest otwarty w innej aplikacji.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"Data ważności nie może przypadać w przeszłości. Ustaw inną datę.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"Określeni użytkownicy",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"Za mało miejsca w pamięci. Nie można utworzyć zaszyfrowanego pliku.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"Plików większych niż %d MB nie można zaszyfrować.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"Wybierz ten plik przed zaszyfrowaniem go.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"Nieprawidłowy ID pracownika. Wprowadź ponownie.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"Nie masz autoryzacji, aby wyświetlić ten plik przy pomocy bieżącego ID HUAWEI.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screenshot",
+            "value":"Zrzut ekranu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"Nie można uzyskać informacji o koncie. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"loading_title",
+            "value":"Wczytywanie…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"Każdy",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"Nie masz uprawnienia wymaganego do zapisania kolejnej kopii tego pliku. Aby poprosić o uprawnienie, skontaktuj z %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"Tylko numery telefonów komórkowych. Zaszyfrowane pliki można wyświetlać na urządzeniach z systemem %s lub nowszym.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"Aby poprosić o uprawnienia, skontaktuj się z %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"Plik nie istnieje lub nie można uzyskać do niego dostępu.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Appointed_day",
+            "value":"Określona data",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"change_encryption",
+            "value":"Ochrona przed zmianą",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"Plików większych niż %d GB nie można zaszyfrować.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_opening",
+            "value":"Otwieranie…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"Wprowadź ID pracownika i naciśnij przycisk Enter. Na przykład: a00123456",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"Wersja systemu jest zbyt przestarzała i nie można otworzyć tego pliku.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"dokumenty, obrazy i filmy",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"Tylko do odczytu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"Błąd aplikacji",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"Ten plik jest szyfrowany. Poczekaj na zakończenie szyfrowania i spróbuj ponownie.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"network_invalid",
+            "value":"Błąd sieci. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit",
+            "value":"Edytuj",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"Edytuj",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"Twoje uprawnienia pliku wygasły. Aby uzyskać dostęp ponownie, skontaktuj się z %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"Nie można zmienić szyfrowania. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title",
+            "value":"Uprawnienia pliku",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"Teraz nie można wykonać tej czynności. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"Tego pliku nie można zaszyfrować.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"Odmowa dostępu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"Konto nie istnieje. Wprowadź ponownie.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"Wymagana jest aktualizacja systemu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"Zaloguj się na konto i spróbuj ponownie.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"Uprawnienia wygasły",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screen_recording",
+            "value":"Nagrywanie ekranu",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"Nie można otworzyć plików zaszyfrowanych w nowszej wersji systemu. Zaktualizuj oprogramowanie systemu i spróbuj ponownie.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_title",
+            "value":"Ten plik jest zabezpieczony. Masz uprawnienie Tylko do odczytu i Edytuj.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"Nie można zaszyfrować. Nazwa pliku jest za długa.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"Nie można uzyskać uprawnienia. Spróbuj ponownie później.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"Data ważności",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"share_the_screen",
+            "value":"Udostępnij ekran",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

@@ -1,0 +1,620 @@
+{
+    "string":[
+        {
+            "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
+            "value":"This app can't open this file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_PARAM_ERROR",
+            "value":"DLP app did not launch. Check your parameters and try again.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"encryption_loading_title",
+            "value":"Encrypting file…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_SELF",
+            "value":"Only myself",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"EncryptedSharing",
+            "value":"Encrypted share",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_readOnly",
+            "value":"This file is protected. You have \"Read-only\" permission.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_ERROR",
+            "value":"Insufficient storage. Delete files you don't need to free up space.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"duplicate",
+            "value":"Copy",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Success",
+            "value":"File encrypted successfully.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
+            "value":"Login information could not be identified. Please log in to your work account to continue.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION",
+            "value":"\"%s\" is currently being encrypted. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_list",
+            "value":"Protect the file with restricted access.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid",
+            "value":"Validity",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly_tips",
+            "value":"Users with read-only access can view this file, but can't edit, copy, or print it.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Contact_Person",
+            "value":"Contacts",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"print",
+            "value":"Print",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Add_Viewable_Users",
+            "value":"Add a user",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"This_File_is_Open_By_Other_App",
+            "value":"This file is open in another app.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permanently",
+            "value":"Never expires",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"SYSTEM_IS_AUTHENTICATED_LOGIN",
+            "value":"Log in",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permissions_are_restricted",
+            "value":"This file is protected, accessible only to specified users.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_encrypted",
+            "value":"File protected",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Count_Error",
+            "value":"A maximum of %d files can be encrypted at a time",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_readonly",
+            "value":"Read-only",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save_as",
+            "value":"Save as",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"finished",
+            "value":"Finish",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_damaged",
+            "value":"This file is damaged and can't be opened.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"stow_away",
+            "value":"Hide",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_cannot_be_opened",
+            "value":"Unable to open this file. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"viewing_encryption_details",
+            "value":"View details",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"sure",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
+            "value":"Unable to obtain file permission. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"da_button",
+            "value":"OK",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"no_longer_have_permission_view_file",
+            "value":"You no longer have permission to view this file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_subject",
+            "value":"Actual permissions may vary by app.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"unencrypted",
+            "value":"Revoke protection",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"ban",
+            "value":"Cancel",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_tips",
+            "value":"Users with this permission can view, edit, copy, screen-record, save, and print this file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Type_Error",
+            "value":"Only %s can be encrypted.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"save",
+            "value":"Save",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Network_anomaly",
+            "value":"Network error. Unable to verify your HUAWEI ID.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_has_been_Encrypted",
+            "value":"This file has already been encrypted.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"The_File_is_Opened_By_Other_App",
+            "value":"This file is open in another app.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Timeout_is_not_supported",
+            "value":"The expiry date can't be in the past. Please set another date.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_TARGET",
+            "value":"Specified users",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_NO_SPACE_TO_CREATE_FILE",
+            "value":"Insufficient storage. Unable to create encrypted file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_MB_Error",
+            "value":"Files larger than %d MB can't be encrypted.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_OPEN_REJECT",
+            "value":"Close this file before encrypting it.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"incorrect_work_ID",
+            "value":"Invalid employee ID. Please re-enter.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"File_no_permission",
+            "value":"Not authorised to view this file with the current HUAWEI ID.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screenshot",
+            "value":"Screenshot",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
+            "value":"Unable to obtain account information. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"loading_title",
+            "value":"Loading…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"PERMISSION_TYPE_SELECT_ALL",
+            "value":"Everyone",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_READ_ONLY",
+            "value":"You don't have permission to save another copy of this file. To request permission, contact %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Enter_Mobile_Number",
+            "value":"Mobile numbers only. Encrypted files can be viewed on devices running %s or later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"apply_for_the_permission",
+            "value":"To request permissions, please contact %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Path_Error",
+            "value":"File does not exist or can't be accessed.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Appointed_day",
+            "value":"Specified date",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"change_encryption",
+            "value":"Change protection",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Single_Size_Limit_GB_Error",
+            "value":"Files larger than %d GB can't be encrypted.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"file_opening",
+            "value":"Opening…",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"enter_a_complete_work_ID",
+            "value":"Enter employee ID and press Enter. For example: a00123456",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_System_Version_Low",
+            "value":"System version is too old to open this file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Supported_Types",
+            "value":"documents, images, and videos",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"perm_list_title_read_only",
+            "value":"Read-only",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_ERROR",
+            "value":"App error",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_ENCRYPTION_REJECTED",
+            "value":"This file is currently being encrypted. Wait for encryption to finish and try again.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"network_invalid",
+            "value":"Network error. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit",
+            "value":"Edit",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title_edit_content",
+            "value":"Edit",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired_description",
+            "value":"Your file permissions have expired. To regain access, contact %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_RECOVER_DLP_ERROR",
+            "value":"Unable to change encryption. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"header_title",
+            "value":"File permissions",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
+            "value":"Unable to do this right now. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
+            "value":"This file cannot be encrypted.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VISIT_FILE_ERROR",
+            "value":"Access denied",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Account_Not_Exist",
+            "value":"Account does not exist. Please re-enter.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"TITLE_APP_VERSION_LOWER",
+            "value":"System update required",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
+            "value":"Log in to your account and try again.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Permission_has_expired",
+            "value":"Permissions expired",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"screen_recording",
+            "value":"Record screen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
+            "value":"Unable to open files that were encrypted in a newer system version. Please update your system software and try again.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"permission_status_title",
+            "value":"This file is protected. You have \"Read-only\" and \"Edit\" permissions.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Name_Too_Long",
+            "value":"Unable to encrypt. File name too long.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_GET_FILE_ASSET_ERROR",
+            "value":"Unable to obtain permission. Try again later.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Document_valid_until",
+            "value":"Valid until",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"share_the_screen",
+            "value":"Share screen",
+            "attr":{
+                "priority":"translate"
+            }
+        }
+    ]
+}

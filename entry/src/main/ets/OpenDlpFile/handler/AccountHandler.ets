@@ -95,6 +95,11 @@ class DomainAccountHandle extends AccountHandlerBase {
 class EnterpriseAccountHandle extends AccountHandlerBase {
   public async handle(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
+    const getAccountInfoRet = await this.getAccountInfo();
+    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !this.accountInfo) {
+      HiLog.error(TAG, 'EnterpriseAccountHandle getAccountInfo error');
+      return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
+    }
     decryptContent.userId = this.userId;
     return ResultMsg.buildSuccess();
   }
