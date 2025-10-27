@@ -125,6 +125,7 @@ export default class StartSandboxHandler {
   private async prepareStartSandbox(decryptContent: DecryptContent,
     context: common.ServiceExtensionContext): Promise<Result<DecryptContent>> {
     const startSandboxRet = await this.startSandboxInner(decryptContent, context);
+    OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandboxInner error');
       await OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
@@ -264,7 +265,7 @@ export default class StartSandboxHandler {
     try {
       await context.startAbility(decryptContent.openDlpFileData.want);
       HiLog.info(TAG, `startAbility success startId: ${decryptContent.openDlpFileData.startId}`);
-      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
+      await ViewAbilityService.getInstance().sendDisconnectMsg();
       await this.addDecryptData(decryptContent);
       this.reportOpenSuccess(decryptContent);
       return ResultMsg.buildSuccess();

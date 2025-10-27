@@ -46,7 +46,6 @@ struct Index {
   private handleScreenOff = async () => {
     HiLog.info(TAG, 'receive SCREEN_OFF_EVENT');
     this.closeDialog();
-    await OpeningDialogService.getInstance().terminateOpeningDialog();
   };
 
   aboutToAppear(): void {
@@ -101,7 +100,6 @@ struct Index {
     this.timeoutId10 = setTimeout(async () => {
       HiLog.error(TAG, 'closeDialog by decrypt timeout');
       await this.closeDialog();
-      await OpeningDialogService.getInstance().terminateOpeningDialog();
     }, Constants.OPENING_DIALOG_TIMEOUT_TIME);
   }
 
@@ -116,6 +114,7 @@ struct Index {
     }
     this.dlpAlertDialog.close();
     await OpeningDialogService.getInstance().dialogDisappear(this.requestId);
+    await OpeningDialogService.getInstance().terminateOpeningDialog();
   }
 
   build() {

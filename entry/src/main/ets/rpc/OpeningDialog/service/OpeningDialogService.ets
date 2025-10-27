@@ -113,38 +113,6 @@ export default class OpeningDialogService {
     }
   }
 
-  public async disconnectViewAbilityWithTimeout(): Promise<void> {
-    HiLog.info(TAG, 'disconnectViewAbilityWithTimeout start');
-
-    if (!this._context) {
-      HiLog.error(TAG, 'disconnectViewAbilityWithTimeout context is undefined');
-      return;
-    }
-
-    if (this._disconnectTimer) {
-      clearTimeout(this._disconnectTimer);
-      this._disconnectTimer = null;
-    }
-
-    return new Promise<void>((resolve) => {
-      this._disconnectTimer = setTimeout(async () => {
-        try {
-          if (this._context && this.connectionId) {
-            await this._context.disconnectServiceExtensionAbility(this.connectionId);
-            HiLog.info(TAG, 'disconnectViewAbilityWithTimeout success');
-          } else {
-            HiLog.warn(TAG, 'disconnectViewAbilityWithTimeout skipped context null or connectionId null');
-          }
-        } catch (error) {
-          HiLog.wrapError(TAG, error, 'Failed to disconnectViewAbilityWithTimeout');
-        } finally {
-          this._disconnectTimer = null;
-          resolve();
-        }
-      }, Constants.DISCONNECT_VIEW_TIMEOUT);
-    });
-  }
-
   private async setRemoteObject(): Promise<void> {
     HiLog.info(TAG, `setRemoteObject start`);
     if (!this.remoteProxy) {

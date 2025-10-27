@@ -64,29 +64,6 @@ export default class ViewAbilityService {
     return true;
   }
 
-  public async sendDisconnectMsgWithTimeout(): Promise<boolean> {
-    HiLog.info(TAG, 'ViewAbilityService sendDisconnectMsgWithTimeout');
-    if (!this._remoteProxy) {
-      HiLog.error(TAG, 'sendDisconnectMsgWithTimeout remoteProxy is invalid');
-      return false;
-    }
-    let option = new rpc.MessageOption();
-    let data = new rpc.MessageSequence();
-    let reply = new rpc.MessageSequence();
-    try {
-      data.writeInterfaceToken(Constants.DLP_MGR_VIEW_ABILITY_TOKEN);
-      await this._remoteProxy.sendMessageRequest(Constants.COMMAND_DISCONNECT_WITH_TIMEOUT, data, reply, option);
-      HiLog.info(TAG, 'sendDisconnectMsgWithTimeout sendmsg success.');
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'sendDisconnectMsgWithTimeout sendmsg error');
-      return false;
-    } finally {
-      data.reclaim();
-      reply.reclaim();
-    }
-    return true;
-  }
-
   public async sendDisconnectMsg(): Promise<boolean> {
     HiLog.info(TAG, 'ViewAbilityService sendDisconnectMsg');
     if (!this._remoteProxy) {

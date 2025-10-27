@@ -108,6 +108,11 @@ export default class OpeningDialogManager {
     return this._isTerminalSelf;
   }
 
+  private setHasCallback(hasCallback: boolean): void {
+    HiLog.debug(TAG, `setHasCallback ${hasCallback}`);
+    this._hasCallback = hasCallback;
+  }
+
   public getIsDecryptingByRequestId(requestId: string): boolean {
     this.printAllDecryptingMap();
     const isDecrypting = this._decryptingMap.has(requestId);
@@ -160,7 +165,7 @@ export default class OpeningDialogManager {
     return true;
   }
 
-  // 判断是否需要拉起沙箱，这次不需要就等timeout的回调
+  // 判断是否需要拉起沙箱，这次不需要就等timeout的回调或者callback的回调
   public getNeedStartAbility(requestId: string): boolean {
     this.printAllDecryptingMap();
     HiLog.info(TAG, `OpeningDialogManager getNeedStartAbility requestId ${requestId}`);
@@ -171,8 +176,8 @@ export default class OpeningDialogManager {
     }
     const timeout = decryptingState.dialogTimeout;
     HiLog.info(TAG, `OpeningDialogManager getNeedStartAbility requestId ${requestId}, timeout ${timeout},
-    showDialogState ${this._showDialogState}`);
-    if (!this._showDialogState || timeout) {
+    showDialogState ${this._showDialogState} hasCallback ${this._hasCallback}`);
+    if ((!this._showDialogState || timeout) && this._hasCallback) {
       HiLog.info(TAG, 'can startAbility');
       return true;
     }
@@ -215,7 +220,7 @@ export default class OpeningDialogManager {
   // 弹框超过250ms的回调
   public async dialogTimeout(requestId: string): Promise<void> {
     this.printAllDecryptingMap();
-    HiLog.info(TAG, `OpeningDialogManager dialogTimeout requestId ${requestId}`);
+    HiLog.info(TAG, `OpeningDialogManager dialogTimeout requestId ${requestId} hasCallback ${this._hasCallback}`);
     const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
     if (!decryptingState) {
       HiLog.info(TAG, 'dialogTimeout uri is not decrypting');
@@ -225,7 +230,7 @@ export default class OpeningDialogManager {
     decryptingState.dialogTimeout = true;
     await ErrorManager.getInstance().startHandleError(requestId);
     this.printAllDecryptingMap();
-    if (decryptingState.needStartAbility) { // 弹框超时，且需要拉起沙箱，就去拉沙箱
+    if (decryptingState.needStartAbility && this._hasCallback) { // 弹框超时，且需要拉起沙箱，就去拉沙箱
       const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox();
       if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
         HiLog.error(TAG, 'OpeningDialogManager startSandbox error');
@@ -233,6 +238,27 @@ export default class OpeningDialogManager {
       this._decryptingMap.delete(requestId);
     }
     await TerminateView.terminate();
+  }
+
+  private async checkNeedStartAbilityButNot(): Promise<void> {
+    this.printAllDecryptingMap();
+    let tempDecryptingState: DecryptingState | undefined = undefined;
+    let requestId = '';
+    for (const entry of this._decryptingMap) {
+      if (entry[1].needStartAbility && entry[1].hasDecrypted) {
+        HiLog.info(TAG, `needStartAbility and hasDecrypted ${entry[0]}`);
+        tempDecryptingState = entry[1];
+        requestId = entry[0];
+      }
+    }
+    if (!tempDecryptingState) {
+      return;
+    }
+    const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox();
+    if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+      HiLog.error(TAG, 'OpeningDialogManager startSandbox error');
+    }
+    this._decryptingMap.delete(requestId);
   }
 
   private async showDialog(requestId: string): Promise<void> {
@@ -273,20 +299,22 @@ export default class OpeningDialogManager {
   // 根据解密状态，校验是否需要拉起弹框
   public async checkShowDialogState(): Promise<void> {
     this.printAllDecryptingMap();
-    this._hasCallback = true;
+    this.setHasCallback(true);
     const isDecrypting = this._decryptingMap.size > 0;
     const requestId = this.getDecryptingRequestId();
     HiLog.info(TAG, `OpeningDialogManager checkShowDialogState showDialogState ${this._showDialogState},
     isDecrypting ${isDecrypting}, requestId ${requestId}, isChargeDecrypting ${this._isChargeDecrypting}`);
-
+    await this.checkNeedStartAbilityButNot();
     if (!isDecrypting && !this._isChargeDecrypting) { // 没在处理弹框逻辑或解密逻辑，需要取消弹框
       await this.hideDialog();
-      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
+      await ViewAbilityService.getInstance().sendDisconnectMsg();
       return;
     }
 
     if (!requestId) {
       HiLog.info(TAG, 'OpeningDialogManager checkShowDialogState getDecryptingRequestId not found');
+      await this.hideDialog();
+      await ViewAbilityService.getInstance().sendDisconnectMsg();
       return;
     }
     if (isDecrypting && !this._showDialogState) { // 正在解密，且没拉起弹框，需要拉起弹框
@@ -397,7 +425,6 @@ export default class OpeningDialogManager {
       return;
     }
     await this.hideDialog();
-    await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
   }
 
   // 根据文件打包类型，文件大小判断是否拉起弹框
@@ -408,7 +435,6 @@ export default class OpeningDialogManager {
       (parseType === FileParseType.RAW && fileSize >= Constants.DIALOG_SHOW_SIZE_RAW)) {
       HiLog.info(TAG, 'need show opening dialog');
       openDlpFileData.needShowToast = true;
-      this._hasCallback = false;
       await this.loadOpeningDialogUIExtAbility(context);
       if (parseType === FileParseType.ZIP) {
         HiLog.info(TAG, 'zip type show opening dialog advance');
@@ -417,7 +443,7 @@ export default class OpeningDialogManager {
       return;
     }
     HiLog.info(TAG, 'no need show opening dialog');
-    this._hasCallback = true;
+    this.setHasCallback(true);
   }
 
   // viewAbility正常结束
@@ -454,6 +480,7 @@ export default class OpeningDialogManager {
     try {
       await context.requestModalUIExtension(uiExtWant);
       HiLog.info(TAG, 'requestModalUIExtension success');
+      this.setHasCallback(false);
       return true;
     } catch (err) {
       HiLog.wrapError(TAG, err, 'requestModalUIExtension error');
