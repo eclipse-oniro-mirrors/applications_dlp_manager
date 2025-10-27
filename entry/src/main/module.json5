@@ -106,7 +106,7 @@
         "icon": "$media:icon",
         "description": "OpeningDialogUIExtAbility",
         "type": "sys/commonUI",
-        "exported": true,
+        "exported": false,
         "srcEntry": "./ets/Ability/OpeningDialogUIExtAbility.ets"
       },
       {
@@ -114,8 +114,16 @@
         "icon": "$media:icon",
         "description": "PhoneDialogUIExtAbility",
         "type": "sys/commonUI",
-        "exported": true,
+        "exported": false,
         "srcEntry": "./ets/Ability/PhoneDialogUIExtAbility.ets"
+      },
+      {
+        "name": "ClearDlpCacheAbility",
+        "srcEntry": "./ets/Ability/ClearDlpCacheAbility.ets",
+        "icon": "$media:icon",
+        "description": "service",
+        "type": "service",
+        "exported": true
       }
     ],
     "requestPermissions": [

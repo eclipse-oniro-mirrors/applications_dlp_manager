@@ -14,9 +14,9 @@
  */
 
 import { HiLog } from '../common/HiLog';
-import rpc from '@ohos.rpc'
-import Constant from '../common/constant'
-import fs from '@ohos.file.fs'
+import rpc from '@ohos.rpc';
+import Constant from '../common/constant';
+import fs from '@ohos.file.fs';
 import { BusinessError } from '@ohos.base';
 import FileUtil from '../common/external/FileUtil';
 
