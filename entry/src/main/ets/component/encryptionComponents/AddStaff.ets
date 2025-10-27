@@ -124,9 +124,6 @@ struct AddStaff {
       let searchArray: string[] = this.inputArray.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
       let accountResponse: DomainAccountResponse | undefined =
         await AccountManager.getDomainAccountByAccountNames(searchArray);
-      if (i === Constants.ENCRYPTION_FIRST_QUERY_BATCH) {
-        this.deleteBuildSpan(startOffset, endOffset);
-      }
       this.dealAccountResponse(searchArray, accountResponse, startOffset, endOffset);
 
       startLine = (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
@@ -138,6 +135,9 @@ struct AddStaff {
     startOffset: number[], endOffset: number[]) {
     let businessCode = this.getBusinessCode(accountResponse);
     if (businessCode !== Constants.INTERFACE_SUCCESS) {
+      if (searchArray.length !== Constants.RICH_EDITOR_FIRST) {
+        this.deleteBuildSpan(startOffset, endOffset);
+      }
       this.batchDealError(searchArray, startOffset, endOffset);
       this.showCode = EncryptProtectionHelper.convertErrorCodeToShowCode(businessCode);
       return;
@@ -163,6 +163,9 @@ struct AddStaff {
         this.showCode = EncryptProtectionShowCodeEnum.INPUT_ERROR;
       }
     })
+    if (this.inputArray.length !== Constants.RICH_EDITOR_FIRST) {
+      this.deleteBuildSpan(startOffset, endOffset);
+    }
   }
 
   private getBusinessCode(accountResponse: DomainAccountResponse | undefined): number {
@@ -247,7 +250,7 @@ struct AddStaff {
     this.deleteBuildSpan(startOffset, endOffset);
     this.showErrInput(inputId, startOffset, endOffset);
     this.controller.addTextSpan(this.errInput.join(';'));
-    this.showCode = EncryptProtectionShowCodeEnum.DEFAULT_ERROR;
+    this.showCode = EncryptProtectionShowCodeEnum.INPUT_ERROR;
     this.showFlag = true;
   }
 
