@@ -21,6 +21,7 @@ import FileUtil from '../../../common/external/FileUtil';
 import { common } from '@kit.AbilityKit';
 import TerminateView from '../../TerminateView/TerminateView';
 import OpeningDialogManager from '../../manager/OpeningDialogManager';
+import FileUtils from '../../../common/FileUtils/FileUtils';
 
 const TAG = 'DataUtils';
 
@@ -34,6 +35,20 @@ async function clearDlpInfoByError(decryptContent: DecryptContent): Promise<void
 
 async function clearDlpInfoByCancelSandbox(decryptContent: DecryptContent): Promise<void> {
   HiLog.info(TAG, 'start clearDlpInfoByCancelSandbox');
+  deleteDecryptData(decryptContent);
+  await deleteDlpLinkFile(decryptContent);
+  await closeDlpFile(decryptContent);
+  FileUtil.closeSync(decryptContent.dlpFd);
+}
+
+async function clearDlpInfoByUri(uri: string): Promise<void> {
+  HiLog.info(TAG, `start clearDlpInfoByUri uri ${FileUtils.getFileNameByUri(uri)}`);
+  const manager = OpenDlpFileManager.getInstance();
+  const getRet = manager.getHasDecryptedContent(uri);
+  if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
+    return;
+  }
+  const decryptContent = getRet.result;
   deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
@@ -113,4 +128,4 @@ function clearIsDecrypting(decryptContent: DecryptContent): void {
   }
 }
 
-export { clearDlpInfoByError, clearDlpInfoBatch, closeDlpFile };
+export { clearDlpInfoByError, clearDlpInfoBatch, closeDlpFile, clearDlpInfoByUri };
