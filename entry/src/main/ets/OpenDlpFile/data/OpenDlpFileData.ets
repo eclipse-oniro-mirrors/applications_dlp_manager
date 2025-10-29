@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Want from '@ohos.app.ability.Want';
-import { FileParseType } from '../../bean/data/FileParseType';
+
 import Constants from '../../common/constant';
-import { HiLog } from '../../common/HiLog';
-import { isInvalidStr, isValidPath } from '../../common/FileUtils/utils';
+import { FileParseType } from '../../bean/data/FileParseType';
 import FileUtils from '../../common/FileUtils/FileUtils';
+import { getCurrentTime, isInvalidStr, isValidPath } from '../../common/FileUtils/utils';
+import { HiLog } from '../../common/HiLog';
+import Want from '@ohos.app.ability.Want';
 
 const TAG: string = 'OpenDlpFileData';
 const APPID_FOR_HOPE: string = '5765880207854533797';
@@ -51,10 +52,12 @@ export default class OpenDlpFileData {
   private _requestId: string = '';
   private _needShowToast: boolean = false;
   private _fileParse: FileParseType = FileParseType.ZIP;
+  private _startTime: number = -1;
 
   constructor(want: Want, startId: number) {
     this._want = want;
     this._startId = startId;
+    this._startTime = getCurrentTime(false);
   }
 
   public set want(value: Want) {
@@ -167,6 +170,14 @@ export default class OpenDlpFileData {
 
   public get fileParse(): FileParseType {
     return this._fileParse;
+  }
+
+  public set startTime(value: number) {
+    this._startTime = value;
+  }
+
+  public get startTime(): number {
+    return this._startTime;
   }
 
   private checkPermissionWithPluginId(): boolean {
