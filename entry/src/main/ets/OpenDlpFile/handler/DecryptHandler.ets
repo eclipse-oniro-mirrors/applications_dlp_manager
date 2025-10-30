@@ -115,6 +115,7 @@ export default class DecryptHandler {
     HiLog.info(TAG, 'start getDecryptState');
     const requestId = decryptContent.openDlpFileData.requestId;
     const needShowToast = decryptContent.openDlpFileData.needShowToast;
+    const startTime = decryptContent.openDlpFileData.startTime;
     const statusRet = this.checkZipCancelByUser(decryptContent);
     if (statusRet.errcode !== Constants.ERR_CODE_SUCCESS || !statusRet.result) {
       HiLog.error(TAG, 'createDecryptTask checkZipCancelByUser failed');
@@ -146,6 +147,7 @@ export default class DecryptHandler {
         decryptContent.hasDecrypted = true;
         decryptContent.openDlpFileData.requestId = requestId;
         decryptContent.openDlpFileData.needShowToast = needShowToast;
+        decryptContent.openDlpFileData.startTime = startTime;
         await OpeningDialogManager.getInstance().hideOpeningDialog(requestId);
       }
     }
