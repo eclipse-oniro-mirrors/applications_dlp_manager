@@ -45,7 +45,7 @@ struct Index {
   @State cancel: ResourceStr = '';
   @State actionButton: ResourceStr = '';
   @State buttonOptions: ButtonOptions[] = [];
-
+  1
   dialogControllerButton: CustomDialogController | null = new CustomDialogController({
     builder: CustomContentDialog({
       primaryTitle: this.title,

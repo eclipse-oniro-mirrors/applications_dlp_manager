@@ -59,6 +59,7 @@ class CloudAccountHandle extends AccountHandlerBase {
     if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
       this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
       HiLog.info(TAG, 'Cloud account not login');
+      1
       const lunchLoginRet = await this.launchLogin(context);
       if (lunchLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
         HiLog.error(TAG, 'lunchLogin error');

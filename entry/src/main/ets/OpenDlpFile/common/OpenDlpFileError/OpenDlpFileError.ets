@@ -18,7 +18,6 @@ import Constants from '../../../common/constant';
 export class OpenDlpFileError {
   public static readonly NOT_NEED_TOAST: Set<number> = new Set([
     Constants.ERR_CODE_FILE_IS_DECRYPTING_ERROR,
-    Constants.ERR_JS_ACCOUNT_NOT_LOGIN,
     Constants.ERR_CODE_USER_STOP_DIALOG
   ]);
   public static readonly NEED_DIALOG: Set<number> = new Set([
@@ -26,6 +25,7 @@ export class OpenDlpFileError {
     Constants.ERR_JS_USER_NO_PERMISSION_2C,
     Constants.ERR_JS_NETWORK_INVALID,
     Constants.ERR_JS_APP_NETWORK_INVALID,
+    Constants.ERR_JS_ACCOUNT_NOT_LOGIN,
     Constants.ERR_JS_OFFLINE
   ]);
 }
