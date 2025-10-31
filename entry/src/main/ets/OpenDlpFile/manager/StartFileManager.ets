@@ -14,8 +14,9 @@
  */
 
 import { common } from '@kit.AbilityKit';
-import { HiLog } from '../../common/HiLog';
 import Constants from '../../common/constant';
+import { HiLog } from '../../common/HiLog';
+import { isValidPath } from '../../common/FileUtils/utils';
 import Result from '../../common/Result';
 import { ResultMsg } from '../../common/ResultMsg';
 
@@ -24,8 +25,12 @@ const TAG: string = 'StartFileManager';
 export class StartFileManager {
   public static async startFileManager(uri: string | undefined): Promise<Result<void>> {
     const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
-    if (!context || !uri) {
-      HiLog.error(TAG, 'startFileManager viewContext null');
+    if (!context) {
+      HiLog.error(TAG, 'startFileManager viewContext is null.');
+      return ResultMsg.getErrMsg(Constants.ERR_JS_APP_PARAM_ERROR);
+    }
+    if (!uri || !isValidPath(uri)) {
+      HiLog.error(TAG, 'startFileManager uri is invalid.');
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_PARAM_ERROR);
     }
     const viewContext = context as common.ServiceExtensionContext;
