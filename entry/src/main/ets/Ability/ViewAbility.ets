@@ -69,7 +69,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     OpeningDialogManager.getInstance().setIsChargeDecrypting(true);
     OpeningDialogManager.getInstance().setIsTerminalSelf(false);
-    AppStorage.setOrCreate(AppStorageConstant.DECRYPTION_START_TIME, systemDateTime.getTime(false));
     const processor = new OpenDlpFileProcessor();
     let processRet = await processor.process(want, startId, this.context);
     if (processRet.errcode !== Constants.ERR_CODE_SUCCESS) {

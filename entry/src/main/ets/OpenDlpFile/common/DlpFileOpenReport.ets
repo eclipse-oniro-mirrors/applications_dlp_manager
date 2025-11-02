@@ -36,7 +36,7 @@ export class DlpFileOpenReport {
       'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'PACK_METHOD': -1,
       'OPERATION_COST': '',
-      'DECRYPTION_COST': getCostTime(AppStorage.get(AppStorageConstant.DECRYPTION_START_TIME)) ?? 0,
+      'DECRYPTION_COST': getCostTime(decryptContent.openDlpFileData.startTime) ?? 0,
       'FVERSIONID': 0,
       'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
@@ -63,7 +63,7 @@ export class DlpFileOpenReport {
       'REAL_FILE_TYPE': decryptContent.fileMetaInfo?.fileType ?? '',
       'FILE_SIZE': decryptContent.fileMetaInfo?.fileSize ?? -1,
       'FILE_CONFIGURATION': decryptContent.authPerm,
-      'DECRYPTION_COST': getCostTime(AppStorage.get(AppStorageConstant.DECRYPTION_START_TIME)) ?? 0,
+      'DECRYPTION_COST': getCostTime(decryptContent.openDlpFileData.startTime) ?? 0,
       'CODE': code
     };
     return msg;
