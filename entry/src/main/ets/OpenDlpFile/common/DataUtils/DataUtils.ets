@@ -89,7 +89,8 @@ async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
 async function terminateDataAbility(dataContext: common.ServiceExtensionContext): Promise<void> {
   HiLog.info(TAG, 'terminateDataAbility start');
   await terminateSelf(dataContext);
-  await TerminateView.terminate(true);
+  HiLog.info(TAG, 'TerminateView terminate by terminateDataAbility');
+  await TerminateView.terminate();
 }
 
 async function terminateSelf(context: common.ServiceExtensionContext): Promise<void> {

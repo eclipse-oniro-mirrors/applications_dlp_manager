@@ -20,6 +20,7 @@ import OpeningDialogManager from '../manager/OpeningDialogManager';
 import { HiLog } from '../../common/HiLog';
 import { BusinessError } from '@ohos.base';
 import { ErrorHandlerFactory } from '../manager/ErrorManager';
+import TerminateView from '../TerminateView/TerminateView';
 
 const TAG = 'ErrorHandler';
 
@@ -37,7 +38,11 @@ export default class ErrorHandler {
     return ErrorHandler.instance;
   }
 
-  // 弹框超过250ms，弹toast；弹框小于250ms，等待弹框250ms之后，弹toast
+  // 错误处理，弹框或者toast
+  // 1、不需要拉起“正在打开”的动效，可以直接进行错误处理（错误处理，情况一）
+  // 2、需要拉起“正在打开”的动效，有以下两种情况：
+  // 2.1 callback回来之后，发现解密完成，直接错误处理（错误处理，情况二）
+  // 2.2 callback回来之后，发现未解密完成，需要拉起“正在打开”的动效，等待timeout之后，进行错误处理（错误处理，情况三）
   public async startHandleError(requestId: string, error?: BusinessError): Promise<Result<boolean>> {
     HiLog.info(TAG, `start startErrorHandler requestId ${requestId}`);
     if (error) {
@@ -48,7 +53,7 @@ export default class ErrorHandler {
       return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
     }
 
-    const canShowToast = OpeningDialogManager.getInstance().getCanShowToast();
+    const canShowToast = OpeningDialogManager.getInstance().getCanShowToast(requestId);
     HiLog.info(TAG, `startHandleError canShowToast ${canShowToast}`);
 
     if (!canShowToast) {
@@ -61,6 +66,9 @@ export default class ErrorHandler {
 
     await this.startHandleErrorInner(this.errorInfo);
     this.errorInfo = undefined;
+
+    HiLog.info(TAG, 'TerminateView terminate by startHandleError');
+    await TerminateView.terminate();
     return ResultMsg.buildSuccess();
   }
 

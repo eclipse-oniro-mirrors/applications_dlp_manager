@@ -263,6 +263,7 @@ export default class DecryptContent {
     return ResultMsg.buildSuccess();
   }
 
+  // 判断是否是非owner打开仅查看一次的dlp文件
   public static isNotOwnerAndReadOnce(decryptContent: DecryptContent): boolean {
     if (CommonUtil.isEmptyStr(decryptContent.fileMetaInfo.fileId)) { // 不是仅查看一次
       HiLog.debug(TAG, 'isOwnerAndReadOnce fileId is empty');

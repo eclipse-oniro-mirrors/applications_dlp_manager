@@ -71,6 +71,9 @@ export default class TerminateView {
     HiLog.info(TAG, `TerminateView hasDecryptedSize: ${hasDecryptedSize}, hasCallback: ${hasCallback},
     isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast},
     highPriority: ${highPriority}`);
+    if (hasDecryptedSize === 0 && !isDecrypting) {
+      ApplyEfficiencyManager.getInstance().releaseEfficiency();
+    }
     if (hasDecryptedSize === 0 && hasCallback && toastSize === 0 && !isWaitingShowToast &&
       (!isDecrypting || highPriority)) {
       TerminateView.executeTerminate(viewContext);
