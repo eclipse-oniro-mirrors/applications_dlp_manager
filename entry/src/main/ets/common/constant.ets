@@ -297,6 +297,7 @@ export default class Constants {
   public static readonly COMMAND_GET_DOMAIN_ACCOUNT_INFO = 3;
   public static readonly COMMAND_BATCH_REFRESH = 4;
   public static readonly COMMAND_USER_CANCEL_DECRYPT = 5;
+  public static readonly COMMAND_NOTIFY_REGISTER_NETWORK = 6;
 
   public static readonly COMMAND_CLEAR_DLP_CACHE = 1;
 

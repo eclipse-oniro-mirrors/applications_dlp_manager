@@ -44,6 +44,7 @@ export default class CredConnectServiceFileId {
       onConnect: (elementName, remote) => {
         HiLog.info(TAG, 'onConnect success');
         this.remoteProxy = remote;
+        this.notifyRegisterNetWork();
         if (this.needWaitCallback) {
           HiLog.info(TAG, 'this.needWaitCallback is true');
           this.cancelFileId(this.fileId);
@@ -80,9 +81,6 @@ export default class CredConnectServiceFileId {
     let want: Want = {
       bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
       abilityName: Constants.DLP_CREDMGR_DATA_ABILITY_NAME,
-      parameters: {
-        'ohos.dlp.params.connectForFileId': true,
-      }
     };
     try {
       switch (code) {
@@ -98,6 +96,38 @@ export default class CredConnectServiceFileId {
     } catch (err) {
       HiLog.wrapError(TAG, err, 'connectServiceAbility failed');
     }
+  }
+
+  private notifyRegisterNetWork() {
+    HiLog.info(TAG, 'notifyRegisterNetWork start');
+    if (this.remoteProxy === null) {
+      HiLog.error(TAG, 'notifyRegisterNetWork remoteProxy null');
+      return;
+    }
+    let option = new rpc.MessageOption(Constants.TF_ASYNC);
+    let data = new rpc.MessageSequence();
+    let reply = new rpc.MessageSequence();
+    try {
+      data.writeInterfaceToken(Constants.DLP_CREDMGR_INTERFACE_TOKEN);
+      let callback: CredCallbackStub = new CredCallbackStub('CredCallbackStub');
+      data.writeRemoteObject(callback.asObject());
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'notifyRegisterNetWork prepare data exception');
+      data.reclaim();
+      reply.reclaim();
+      return;
+    }
+    this.remoteProxy.sendMessageRequest(Constants.COMMAND_NOTIFY_REGISTER_NETWORK, data, reply, option)
+      .then((result) => {
+        HiLog.info(TAG, 'notifyRegisterNetWork success.');
+      })
+      .catch((e: string) => {
+        HiLog.error(TAG, `notifyRegisterNetWork error: ${e}`);
+      })
+      .finally(() => {
+        data.reclaim();
+        reply.reclaim();
+      });
   }
 
   cancelFileId(fileId: string) {
@@ -127,14 +157,17 @@ export default class CredConnectServiceFileId {
       reply.reclaim();
       return;
     }
-    this.remoteProxy.sendMessageRequest(Constants.COMMAND_USER_CANCEL_DECRYPT, data, reply, option).then((result) => {
-      HiLog.info(TAG, 'cancelFileId success.');
-    }).catch((e: string) => {
-      HiLog.error(TAG, `cancelFileId error: ${e}`);
-    }).finally(() => {
-      data.reclaim();
-      reply.reclaim();
-    });
+    this.remoteProxy.sendMessageRequest(Constants.COMMAND_USER_CANCEL_DECRYPT, data, reply, option)
+      .then((result) => {
+        HiLog.info(TAG, 'cancelFileId success.');
+      })
+      .catch((e: string) => {
+        HiLog.error(TAG, `cancelFileId error: ${e}`);
+      })
+      .finally(() => {
+        data.reclaim();
+        reply.reclaim();
+      });
   }
 
   public disconnectServiceAbility() {
