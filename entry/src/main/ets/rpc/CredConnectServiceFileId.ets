@@ -70,7 +70,7 @@ export default class CredConnectServiceFileId {
   }
 
   private connectServiceAbility(code: number) {
-    HiLog.info(TAG, 'connectServiceAbility start');
+    HiLog.info(TAG, 'CredConnectServiceFileId connectServiceAbility start');
     const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
     if (!context) {
       HiLog.error(TAG, 'connectServiceAbility viewContext null');
@@ -80,6 +80,9 @@ export default class CredConnectServiceFileId {
     let want: Want = {
       bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
       abilityName: Constants.DLP_CREDMGR_DATA_ABILITY_NAME,
+      parameters: {
+        'ohos.dlp.params.connectForFileId': true,
+      }
     };
     try {
       switch (code) {
