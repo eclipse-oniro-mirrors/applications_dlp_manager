@@ -387,6 +387,7 @@ export default class MainAbility extends UIExtensionAbility {
         if (err === Constants.ERR_JS_USER_NO_PERMISSION) {
           let accountName: string = getAccountNameFromErrMsg(msg);
           if (!CommonUtil.isEmptyStr(accountName)) {
+            ansErr.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
             accountFlag = await AccountManager.checkAccountInfo(accountName);
           }
         }
