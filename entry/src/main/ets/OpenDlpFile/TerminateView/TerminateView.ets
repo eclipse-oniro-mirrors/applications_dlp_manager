@@ -35,7 +35,21 @@ export default class TerminateView {
     return TerminateView._viewAbilityPhoneToastCount;
   }
 
-  public static async terminate(): Promise<void> {
+  private static async executeTerminate(viewContext: common.ServiceExtensionContext): Promise<void> {
+    HiLog.info(TAG, 'start executeTerminate');
+    try {
+      ApplyEfficiencyManager.getInstance().releaseEfficiency();
+      OpeningDialogManager.getInstance().setIsTerminalSelf(true);
+      await ViewAbilityService.getInstance().sendDisconnectMsg();
+      await viewContext.terminateSelf();
+      HiLog.info(TAG, 'viewAbility terminateSelf success');
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'terminateSelf exception');
+    }
+    OpeningDialogManager.getInstance().setIsTerminalSelf(false);
+  }
+
+  public static async terminate(highPriority?: boolean): Promise<void> {
     HiLog.info(TAG, 'TerminateView terminate start');
     const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
     if (!context) {
@@ -55,18 +69,14 @@ export default class TerminateView {
     const toastSize = TerminateView._viewAbilityPhoneToastCount;
     const isWaitingShowToast = OpeningDialogManager.getInstance().getIsWaitingShowToast();
     HiLog.info(TAG, `TerminateView hasDecryptedSize: ${hasDecryptedSize}, hasCallback: ${hasCallback},
-    isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast}`);
-    if (hasDecryptedSize === 0 && hasCallback && !isDecrypting && toastSize === 0 && !isWaitingShowToast) {
-      try {
-        ApplyEfficiencyManager.getInstance().releaseEfficiency();
-        OpeningDialogManager.getInstance().setIsTerminalSelf(true);
-        await ViewAbilityService.getInstance().sendDisconnectMsg();
-        await viewContext.terminateSelf();
-        HiLog.info(TAG, 'viewAbility terminateSelf success');
-      } catch (error) {
-        HiLog.wrapError(TAG, error, 'terminateSelf exception');
-      }
+    isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast},
+    highPriority: ${highPriority}`);
+    if (hasDecryptedSize === 0 && !isDecrypting) {
+      ApplyEfficiencyManager.getInstance().releaseEfficiency();
     }
-    OpeningDialogManager.getInstance().setIsTerminalSelf(false);
+    if (hasDecryptedSize === 0 && hasCallback && toastSize === 0 && !isWaitingShowToast &&
+      (!isDecrypting || highPriority)) {
+      TerminateView.executeTerminate(viewContext);
+    }
   }
 }

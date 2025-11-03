@@ -76,10 +76,6 @@ export default class ViewAbility extends ServiceExtensionAbility {
     }
     hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
     await OpeningDialogManager.getInstance().unLoadOpeningDialogNormal();
-    if (!OpeningDialogManager.getInstance().getIsWaitingShowToast()) {
-      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
-      await TerminateView.terminate();
-    }
   }
 
   async onDestroy(): Promise<void> {

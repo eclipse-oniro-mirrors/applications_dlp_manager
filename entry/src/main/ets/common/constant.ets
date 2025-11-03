@@ -368,14 +368,12 @@ export default class Constants {
   public static readonly DECRYPT_NO_NEED_SHOW_DIALOG_TIMEOUT: number = 500;
   public static readonly OPENING_DIALOG_TIMEOUT_TIME: number = 40 * 1000;
   public static readonly COMMAND_SHOW_DIALOG = 1;
-  public static readonly COMMAND_DISCONNECT_WITH_TIMEOUT = 2;
   public static readonly COMMAND_DISCONNECT = 3;
   public static readonly COMMAND_SET_REMOTE_OBJECT = 1;
   public static readonly COMMAND_DIALOG_DISAPPEAR = 2;
   public static readonly COMMAND_DIALOG_TIMEOUT = 3;
   public static readonly CONNECT_VIEW_ABILITY: string = 'connectViewAbility';
   public static readonly STRING_DECRYPT_TIMEOUT: string = 'DECRYPT_TIMEOUT';
-  public static readonly DISCONNECT_VIEW_TIMEOUT: number = 1000;
   public static readonly NO_PERMISSION_OR_EXPIRATION: string = 'no permission or expiration';
   public static readonly DEVICE_2IN1: string = '2in1';
 

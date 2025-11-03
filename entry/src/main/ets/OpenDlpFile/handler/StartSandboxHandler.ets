@@ -125,6 +125,7 @@ export default class StartSandboxHandler {
   private async prepareStartSandbox(decryptContent: DecryptContent,
     context: common.ServiceExtensionContext): Promise<Result<DecryptContent>> {
     const startSandboxRet = await this.startSandboxInner(decryptContent, context);
+    OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandboxInner error');
       await OpenDlpFileManager.getInstance().deleteStatus(decryptContent.openDlpFileData.uri);
@@ -133,7 +134,11 @@ export default class StartSandboxHandler {
     return startSandboxRet;
   }
 
-  // 拉起沙箱：弹框超过250ms，拉起沙箱；弹框小于250ms，等待弹框250ms之后，拉起沙箱
+  // 拉起沙箱
+  // 1、不需要拉起“正在打开”的动效，可以直接拉起沙箱（拉起沙箱，情况一）
+  // 2、需要拉起“正在打开”的动效，有以下两种情况：
+  // 2.1 callback回来之后，发现解密完成，拉起沙箱（拉起沙箱，情况二）
+  // 2.2 callback回来之后，发现未解密完成，需要拉起“正在打开”的动效，等待timeout之后，拉起沙箱（拉起沙箱，情况三）
   public async startSandbox(decryptContent?: DecryptContent): Promise<Result<DecryptContent>> {
     HiLog.info(TAG, 'start startSandbox');
     if (decryptContent) {
@@ -262,9 +267,9 @@ export default class StartSandboxHandler {
     HiLog.info(TAG, 'start sandbox begin');
     this.prepareWantParams(decryptContent);
     try {
+      await ViewAbilityService.getInstance().sendDisconnectMsg();
       await context.startAbility(decryptContent.openDlpFileData.want);
       HiLog.info(TAG, `startAbility success startId: ${decryptContent.openDlpFileData.startId}`);
-      await ViewAbilityService.getInstance().sendDisconnectMsgWithTimeout();
       await this.addDecryptData(decryptContent);
       this.reportOpenSuccess(decryptContent);
       return ResultMsg.buildSuccess();

@@ -21,22 +21,22 @@ const TAG: string = 'ReportSecurityEventUtil';
 export declare type SecurityEventMsg = Record<string, number | string | boolean>;
 
 export class ReportSecurityEventUtil {
-    public static reportSecurityEvent(eventId: number, eventMsg?: object | SecurityEventMsg ) : void {
-        let currentTimestamp: number = getCurrentTime(false);
-        let formatTimestamp: string = getFormatTimestamp(currentTimestamp);
-        let info: securityGuard.SecurityEvent = {
-            eventId: eventId,
-            version: '1.0.0',
-            content: JSON.stringify(eventMsg),
-            timestamp: formatTimestamp
-        }
-        try {
-            securityGuard.reportSecurityEvent(info);
-            HiLog.info(TAG, 'report security event success.');
-        } catch (err) {
-            HiLog.error(TAG, `report security event fail, err: ${JSON.stringify(err)}`);
-        }
+  public static reportSecurityEvent(eventId: number, eventMsg?: object | SecurityEventMsg): void {
+    let currentTimestamp: number = getCurrentTime(false);
+    let formatTimestamp: string = getFormatTimestamp(currentTimestamp);
+    let info: securityGuard.SecurityEvent = {
+      eventId: eventId,
+      version: '1.0.0',
+      content: JSON.stringify(eventMsg),
+      timestamp: formatTimestamp
     }
+    try {
+      securityGuard.reportSecurityEvent(info);
+      HiLog.info(TAG, 'report security event success.');
+    } catch (err) {
+      HiLog.error(TAG, `report security event fail, err: ${JSON.stringify(err)}`);
+    }
+  }
 }
 
 export class SecurityEventIdConstants {

@@ -44,6 +44,7 @@ export class OpenDlpFileProcessor {
     const proRet = await this.processOpenDlpFile(want, startId, context);
     if (proRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'processOpenDlpFile error');
+      await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(proRet.result?.openDlpFileData.requestId);
       const err = { code: proRet.errcode, message: proRet.errmsg ? proRet.errmsg : '' } as BusinessError;
       return await this.processErrcode(err, proRet.result);
     }
@@ -73,7 +74,6 @@ export class OpenDlpFileProcessor {
     const fileParseResult = await this.parseFile(openDlpFileData, context, checkRet.result);
     if (fileParseResult.errcode !== Constants.ERR_CODE_SUCCESS || !fileParseResult.result) {
       HiLog.error(TAG, 'parseFile error');
-      await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(openDlpFileData.requestId);
       return ResultMsg.buildMsg(fileParseResult.errcode, fileParseResult.errmsg);
     }
     let decryptContent = fileParseResult.result;
@@ -92,11 +92,10 @@ export class OpenDlpFileProcessor {
       return ResultMsg.buildResult(decryptResult.errcode, decryptResult.errmsg, decryptContent);
     }
 
-    // 6. start sandbox
+    // 6. start sandbox 不需要拉起“正在打开”的动效，可以直接拉起沙箱（拉起沙箱，情况一）
     const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox(decryptContent);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandbox error');
-      await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
       return ResultMsg.buildResult(startSandboxRet.errcode, startSandboxRet.errmsg, decryptContent);
     }
 
@@ -111,13 +110,12 @@ export class OpenDlpFileProcessor {
       return ResultMsg.buildMsg(fileParseRet.errcode, fileParseRet.errmsg);
     }
 
-    OpeningDialogManager.getInstance().loadOpeningDialog(context, fileParseRet.result.fileSize,
+    OpeningDialogManager.getInstance().loadOpeningDialogByFileTypeAndSize(context, fileParseRet.result.fileSize,
       openDlpFileData, state, fileParseRet.result?.parseType);
 
     const fileMetaInfoRet = await fileParseRet.result.parse(openDlpFileData.uri, context.filesDir);
     if (fileMetaInfoRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'parse error');
-      OpeningDialogManager.getInstance().hideOpeningDialogByFailed(openDlpFileData.requestId);
       return ResultMsg.buildMsg(fileMetaInfoRet.errcode, fileMetaInfoRet.errmsg);
     }
     const decryptContent = new DecryptContent(fileMetaInfoRet.result!, openDlpFileData);
@@ -129,14 +127,12 @@ export class OpenDlpFileProcessor {
     const accountHandlerRet = AccountHandlerFactory.createAccountHandler(decryptContent);
     if (accountHandlerRet.errcode !== Constants.ERR_CODE_SUCCESS || !accountHandlerRet.result) {
       HiLog.error(TAG, 'createAccountHandler error');
-      OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
       return ResultMsg.buildResult(accountHandlerRet.errcode, accountHandlerRet.errmsg, decryptContent);
     }
 
     const handleLoginRet = await accountHandlerRet.result.handle(decryptContent, context);
     if (handleLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'handleLogin error');
-      OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
       return ResultMsg.buildResult(handleLoginRet.errcode, handleLoginRet.errmsg, decryptContent);
     }
     return ResultMsg.buildSuccess(decryptContent);
@@ -151,7 +147,6 @@ export class OpenDlpFileProcessor {
     if (getDecryptDataRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'getDecryptData error');
       await OpenDlpFileManager.getInstance().deleteStatusButNotHasDecrypted(decryptContent.openDlpFileData.uri);
-      OpeningDialogManager.getInstance().hideOpeningDialogByFailed(decryptContent.openDlpFileData.requestId);
       return ResultMsg.buildResult(getDecryptDataRet.errcode, getDecryptDataRet.errmsg, decryptContent);
     }
     return ResultMsg.buildSuccess(decryptContent);
@@ -203,6 +198,7 @@ export class OpenDlpFileProcessor {
       });
       return ResultMsg.buildSuccess();
     }
+    // 不需要拉起“正在打开”的动效，可以直接进行错误处理（错误处理，情况一）
     await ErrorManager.getInstance().startHandleError(decryptContent?.openDlpFileData?.requestId ?? '', error);
     if (decryptContent) {
       clearDlpInfoByError(decryptContent);

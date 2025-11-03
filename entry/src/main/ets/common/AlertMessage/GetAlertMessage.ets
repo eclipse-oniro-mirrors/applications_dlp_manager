@@ -72,6 +72,7 @@ export class GetAlertMessage {
         TerminateView.setViewAbilityPhoneToastCount(--viewAbilityPhoneToastCount);
         if (viewAbilityPhoneToastCount === 0) {
           UIContext.destroyUIContextWithoutWindow();
+          HiLog.info(TAG, 'TerminateView terminate by destroyUIContextWithoutWindow');
           await TerminateView.terminate();
         }
       } finally {
@@ -111,10 +112,10 @@ export class GetAlertMessage {
         return { 'msg': $r('app.string.MESSAGE_NOT_AUTHORIZED_APPLICATION') } as Record<string, Resource>;
       case Constants.ERR_JS_NETWORK_INVALID:
       case Constants.ERR_JS_APP_NETWORK_INVALID:
+      case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
         return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
       case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
       case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
-      case Constants.ERR_JS_CREDENTIAL_TIMEOUT:
       case Constants.ERR_JS_APP_INSIDE_ERROR:
         return { 'msg': $r('app.string.File_cannot_be_opened') } as Record<string, Resource>;
       case Constants.ERR_JS_NOT_DLP_FILE:

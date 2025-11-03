@@ -148,7 +148,7 @@ export default class DecryptHandler {
         decryptContent.openDlpFileData.requestId = requestId;
         decryptContent.openDlpFileData.needShowToast = needShowToast;
         decryptContent.openDlpFileData.startTime = startTime;
-        await OpeningDialogManager.getInstance().hideOpeningDialog(requestId);
+        await OpeningDialogManager.getInstance().setHasDecrypted(requestId);
       }
     }
     return ResultMsg.buildSuccess(hasDecrypted);
@@ -369,7 +369,7 @@ export default class DecryptHandler {
     HiLog.info(TAG, 'createDecryptTask finally');
     clearTimeout(timeout10);
     clearTimeout(timeout500);
-    await OpeningDialogManager.getInstance().hideOpeningDialog(decryptContent.openDlpFileData.requestId);
+    await OpeningDialogManager.getInstance().setHasDecrypted(decryptContent.openDlpFileData.requestId);
   }
 
   private setupTimeoutForInstallSandbox(): TimeoutData {
