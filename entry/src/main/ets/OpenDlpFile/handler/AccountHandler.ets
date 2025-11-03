@@ -26,6 +26,7 @@ import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import AccountManager from '../../manager/AccountManager';
 
 const TAG: string = 'AccountHandler';
+const ENTERPRISE_ACCOUNT: number = 4;
 
 abstract class AccountHandlerBase {
   protected accountInfo?: account_osAccount.OsAccountInfo;
@@ -59,36 +60,10 @@ class CloudAccountHandle extends AccountHandlerBase {
     if (this.accountInfo.distributedInfo.name === 'ohosAnonymousName' &&
       this.accountInfo.distributedInfo.id === 'ohosAnonymousUid') {
       HiLog.info(TAG, 'Cloud account not login');
-      1
-      const lunchLoginRet = await this.launchLogin(context);
-      if (lunchLoginRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-        HiLog.error(TAG, 'lunchLogin error');
-        return ResultMsg.buildMsg(lunchLoginRet.errcode, lunchLoginRet.errmsg);
-      } else {
-        HiLog.info(TAG, 'lunchLogin success');
-        return ResultMsg.getErrMsg(Constants.ERR_JS_ACCOUNT_NOT_LOGIN);
-      }
+      return ResultMsg.buildMsg(Constants.ERR_JS_ACCOUNT_NOT_LOGIN, '');
     }
     decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.userId = this.userId;
-    return ResultMsg.buildSuccess();
-  }
-
-  private async launchLogin(context: common.ServiceExtensionContext): Promise<Result<void>> {
-    let accountWant: Want = {
-      bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
-      abilityName: Constants.DLP_CREDMGR_LOGIN_ABILITY_NAME,
-    };
-    if (!(await getConnectionStatus())) {
-      HiLog.error(TAG, 'getConnectionStatus error');
-      return ResultMsg.getErrMsg(Constants.ERR_JS_NETWORK_INVALID);
-    }
-    try {
-      await context.startAbility(accountWant);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'Failed to invoke startAbility');
-      return ResultMsg.getErrMsg(Constants.ERR_CODE_START_ABILITY_ERROR);
-    }
     return ResultMsg.buildSuccess();
   }
 }
@@ -111,6 +86,19 @@ class DomainAccountHandle extends AccountHandlerBase {
     }
     decryptContent.distributedInfoId = this.accountInfo.distributedInfo.id;
     decryptContent.accountName = this.accountInfo.domainInfo.accountName;
+    decryptContent.userId = this.userId;
+    return ResultMsg.buildSuccess();
+  }
+}
+
+class EnterpriseAccountHandle extends AccountHandlerBase {
+  public async handle(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
+    Promise<Result<void>> {
+    const getAccountInfoRet = await this.getAccountInfo();
+    if (getAccountInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !this.accountInfo) {
+      HiLog.error(TAG, 'EnterpriseAccountHandle getAccountInfo error');
+      return ResultMsg.buildMsg(getAccountInfoRet.errcode, getAccountInfoRet.errmsg);
+    }
     decryptContent.userId = this.userId;
     return ResultMsg.buildSuccess();
   }
@@ -146,6 +134,10 @@ export class AccountHandlerFactory {
     if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
       HiLog.info(TAG, 'create DomainAccountHandle');
       return ResultMsg.buildSuccess(new DomainAccountHandle());
+    }
+    if (decryptContent.fileMetaInfo.accountType === ENTERPRISE_ACCOUNT) {
+      HiLog.info(TAG, 'create EnterpriseAccountHandle');
+      return ResultMsg.buildSuccess(new EnterpriseAccountHandle());
     }
     HiLog.error(TAG, 'not found AccountHandler');
     return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
