@@ -313,10 +313,11 @@ export default class DecryptHandler {
   }
 
   private setupTimeoutPromise(): TimeoutData {
+    // 调用openDLPFile接口等待60秒
     let timeout10: number | undefined = undefined;
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeout10 = setTimeout(() => {
-        HiLog.error(TAG, 'openDLPFile operation timed out after 10 seconds');
+        HiLog.error(TAG, 'openDLPFile operation timed out after 60 seconds');
         reject();
       }, Constants.DECRYPT_TIMEOUT_TIME);
     });

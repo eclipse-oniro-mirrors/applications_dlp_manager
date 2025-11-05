@@ -363,10 +363,10 @@ export default class Constants {
   public static readonly OPEN_DIRECTORY_LINK: string = 'filemanager://openDirectory';
 
   public static readonly OPENING_DIALOG_TIMEOUT: number = 250;
-  public static readonly DECRYPT_TIMEOUT_TIME: number = 20 * 1000;
+  public static readonly DECRYPT_TIMEOUT_TIME: number = 60 * 1000;
   public static readonly INSTALL_TIMEOUT_TIME: number = 5 * 1000;
   public static readonly DECRYPT_NO_NEED_SHOW_DIALOG_TIMEOUT: number = 500;
-  public static readonly OPENING_DIALOG_TIMEOUT_TIME: number = 40 * 1000;
+  public static readonly OPENING_DIALOG_TIMEOUT_TIME: number = 100 * 1000;
   public static readonly COMMAND_SHOW_DIALOG = 1;
   public static readonly COMMAND_DISCONNECT = 3;
   public static readonly COMMAND_SET_REMOTE_OBJECT = 1;

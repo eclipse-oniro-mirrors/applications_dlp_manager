@@ -97,6 +97,7 @@ struct Index {
       await OpeningDialogService.getInstance().dialogTimeout(this.requestId);
     }, Constants.OPENING_DIALOG_TIMEOUT);
 
+    // “正在打开”动效持续最多100秒
     this.timeoutId10 = setTimeout(async () => {
       HiLog.error(TAG, 'closeDialog by decrypt timeout');
       await this.closeDialog();
