@@ -615,6 +615,41 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"คุณไม่ได้รับอนุญาตให้ดูไฟล์นี้ หากต้องการขออนุญาต โปรดติดต่อ %s",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"คุณไม่ได้รับอนุญาตให้ดูไฟล์นี้",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"ยืนยัน",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"ไม่สามารถเข้ารหัสไฟล์ได้",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"กรอกหมายเลขโทรศัพท์ที่ถูกต้อง",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

@@ -615,6 +615,41 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"Non disponi dell'autorizzazione per visualizzare questo file. Per richiedere l'autorizzazione, contatta %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"Non disponi dell'autorizzazione per visualizzare questo file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"Conferma",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"Impossibile crittografare il file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"Inserisci un numero di telefono valido",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

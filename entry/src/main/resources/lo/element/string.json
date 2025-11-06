@@ -615,6 +615,41 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"ທ່ານບໍ່ໄດ້ຮັບການອະນຸຍາດໃຫ້ເບິ່ງໄຟລ໌ນີ້. ເພື່ອຂໍການອະນຸຍາດນີ້, ຕິດຕໍ່ %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"ທ່ານບໍ່ໄດ້ຮັບການອະນຸຍາດໃຫ້ເບິ່ງໄຟລ໌ນີ້.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"ຢືນຢັນ",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"ບໍ່ສາມາດໃສ່ລະຫັດໄຟລ໌ໄດ້.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"ປ້ອນເບີໂທລະສັບທີ່ໃຊ້ໄດ້",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

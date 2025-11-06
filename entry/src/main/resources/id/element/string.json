@@ -615,6 +615,41 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"Anda tidak punya izin untuk melihat file ini. Untuk mengajukan izin, hubungi %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"Anda tidak punya izin untuk melihat file ini.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"Konfirmasi",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"Tidak dapat mengenkripsi file.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"Masukkan nomor telepon yang valid",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

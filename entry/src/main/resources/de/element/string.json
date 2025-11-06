@@ -615,6 +615,41 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"Sie haben keine Berechtigung, diese Datei anzuzeigen. Um eine Berechtigung zu beantragen, wenden Sie sich an %s.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"Sie sind nicht berechtigt, diese Datei anzuzeigen.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"Bestätigen",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"Verschlüsseln der Datei nicht möglich.",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"Gültige Telefonnummer eingeben",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
