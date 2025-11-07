@@ -231,20 +231,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"请输入用户账号",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"账号错误，请输入有效的账号",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"encryption_loading_title",
             "value":"文件加密中…",
             "attr":{
@@ -357,13 +343,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"无法打开此文件。请检查后重试。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_READ_ONLY",
             "value":"您没有“另存为”权限，无法使用此功能。如需申请权限，请联系 %s。",
             "attr":{
@@ -399,13 +378,6 @@
             }
         },
         {
-            "name":"delete_account",
-            "value":"删除",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_OPEN_REJECT",
             "value":"文件已被打开，请先关闭后再进行加密。",
             "attr":{
@@ -422,13 +394,6 @@
         {
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
             "value":"无法打开使用高版本系统加密的文件，请升级系统后再试。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"工号：%s",
             "attr":{
                 "priority":"translate"
             }
@@ -485,27 +450,6 @@
         {
             "name":"Permission_has_expired_description",
             "value":"该文件权限已过期，如需继续查看，请联系 %s。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Network_not_connected",
-            "value":"网络未连接",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Network_not_connected_description",
-            "value":"该文件已设置有效期，请先联网确认文件权限。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"前往设置",
             "attr":{
                 "priority":"translate"
             }

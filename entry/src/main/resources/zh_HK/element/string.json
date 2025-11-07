@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"此檔案已設定有效期。請先連線網絡以確認檔案權限。",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_OPEN_REJECT",
             "value":"檔案已被開啟。請先關閉，然後再加密。",
             "attr":{
@@ -96,13 +89,6 @@
             "value":"複製",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"無法開啟此檔案。請先檢查，然後重試。",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -164,13 +150,6 @@
         {
             "name":"MESSAGE_DLP_READ_ONLY",
             "value":"您沒有「另存為」權限，無法使用此功能。如需申請權限，請聯絡%s。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"員工編號：%s",
             "attr":{
                 "priority":"translate"
             }
@@ -302,13 +281,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"請輸入用戶帳戶",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"唯讀",
             "attr":{
@@ -337,24 +309,10 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"網絡未連線",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"帳戶未登入。請先登入帳戶，然後重試。",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"前往設定",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -376,13 +334,6 @@
             "value":"完成",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"帳戶錯誤，請輸入有效的帳戶",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -465,13 +416,6 @@
         {
             "name":"header_title_edit_tips",
             "value":"擁有編輯權限的用戶可以檢視、編輯、複製、錄屏、儲存和列印檔案。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"刪除",
             "attr":{
                 "priority":"translate"
             }
