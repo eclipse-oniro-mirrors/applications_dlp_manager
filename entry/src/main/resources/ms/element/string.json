@@ -29,13 +29,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"Tempoh kesahan sudah ditetapkan untuk akses ke fail ini. Sila bersambung ke Internet untuk mengesahkan kebenaran.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"EncryptedSharing",
             "value":"Perkongsian disulitkan",
             "attr":{
@@ -192,20 +185,6 @@
         {
             "name":"save_as",
             "value":"Simpan sebagai",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Network_not_connected",
-            "value":"Tiada sambungan Internet",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"Pergi ke Tetapan",
             "attr":{
                 "priority":"translate"
             }
@@ -400,13 +379,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"Tidak dapat membuka fail. Periksa dan cuba lagi.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_GET_ACCOUNT_ERROR",
             "value":"Tidak dapat memperoleh maklumat akaun. Cuba sebentar lagi.",
             "attr":{
@@ -437,13 +409,6 @@
         {
             "name":"Share_Enter_Mobile_Number",
             "value":"Nombor telefon bimbit sahaja. Fail disulitkan hanya boleh dilihat pada peranti yang menjalankan %s atau versi lebih baru.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"ID pekerja: %s",
             "attr":{
                 "priority":"translate"
             }
@@ -582,13 +547,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"Masukkan akaun",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
             "value":"Tidak dapat melakukan ini sekarang. Cuba sebentar lagi.",
             "attr":{
@@ -645,13 +603,6 @@
             }
         },
         {
-            "name":"incorrect_account",
-            "value":"Nama akaun tidak sah",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
             "value":"Tidak dapat membuka fail yang disulitkan dalam versi sistem lebih baru. Sila kemas kini perisian sistem anda dan cuba lagi.",
             "attr":{
@@ -696,13 +647,6 @@
         {
             "name":"share_the_screen",
             "value":"Kongsi skrin",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"Padamkan",
             "attr":{
                 "priority":"translate"
             }

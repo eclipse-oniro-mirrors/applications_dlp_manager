@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"このファイルへのアクセスには有効期間が設定されています。インターネットに接続して権限を確認してください。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"EncryptedSharing",
             "value":"暗号化共有",
             "attr":{
@@ -127,13 +120,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"ファイルを開けません。確認してから再試行してください。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
             "value":"ログイン情報を識別できませんでした。続行するには、仕事用アカウントにログインしてください。",
             "attr":{
@@ -199,13 +185,6 @@
         {
             "name":"Share_Enter_Mobile_Number",
             "value":"携帯電話番号のみ使用できます。暗号化されたファイルは、%s以降を実行している端末で表示できます。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"従業員ID：%s",
             "attr":{
                 "priority":"translate"
             }
@@ -358,13 +337,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"アカウントを入力してください",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"読み取り専用",
             "attr":{
@@ -400,13 +372,6 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"インターネット未接続",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"TITLE_APP_VERSION_LOWER",
             "value":"システム更新が必要",
             "attr":{
@@ -416,13 +381,6 @@
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"アカウントにログインしてから再試行してください。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"設定に移動",
             "attr":{
                 "priority":"translate"
             }
@@ -446,13 +404,6 @@
             "value":"完了",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"アカウント名が無効です",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -565,13 +516,6 @@
             "value":"この権限を持つユーザーは、このファイルを表示、編集、コピー、スクリーン録画、保存、印刷することができます。",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"削除",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
