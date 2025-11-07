@@ -615,6 +615,41 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
+            "value":"ဤဖိုင်ကို ကြည့်ရန် သင့်တွင် ခွင့်ပြုချက် မရှိပါ။ ခွင့်ပြုချက်တောင်းရန် %s ထံ ဆက်သွယ်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"MESSAGE_APP_NOT_HAVE_PERM",
+            "value":"ဤဖိုင်ကို ကြည့်ရန် ခွင့်ပြုချက် မရှိပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Confirms",
+            "value":"အတည်ပြုရန်",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_File_Encrypted_Failed",
+            "value":"ဖိုင်ကို ကုဒ်ပြောင်းဝှက်၍ မရနိုင်ပါ။",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"Share_Tips_Phone_Format",
+            "value":"မှန်ကန်သည့် ဖုန်းနံပါတ်ကို ဖြည့်ပေးပါ",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
