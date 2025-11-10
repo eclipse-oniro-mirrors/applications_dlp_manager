@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"بۇ ھۆججەت ئۈچۈن قەرەل بېكىتىلگەن، تورغا ئۇلاپ ھۆججەت ئىجازىتىنى جەزملەڭ.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_OPEN_REJECT",
             "value":"ھۆججەت ئوچۇق، ئېتىپ ئاندىن مەخپىيلەشتۈرۈڭ.",
             "attr":{
@@ -96,13 +89,6 @@
             "value":"كۆچۈرۈش",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"ھۆججەت ئېچىلمىدى، تەكشۈرۈپ قايتا سىناڭ.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -164,13 +150,6 @@
         {
             "name":"MESSAGE_DLP_READ_ONLY",
             "value":"«باشقا ساقلاش» ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"خىزمەتچى نومۇرى: %s",
             "attr":{
                 "priority":"translate"
             }
@@ -302,13 +281,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"ھېسابات كىرگۈزۈڭ",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"پەقەت ئوقۇش",
             "attr":{
@@ -337,24 +309,10 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"تور يوق",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"ھېساباتقا تىزىملاپ كىرىپ قايتا سىناڭ.",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"تەڭشەك",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -376,13 +334,6 @@
             "value":"پۈتتى",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"ھېسابات خاتا، قايتا كىرگۈزۈڭ.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -465,13 +416,6 @@
         {
             "name":"header_title_edit_tips",
             "value":"تەھرىرلەش ئىجازىتى بار ئىشلەتكۈچى ھۆججەتنى كۆرەلەيدۇ، تەھرىرلىيەلەيدۇ، كۆچۈرەلەيدۇ، ئېكران تۇتالايدۇ، ساقلىيالايدۇ ۋە بېسىپ چىقىرالايدۇ.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"ئۆچۈرۈش",
             "attr":{
                 "priority":"translate"
             }

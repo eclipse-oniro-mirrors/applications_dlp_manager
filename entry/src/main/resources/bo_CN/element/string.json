@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"ཡིག་ཆ་དེར་ནུས་ལྡན་དུས་ཡུན་སྒྲིག་འགོད་བྱས་ཟིན། དྲ་རྒྱར་སྦྲེལ་ནས་ཡིག་ཆའི་དབང་ཚད་གཏན་འཁེལ་གནང་རོགས།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_OPEN_REJECT",
             "value":"ཡིག་ཆ་ཁ་ཕྱེ་ཟིན། སྔོན་ལ་ཁ་བརྒྱབ་རྗེས་དེ་ནས་གསང་སྡོམ་གནང་རོགས།",
             "attr":{
@@ -96,13 +89,6 @@
             "value":"འདྲ་བཤུས།",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"ཡིག་ཆ་འདི་ཁ་འབྱེད་མི་ཐུབ། བརྟག་དཔྱད་བྱས་རྗེས་ཚོད་ལྟ་གནང་རོགས།",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -164,13 +150,6 @@
         {
             "name":"MESSAGE_DLP_READ_ONLY",
             "value":"ཁྱེད་ལ་༼ལོགས་སུ་ཉར་ཚགས་༽ཀྱི་དབང་ཚད་མེད་པས། རྩོལ་ནུས་འདི་བཀོལ་ཐབས་བྲལ། དབང་ཚད་རེ་ཞུ་བྱ་དགོས་ན། %s ལ་འབྲེལ་གཏུག་གནང་རོགས།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"ལས་མིའི་ཨང་རྟགས། : %s",
             "attr":{
                 "priority":"translate"
             }
@@ -302,13 +281,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"སྤྱོད་མཁན་གྱི་ཐོ་ཨང་ནང་འཇུག་གནང་རོགས།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"ཀློག་པ་ཁོ་ན།",
             "attr":{
@@ -337,24 +309,10 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"དྲ་རྒྱར་སྦྲེལ་མཐུད་བྱས་མེད།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"ཐོ་ཨང་ཐོ་འཇུག་བྱས་མེད། ཐོ་ཨང་ཐོ་འཇུག་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།",
             "attr":{
                 "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"སྒྲིག་འགོད་ལ་སྐྱོད།",
-            "attr":{
-                "priority":"LT"
             }
         },
         {
@@ -376,13 +334,6 @@
             "value":"ཚར་སོང་།",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"ཐོ་ཨང་ནོར། ཐོ་ཨང་ཡང་དག་ནང་འཇུག་གནང་རོགས།",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -465,13 +416,6 @@
         {
             "name":"header_title_edit_tips",
             "value":"རྩོམ་སྒྲིག་གི་དབང་ཚད་ཡོད་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆར་ལྟ་ཞིབ་དང་། རྩོམ་སྒྲིག འདྲ་བཤུས། ཡོལ་ཕབ། ཉར་ཚགས་དང་པར་འདེབས་བཅས་བྱེད་ཐུབ།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"སུབ་པ།",
             "attr":{
                 "priority":"translate"
             }

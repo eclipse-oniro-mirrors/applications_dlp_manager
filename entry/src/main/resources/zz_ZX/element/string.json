@@ -33,10 +33,6 @@
             "value":"[TS_850780]_Specified users"
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"[TS_872903]_A validity period has been set for access to this file. Please connect to the Internet to confirm permissions."
-        },
-        {
             "name":"EncryptedSharing",
             "value":"[TS_934972]_Encrypted share"
         },
@@ -85,10 +81,6 @@
             "value":"[TS_850777]_DLPManager"
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"[TS_850768]_Unable to open file. Check and try again."
-        },
-        {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
             "value":"[TS_869447]_Login information could not be identified. Please log in to your work account to continue."
         },
@@ -127,10 +119,6 @@
         {
             "name":"Share_Enter_Mobile_Number",
             "value":"[TS_934969]_Mobile numbers only. Encrypted files can be viewed on devices running %s or later."
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"[TS_869451]_Employee ID: %s"
         },
         {
             "name":"apply_for_the_permission",
@@ -217,10 +205,6 @@
             "value":"[TS_850761]_File permissions"
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"[TS_850741]_Enter account"
-        },
-        {
             "name":"header_title_readonly",
             "value":"[TS_850756]_Read-only"
         },
@@ -241,20 +225,12 @@
             "value":"[TS_850759]_Access denied"
         },
         {
-            "name":"Network_not_connected",
-            "value":"[TS_872902]_No Internet connection"
-        },
-        {
             "name":"TITLE_APP_VERSION_LOWER",
             "value":"[TS_915011]_System update required"
         },
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"[TS_850755]_Log in to your account and try again."
-        },
-        {
-            "name":"Go_setting",
-            "value":"[TS_872901]_Go to Settings"
         },
         {
             "name":"Permission_has_expired",
@@ -267,10 +243,6 @@
         {
             "name":"finished",
             "value":"[TS_850751]_Finish"
-        },
-        {
-            "name":"incorrect_account",
-            "value":"[TS_850770]_Invalid account name"
         },
         {
             "name":"MESSAGE_DLP_SYSTEM_NEED_TO_BE_UPGRADED",
@@ -339,10 +311,6 @@
         {
             "name":"header_title_edit_tips",
             "value":"[TS_850757]_Users with this permission can view, edit, copy, screen-record, save, and print this file."
-        },
-        {
-            "name":"delete_account",
-            "value":"[TS_850735]_Delete"
         },
         {
             "name":"Share_Contact_Person",
