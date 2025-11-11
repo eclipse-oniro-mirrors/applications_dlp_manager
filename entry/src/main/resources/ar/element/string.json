@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"لقد تم تعيين فترة الصلاحية للوصول إلى هذا الملف. يُرجى الاتصال بالإنترنت لتأكيد الأذونات.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"EncryptedSharing",
             "value":"مشاركة مشفرة",
             "attr":{
@@ -127,13 +120,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"يتعذر فتح الملف. يُرجى التحقق وإعادة المحاولة.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
             "value":"تعذر التعرف على معلومات تسجيل الدخول. يُرجى تسجيل الدخول إلى حساب العمل الخاص بك للمتابعة.",
             "attr":{
@@ -199,13 +185,6 @@
         {
             "name":"Share_Enter_Mobile_Number",
             "value":"أرقام الجوال فقط. يمكن عرض الملفات المشفرة على الأجهزة التي تعمل بالإصدار %s أو الإصدارات الأحدث.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"هوية الموظف: %s",
             "attr":{
                 "priority":"translate"
             }
@@ -358,13 +337,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"أدخل الحساب",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"القراءة فقط",
             "attr":{
@@ -400,13 +372,6 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"غير متصل بالإنترنت",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"TITLE_APP_VERSION_LOWER",
             "value":"مطلوب تحديث النظام",
             "attr":{
@@ -416,13 +381,6 @@
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"سجّل الدخول إلى حسابك وأعد المحاولة.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"الإعدادات",
             "attr":{
                 "priority":"translate"
             }
@@ -444,13 +402,6 @@
         {
             "name":"finished",
             "value":"تم",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"اسم الحساب غير صالح",
             "attr":{
                 "priority":"translate"
             }
@@ -565,13 +516,6 @@
             "value":"يمكن للمستخدمين الحاصلين على هذا الإذن عرض هذا الملف وتعديله ونسخه وتسجيل شاشته وحفظه وطباعته",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"حذف",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

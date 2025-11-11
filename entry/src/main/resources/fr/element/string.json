@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"Une période de validité a été définie pour l'accès à ce fichier. Veuillez vous connecter à Internet pour confirmer les autorisations.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"EncryptedSharing",
             "value":"Partage crypté",
             "attr":{
@@ -127,13 +120,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"L'ouverture du fichier a échoué. Veuillez vérifier, puis réessayez.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
             "value":"Les informations de connexion n'ont pas pu être identifiées. Veuillez vous connecter à votre compte professionnel pour continuer.",
             "attr":{
@@ -199,13 +185,6 @@
         {
             "name":"Share_Enter_Mobile_Number",
             "value":"Numéros de téléphone uniquement. Les fichiers cryptés peuvent être affichés sur les appareils fonctionnant sous %s ou une version ultérieure.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"ID d'employé : %s",
             "attr":{
                 "priority":"translate"
             }
@@ -358,13 +337,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"Saisir le compte",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"Lecture seule",
             "attr":{
@@ -400,13 +372,6 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"Aucune connexion Internet",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"TITLE_APP_VERSION_LOWER",
             "value":"Mise à jour système nécessaire",
             "attr":{
@@ -416,13 +381,6 @@
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"Veuillez vous connecter à votre compte, puis réessayez.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"Aller à Paramètres",
             "attr":{
                 "priority":"translate"
             }
@@ -444,13 +402,6 @@
         {
             "name":"finished",
             "value":"Terminer",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"Nom de compte invalide.",
             "attr":{
                 "priority":"translate"
             }
@@ -563,13 +514,6 @@
         {
             "name":"header_title_edit_tips",
             "value":"Les utilisateurs disposant de cette autorisation peuvent enregistrer l'écran, afficher, modifier, copier, enregistrer et imprimer ce fichier.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"Supprimer",
             "attr":{
                 "priority":"translate"
             }

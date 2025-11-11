@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"이 파일의 액세스에 대한 유효 기간이 설정되었습니다. 권한을 확인하려면 인터넷에 연결하십시오.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"EncryptedSharing",
             "value":"암호화된 공유",
             "attr":{
@@ -127,13 +120,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"파일을 열 수 없습니다. 확인하고 다시 시도하십시오.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
             "value":"로그인 정보를 식별하지 못했습니다. 계속하려면 직장 계정에 로그인하십시오.",
             "attr":{
@@ -199,13 +185,6 @@
         {
             "name":"Share_Enter_Mobile_Number",
             "value":"휴대폰 번호만 가능합니다. 암호화된 파일은 %s 이상을 실행하는 장치에서 볼 수 있습니다.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"직원 ID: %s",
             "attr":{
                 "priority":"translate"
             }
@@ -358,13 +337,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"계정 입력",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"읽기 전용",
             "attr":{
@@ -400,13 +372,6 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"인터넷 연결 없음",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"TITLE_APP_VERSION_LOWER",
             "value":"시스템 업데이트 필요",
             "attr":{
@@ -416,13 +381,6 @@
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"계정에 로그인하고 다시 시도하십시오.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"설정으로 이동",
             "attr":{
                 "priority":"translate"
             }
@@ -444,13 +402,6 @@
         {
             "name":"finished",
             "value":"완료",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"올바르지 않은 계정 이름",
             "attr":{
                 "priority":"translate"
             }
@@ -563,13 +514,6 @@
         {
             "name":"header_title_edit_tips",
             "value":"이 권한이 있는 사용자는 이 파일의 보기, 편집, 복사, 화면 녹화, 저장 및 인쇄 작업을 수행할 수 있습니다.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"삭제",
             "attr":{
                 "priority":"translate"
             }

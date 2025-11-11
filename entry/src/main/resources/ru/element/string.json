@@ -50,13 +50,6 @@
             }
         },
         {
-            "name":"Network_not_connected_description",
-            "value":"Настроен срок действия доступа к этому файлу. Для подтверждения прав подключитесь к Интернету.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"EncryptedSharing",
             "value":"Передача с шифрованием",
             "attr":{
@@ -127,13 +120,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"Сбой открытия файла. Проверьте и повторите попытку.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_SYSTEM_IS_AUTHENTICATED",
             "value":"Сбой идентификации данных входа. Чтобы продолжить, выполните вход в рабочий аккаунт.",
             "attr":{
@@ -199,13 +185,6 @@
         {
             "name":"Share_Enter_Mobile_Number",
             "value":"Только номера мобильных телефонов. Зашифрованные файлы можно посмотреть на устройствах с %s или более поздней версией.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"ID сотрудника: %s",
             "attr":{
                 "priority":"translate"
             }
@@ -358,13 +337,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"Введите аккаунт",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"header_title_readonly",
             "value":"Только чтение",
             "attr":{
@@ -400,13 +372,6 @@
             }
         },
         {
-            "name":"Network_not_connected",
-            "value":"Нет доступа в Интернет",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"TITLE_APP_VERSION_LOWER",
             "value":"Требуется обновление системы",
             "attr":{
@@ -416,13 +381,6 @@
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
             "value":"Войдите в ваш аккаунт и повторите попытку.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"Настройки",
             "attr":{
                 "priority":"translate"
             }
@@ -446,13 +404,6 @@
             "value":"Готово",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"Недействительное имя аккаунта",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -565,13 +516,6 @@
             "value":"Пользователи с этим правом могут посмотреть, изменить, скопировать, сохранить, напечатать этот файл или записать его контент с экрана.",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"delete_account",
-            "value":"Удалить",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

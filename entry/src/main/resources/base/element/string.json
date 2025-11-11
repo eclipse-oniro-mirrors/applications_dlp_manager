@@ -231,20 +231,6 @@
             }
         },
         {
-            "name":"enter_a_complete_account",
-            "value":"Enter account",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"incorrect_account",
-            "value":"Invalid account name",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"encryption_loading_title",
             "value":"Encrypting file…",
             "attr":{
@@ -357,13 +343,6 @@
             }
         },
         {
-            "name":"MESSAGE_APP_FILE_PARAM_ERROR",
-            "value":"Unable to open file. Check and try again.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_READ_ONLY",
             "value":"You don't have permission to save another copy of this file. To request permission, contact %s.",
             "attr":{
@@ -399,13 +378,6 @@
             }
         },
         {
-            "name":"delete_account",
-            "value":"Delete",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_DLP_OPEN_REJECT",
             "value":"Close this file before encrypting it.",
             "attr":{
@@ -424,13 +396,6 @@
             "value":"Unable to open files that were encrypted in a newer system version. Please update your system software and try again.",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"encrypt_employee_id",
-            "value":"Employee ID: %s",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
@@ -485,27 +450,6 @@
         {
             "name":"Permission_has_expired_description",
             "value":"Your file permissions have expired. To regain access, contact %s.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"Network_not_connected",
-            "value":"No Internet connection",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"Network_not_connected_description",
-            "value":"A validity period has been set for access to this file. Please connect to the Internet to confirm permissions.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
-            "name":"Go_setting",
-            "value":"Go to Settings",
             "attr":{
                 "priority":"LT"
             }
