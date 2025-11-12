@@ -74,8 +74,7 @@ export default class TerminateView {
     if (hasDecryptedSize === 0 && !isDecrypting) {
       ApplyEfficiencyManager.getInstance().releaseEfficiency();
     }
-    if (hasDecryptedSize === 0 && hasCallback && toastSize === 0 && !isWaitingShowToast &&
-      (!isDecrypting || highPriority)) {
+    if (hasDecryptedSize === 0 && hasCallback && toastSize === 0 && !isWaitingShowToast && !isDecrypting) {
       TerminateView.executeTerminate(viewContext);
     }
   }
