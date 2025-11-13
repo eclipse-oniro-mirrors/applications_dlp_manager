@@ -19,4 +19,5 @@ export default interface FileMetaInfo {
   ownerAccount: string;
   fileSize: number;
   fileId: string;
+  allowedOpenCount: number;
 }
