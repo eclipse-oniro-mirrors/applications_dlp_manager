@@ -54,6 +54,10 @@ export default class OpeningDialogManager {
 
   private constructor() {
     this._decryptingMap = new Map<string, DecryptingState>();
+  }
+
+  public registerEmitEvent() {
+    HiLog.debug(TAG, 'registerEmitEvent');
     emitter.on(Constants.CHECK_SHOW_DIALOG_STATE, this.checkShowDialogStateEvent);
   }
 

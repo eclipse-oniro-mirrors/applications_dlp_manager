@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import AppStorageConstant from '../common/AppStorageConstant';
 import Constants from '../common/constant';
 import { HiLog } from '../common/HiLog';
 import hiTraceMeter from '@ohos.hiTraceMeter';
@@ -21,11 +20,8 @@ import { OpenDlpFileProcessor } from '../OpenDlpFile/ViewProcessor/ViewProcessor
 import OpeningDialogManager from '../OpenDlpFile/manager/OpeningDialogManager';
 import rpc from '@ohos.rpc';
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
-import { systemDateTime } from '@kit.BasicServicesKit';
 import ViewAbilityStub from '../rpc/ViewAbility/stub/ViewAbilityStub';
 import Want from '@ohos.app.ability.Want';
-import TerminateView from '../OpenDlpFile/TerminateView/TerminateView';
-import ViewAbilityService from '../rpc/ViewAbility/service/ViewAbilityService';
 import { StartFileManager } from '../OpenDlpFile/manager/StartFileManager';
 import FileUtils from '../common/FileUtils/FileUtils';
 import FileIdHandler from '../OpenDlpFile/handler/FileIdHandler';
@@ -36,6 +32,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
   private serviceImpl: ViewAbilityStub = new ViewAbilityStub(TAG);
 
   onCreate(want: Want): void {
+    OpeningDialogManager.getInstance().registerEmitEvent();
     HiLog.info(TAG, 'ViewAbility onCreate');
   }
 
