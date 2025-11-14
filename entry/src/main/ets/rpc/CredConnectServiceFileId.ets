@@ -70,7 +70,7 @@ export default class CredConnectServiceFileId {
   }
 
   private connectServiceAbility(code: number) {
-    HiLog.info(TAG, 'connectServiceAbility start');
+    HiLog.info(TAG, 'CredConnectServiceFileId connectServiceAbility start');
     const context: common.ServiceExtensionContext | undefined = AppStorage.get('viewContext');
     if (!context) {
       HiLog.error(TAG, 'connectServiceAbility viewContext null');
@@ -124,14 +124,17 @@ export default class CredConnectServiceFileId {
       reply.reclaim();
       return;
     }
-    this.remoteProxy.sendMessageRequest(Constants.COMMAND_USER_CANCEL_DECRYPT, data, reply, option).then((result) => {
-      HiLog.info(TAG, 'cancelFileId success.');
-    }).catch((e: string) => {
-      HiLog.error(TAG, `cancelFileId error: ${e}`);
-    }).finally(() => {
-      data.reclaim();
-      reply.reclaim();
-    });
+    this.remoteProxy.sendMessageRequest(Constants.COMMAND_USER_CANCEL_DECRYPT, data, reply, option)
+      .then((result) => {
+        HiLog.info(TAG, 'cancelFileId success.');
+      })
+      .catch((e: string) => {
+        HiLog.error(TAG, `cancelFileId error: ${e}`);
+      })
+      .finally(() => {
+        data.reclaim();
+        reply.reclaim();
+      });
   }
 
   public disconnectServiceAbility() {
