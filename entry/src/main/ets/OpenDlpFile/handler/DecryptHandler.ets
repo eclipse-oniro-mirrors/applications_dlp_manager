@@ -138,7 +138,7 @@ export default class DecryptHandler {
         return ResultMsg.getErrMsg(Constants.ERR_JS_OTHER_APP_OPEN_FILE);
       }
       const checkIsSameUser = await this.checkDistributedInfoId(decrypt);
-      if (!checkIsSameUser) {
+      if (!checkIsSameUser || decrypt.fileMetaInfo.fileId !== decryptContent.fileMetaInfo.fileId) {
         HiLog.info(TAG, 'checkDistributedInfoId not same');
         hasDecrypted = false;
       } else {

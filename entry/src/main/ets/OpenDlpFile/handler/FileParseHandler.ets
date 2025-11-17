@@ -112,6 +112,7 @@ interface DlpGeneralInfo {
   contactAccount: string,
   realFileType: string,
   fileId: string,
+  allowedOpenCount: number,
 }
 
 interface CertInfo {
@@ -183,10 +184,19 @@ class ZipParse extends FileParseBase {
       }
     }
 
+    let allowedOpenCount: number = -1;
+    try {
+      let jsonObj: object = JSON.parse(generalInfo);
+      allowedOpenCount = jsonObj['allowedOpenCount'];
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'allowedOpenCount is error');
+    }
+
     const dlpGeneralInfo: DlpGeneralInfo = {
       contactAccount: contactAccount,
       realFileType: realFileType,
       fileId: fileId,
+      allowedOpenCount: allowedOpenCount,
     }
     return dlpGeneralInfo;
   }
@@ -220,7 +230,8 @@ class ZipParse extends FileParseBase {
         fileType: dlpGeneralInfo.realFileType,
         ownerAccount: dlpGeneralInfo.contactAccount,
         fileSize: this.fileSize,
-        fileId: dlpGeneralInfo.fileId
+        fileId: dlpGeneralInfo.fileId,
+        allowedOpenCount: dlpGeneralInfo.allowedOpenCount
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
@@ -254,11 +265,25 @@ class RawParse extends FileParseBase {
     fs.readSync(file.fd, fileId, option);
     const fileIdString: string = textDecoder.decodeToString(new Uint8Array(fileId), { stream: false });
 
+    let flag = new ArrayBuffer(Constants.INT32_SIZE);
+    option = {offset: this.fileSize - Constants.FLAG_SIZE, length: Constants.INT32_SIZE};
+    fs.readSync(file.fd, flag, option);
+    let flagValue: number = new Int32Array(flag)[0];
+    let allowedOpenCount: number = -1;
+    if (flagValue === 1) {
+      option = {offset: this.fileSize - Constants.ALLOWED_OPEN_SIZE, length: Constants.INT32_SIZE};
+      fs.readSync(file.fd, flag, option);
+      allowedOpenCount = new Int32Array(flag)[0];
+    } else {
+      allowedOpenCount = fileIdString.trim() != '' ? 1 : -1;
+    }
+
     const dlpGeneralInfo: DlpGeneralInfo = {
       contactAccount: contactString ?? '',
       realFileType: NUM_TO_TYPE_MAP.has(buf[Constants.NUMBER_THREE]) ?
         NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
       fileId: fileIdString ?? '',
+      allowedOpenCount: allowedOpenCount,
     }
     return dlpGeneralInfo;
   }
@@ -295,7 +320,8 @@ class RawParse extends FileParseBase {
         fileType: dlpGeneralInfo.realFileType,
         ownerAccount: dlpGeneralInfo.contactAccount,
         fileSize: this.fileSize,
-        fileId: dlpGeneralInfo.fileId
+        fileId: dlpGeneralInfo.fileId,
+        allowedOpenCount: dlpGeneralInfo.allowedOpenCount
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
