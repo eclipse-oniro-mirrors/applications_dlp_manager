@@ -64,6 +64,7 @@ export default class ClearDlpCacheStub extends rpc.RemoteObject {
           reply.writeInt(Constant.INTERFACE_SUCCESS);
         } catch (error) {
           HiLog.error(TAG, 'onRemoteMessageRequest writeInt failed');
+          return false;
         }
         return true;
       }

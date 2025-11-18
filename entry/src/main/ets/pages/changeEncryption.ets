@@ -913,10 +913,14 @@ struct changeEncryption {
                           duration: Constants.SHARE_SET_TIMEOUT
                         });
                       }
-                      router.replaceUrl({
-                        url: 'pages/encryptionProtection',
-                        params: this.routerData
-                      })
+                      try {
+                        router.replaceUrl({
+                          url: 'pages/encryptionProtection',
+                          params: this.routerData
+                        })
+                      } catch (error) {
+                        HiLog.wrapError(TAG, error, 'replaceUrl error');
+                      }
                     })
                     .margin({
                       right: SystemUtils.isRTL() ?

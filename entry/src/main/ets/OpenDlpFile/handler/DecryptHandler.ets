@@ -21,7 +21,8 @@ import {
   getAppIdWithUserId,
   getOsAccountInfo,
   getCurrentTime,
-  getAccountNameFromErrMsg
+  getAccountNameFromErrMsg,
+  isValidPath
 } from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
@@ -454,6 +455,10 @@ export default class DecryptHandler {
     wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
     const uri = decryptContent.openDlpFileData.uri;
     const targetBundleName = decryptContent.openDlpFileData.sandboxBundleName;
+    if (!isValidPath(uri)) {
+      HiLog.error(TAG, `invalid uri in want.uri`);
+      return;
+    }
     try {
       uriPermissionManager.grantUriPermission(uri, flag, targetBundleName);
     } catch (error) {
