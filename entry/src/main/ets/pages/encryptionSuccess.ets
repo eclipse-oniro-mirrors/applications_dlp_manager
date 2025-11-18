@@ -46,10 +46,12 @@ function customizeText() {
 }
 
 let storage: LocalStorage = LocalStorage.getShared();
+
 @Entry(storage)
 @Component
 struct encryptionSuccess {
-  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+  @State session: UIExtensionContentSession | undefined =
+    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
   private routerParams: Record<string, AuthAccount[] | PermissionType> =
     router.getParams() as Record<string, AuthAccount[] | PermissionType>;
   @State directionStatus: number = 0;
@@ -67,7 +69,8 @@ struct encryptionSuccess {
   @State staffDataArrayReadOnly: AuthAccount[] = this.routerParams.staffDataArrayReadOnly as AuthAccount[];
   @State staffDataArrayEdit: AuthAccount[] = this.routerParams.staffDataArrayEdit as AuthAccount[];
 
-  @Builder popupBuilderReadOnly() {
+  @Builder
+  popupBuilderReadOnly() {
     Row() {
       Text($r('app.string.header_title_readonly_tips'))
         .fontFamily('HarmonyHeiTi')
@@ -83,7 +86,8 @@ struct encryptionSuccess {
     })
   }
 
-  @Builder popupBuilderEdit() {
+  @Builder
+  popupBuilderEdit() {
     Row() {
       Text($r('app.string.header_title_edit_tips'))
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
@@ -139,8 +143,10 @@ struct encryptionSuccess {
           lg: Constants.DIALOG_LG_OFFSET
         }
       }) {
-        Flex({ justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
-          direction: FlexDirection.Column }) {
+        Flex({
+          justifyContent: FlexAlign.Center, alignItems: ItemAlign.Center,
+          direction: FlexDirection.Column
+        }) {
           Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
             Column() {
               Row() {
@@ -170,6 +176,7 @@ struct encryptionSuccess {
                       .fontColor([$r('sys.color.icon_on_primary')])
                   }
                   .margin({ top: Constants.ENCRYPTION_SUCCESS_IMAGE_MARGIN_TOP });
+
                   Column() {
                     Row() {
                       Text($r('app.string.file_encrypted'))
@@ -335,7 +342,7 @@ struct encryptionSuccess {
                                     .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.readOnlyFlag ?
-                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
@@ -384,7 +391,7 @@ struct encryptionSuccess {
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
                           Text((this.routerParams.selectedPermissionTypeEdit as PermissionType).data === 'all' ?
-                            $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
+                          $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
@@ -486,14 +493,14 @@ struct encryptionSuccess {
                                       Span('+')
                                       Span(this.hideNamesNumEdit)
                                     }
-                                      .customizeText()
+                                    .customizeText()
                                   }
                                   SymbolGlyph($r('sys.symbol.chevron_down'))
                                     .fontSize(`${Constants.PP_IMAGE_HEIGHT}vp`)
                                     .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.editFlag ?
-                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                      Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
@@ -566,10 +573,14 @@ struct encryptionSuccess {
                             .width(Constants.HEADER_COLUMN_WIDTH)
                             .textAlign(TextAlign.Start)
                             .onClick(() => {
-                              router.replaceUrl({
-                                url: 'pages/changeEncryption',
-                                params: this.routerParams
-                              })
+                              try {
+                                router.replaceUrl({
+                                  url: 'pages/changeEncryption',
+                                  params: this.routerParams
+                                })
+                              } catch (error) {
+                                HiLog.wrapError(TAG, error, 'replaceUrl error');
+                              }
                             })
                         }
                         .width(Constants.HEADER_COLUMN_WIDTH)

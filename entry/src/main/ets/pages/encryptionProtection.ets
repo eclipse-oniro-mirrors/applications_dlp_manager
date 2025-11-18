@@ -396,15 +396,19 @@ struct DlpDialog {
         GlobalContext.store('dlpFileName', this.srcFileName);
         GlobalContext.store('dlpProperty', _dlp);
         sendDlpManagerFileConfiguration();
-        router.replaceUrl({
-          url: 'pages/encryptionSuccess',
-          params: {
-            staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-            staffDataArrayEdit: this.staffDataArrayEdit,
-            selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
-            selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
-          }
-        })
+        try {
+          router.replaceUrl({
+            url: 'pages/encryptionSuccess',
+            params: {
+              staffDataArrayReadOnly: this.staffDataArrayReadOnly,
+              staffDataArrayEdit: this.staffDataArrayEdit,
+              selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
+              selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
+            }
+          })
+        } catch (error) {
+          HiLog.wrapError(TAG, error, 'replaceUrl error');
+        }
       }
     });
   }
@@ -498,15 +502,19 @@ struct DlpDialog {
         GlobalContext.store('uri', uri);
         this.processing = false;
         sendDlpManagerFileConfiguration();
-        router.replaceUrl({
-          url: 'pages/encryptionSuccess',
-          params: {
-            staffDataArrayReadOnly: this.staffDataArrayReadOnly,
-            staffDataArrayEdit: this.staffDataArrayEdit,
-            selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
-            selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
-          }
-        })
+        try {
+          router.replaceUrl({
+            url: 'pages/encryptionSuccess',
+            params: {
+              staffDataArrayReadOnly: this.staffDataArrayReadOnly,
+              staffDataArrayEdit: this.staffDataArrayEdit,
+              selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
+              selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
+            }
+          })
+        } catch (error) {
+          HiLog.wrapError(TAG, error, 'replaceUrl error');
+        }
       }
     });
   }
