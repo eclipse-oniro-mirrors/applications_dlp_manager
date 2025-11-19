@@ -153,6 +153,9 @@
       },
       {
         "name": "ohos.permission.REPORT_SECURITY_EVENT"
+      },
+      {
+        "name": "ohos.permission.FILE_ACCESS_MANAGER"
       }
     ]
   }
