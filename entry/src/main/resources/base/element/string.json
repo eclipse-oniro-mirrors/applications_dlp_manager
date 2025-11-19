@@ -670,6 +670,10 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"Cannot view encrypted files."
         }
     ]
 }
