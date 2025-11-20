@@ -250,6 +250,9 @@ export default class StartSandboxHandler {
       }
     };
     ObjectUtil.Assign(want.parameters, dlpWant.parameters);
+    if (want.parameters) {
+      want.parameters['ability.params.stream'] = '';
+    }
   }
 
   private async reportOpenSuccess(decryptContent: DecryptContent) {
