@@ -98,9 +98,9 @@ export default class OpeningDialogManager {
     return this._isWaitingShowToast;
   }
 
-  public getShowDialogState(): boolean {
-    HiLog.debug(TAG, `getShowDialogState ${this._showDialogState}`);
-    return this._showDialogState;
+  private setShowDialogState(value: boolean) {
+    HiLog.debug(TAG, `setShowDialogState ${value}`);
+    this._showDialogState = value;
   }
 
   public getHasCallback(): boolean {
@@ -217,7 +217,7 @@ export default class OpeningDialogManager {
     this.printAllDecryptingMap();
     HiLog.info(TAG, `OpeningDialogManager dialogDisappear requestId ${requestId}`);
     FileIdHandler.getInstance().dialogCancel(requestId);
-    this._showDialogState = false;
+    this.setShowDialogState(false);
     const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
     if (!decryptingState) {
       HiLog.info(TAG, 'dialogDisappear uri is not decrypting');
@@ -307,15 +307,19 @@ export default class OpeningDialogManager {
 
   // SEA向UEA发送打开“正在打开”动效
   private async showDialog(requestId: string): Promise<void> {
-    this.printAllDecryptingMap();
-    this._showDialogState = await ViewAbilityService.getInstance().showDialog(true, requestId);
+    const setRet: boolean = await ViewAbilityService.getInstance().showDialog(true, requestId);
+    this.setShowDialogState(setRet);
     HiLog.info(TAG, `OpeningDialogManager showDialog requestId: ${requestId}, state: ${this._showDialogState}`);
   }
 
   // SEA向UEA发送取消“正在打开”动效
   private async hideDialog(): Promise<void> {
     HiLog.info(TAG, 'OpeningDialogManager hideDialog start');
-    await ViewAbilityService.getInstance().showDialog(false);
+    const setRet: boolean = await ViewAbilityService.getInstance().showDialog(false);
+    if (!setRet) {
+      HiLog.debug(TAG, 'showDialog sendMsg failed, showDialogState false');
+      this.setShowDialogState(false);
+    }
   }
 
   // callback回调后，根据当前解密内容，判断是否需要拉起“正在打开”动效
@@ -353,7 +357,7 @@ export default class OpeningDialogManager {
       return;
     }
     if (isDecrypting && !this._showDialogState) { // 正在解密，且没拉起“正在打开”动效，需要拉起“正在打开”动效
-      this._showDialogState = true;
+      this.setShowDialogState(true);
       await this.showDialog(requestId);
       return;
     }
