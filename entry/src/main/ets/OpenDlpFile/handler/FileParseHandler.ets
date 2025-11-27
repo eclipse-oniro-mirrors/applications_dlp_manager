@@ -185,11 +185,17 @@ class ZipParse extends FileParseBase {
     }
 
     let allowedOpenCount: number = -1;
-    try {
-      let jsonObj: object = JSON.parse(generalInfo);
-      allowedOpenCount = jsonObj['allowedOpenCount'];
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'allowedOpenCount is error');
+    const allowedOpenCountArray = generalInfo.split('allowedOpenCount');
+    if (allowedOpenCountArray.length === 1) {
+      allowedOpenCount = fileId === '' ? -1 : 1;
+    } else {
+      try {
+        let jsonObj: object = JSON.parse(generalInfo);
+        let allowedOpenCountCon: number = jsonObj['allowedOpenCount'];
+        allowedOpenCount = typeof allowedOpenCountCon === 'number' ? allowedOpenCountCon : -1
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'allowedOpenCount is error');
+      }
     }
 
     const dlpGeneralInfo: DlpGeneralInfo = {
