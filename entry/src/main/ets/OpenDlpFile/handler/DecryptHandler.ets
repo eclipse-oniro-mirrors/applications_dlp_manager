@@ -435,7 +435,6 @@ export default class DecryptHandler {
       return ResultMsg.buildMsg(generateLinkUriRet.errcode, generateLinkUriRet.errmsg);
     }
 
-    this.grandUriPermission(decryptContent);
     return ResultMsg.buildSuccess();
   }
 
@@ -447,22 +446,6 @@ export default class DecryptHandler {
       HiLog.wrapError(TAG, error, 'addDLPLinkFile failed');
       await closeDlpFile(decryptContent);
       return ResultMsg.buildResult(error.code, error.message);
-    }
-  }
-
-  private async grandUriPermission(decryptContent: DecryptContent): Promise<void> {
-    const flag = wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION |
-    wantConstant.Flags.FLAG_AUTH_PERSISTABLE_URI_PERMISSION;
-    const uri = decryptContent.openDlpFileData.uri;
-    const targetBundleName = decryptContent.openDlpFileData.sandboxBundleName;
-    if (!isValidPath(uri)) {
-      HiLog.error(TAG, `invalid uri in want.uri`);
-      return;
-    }
-    try {
-      uriPermissionManager.grantUriPermission(uri, flag, targetBundleName);
-    } catch (error) {
-      HiLog.wrapError(TAG, error, 'grandUriPermission failed');
     }
   }
 
