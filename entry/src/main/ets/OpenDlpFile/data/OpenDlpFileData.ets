@@ -21,8 +21,8 @@ import { HiLog } from '../../common/HiLog';
 import Want from '@ohos.app.ability.Want';
 
 const TAG: string = 'OpenDlpFileData';
-const APPID_FOR_HOPE: string = '5765880207854533797';
-const BUNDLE_NAME_FOR_HOPE: string = 'com.huawei.it.welink';
+const EXPECTED_APPID: string = '5765880207854533797';
+const BUNDLE_NAME_FOR_EXPECTED_APPID: string = 'com.huawei.it.welink';
 
 interface DlpConnectionPluginIdObj {
   id: string
@@ -185,7 +185,7 @@ export default class OpenDlpFileData {
       return true;
     }
 
-    if (this._callerAppId !== APPID_FOR_HOPE || this._callerBundleName !== BUNDLE_NAME_FOR_HOPE) {
+    if (this._callerAppId !== EXPECTED_APPID || this._callerBundleName !== BUNDLE_NAME_FOR_EXPECTED_APPID) {
       HiLog.error(TAG, 'callerAppId or callerBundleName error.');
       return false;
     }
