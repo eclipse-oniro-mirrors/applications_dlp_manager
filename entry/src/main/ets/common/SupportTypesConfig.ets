@@ -14,15 +14,19 @@
  */
 
 export class SupportTypesConfig {
-  private static documentTypes: string[] = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'];
+  private static documentTypes: string[] = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'pot'];
   private static imageTypes: string[] =
     ['bmp', 'bm', 'dng', 'gif', 'heic', 'heics', 'heif', 'heifs', 'hif', 'jpg', 'jpeg', 'jpe', 'png', 'webp', 'cur',
-      'raf', 'ico', 'nrw', 'rw2', 'pef', 'srw', 'arw', 'svg', 'wbmp', 'nef', 'cr2'];
+      'raf', 'ico', 'nrw', 'rw2', 'pef', 'srw', 'arw', 'svg', 'wbmp', 'nef', 'cr2', 'avif', 'svgz', 'raw', 'ief',
+      'jp2', 'jpg2', 'jpx', 'jpf', 'pcx', 'djvu', 'djv', 'crw', 'ras', 'cdr', 'pat', 'cdt', 'cpt', 'erf', 'art',
+      'jng', 'orf', 'pnm', 'pbm', 'pgm', 'ppm', 'rgb', 'xbm', 'xwd', ];
   private static videoTypes: string[] =
     ['3gpp2', '3gp2', '3g2', '3gpp', '3gp', 'avi', 'm4v', 'f4v', 'mp4v', 'mpeg4', 'mp4', 'm2ts', 'mts', 'ts', 'vt',
       'wrf', 'mpeg', 'mpeg2', 'mpv2', 'mp2v', 'm2v', 'm2t', 'mpeg1', 'mpv1', 'mp1v', 'm1v', 'mpg', 'mov', 'mkv', 'webm',
-      'h264'];
-  private static audioTypes: string[] = ['mp3', 'flac', 'm4a', 'aac', 'wav', 'ogg', 'amr', 'm4b'];
+      'h264', 'yt', 'mpe', 'qt', 'mpv', 'flv', 'rmvb', 'axv', 'dv', 'fli', 'ogv', 'mxu', 'lsf', 'lsx', 'mng', 'asx',
+      'wm','wmv', 'wmx', 'wvx', 'movie'];
+  private static audioTypes: string[] = ['mp3', 'flac', 'm4a', 'aac', 'wav', 'ogg', 'amr', 'm4b', 'ac3', 'imy',
+    'rtttl', 'xmf', 'mxmf', 'm4p','m3u','smf','mka','ra','snd','mp2'];
   private static supportTypesSet: Set<string> =
     new Set<string>([...SupportTypesConfig.documentTypes, ...SupportTypesConfig.imageTypes,
       ...SupportTypesConfig.videoTypes, ...SupportTypesConfig.audioTypes]);
