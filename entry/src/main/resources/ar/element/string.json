@@ -88,7 +88,7 @@
             "name":"permission_status_readOnly",
             "value":"هذا الملف محمي. لديك صلاحية \"القراءة فقط\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -648,7 +648,7 @@
             "name":"no_longer_have_permission_view_file",
             "value":"لم يعُد لديك الإذن لعرض هذا الملف.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

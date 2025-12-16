@@ -25,7 +25,7 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"မိမိတစ်ဦးတည်း",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"permission_status_readOnly",
             "value":"ဤဖိုင်ကို ကာကွယ်ထားပါသည်။ သင့်တွင် \"ဖတ်ရန်သီးသန့်\" ခွင့်ပြုချက် ရှိပါသည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"duplicate",
             "value":"ကူးယူရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,21 +81,21 @@
             "name":"header_title_list",
             "value":"ကန့်သတ်ထားသော ဝင်ရောက်သုံးစွဲခွင့်ဖြင့် ဖိုင်ကို ကာကွယ်ပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"သက်တမ်းရှိကာလ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"ဖတ်ရန်သီးသန့် ဝင်ရောက်သုံးစွဲခွင့် ရထားသည့် သုံးစွဲသူများက ဤဖိုင်ကို ကြည့်နိုင်သော်လည်း တည်းဖြတ်ခြင်း၊ ကူးယူခြင်း သို့မဟုတ် ပရင့်ထုတ်ခြင်း လုပ်နိုင်မည် မဟုတ်ပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,7 +109,7 @@
             "name":"print",
             "value":"ပရင့်ထုတ်ရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -151,7 +151,7 @@
             "name":"file_encrypted",
             "value":"ဖိုင်ကို ကာကွယ်ထားပြီး",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,21 +165,21 @@
             "name":"header_title_readonly",
             "value":"ဖတ်ရန်သီးသန့်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"save_as",
             "value":"ဖော်ပြပါအဖြစ် သိမ်းရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"အဆုံးသတ်ရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,28 +193,28 @@
             "name":"stow_away",
             "value":"ဝှက်ရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"ဤဖိုင်ကို ဖွင့်၍ မရနိုင်ပါ။ နောက်မှ ထပ်ကြိုးစားပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"အသေးစိတ် ကြည့်ရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"အိုကေ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,42 +228,42 @@
             "name":"da_button",
             "value":"အိုကေ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"no_longer_have_permission_view_file",
             "value":"ဤဖိုင်ကို ကြည့်ရန် ခွင့်ပြုချက် မရှိတော့ပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"apply_for_the_subject",
             "value":"အမှန်တကယ် ခွင့်ပြုချက်များသည် အက်ပ်အလိုက် ကွဲပြားနိုင်ပါသည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"အကာအကွယ် ပြန်ရုပ်သိမ်းရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"ပယ်ဖျက်မည်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"ဤခွင့်ပြုချက် ရထားသည့် သုံးစွဲသူများက ဤဖိုင်ကို ကြည့်ခြင်း၊ တည်းဖြတ်ခြင်း၊ ကူးယူခြင်း၊ မျက်နှာပြင် မှတ်တမ်းတင်ခြင်း၊ သိမ်းဆည်းခြင်းနှင့် ပရင့်ထုတ်ခြင်းများ လုပ်ဆောင်နိုင်ပါသည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -277,7 +277,7 @@
             "name":"save",
             "value":"သိမ်းရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"Timeout_is_not_supported",
             "value":"သက်တမ်းကုန်ဆုံးသည့် နေ့သည် ပြီးခဲ့သော ရက်စွဲ မဖြစ်ရပါ။ အခြားရက်တစ်ခု သတ်မှတ်ပေးပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"သတ်မှတ်ထားသော သုံးစွဲသူများ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -340,21 +340,21 @@
             "name":"incorrect_work_ID",
             "value":"ဝန်ထမ်း ID မှားယွင်းနေပါသည်။ ပြန်ရိုက်ထည့်ပေးပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_no_permission",
             "value":"လက်ရှိ HUAWEI ID ဖြင့် ဤဖိုင်ကို ကြည့်ခွင့် မရှိပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"စခရင်ရှော့(တ်)",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -375,7 +375,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"လူတိုင်း",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"apply_for_the_permission",
             "value":"ခွင့်ပြုချက်များ တောင်းရန် %s ထံ ဆက်သွယ်ပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -410,14 +410,14 @@
             "name":"Appointed_day",
             "value":"သတ်မှတ်ထားသည့် ရက်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"အကာအကွယ် ပြောင်းရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,7 +438,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"ဝန်ထမ်း ID ကို ရိုက်ထည့်ပြီး Enter ကို နှိပ်ပါ။ ဥပမာ- a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -459,7 +459,7 @@
             "name":"perm_list_title_read_only",
             "value":"ဖတ်ရန်သီးသန့်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -478,16 +478,16 @@
         },
         {
             "name":"network_invalid",
-            "value":"ကွန်ရက် ချို့ယွင်းချက်။ နောက်မှ ထပ်ကြိုးစားပါ။",
+            "value":"ကွန်ရက် ချို့ယွင်းချက် ဖြစ်ပေါ်နေသည်။ နောက်မှ ထပ်မံကြိုးစားပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"တည်းဖြတ်ရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -501,7 +501,7 @@
             "name":"Permission_has_expired_description",
             "value":"သင့်ဖိုင်ခွင့်ပြုချက်များ သက်တမ်းကုန်သွားပါပြီ။ ဝင်ရောက်သုံးစွဲခွင့် ပြန်ရယူရန် %s ထံ ဆက်သွယ်ပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,7 +515,7 @@
             "name":"header_title",
             "value":"ဖိုင် ခွင့်ပြုချက်များ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -564,14 +564,14 @@
             "name":"Permission_has_expired",
             "value":"ခွင့်ပြုချက်များ သက်တမ်းကုန်သွားပါပြီ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"မျက်နှာပြင် မှတ်တမ်းတင်ရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -585,7 +585,7 @@
             "name":"permission_status_title",
             "value":"ဤဖိုင်ကို ကာကွယ်ထားပါသည်။ သင့်တွင် \"ဖတ်ရန်သီးသန့်\" နှင့် \"တည်းဖြတ်ရန်\" ခွင့်ပြုချက်များ ရှိပါသည်။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -606,21 +606,21 @@
             "name":"Document_valid_until",
             "value":"သက်တမ်းကုန်ချိန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"စက်မျက်နှာပြင် ဝေမျှရန်",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"ဤဖိုင်ကို ကြည့်ရန် သင့်တွင် ခွင့်ပြုချက် မရှိပါ။ ခွင့်ပြုချက်တောင်းရန် %s ထံ ဆက်သွယ်ပါ။",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

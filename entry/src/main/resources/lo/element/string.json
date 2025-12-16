@@ -25,7 +25,7 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"ຕົວ​ຂ້ອຍ​ເອງ​ເທົ່າ​ນັ້ນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"permission_status_readOnly",
             "value":"ໄຟ​ລ໌​ນີ້​ໄດ້​ຮັບ​ການ​ປົກ​ປ້ອງ. ທ່ານ​ໄດ້​ຮັບການ​ອະ​ນຸ​ຍາດ \"ອ່ານ​ເທົ່າ​ນັ້ນ\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"duplicate",
             "value":"ອັດສຳເນົາ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,21 +81,21 @@
             "name":"header_title_list",
             "value":"ປົກ​ປ້ອງ​ໄຟ​ລ໌​ດ້ວຍ​ການ​ເຂົ້າ​ເຖິງ​ທີ່​ຈຳ​ກັດ​.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"ໄລ​ຍະ​ເວ​ລາ​ການໃຊ້ໄດ້",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"ຜູ້​ໃຊ້​ທີ່​ມີ​ການ​ເຂົ້າ​ເຖິງ​ແບບ​ອ່ານ​ເທົ່າ​ນັ້ນ ສາ​ມາດ​ເບິ່ງ​ໄຟ​ລ໌​ນີ້​ໄດ້, ແຕ່​ບໍ່​ສາ​ມາດ​ແກ້​ໄຂ, ອັດ​ສຳ​ເນົາ ຫຼື ພິມ​ມັນ​ໄດ້.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,7 +109,7 @@
             "name":"print",
             "value":"ພິມ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -130,7 +130,7 @@
             "name":"permanently",
             "value":"ບໍ່​ໝົດ​ອາ​ຍຸ​ຈັກ​ເທື່ອ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -151,7 +151,7 @@
             "name":"file_encrypted",
             "value":"ປົກ​ປ້ອງ​ໄຟ​ລ໌​ແລ້ວ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,21 +165,21 @@
             "name":"header_title_readonly",
             "value":"ອ່ານ​ເທົ່າ​ນັ້ນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"save_as",
             "value":"ບັນທຶກເປັນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"ສໍາເລັດ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,28 +193,28 @@
             "name":"stow_away",
             "value":"ເຊື່ອງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"ບໍ່ສາມາດເປີດໄຟລ໌ນີ້ໄດ້. ລອງ​ໃໝ່​ອີກໃນ​ພາຍຫຼັງ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"ເບິ່ງລາຍລະອຽດ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"ຕົກລົງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,42 +228,42 @@
             "name":"da_button",
             "value":"ຕົກລົງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"no_longer_have_permission_view_file",
             "value":"ທ່ານບໍ່ໄດ້ຮັບການອະນຸຍາດໃຫ້ເບິ່ງໄຟລ໌ນີ້ອີກຕໍ່ໄປ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"apply_for_the_subject",
             "value":"ການ​ອະ​ນຸ​ຍາດ​ຕົວ​ຈິງ​ອາດ​ຈະ​ແຕກ​ຕ່າງ​ກັນ​ໄປ​ຕາມ​ແອັບ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"ຖອນ​ຄືນ​ການ​ປົກ​ປ້ອງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"ຍົກເລີກ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"ຜູ້​ໃຊ້​ທີ່​ມີ​ການ​ອະ​ນຸ​ຍາດ​ນີ້​ສາ​ມາດ​ເບິ່ງ, ແກ້​ໄຂ, ອັດ​ສຳ​ເນົາ, ບັນ​ທຶກ​ໜ້າ​ຈໍ, ບັນ​ທຶກ ແລະ ພິມ​ໄຟ​ລ໌​ນີ້​ໄດ້.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -277,7 +277,7 @@
             "name":"save",
             "value":"ບັນທຶກ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"Timeout_is_not_supported",
             "value":"ວັນ​ທີ​ໝົດ​ອາ​ຍຸ​ບໍ່​ສາ​ມາດ​ເປັນວັນ​ທີໃນ​ອະ​ດີດ​ໄດ້. ກະ​ລຸ​ນາ​ຕັ້ງ​ວັນ​ທີ​ອື່ນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"ຜູ້​ໃຊ້ທີ່​ລະ​ບຸ​ໄວ້",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -340,21 +340,21 @@
             "name":"incorrect_work_ID",
             "value":"ID ພະ​ນັກ​ງານ​ບໍ່​ຖືກ​ຕ້ອງ. ກະ​ລຸ​ນາປ້ອນ​ເຂົ້າ​ໃໝ່.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_no_permission",
             "value":"ບໍ່​ໄດ້​ຮັບ​ອະ​ນຸ​ຍາດ​ໃຫ້​ເບິ່ງ​ໄຟ​ລ໌​ນີ້ດ້ວຍ HUAWEI ID ປະ​ຈຸ​ບັນ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"ຮູບໜ້າ​ຈໍ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -375,7 +375,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"ທຸກໆຄົນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"apply_for_the_permission",
             "value":"ເພື່ອ​ຂໍ​ການ​ອະ​ນຸ​ຍາດ, ກ​ະ​ລຸ​ນາ​ຕິດ​ຕໍ່ %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -410,14 +410,14 @@
             "name":"Appointed_day",
             "value":"ວັນ​ທີທີ່​ລະ​ບຸ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"ປ່ຽນ​ການ​ປົກ​ປ້ອງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,7 +438,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"ປ້ອນ ID ພະ​ນັກ​ງ​ານ ແລະ ກົດ Enter. ຍົກ​ຕົວ​ຢ່າງ: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -459,7 +459,7 @@
             "name":"perm_list_title_read_only",
             "value":"ອ່ານ​ເທົ່າ​ນັ້ນ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -480,28 +480,28 @@
             "name":"network_invalid",
             "value":"ເຄືອຂ່າຍຜິດພາດ. ລອງ​ໃໝ່​ອີກໃນ​ພາຍຫຼັງ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"ແກ້ໄຂ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_content",
             "value":"ແກ້ໄຂ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Permission_has_expired_description",
-            "value":"ການ​ອະ​ນຸ​ຍາດ​ໄຟ​ລ໌​ຂອງ​ທ່ານ​ໄດ້​ໝົດ​ອາ​ຍຸ​ແລ້ວ. ເພື່ອ​ຮັບ​ການ​ເອົາ​ເຖິງ​ຄືນ​ໃໝ່, ຕິດ​ຕໍ່ %s.",
+            "value":"ການ​ອະ​ນຸ​ຍາດ​ໄຟ​ລ໌​ຂອງ​ທ່ານ​ໄດ້​ໝົດ​ອາ​ຍຸ​ແລ້ວ. ເພື່ອ​ຮັບ​ການ​ເຂົ້າ​ເຖິງ​ຄືນ​ໃໝ່, ຕິດ​ຕໍ່ %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,7 +515,7 @@
             "name":"header_title",
             "value":"ການ​ອະ​ນຸ​ຍາດ​ໄຟ​ລ໌",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -564,14 +564,14 @@
             "name":"Permission_has_expired",
             "value":"ການ​ອະ​ນຸ​ຍາດ​ໝົດ​ອາ​ຍຸ​ແລ້ວ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"ບັນ​ທຶກ​ໜ້າ​ຈໍ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -585,7 +585,7 @@
             "name":"permission_status_title",
             "value":"ໄຟ​ລ໌​ນີ້​ໄດ້​ຮັບ​ການ​ປົກ​ປ້ອງ. ​ທ່ານ​ໄດ້​ຮັບ​ການ​ອະ​ນຸ​ຍາດ \"ອ່ານ​ເທົ່າ​ນັ້ນ\" ​ແລະ \"​ແກ້​ໄຂ\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -606,21 +606,21 @@
             "name":"Document_valid_until",
             "value":"ໃຊ້ໄດ້ເຖິງ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"ແຊ​ຣ໌ໜ້າ​ຈໍ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"ທ່ານບໍ່ໄດ້ຮັບການອະນຸຍາດໃຫ້ເບິ່ງໄຟລ໌ນີ້. ເພື່ອຂໍການອະນຸຍາດນີ້, ຕິດຕໍ່ %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

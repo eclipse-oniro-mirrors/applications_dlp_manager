@@ -39,14 +39,14 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"ئۆزۈم",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"بەلگىلەنگەن ئىشلەتكۈچى",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,21 +60,21 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"بۇ ھۆججەتنى كۆرۈش ئىجازىتىڭىز يوق. ئىجازەت كېرەك بولسا، %s بىلەن ئالاقىلىشىڭ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"خىزمەتچى نومۇرى خاتا، قايتا كىرگۈزۈڭ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_readOnly",
             "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ئىجازىتى بار.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,7 +144,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"ھەممەيلەن",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,14 +186,14 @@
             "name":"enter_a_complete_work_ID",
             "value":"خىزمەتچى نومۇرىنى كىرگۈزۈپ Enter نى بېسىڭ، مىسال: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"perm_list_title_read_only",
             "value":"پەقەت ئوقۇش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,14 +228,14 @@
             "name":"network_invalid",
             "value":"توردا خاتالىق كۆرۈلدى، كېيىنرەك قايتا سىناڭ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"تەھرىرلەش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -249,7 +249,7 @@
             "name":"header_title_edit_content",
             "value":"تەھرىرلەش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -284,7 +284,7 @@
             "name":"header_title_readonly",
             "value":"پەقەت ئوقۇش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -298,7 +298,7 @@
             "name":"save_as",
             "value":"باشقا ساقلاش",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -368,7 +368,7 @@
             "name":"permission_status_title",
             "value":"بۇ ھۆججەت قوغدالغان، سىزدە «پەقەت ئوقۇش» ۋە «تەھرىرلەش» ئىجازىتى بار.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -417,7 +417,7 @@
             "name":"header_title_edit_tips",
             "value":"تەھرىرلەش ئىجازىتى بار ئىشلەتكۈچى ھۆججەتنى كۆرەلەيدۇ، تەھرىرلىيەلەيدۇ، كۆچۈرەلەيدۇ، ئېكران تۇتالايدۇ، ساقلىيالايدۇ ۋە بېسىپ چىقىرالايدۇ.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -648,7 +648,7 @@
             "name":"no_longer_have_permission_view_file",
             "value":"ئەمدى بۇ ھۆججەتنى كۆرۈش ھوقۇقىڭىز يوق.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

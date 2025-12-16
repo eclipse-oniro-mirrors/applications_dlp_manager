@@ -25,7 +25,7 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"Sadece ben",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"permission_status_readOnly",
             "value":"Bu dosya korumalı. \"Salt okunur\" izniniz var.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"duplicate",
             "value":"Kopyala",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,21 +81,21 @@
             "name":"header_title_list",
             "value":"Dosyayı kısıtlı erişimle koruyun.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"Geçerlilik",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"Salt okunur erişimi olan kullanıcılar bu dosyayı görüntüleyebilir ancak düzenleyemez, kopyalayamaz veya yazdıramaz.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,7 +109,7 @@
             "name":"print",
             "value":"Yazdır",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -130,7 +130,7 @@
             "name":"permanently",
             "value":"Son kullanma tarihi yoktur",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -151,7 +151,7 @@
             "name":"file_encrypted",
             "value":"Dosya korumalı",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,21 +165,21 @@
             "name":"header_title_readonly",
             "value":"Salt okunur",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"save_as",
             "value":"Farklı kaydet",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"Bitir",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,28 +193,28 @@
             "name":"stow_away",
             "value":"Gizle",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"Bu dosya açılamıyor. Daha sonra tekrar deneyin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"Ayrıntıları görüntüle",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"Tamam",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,42 +228,42 @@
             "name":"da_button",
             "value":"Tamam",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"no_longer_have_permission_view_file",
             "value":"Artık bu dosyayı görüntüleme izniniz bulunmuyor.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"apply_for_the_subject",
             "value":"Gerçek izinler uygulamaya göre değişebilir.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"Korumayı iptal et",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"İptal",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"Bu izne sahip kullanıcılar bu dosyayı görüntüleyebilir, düzenleyebilir, kopyalayabilir, ekran kaydı yapabilir, kaydedebilir ve yazdırabilir.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -277,7 +277,7 @@
             "name":"save",
             "value":"Kaydet",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"Timeout_is_not_supported",
             "value":"Sona erme tarihi geçmişte olamaz. Lütfen başka bir tarih belirleyin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"Belirtilen kullanıcılar",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -340,21 +340,21 @@
             "name":"incorrect_work_ID",
             "value":"Geçersiz çalışan kimliği. Lütfen tekrar girin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_no_permission",
             "value":"Bu dosyayı geçerli HUAWEI Kimliği ile görüntüleme yetkisi yok.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"Ekran görüntüsü",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -375,7 +375,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"Herkes",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"apply_for_the_permission",
             "value":"İzin istemek için lütfen %s ile iletişime geçin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -410,14 +410,14 @@
             "name":"Appointed_day",
             "value":"Belirtilen tarih",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"Değişiklik koruması",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,7 +438,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"Çalışan kimliğini girin ve Enter tuşuna basın. Örneğin: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -459,7 +459,7 @@
             "name":"perm_list_title_read_only",
             "value":"Salt okunur",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -480,28 +480,28 @@
             "name":"network_invalid",
             "value":"Ağ hatası. Daha sonra tekrar deneyin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"Düzenle",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_content",
             "value":"Düzenle",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Permission_has_expired_description",
             "value":"Dosya izinlerinizin süresi sona erdi. Erişimi yeniden kazanmak için %s ile iletişime geçin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,7 +515,7 @@
             "name":"header_title",
             "value":"Dosya izinleri",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -564,14 +564,14 @@
             "name":"Permission_has_expired",
             "value":"İzinlerin süresi sona erdi",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"Ekran kaydı",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -585,7 +585,7 @@
             "name":"permission_status_title",
             "value":"Bu dosya korumalı. \"Salt okunur\" ve \"Düzenle\" izinleriniz var.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -606,21 +606,21 @@
             "name":"Document_valid_until",
             "value":"Geçerlilik tarihi",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"Ekranı paylaş",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"Bu dosyayı görüntüleme izniniz yok. İzin talebinde bulunmak için %s ile iletişime geçin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {

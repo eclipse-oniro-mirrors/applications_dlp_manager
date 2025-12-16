@@ -25,7 +25,7 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"Only myself",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"permission_status_readOnly",
             "value":"This file is protected. You have \"Read-only\" permission.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"duplicate",
             "value":"Copy",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,21 +81,21 @@
             "name":"header_title_list",
             "value":"Protect the file with restricted access.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"Validity",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"Users with read-only access can view this file, but can't edit, copy, or print it.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,7 +109,7 @@
             "name":"print",
             "value":"Print",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -130,7 +130,7 @@
             "name":"permanently",
             "value":"Never expires",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,14 +165,14 @@
             "name":"header_title_readonly",
             "value":"Read-only",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"save_as",
             "value":"Save as",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,7 +214,7 @@
             "name":"sure",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -235,14 +235,14 @@
             "name":"no_longer_have_permission_view_file",
             "value":"You no longer have permission to view this file.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"apply_for_the_subject",
             "value":"Actual permissions may vary by app.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -256,14 +256,14 @@
             "name":"ban",
             "value":"Cancel",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"Users with this permission can view, edit, copy, screen-record, save, and print this file.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -277,7 +277,7 @@
             "name":"save",
             "value":"Save",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"Timeout_is_not_supported",
             "value":"The expiry date can't be in the past. Please set another date.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"Specified users",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -340,21 +340,21 @@
             "name":"incorrect_work_ID",
             "value":"Invalid employee ID. Please re-enter.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_no_permission",
             "value":"Not authorised to view this file with the current HUAWEI ID.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"Screenshot",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -375,7 +375,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"Everyone",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"apply_for_the_permission",
             "value":"To request permissions, please contact %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,7 +438,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"Enter employee ID and press Enter. For example: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -459,7 +459,7 @@
             "name":"perm_list_title_read_only",
             "value":"Read-only",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -480,14 +480,14 @@
             "name":"network_invalid",
             "value":"Network error. Try again later.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"Edit",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,7 +515,7 @@
             "name":"header_title",
             "value":"File permissions",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -571,7 +571,7 @@
             "name":"screen_recording",
             "value":"Record screen",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -585,7 +585,7 @@
             "name":"permission_status_title",
             "value":"This file is protected. You have \"Read-only\" and \"Edit\" permissions.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -606,21 +606,21 @@
             "name":"Document_valid_until",
             "value":"Valid until",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"Share screen",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"You don't have permission to view this file. To apply for permission, contact %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
