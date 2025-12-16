@@ -39,14 +39,14 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"只限本人",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"指定使用者",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,21 +60,21 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"您沒有權限查看此檔案。如需申請權限，請聯絡：%s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"員工編號錯誤，請輸入有效員工編號。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_readOnly",
             "value":"權限已受限制，您擁有「唯讀」權限。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -137,14 +137,14 @@
             "name":"header_title_readonly_tips",
             "value":"擁有唯讀權限的使用者可查看檔案，但無法編輯、複製和列印檔案。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"所有人",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -158,7 +158,7 @@
             "name":"apply_for_the_permission",
             "value":"如需申請權限，請聯絡 %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,14 +186,14 @@
             "name":"enter_a_complete_work_ID",
             "value":"請輸入完整員工編號，然後按輸入鍵。範例：a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"perm_list_title_read_only",
             "value":"唯讀",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,14 +228,14 @@
             "name":"network_invalid",
             "value":"網路異常，請稍後再試",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"編輯",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -249,7 +249,7 @@
             "name":"header_title_edit_content",
             "value":"編輯",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -284,7 +284,7 @@
             "name":"header_title_readonly",
             "value":"唯讀",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -298,7 +298,7 @@
             "name":"save_as",
             "value":"另存新檔",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -368,7 +368,7 @@
             "name":"permission_status_title",
             "value":"權限已受限制，您擁有「唯讀」和「編輯」權限。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -417,7 +417,7 @@
             "name":"header_title_edit_tips",
             "value":"擁有編輯權限的使用者可以查看、編輯、複製、螢幕錄影、儲存和列印檔案。",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -647,6 +647,13 @@
         {
             "name":"no_longer_have_permission_view_file",
             "value":"已無權限查看此檔案。",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"不支援查看加密檔案",
             "attr":{
                 "priority":"translate"
             }

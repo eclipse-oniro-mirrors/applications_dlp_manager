@@ -25,7 +25,7 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"Hanya saya",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"Anda tidak mempunyai kebenaran untuk melihat fail ini. Untuk memohon kebenaran, hubungi %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"permission_status_readOnly",
             "value":"Fail ini dilindungi. Anda mempunyai kebenaran \"Baca sahaja\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,7 +67,7 @@
             "name":"duplicate",
             "value":"Salin",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -95,21 +95,21 @@
             "name":"header_title_list",
             "value":"Lindungi fail dengan akses disekat.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"Kesahan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"Pengguna dengan akses baca sahaja boleh melihat fail ini, tetapi tidak boleh mengedit, menyalin atau mencetaknya.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -123,7 +123,7 @@
             "name":"print",
             "value":"Cetak",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,7 +144,7 @@
             "name":"permanently",
             "value":"Tidak akan tamat tempoh",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,7 +165,7 @@
             "name":"file_encrypted",
             "value":"Fail dilindungi",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -179,21 +179,21 @@
             "name":"header_title_readonly",
             "value":"Baca sahaja",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"save_as",
             "value":"Simpan sebagai",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"Selesai",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,28 +214,28 @@
             "name":"stow_away",
             "value":"Sembunyikan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"Tidak dapat membuka fail ini. Cuba sebentar lagi.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"Lihat butiran",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -249,42 +249,42 @@
             "name":"da_button",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"no_longer_have_permission_view_file",
             "value":"Anda tidak lagi mempunyai kebenaran untuk melihat fail ini.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"apply_for_the_subject",
             "value":"Kebenaran sebenar mungkin berbeza mengikut aplikasi.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"Batalkan perlindungan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"Batalkan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"Pengguna dengan kebenaran ini boleh melihat, mengedit, menyalin, merakam skrin, menyimpan, dan mencetak fail ini.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -298,7 +298,7 @@
             "name":"save",
             "value":"Simpan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -326,14 +326,14 @@
             "name":"Timeout_is_not_supported",
             "value":"Tarikh tamat tempoh tidak boleh ditetapkan pada masa yang sudah berlalu. Sila tetapkan tarikh yang lain.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"Pengguna ditetapkan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -361,21 +361,21 @@
             "name":"incorrect_work_ID",
             "value":"ID pekerja tidak sah. Sila masukkan semula.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_no_permission",
             "value":"Tidak diberikan kuasa untuk melihat fail ini dengan ID HUAWEI semasa.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"Syot layar",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"Semua orang",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -417,7 +417,7 @@
             "name":"apply_for_the_permission",
             "value":"Untuk meminta kebenaran, sila hubungi %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -431,14 +431,14 @@
             "name":"Appointed_day",
             "value":"Tarikh ditetapkan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"Tukar perlindungan",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -459,7 +459,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"Masukkan ID pekerja dan tekan Enter. Sebagai contoh: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -480,7 +480,7 @@
             "name":"perm_list_title_read_only",
             "value":"Baca sahaja",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -508,28 +508,28 @@
             "name":"network_invalid",
             "value":"Ralat rangkaian. Cuba sebentar lagi.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"Edit",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_content",
             "value":"Edit",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Permission_has_expired_description",
             "value":"Kebenaran fail anda sudah tamat tempoh. Untuk mendapat semula akses, hubungi %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -543,7 +543,7 @@
             "name":"header_title",
             "value":"Kebenaran Fail",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -592,14 +592,14 @@
             "name":"Permission_has_expired",
             "value":"Kebenaran tamat tempoh",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"Rakam skrin",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -613,7 +613,7 @@
             "name":"permission_status_title",
             "value":"Fail ini dilindungi. Anda mempunyai kebenaran \"Baca sahaja\" dan \"Edit\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -641,12 +641,19 @@
             "name":"Document_valid_until",
             "value":"Sah sehingga",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"Kongsi skrin",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"Tidak dapat melihat fail disulitkan",
             "attr":{
                 "priority":"translate"
             }

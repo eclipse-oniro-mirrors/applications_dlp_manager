@@ -25,7 +25,7 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"Solo io",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"permission_status_readOnly",
             "value":"Questo file è protetto. Hai un'autorizzazione di \"Sola lettura\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"duplicate",
             "value":"Copia",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,21 +81,21 @@
             "name":"header_title_list",
             "value":"Proteggi il file con accesso limitato.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"Validità",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"Gli utenti con accesso di sola lettura possono visualizzare questo file, ma non possono modificarlo, copiarlo o stamparlo.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,7 +109,7 @@
             "name":"print",
             "value":"Stampa",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -130,7 +130,7 @@
             "name":"permanently",
             "value":"Nessuna scadenza",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -151,7 +151,7 @@
             "name":"file_encrypted",
             "value":"File protetto",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,21 +165,21 @@
             "name":"header_title_readonly",
             "value":"Sola lettura",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"save_as",
             "value":"Salva come",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"Termina",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,28 +193,28 @@
             "name":"stow_away",
             "value":"Nascondi",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"Impossibile aprire questo file. Riprova più tardi.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"Visualizza dettagli",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,42 +228,42 @@
             "name":"da_button",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"no_longer_have_permission_view_file",
             "value":"Non sei più autorizzato a visualizzare questo file.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"apply_for_the_subject",
             "value":"Le autorizzazioni effettive possono variare in funzione dell'app.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"Revoca protezione",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"Annulla",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"Gli utenti con questa autorizzazione possono visualizzare, modificare, copiare, registrare lo schermo, salvare e stampare questo file.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -277,7 +277,7 @@
             "name":"save",
             "value":"Salva",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"Timeout_is_not_supported",
             "value":"La data di scadenza non può essere nel passato. Imposta un'altra data.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"Utenti specificati",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -340,21 +340,21 @@
             "name":"incorrect_work_ID",
             "value":"ID dipendente non valido. Inserisci di nuovo.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_no_permission",
             "value":"Autorizzazione assente per visualizzare questo file con il HUAWEI ID corrente.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"Schermata",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -375,7 +375,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"Tutti",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"apply_for_the_permission",
             "value":"Per richiedere le autorizzazioni, contatta %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -410,14 +410,14 @@
             "name":"Appointed_day",
             "value":"Data specificata",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"Modifica protezione",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -436,9 +436,9 @@
         },
         {
             "name":"enter_a_complete_work_ID",
-            "value":"Immetti ID dipendente e premi Invio. Per esempio: a00123456",
+            "value":"Inserisci ID dipendente e premi Invio. Per esempio: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -459,7 +459,7 @@
             "name":"perm_list_title_read_only",
             "value":"Sola lettura",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -480,28 +480,28 @@
             "name":"network_invalid",
             "value":"Errore di rete. Riprova più tardi.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"Modifica",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_content",
             "value":"Modifica",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Permission_has_expired_description",
             "value":"Le tue autorizzazioni di file sono scadute. Per ottenere di nuovo l'accesso, contatta %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,7 +515,7 @@
             "name":"header_title",
             "value":"Autorizzazioni di file",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -564,14 +564,14 @@
             "name":"Permission_has_expired",
             "value":"Autorizzazioni scadute",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"Registra schermo",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -585,7 +585,7 @@
             "name":"permission_status_title",
             "value":"Questo file è protetto. Hai autorizzazioni di \"Sola lettura\" e \"Modifica\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -606,21 +606,21 @@
             "name":"Document_valid_until",
             "value":"Valido fino a",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"Condividi schermo",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"Non disponi dell'autorizzazione per visualizzare questo file. Per richiedere l'autorizzazione, contatta %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -647,6 +647,13 @@
         {
             "name":"Share_Tips_Phone_Format",
             "value":"Inserisci un numero di telefono valido",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"Impossibile visualizzare i file crittografati",
             "attr":{
                 "priority":"translate"
             }

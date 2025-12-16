@@ -39,14 +39,14 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"རང་ཉིད་ཁོ་ན།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"དམིགས་བཙུགས་སྤྱོད་མཁན།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -60,21 +60,21 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"ཁྱེད་ལ་ཡིག་ཆ་འདི་ལ་ལྟ་བའི་དབང་ཚད་མེད། དབང་ཚད་རེ་ཞུ་བྱ་དགོས་ན། %s ལ་འབྲེལ་གཏུག་གནང་རོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"ལས་མིའི་ཨང་རྟགས་ནོར། ལས་མིའི་ཨང་རྟགས་ཡང་དག་ནང་འཇུག་གནང་རོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_readOnly",
             "value":"དབང་ཚད་ལ་ཚོད་འཛིན་ཐེབས་ཟིན། ཁྱེད་ལ་༼ཀློག་པ་ཁོ་ན་༽ཡི་དབང་ཚད་ལས་མེད།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -144,7 +144,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"མི་ཚང་མ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -186,14 +186,14 @@
             "name":"enter_a_complete_work_ID",
             "value":"ལས་མིའི་ཨང་རྟགས་ཆ་ཚང་ནང་འཇུག་བྱས་རྗེས་སྟར་བརྗེའི་མཐེབ་གནོན་རོགས། དཔེར་ན། a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"perm_list_title_read_only",
             "value":"ཀློག་པ་ཁོ་ན།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,14 +228,14 @@
             "name":"network_invalid",
             "value":"དྲ་རྒྱ་རྒྱུན་ལྡན་མིན། ཏོག་ཙམ་ནས་བསྐྱར་དུ་ཚོད་ལྟ་གནང་རོགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"རྩོམ་སྒྲིག",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -249,7 +249,7 @@
             "name":"header_title_edit_content",
             "value":"རྩོམ་སྒྲིག",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -275,7 +275,7 @@
         },
         {
             "name":"header_title",
-            "value":"ཡིག་ཆའི་དབང་ཚད།",
+            "value":"གསང་སྡོམ་སྲུང་སྲུང་སྐྱོབ།",
             "attr":{
                 "priority":"LT"
             }
@@ -284,7 +284,7 @@
             "name":"header_title_readonly",
             "value":"ཀློག་པ་ཁོ་ན།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -298,7 +298,7 @@
             "name":"save_as",
             "value":"ལོགས་སུ་ཉར་ཚགས།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -368,7 +368,7 @@
             "name":"permission_status_title",
             "value":"དབང་ཚད་ལ་ཚོད་འཛིན་ཐེབས་ཟིན། ཁྱེད་ལ་༼ཀློག་པ་ཁོ་ན་༽དང་༼རྩོམ་སྒྲིག་༽གི་དབང་ཚད་ལས་མེད།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -417,7 +417,7 @@
             "name":"header_title_edit_tips",
             "value":"རྩོམ་སྒྲིག་གི་དབང་ཚད་ཡོད་པའི་སྤྱོད་མཁན་གྱིས་ཡིག་ཆར་ལྟ་ཞིབ་དང་། རྩོམ་སྒྲིག འདྲ་བཤུས། ཡོལ་ཕབ། ཉར་ཚགས་དང་པར་འདེབས་བཅས་བྱེད་ཐུབ།",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -646,7 +646,14 @@
         },
         {
             "name":"no_longer_have_permission_view_file",
-            "value":"ཡིག་ཆ་དེར་བལྟ་བའི་དབང་ཚད་མེད།",
+            "value":"ཡིག་ཆ་དེར་ལྟ་ཞིབ་བྱེད་པའི་དབང་ཚད་མེད།",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"གསང་སྡོམ་ཡིག་ཆར་ལྟ་ཞིབ་བྱེད་པར་རྒྱབ་སྐྱོར་མི་བྱེད།",
             "attr":{
                 "priority":"translate"
             }

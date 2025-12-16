@@ -88,7 +88,7 @@
             "name":"permission_status_readOnly",
             "value":"هذا الملف محمي. لديك صلاحية \"القراءة فقط\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -647,6 +647,13 @@
         {
             "name":"no_longer_have_permission_view_file",
             "value":"لم يعُد لديك الإذن لعرض هذا الملف.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"يتعذر عرض الملفات المُشفرة",
             "attr":{
                 "priority":"translate"
             }

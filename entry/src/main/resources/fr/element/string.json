@@ -4,7 +4,7 @@
             "name":"save",
             "value":"Enregistrement",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"Seulement moi",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"Utilisateurs spécifiés",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -65,9 +65,9 @@
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
-            "value":"Vous n'avez pas l'autorisation de voir ce fichier. Veuillez contacter %s pour demander l'autorisation.",
+            "value":"Vous n'avez pas l'autorisation de consulter ce fichier. Veuillez contacter %s pour demander l'autorisation.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -88,7 +88,7 @@
             "name":"permission_status_readOnly",
             "value":"Ce fichier est protégé. Vous avez l'autorisation \"Lecture seule\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,7 +102,7 @@
             "name":"screenshot",
             "value":"Capture d'écran",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -149,30 +149,30 @@
         },
         {
             "name":"header_title_list",
-            "value":"Pour protéger le fichier avec un accès restreint.",
+            "value":"Protection du fichier avec un accès restreint.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"Validité",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
-            "value":"Les utilisateurs disposant d'un accès en lecture seule peuvent afficher ce fichier, mais ne peuvent pas modifier, copier ou imprimer ce fichier.",
+            "value":"Les utilisateurs disposant d'un accès en lecture seule peuvent consulter ce fichier, mais ne peuvent pas modifier, copier ou imprimer ce fichier.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"Tout le monde",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,7 +193,7 @@
             "name":"apply_for_the_permission",
             "value":"Veuillez contacter %s pour demander des autorisations.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,7 +214,7 @@
             "name":"print",
             "value":"Impression",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,7 +228,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"Saisir l'ID d'employé et appuyer sur Entrée. Par exemple : a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -242,14 +242,14 @@
             "name":"perm_list_title_read_only",
             "value":"Lecture seule",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permanently",
             "value":"N'expire jamais",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -284,14 +284,14 @@
             "name":"network_invalid",
             "value":"Erreur réseau. Veuillez réessayer ultérieurement.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"Modification",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,7 +305,7 @@
             "name":"header_title_edit_content",
             "value":"Modification",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -333,19 +333,19 @@
             "name":"header_title",
             "value":"Autorisations du fichier",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly",
             "value":"Lecture seule",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Ceci ne peut pas être fait pour l'instant. Veuillez réessayer ultérieurement.",
+            "value":"Cette action a échoué pour le moment. Veuillez réessayer ultérieurement.",
             "attr":{
                 "priority":"LT"
             }
@@ -361,7 +361,7 @@
             "name":"save_as",
             "value":"Enregistrement sous",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"screen_recording",
             "value":"Enregistrement de l'écran",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,14 +438,14 @@
             "name":"sure",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_title",
             "value":"Ce fichier est protégé. Vous avez les autorisations \"Lecture seule\" et \"Modification\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -487,14 +487,14 @@
             "name":"Document_valid_until",
             "value":"Validité jusqu'au",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"Partage d'écran",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -508,14 +508,14 @@
             "name":"ban",
             "value":"Annuler",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"Les utilisateurs disposant de cette autorisation peuvent enregistrer l'écran, afficher, modifier, copier, enregistrer et imprimer ce fichier.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -646,7 +646,14 @@
         },
         {
             "name":"no_longer_have_permission_view_file",
-            "value":"Vous n'êtes plus autorisé à voir ce fichier.",
+            "value":"Vous n'avez plus l'autorisation de consulter ce fichier.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"L'affichage de fichiers cryptés a échoué",
             "attr":{
                 "priority":"translate"
             }

@@ -673,7 +673,10 @@
         },
         {
             "name":"restore_minor_dialog_title",
-            "value":"不支持查看加密文件"
+            "value":"不支持查看加密文件",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }

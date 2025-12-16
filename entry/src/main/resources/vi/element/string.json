@@ -4,7 +4,7 @@
             "name":"save",
             "value":"Lưu",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"Chỉ mình tôi",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"Người dùng được chỉ định",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,14 +67,14 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"Bạn không có quyền xem tệp tin này. Để yêu cầu cấp quyền, hãy liên hệ %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"ID nhân viên không hợp lệ. Vui lòng nhập lại.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -88,7 +88,7 @@
             "name":"permission_status_readOnly",
             "value":"Tệp tin này được bảo vệ. Bạn có quyền \"Chỉ đọc\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,14 +102,14 @@
             "name":"screenshot",
             "value":"Chụp màn hình",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"duplicate",
             "value":"Sao chép",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -151,28 +151,28 @@
             "name":"header_title_list",
             "value":"Bảo vệ tệp tin với chế độ quyền truy cập hạn chế.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
             "value":"Thời hạn hiệu lực",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"Người dùng có quyền chỉ đọc có thể xem tệp tin này nhưng không thể chỉnh sửa, sao chép hoặc in tệp tin.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"Mọi người",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,7 +193,7 @@
             "name":"apply_for_the_permission",
             "value":"Để yêu cầu cấp quyền, vui lòng liên hệ %s.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,7 +214,7 @@
             "name":"print",
             "value":"In",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,7 +228,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"Nhập ID nhân viên và nhấn Enter. Ví dụ: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -242,14 +242,14 @@
             "name":"perm_list_title_read_only",
             "value":"Chỉ đọc",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permanently",
             "value":"Không có thời hạn",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -284,14 +284,14 @@
             "name":"network_invalid",
             "value":"Lỗi mạng. Hãy thử lại sau.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"Sửa",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -333,14 +333,14 @@
             "name":"header_title",
             "value":"Quyền truy cập Tệp tin",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly",
             "value":"Chỉ đọc",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -361,7 +361,7 @@
             "name":"save_as",
             "value":"Lưu dưới dạng",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"screen_recording",
             "value":"Quay phim màn hình",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,14 +438,14 @@
             "name":"sure",
             "value":"OK",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_title",
             "value":"Tệp tin này được bảo vệ. Bạn có quyền \"Chỉ đọc\" và \"Sửa\".",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -473,7 +473,7 @@
             "name":"apply_for_the_subject",
             "value":"Quyền thực tế có thể khác nhau tùy theo ứng dụng.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -487,14 +487,14 @@
             "name":"Document_valid_until",
             "value":"Có hiệu lực tới",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"Chia sẻ màn hình",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -508,7 +508,7 @@
             "name":"ban",
             "value":"Hủy",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -647,6 +647,13 @@
         {
             "name":"no_longer_have_permission_view_file",
             "value":"Bạn không còn quyền xem tệp tin này nữa.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"Không thể xem các tệp tin được mã hóa",
             "attr":{
                 "priority":"translate"
             }

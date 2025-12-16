@@ -88,7 +88,7 @@
             "name":"permission_status_readOnly",
             "value":"Этот файл защищен. У вас есть право Только чтение.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -647,6 +647,13 @@
         {
             "name":"no_longer_have_permission_view_file",
             "value":"У вас больше нет прав на просмотр этого файла.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"Сбой просмотра зашифрованных файлов",
             "attr":{
                 "priority":"translate"
             }

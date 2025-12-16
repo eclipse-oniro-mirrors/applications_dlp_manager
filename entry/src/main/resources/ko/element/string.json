@@ -4,7 +4,7 @@
             "name":"save",
             "value":"저장",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,14 +39,14 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"나만",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"특정 사용자",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -67,14 +67,14 @@
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"이 파일을 볼 수 있는 권한이 없습니다. 권한을 신청하려면 %s님에게 문의하십시오.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"incorrect_work_ID",
             "value":"올바르지 않은 직원 ID입니다. 다시 입력하십시오.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -88,7 +88,7 @@
             "name":"permission_status_readOnly",
             "value":"이 파일은 보호되어 있습니다. \"읽기 전용\" 권한이 있습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -102,14 +102,14 @@
             "name":"screenshot",
             "value":"스크린샷",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"duplicate",
             "value":"복사",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -151,28 +151,28 @@
             "name":"header_title_list",
             "value":"제한된 액세스로 파일을 보호합니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
-            "value":"유효성",
+            "value":"유효 기간",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
-            "value":"읽기 전용 권한이 있는 사용자는 이 파일을 볼 수는 있지만 편집, 복사 또는 인쇄 작업은 수행할 수 없습니다.",
+            "value":"읽기 전용 액세스 권한이 있는 사용자는 이 파일을 볼 수는 있지만 편집, 복사 또는 인쇄 작업은 수행할 수 없습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"모두",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,7 +193,7 @@
             "name":"apply_for_the_permission",
             "value":"권한을 요청하려면 %s님에게 문의하십시오.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -214,7 +214,7 @@
             "name":"print",
             "value":"인쇄",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,7 +228,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"직원 ID를 입력하고 Enter를 누르십시오. 예: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -242,14 +242,14 @@
             "name":"perm_list_title_read_only",
             "value":"읽기 전용",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permanently",
             "value":"만료되지 않음",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -284,14 +284,14 @@
             "name":"network_invalid",
             "value":"네트워크 오류입니다. 나중에 다시 시도하십시오.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"편집",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,7 +305,7 @@
             "name":"header_title_edit_content",
             "value":"편집",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -333,14 +333,14 @@
             "name":"header_title",
             "value":"파일 권한",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly",
             "value":"읽기 전용",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -361,7 +361,7 @@
             "name":"save_as",
             "value":"다른 이름으로 저장",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"screen_recording",
             "value":"화면 녹화",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,14 +438,14 @@
             "name":"sure",
             "value":"확인",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"permission_status_title",
             "value":"이 파일은 보호되어 있습니다. \"읽기 전용\" 및 \"편집\" 권한이 있습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -487,14 +487,14 @@
             "name":"Document_valid_until",
             "value":"유효 기간",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"화면 공유",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -508,14 +508,14 @@
             "name":"ban",
             "value":"취소",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"이 권한이 있는 사용자는 이 파일의 보기, 편집, 복사, 화면 녹화, 저장 및 인쇄 작업을 수행할 수 있습니다.",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -647,6 +647,13 @@
         {
             "name":"no_longer_have_permission_view_file",
             "value":"더 이상 이 파일을 볼 수 있는 권한이 없습니다.",
+            "attr":{
+                "priority":"LT"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"암호화된 파일 확인 불가",
             "attr":{
                 "priority":"translate"
             }

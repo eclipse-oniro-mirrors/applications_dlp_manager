@@ -25,7 +25,7 @@
             "name":"PERMISSION_TYPE_SELECT_SELF",
             "value":"เฉพาะฉัน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -39,7 +39,7 @@
             "name":"permission_status_readOnly",
             "value":"ไฟล์นี้ได้รับการป้องกัน คุณมีสิทธิ์ \"อ่านอย่างเดียว\"",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -53,7 +53,7 @@
             "name":"duplicate",
             "value":"คัดลอก",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -81,21 +81,21 @@
             "name":"header_title_list",
             "value":"ป้องกันไฟล์ด้วยการเข้าถึงแบบจำกัด",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Document_valid",
-            "value":"การใช้งานได้",
+            "value":"ระยะเวลาใช้งาน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_readonly_tips",
             "value":"ผู้ใช้ที่มีสิทธิ์เข้าถึงแบบอ่านอย่างเดียวสามารถดูไฟล์นี้ได้ แต่ไม่สามารถแก้ไข คัดลอก หรือพิมพ์ได้",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -109,7 +109,7 @@
             "name":"print",
             "value":"พิมพ์",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -130,7 +130,7 @@
             "name":"permanently",
             "value":"ไม่มีวันหมดอายุ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -151,7 +151,7 @@
             "name":"file_encrypted",
             "value":"ไฟล์ได้รับการป้องกัน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -165,21 +165,21 @@
             "name":"header_title_readonly",
             "value":"อ่านอย่างเดียว",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"save_as",
             "value":"บันทึกเป็น",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"finished",
             "value":"เสร็จสิ้น",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -193,28 +193,28 @@
             "name":"stow_away",
             "value":"ซ่อน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_cannot_be_opened",
             "value":"ไม่สามารถเปิดไฟล์นี้ได้ ลองอีกครั้งในภายหลัง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"viewing_encryption_details",
             "value":"ดูรายละเอียด",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"sure",
             "value":"ตกลง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -228,42 +228,42 @@
             "name":"da_button",
             "value":"ตกลง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"no_longer_have_permission_view_file",
             "value":"คุณไม่ได้รับการอนุญาตให้ดูไฟล์นี้อีกต่อไป",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"apply_for_the_subject",
             "value":"การอนุญาตจริงอาจแตกต่างกันไปตามแอป",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"unencrypted",
             "value":"เพิกถอนการป้องกัน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"ban",
             "value":"ยกเลิก",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_tips",
             "value":"ผู้ใช้ที่มีสิทธิ์การอนุญาตนี้จะสามารถดู แก้ไข คัดลอก บันทึกหน้าจอ บันทึก และพิมพ์ไฟล์นี้ได้",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -277,7 +277,7 @@
             "name":"save",
             "value":"บันทึก",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -305,14 +305,14 @@
             "name":"Timeout_is_not_supported",
             "value":"วันหมดอายุไม่สามารถเป็นอดีตได้ โปรดกำหนดวันใหม่อีกครั้ง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"PERMISSION_TYPE_SELECT_TARGET",
             "value":"ผู้ใช้ที่ระบุ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -338,23 +338,23 @@
         },
         {
             "name":"incorrect_work_ID",
-            "value":"ID พนักงานไม่ถูกต้อง โปรดกรอกอีกครั้ง",
+            "value":"รหัสพนักงานไม่ถูกต้อง โปรดกรอกอีกครั้ง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"File_no_permission",
             "value":"ไม่มีสิทธิ์ในการดูไฟล์นี้ด้วย HUAWEI ID ปัจจุบัน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screenshot",
             "value":"ภาพหน้าจอ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -375,7 +375,7 @@
             "name":"PERMISSION_TYPE_SELECT_ALL",
             "value":"ทุกคน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -396,7 +396,7 @@
             "name":"apply_for_the_permission",
             "value":"หากต้องการขออนุญาต โปรดติดต่อ %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -410,14 +410,14 @@
             "name":"Appointed_day",
             "value":"วันที่ระบุ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"change_encryption",
             "value":"เปลี่ยนการป้องกัน",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -438,7 +438,7 @@
             "name":"enter_a_complete_work_ID",
             "value":"กรอกรหัสพนักงานแล้วกด Enter ตัวอย่าง: a00123456",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -459,7 +459,7 @@
             "name":"perm_list_title_read_only",
             "value":"อ่านอย่างเดียว",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -478,30 +478,30 @@
         },
         {
             "name":"network_invalid",
-            "value":"ข้อผิดพลาดเครือข่าย ลองอีกครั้งในภายหลัง",
+            "value":"เครือข่ายเกิดข้อผิดพลาด ลองอีกครั้งในภายหลัง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit",
             "value":"แก้ไข",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"header_title_edit_content",
             "value":"แก้ไข",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"Permission_has_expired_description",
             "value":"สิทธิ์การเข้าถึงไฟล์ของคุณหมดอายุแล้ว หากต้องการเข้าถึงอีกครั้ง โปรดติดต่อ %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -515,7 +515,7 @@
             "name":"header_title",
             "value":"การอนุญาตสิทธิ์ไฟล์",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -564,14 +564,14 @@
             "name":"Permission_has_expired",
             "value":"สิทธิ์อนุญาตหมดอายุแล้ว",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"screen_recording",
             "value":"บันทึกหน้าจอ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -585,7 +585,7 @@
             "name":"permission_status_title",
             "value":"ไฟล์นี้ได้รับการป้องกัน คุณมีสิทธิ์ \"อ่านอย่างเดียว\" และ \"แก้ไข\"",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -606,21 +606,21 @@
             "name":"Document_valid_until",
             "value":"ใช้งานได้จนถึง",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"share_the_screen",
             "value":"แบ่งปันหน้าจอ",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
             "name":"MESSAGE_APP_NOT_HAVE_PERM_VISIT",
             "value":"คุณไม่ได้รับอนุญาตให้ดูไฟล์นี้ หากต้องการขออนุญาต โปรดติดต่อ %s",
             "attr":{
-                "priority":"translate"
+                "priority":"LT"
             }
         },
         {
@@ -647,6 +647,13 @@
         {
             "name":"Share_Tips_Phone_Format",
             "value":"กรอกหมายเลขโทรศัพท์ที่ถูกต้อง",
+            "attr":{
+                "priority":"translate"
+            }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"ไม่สามารถดูไฟล์ที่เข้ารหัสได้",
             "attr":{
                 "priority":"translate"
             }
