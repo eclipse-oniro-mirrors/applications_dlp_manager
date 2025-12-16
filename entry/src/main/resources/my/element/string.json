@@ -650,6 +650,13 @@
             "attr":{
                 "priority":"translate"
             }
+        },
+        {
+            "name":"restore_minor_dialog_title",
+            "value":"ကုဒ်ပြောင်းဝှက်ထားသော ဖိုင်များကို ကြည့်၍ မရနိုင်ပါ",
+            "attr":{
+                "priority":"translate"
+            }
         }
     ]
 }
