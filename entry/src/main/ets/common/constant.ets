@@ -342,8 +342,9 @@ export default class Constants {
   public static readonly CONTACT_ACCOUNT_OFFSET = 8;
   public static readonly CONTACT_ACCOUNT_SIZE = 9;
   public static readonly FILE_ID_SIZE = 46;
-  public static readonly FLAG_SIZE = 54;
   public static readonly ALLOWED_OPEN_SIZE = 50;
+  public static readonly FLAG_SIZE = 54;
+  public static readonly WATERMARK_CONFIG_SIZE = 58;
   public static readonly INT32_SIZE = 4;
 
   // want params

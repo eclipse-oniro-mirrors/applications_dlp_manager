@@ -40,7 +40,6 @@ const ENTERPRISE_ACCOUNT: number = 4;
 
 export class OpenDlpFileProcessor {
   public async process(want: Want, startId: number, context: common.ServiceExtensionContext): Promise<Result<void>> {
-    this.batchRefresh(context);
     const proRet = await this.processOpenDlpFile(want, startId, context);
     if (proRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'processOpenDlpFile error');
