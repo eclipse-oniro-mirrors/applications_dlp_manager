@@ -174,6 +174,7 @@ interface DlpGeneralInfo {
   realFileType: string,
   fileId: string,
   allowedOpenCount: number,
+  waterMarkConfig: boolean,
 }
 
 interface CertInfo {
@@ -216,8 +217,7 @@ class ZipParse extends FileParseBase {
     return ResultMsg.buildSuccess(accountType);
   }
 
-  async parseDlpGeneralInfo(generalInfoPath: string): Promise<DlpGeneralInfo> {
-    const generalInfo = fs.readTextSync(generalInfoPath);
+  private parseRealFileType(generalInfo: string): string {
     const realFileTypeInfoArray = generalInfo.split('realFileType');
     let realFileType: string = '';
     if (realFileTypeInfoArray.length === Constants.NUMBER_TWO) {
@@ -226,7 +226,10 @@ class ZipParse extends FileParseBase {
         realFileType = realFileTypeStr[Constants.NUMBER_TWO];
       }
     }
+    return realFileType;
+  }
 
+  private parseContactAccount(generalInfo: string): string {
     const contactAccountInfoArray = generalInfo.split('contactAccount');
     let contactAccount: string = '';
     if (contactAccountInfoArray.length === Constants.NUMBER_TWO) {
@@ -235,7 +238,10 @@ class ZipParse extends FileParseBase {
         contactAccount = contactAccountStr[Constants.NUMBER_TWO];
       }
     }
+    return contactAccount;
+  }
 
+  private parseFileId(generalInfo: string): string {
     const fileIdInfoArray = generalInfo.split('fileId');
     let fileId: string = '';
     if (fileIdInfoArray.length === Constants.NUMBER_TWO) {
@@ -244,7 +250,10 @@ class ZipParse extends FileParseBase {
         fileId = fileIdStr[Constants.NUMBER_TWO];
       }
     }
+    return fileId;
+  }
 
+  private parseAllowedOpenCount(generalInfo: string, fileId: string): number {
     let allowedOpenCount: number = -1;
     const allowedOpenCountArray = generalInfo.split('allowedOpenCount');
     if (allowedOpenCountArray.length === 1) {
@@ -253,17 +262,39 @@ class ZipParse extends FileParseBase {
       try {
         let jsonObj: object = JSON.parse(generalInfo);
         let allowedOpenCountCon: number = jsonObj['allowedOpenCount'];
-        allowedOpenCount = typeof allowedOpenCountCon === 'number' ? allowedOpenCountCon : -1
+        allowedOpenCount = typeof allowedOpenCountCon === 'number' ? allowedOpenCountCon : -1;
       } catch (error) {
         HiLog.wrapError(TAG, error, 'allowedOpenCount is error');
       }
     }
+    return allowedOpenCount;
+  }
 
+  private parseWaterMarkConfig(generalInfo: string): boolean {
+    let waterMarkConfig: boolean = false;
+    try {
+      let jsonObj: object = JSON.parse(generalInfo);
+      let waterMarkConfigCon: boolean = jsonObj['waterMarkConfig'];
+      waterMarkConfig = typeof waterMarkConfigCon === 'boolean' ? waterMarkConfigCon : false;
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'waterMarkConfig is error');
+    }
+    return waterMarkConfig;
+  }
+
+  async parseDlpGeneralInfo(generalInfoPath: string): Promise<DlpGeneralInfo> {
+    const generalInfo = fs.readTextSync(generalInfoPath);
+    const realFileType = this.parseRealFileType(generalInfo);
+    const contactAccount = this.parseContactAccount(generalInfo);
+    const fileId = this.parseFileId(generalInfo);
+    const allowedOpenCount = this.parseAllowedOpenCount(generalInfo, fileId);
+    const waterMarkConfig = this.parseWaterMarkConfig(generalInfo);
     const dlpGeneralInfo: DlpGeneralInfo = {
       contactAccount: contactAccount,
       realFileType: realFileType,
       fileId: fileId,
       allowedOpenCount: allowedOpenCount,
+      waterMarkConfig: waterMarkConfig,
     }
     return dlpGeneralInfo;
   }
@@ -298,7 +329,8 @@ class ZipParse extends FileParseBase {
         ownerAccount: dlpGeneralInfo.contactAccount,
         fileSize: this.fileSize,
         fileId: dlpGeneralInfo.fileId,
-        allowedOpenCount: dlpGeneralInfo.allowedOpenCount
+        allowedOpenCount: dlpGeneralInfo.allowedOpenCount,
+        waterMarkConfig: dlpGeneralInfo.waterMarkConfig,
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
@@ -333,17 +365,22 @@ class RawParse extends FileParseBase {
     const fileIdString: string = textDecoder.decodeToString(new Uint8Array(fileId), { stream: false });
 
     let flag = new ArrayBuffer(Constants.INT32_SIZE);
-    option = {offset: this.fileSize - Constants.FLAG_SIZE, length: Constants.INT32_SIZE};
+    option = { offset: this.fileSize - Constants.FLAG_SIZE, length: Constants.INT32_SIZE };
     fs.readSync(file.fd, flag, option);
     let flagValue: number = new Int32Array(flag)[0];
     let allowedOpenCount: number = -1;
     if (flagValue === 1) {
-      option = {offset: this.fileSize - Constants.ALLOWED_OPEN_SIZE, length: Constants.INT32_SIZE};
+      option = { offset: this.fileSize - Constants.ALLOWED_OPEN_SIZE, length: Constants.INT32_SIZE };
       fs.readSync(file.fd, flag, option);
       allowedOpenCount = new Int32Array(flag)[0];
     } else {
       allowedOpenCount = fileIdString.trim() != '' ? 1 : -1;
     }
+
+    let waterMarkConfig: boolean = false;
+    option = { offset: this.fileSize - Constants.WATERMARK_CONFIG_SIZE, length: Constants.INT32_SIZE };
+    fs.readSync(file.fd, flag, option);
+    waterMarkConfig = new Int32Array(flag)[0] === 1 ? true : false;
 
     const dlpGeneralInfo: DlpGeneralInfo = {
       contactAccount: contactString ?? '',
@@ -351,6 +388,7 @@ class RawParse extends FileParseBase {
         NUM_TO_TYPE_MAP.get(buf[Constants.NUMBER_THREE]) as string : '',
       fileId: fileIdString ?? '',
       allowedOpenCount: allowedOpenCount,
+      waterMarkConfig: waterMarkConfig,
     }
     return dlpGeneralInfo;
   }
@@ -388,7 +426,8 @@ class RawParse extends FileParseBase {
         ownerAccount: dlpGeneralInfo.contactAccount,
         fileSize: this.fileSize,
         fileId: dlpGeneralInfo.fileId,
-        allowedOpenCount: dlpGeneralInfo.allowedOpenCount
+        allowedOpenCount: dlpGeneralInfo.allowedOpenCount,
+        waterMarkConfig: dlpGeneralInfo.waterMarkConfig,
       };
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {

@@ -309,7 +309,7 @@ export default class StartSandboxHandler {
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
         'ohos.dlp.params.securityFlag': decryptContent.authPerm ===
         dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
-        'ohos.dlp.params.waterMarkConfig': decryptContent.dlpFile.dlpProperty.waterMarkConfig ?? false
+        'ohos.dlp.params.waterMarkConfig': decryptContent.fileMetaInfo.waterMarkConfig,
       }
     };
     ObjectUtil.Assign(want.parameters, dlpWant.parameters);

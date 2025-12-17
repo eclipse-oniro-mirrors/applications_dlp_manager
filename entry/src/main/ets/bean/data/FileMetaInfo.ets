@@ -20,4 +20,5 @@ export default interface FileMetaInfo {
   fileSize: number;
   fileId: string;
   allowedOpenCount: number;
+  waterMarkConfig: boolean;
 }
