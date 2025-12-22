@@ -34,3 +34,8 @@ export const enum EncryptSharingTerminateCode {
   SUCCESS = 2,
   CHECK_URI_FAILED = 3
 }
+
+export const enum ToggleState {
+  DISABLE = 0,
+  ENABLE = 1
+}

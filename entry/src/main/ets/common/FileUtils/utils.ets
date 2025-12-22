@@ -24,19 +24,19 @@ import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import fileUri from '@ohos.file.fileuri';
+import FileUtil from '../external/FileUtil';
+import FileUtils from './FileUtils';
 import fs from '@ohos.file.fs';
 import GlobalContext from '../GlobalContext';
 import { HiLog } from '../HiLog';
 import hiSysEvent from '@ohos.hiSysEvent';
 import { promptAction, UIContext } from '@kit.ArkUI';
-import { systemDateTime } from '@kit.BasicServicesKit';
+import { systemDateTime, systemParameterEnhance } from '@kit.BasicServicesKit';
 import util from '@ohos.util';
 import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
 import Result from '../Result';
 import { ResultMsg } from '../ResultMsg';
-import FileUtil from '../external/FileUtil';
-import FileUtils from './FileUtils';
 
 const TAG = 'Utils';
 
@@ -121,11 +121,6 @@ interface DLPInfo {
 interface DLPGeneralInfo {
   accountType: number;
   realFileType: string;
-}
-
-interface BundleNameInfo {
-  callerBundleName: string;
-  sandboxBundleName: string;
 }
 
 function getFileUriByPath(filePath: string): string {
@@ -391,13 +386,7 @@ async function getDLPInfo(): Promise<Result<DLPInfo>> {
   }
 }
 
-function getBundleNameInfo(callerBundleName: string, openFileBundleName: string): string {
-  const bundleInfo: BundleNameInfo = {
-    callerBundleName: callerBundleName,
-    sandboxBundleName: openFileBundleName
-  };
-  return JSON.stringify(bundleInfo);
-}
+
 
 function sendDlpManagerAccountLogin(errorCode: number) {
   let event: hiSysEvent.SysEventInfo = {
@@ -902,6 +891,15 @@ function checkValidAccountType(accountType: number): boolean {
   return true;
 }
 
+function isDevelopmentMode(): boolean {
+  try {
+    return systemParameterEnhance.getSync('const.security.developermode.state') === 'true';
+  } catch (error) {
+    HiLog.wrapError(TAG, error, 'Failed to get development mode.');
+  }
+  return false;
+}
+
 export {
   AuthAccount,
   PermissionType,
@@ -948,8 +946,8 @@ export {
   uint8ArrayToHexString,
   getCostTime,
   anonymizeUid,
-  getBundleNameInfo,
+  getFormatTimestamp,
   getAccountNameFromErrMsg,
   checkValidAccountType,
-  getFormatTimestamp
+  isDevelopmentMode
 };

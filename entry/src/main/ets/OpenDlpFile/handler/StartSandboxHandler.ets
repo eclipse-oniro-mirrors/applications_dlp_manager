@@ -356,7 +356,7 @@ export default class StartSandboxHandler {
       await context.startAbility(want);
       HiLog.debug(TAG, 'startDataAbility success');
     } catch (error) {
-      HiLog.wrapError(TAG, error, 'startDataAbility failed')
+      HiLog.wrapError(TAG, error, 'startDataAbility failed');
     }
   }
 

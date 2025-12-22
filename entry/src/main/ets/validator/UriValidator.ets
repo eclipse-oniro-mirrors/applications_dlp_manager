@@ -16,11 +16,11 @@
 import Constants from '../common/constant';
 import { EncryptSharingShowCodeEnum } from '../common/enum/EncryptSharingShowCodeEnum';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
+import { FileClassification, SupportTypesConfig } from '../common/SupportTypesConfig';
 import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import { getFileSizeByUriSync, isInvalidStr, isValidPath } from '../common/FileUtils/utils';
 import { HiLog } from '../common/HiLog';
 import Singleton from '../common/Singleton';
-import { SupportTypesConfig } from '../common/SupportTypesConfig';
 
 const TAG = 'UriValidator';
 const DLP_FILE_TYPE = 'dlp';
@@ -163,7 +163,7 @@ class FileSizeValidator extends BaseValidator {
 
       const fileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(context.currentUri);
       const fileType: string = FileUtils.removeFileTypeFirstDot(fileMsg.fileType);
-      if (SupportTypesConfig.isDocumentType(fileType)) {
+      if (SupportTypesConfig.isTypeOf(fileType, FileClassification.DOCUMENT)) {
         if (size > Constants.SHARE_MAX_SUPPORT_SIZE_DOC) {
           context.errorCode = EncryptSharingShowCodeEnum.SINGLE_SIZE_ERROR_DOC_MB;
           return false;

@@ -14,13 +14,18 @@
  */
 
 import { BigDataConstants, ReportToBigDataUtil } from '../../common/ReportToBigDataUtil';
-import DecryptContent from '../data/DecryptContent';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { anonymizeUid, getBundleNameInfo, getCostTime } from '../../common/FileUtils/utils';
-import AppStorageConstant from '../../common/AppStorageConstant';
-import { SecurityEventIdConstants, SecurityEventNameConstants, ReportSecurityEventUtil } from '../../common/ReportSecurityEventUtil';
-import { HiLog } from '../../common/HiLog';
+import DecryptContent from '../data/DecryptContent';
 import { dlpPermission } from '@kit.DataProtectionKit';
+import { DlpFileOpenReportUtils } from './DlpFileOpenReportUtils';
+import { getCostTime } from '../../common/FileUtils/utils';
+import { HiLog } from '../../common/HiLog';
+import {
+  SecurityEventIdConstants,
+  SecurityEventNameConstants,
+  ReportSecurityEventUtil
+} from '../../common/ReportSecurityEventUtil';
+import { SupportTypesConfig } from '../../common/SupportTypesConfig';
 
 const TAG: string = 'DlpFileOpenReport';
 
@@ -31,8 +36,7 @@ export class DlpFileOpenReport {
       'ACCOUNT_TYPE': decryptContent.fileMetaInfo?.accountType ?? -1,
       'FILE_SIZE': decryptContent.fileMetaInfo?.fileSize ?? -1,
       'REAL_FILE_TYPE': decryptContent.fileMetaInfo?.fileType ?? '',
-      'RECV_USER_ID': decryptContent.dlpFile?.dlpProperty?.authUserList?.[0]?.authAccount ?
-        anonymizeUid(decryptContent.dlpFile.dlpProperty.authUserList[0].authAccount) ?? -1 : -1,
+      'RECV_USER_ID': DlpFileOpenReportUtils.getRecvUserId(decryptContent),
       'ACCOUNT_STATUS': AppStorage.get('hiAccountStatus') ?? -1,
       'PACK_METHOD': -1,
       'OPERATION_COST': '',
@@ -41,11 +45,18 @@ export class DlpFileOpenReport {
       'OPEN_FILE_FIRST_TIME': false,
       'CODE': code,
       'USER_ID': decryptContent.userId ?? -1,
-      'SANDBOX_PKGNAME': getBundleNameInfo(
-        decryptContent.openDlpFileData?.callerBundleName ?? '',
-        decryptContent.openDlpFileData?.sandboxBundleName ?? ''
+      'SANDBOX_PKGNAME': DlpFileOpenReportUtils.getBundleNameInfo(
+        decryptContent.openDlpFileData?.callerBundleName,
+        decryptContent.openDlpFileData?.sandboxBundleName
       ),
       'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
+      'ALLOWED_OPEN_COUNT': decryptContent.fileMetaInfo?.allowedOpenCount ?? 0,
+      'ALLOWED_OPEN_DURATION': 0,
+      'WATERMARK': DlpFileOpenReportUtils.getWatermarkState(decryptContent),
+      'FILE_CLASSIFICATION': SupportTypesConfig.getFileClassification(decryptContent.fileMetaInfo?.fileType),
+      'CALLER_PKGNAME': decryptContent.openDlpFileData?.callerBundleName ?? '',
+      'DEV_MODE': DlpFileOpenReportUtils.getDevModeState(),
+      'FILE_INFO': DlpFileOpenReportUtils.getFileInfoString(decryptContent)
     };
     return msg;
   }
@@ -55,9 +66,9 @@ export class DlpFileOpenReport {
     const msg: Record<string, number | string | boolean> = {
       'FILE_ID': decryptContent.dlpFile?.dlpProperty?.fileId ?? '',
       'EVENT_TYPE': SecurityEventNameConstants.DLP_FILE_OPEN,
-      'SANDBOX_PKGNAME': getBundleNameInfo(
-        decryptContent.openDlpFileData?.callerBundleName ?? '',
-        decryptContent.openDlpFileData?.sandboxBundleName ?? ''
+      'SANDBOX_PKGNAME': DlpFileOpenReportUtils.getBundleNameInfo(
+        decryptContent.openDlpFileData?.callerBundleName,
+        decryptContent.openDlpFileData?.sandboxBundleName
       ),
       'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
       'REAL_FILE_TYPE': decryptContent.fileMetaInfo?.fileType ?? '',
@@ -82,8 +93,8 @@ export class DlpFileOpenReport {
 
   public static reportDlpFileOpenSecurityEvent(code: number, decryptContent: DecryptContent) {
     if (decryptContent.fileMetaInfo?.accountType != dlpPermission.AccountType.DOMAIN_ACCOUNT) {
-        HiLog.info(TAG, 'report security event ignore.');
-        return;
+      HiLog.info(TAG, 'report security event ignore.');
+      return;
     }
     const msg: Record<string, number | string | boolean> = DlpFileOpenReport.getSecurityEventMsg(code, decryptContent);
     ReportSecurityEventUtil.reportSecurityEvent(SecurityEventIdConstants.DLP_FILE_OPEN, msg);
