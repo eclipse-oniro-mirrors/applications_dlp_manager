@@ -122,9 +122,16 @@ struct AddStaff {
         break;
       }
       let searchArray: string[] = this.inputArray.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
+      let start: number[] = startOffset.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
+      let end: number[] = endOffset.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
+      if (start.length && start.length === end.length) {
+        const n = start[0];
+        start = start.map(item => item - n);
+        end = end.map(item => item - n);
+      }
       let accountResponse: DomainAccountResponse | undefined =
         await AccountManager.getDomainAccountByAccountNames(searchArray);
-      this.dealAccountResponse(searchArray, accountResponse, startOffset, endOffset);
+      this.dealAccountResponse(searchArray, accountResponse, start, end);
 
       startLine = (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
     }
