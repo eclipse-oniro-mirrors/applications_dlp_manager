@@ -51,7 +51,7 @@ export class DlpFileOpenReport {
       ),
       'SANDBOX_INDEX': decryptContent.appInfo?.appIndex ?? -1,
       'ALLOWED_OPEN_COUNT': decryptContent.fileMetaInfo?.allowedOpenCount ?? 0,
-      'ALLOWED_OPEN_DURATION': 0,
+      'ALLOWED_OPEN_DURATION': decryptContent.fileMetaInfo.countdown,
       'WATERMARK': DlpFileOpenReportUtils.getWatermarkState(decryptContent),
       'FILE_CLASSIFICATION': SupportTypesConfig.getFileClassification(decryptContent.fileMetaInfo?.fileType),
       'CALLER_PKGNAME': decryptContent.openDlpFileData?.callerBundleName ?? '',

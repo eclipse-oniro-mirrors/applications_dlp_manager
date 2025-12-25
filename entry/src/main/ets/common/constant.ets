@@ -345,7 +345,9 @@ export default class Constants {
   public static readonly ALLOWED_OPEN_SIZE = 50;
   public static readonly FLAG_SIZE = 54;
   public static readonly WATERMARK_CONFIG_SIZE = 58;
+  public static readonly COUNTDOWN_SIZE = 62;
   public static readonly INT32_SIZE = 4;
+  public static readonly COUNTDOWN_FILE_TYPE = 10000;
 
   // want params
   public static readonly PARAMS_BUNDLE_NAME: string = 'ohos.dlp.params.bundleName';
