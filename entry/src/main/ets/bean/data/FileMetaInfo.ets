@@ -21,4 +21,5 @@ export default interface FileMetaInfo {
   fileId: string;
   allowedOpenCount: number;
   waterMarkConfig: boolean;
+  countdown: number;
 }

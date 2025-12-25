@@ -114,4 +114,12 @@ export default class FileUtils {
     const value = params[key];
     return (typeof value === typeof defaultValue) ? value as T : defaultValue;
   }
+
+  static getExtractRealType(typeStr: string): string {
+    const lastUnderscore = typeStr.lastIndexOf('_');
+    if (lastUnderscore === -1) {
+      return typeStr;
+    }
+    return typeStr.substring(lastUnderscore + 1);
+  }
 }
