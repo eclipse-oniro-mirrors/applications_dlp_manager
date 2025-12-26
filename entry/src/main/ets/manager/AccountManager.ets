@@ -67,16 +67,29 @@ export default class AccountManager {
     if (!accountInfo) {
       return undefined;
     }
-    let searchReq = DomainAccountConvertor.convertBatchToDomainAccountReq(
-      searchArray, accountInfo.domainInfo?.accountName, accountInfo.domainInfo?.accountId);
-    let connection: CredConnectServiceDomain | undefined =
-      AppStorage.get<CredConnectServiceDomain>(AppStorageConstant.CRED_CONNECTION_DOMAIN);
-    let response: DomainAccountResponse | undefined = await connection?.getDomainAccountInfo(searchReq);
-    if (response?.getErrorCode() !== Constants.ERR_CODE_SUCCESS) {
-      return undefined;
+    let array: DomainAccountInfo[] = [];
+    let errCode = Constants.ERR_CODE_SUCCESS;
+    for (let i = 0; i < searchArray.length; i += 50) {
+      let parts = searchArray.slice(i, i + 50);
+      let searchReq = DomainAccountConvertor.convertBatchToDomainAccountReq(parts, accountInfo.domainInfo?.accountName,
+        accountInfo.domainInfo?.accountId);
+      let connection: CredConnectServiceDomain | undefined =
+        AppStorage.get<CredConnectServiceDomain>(AppStorageConstant.CRED_CONNECTION_DOMAIN);
+      if (!connection) {
+        return undefined;
+      }
+      let response: DomainAccountResponse | undefined = await connection?.getDomainAccountInfo(searchReq);
+      if (response?.getErrorCode() !== Constants.ERR_CODE_SUCCESS) {
+        return undefined;
+      }
+      errCode = response.getErrorCode();
+      array = [...array, ...response.getData()];
     }
-    AccountManager.dealDomainAccountMapCache(response?.getData());
-    return response;
+    let result: DomainAccountResponse = new DomainAccountResponse();
+    result.setErrorCode(errCode);
+    result.setData(array);
+    AccountManager.dealDomainAccountMapCache(result.getData());
+    return result;
   }
 
   public static async getDomainAccountWithRetry(searchArray: string[]): Promise<DomainAccountResponse | undefined> {
