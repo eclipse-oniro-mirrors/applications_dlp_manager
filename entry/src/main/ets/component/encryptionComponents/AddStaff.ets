@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import { BusinessError } from '@ohos.base';
 import { staffItem } from './staff';
 import Constants from '../../common/constant';
 import { AccountTipsConfig } from '../AccountTipsConfig';
@@ -59,8 +58,6 @@ struct AddStaff {
   @State inputArray: string[] = [];
   private controller: RichEditorController = new RichEditorController();
   private options: RichEditorOptions = { controller: this.controller };
-
-  private shardingCount: number = 0;
   @State @Watch('onErrorStyleChange') showFlag: boolean = false;
   @State showCode: number = EncryptProtectionShowCodeEnum.INIT_SUCCESS;
 
@@ -110,31 +107,17 @@ struct AddStaff {
 
   private async dealAccount(startOffset: number[], endOffset: number[]) {
     HiLog.info(TAG, 'dealAccount start');
-    this.inputArray = this.inputArray.filter(item =>{
+    this.inputArray = this.inputArray.filter(item => {
       return !CommonUtil.isEmptyStr(item);
     });
-    this.shardingCount = this.inputArray.length / Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
-    let startLine: number = 0;
-    for (let i = 0; i < this.shardingCount; i++) {
-      if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
-        this.staffArrayLength = true;
-        this.errInput = [];
-        break;
-      }
-      let searchArray: string[] = this.inputArray.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
-      let start: number[] = startOffset.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
-      let end: number[] = endOffset.slice(startLine, (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX);
-      if (start.length && start.length === end.length) {
-        const n = start[0];
-        start = start.map(item => item - n);
-        end = end.map(item => item - n);
-      }
-      let accountResponse: DomainAccountResponse | undefined =
-        await AccountManager.getDomainAccountByAccountNames(searchArray);
-      this.dealAccountResponse(searchArray, accountResponse, start, end);
-
-      startLine = (i + 1) * Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX;
+    if (this.staffArray.length >= Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
+      this.staffArrayLength = true;
+      this.errInput = [];
+      return;
     }
+    let accountResponse: DomainAccountResponse | undefined =
+      await AccountManager.getDomainAccountByAccountNames(this.inputArray);
+    this.dealAccountResponse(this.inputArray, accountResponse, startOffset, endOffset);
     HiLog.info(TAG, 'dealAccount end');
   }
 
@@ -150,7 +133,7 @@ struct AddStaff {
       return;
     }
     let dataArray: Array<DomainAccountInfo> | undefined = accountResponse?.getData();
-    searchArray.forEach(accountName =>{
+    searchArray.forEach(accountName => {
       let matchAccount = dataArray?.find(
         data => data.accountName.toLocaleUpperCase() === accountName.toLocaleUpperCase());
       if (matchAccount) {
@@ -200,7 +183,7 @@ struct AddStaff {
   }
 
   private batchDealError(accountNameArray: string[], startOffset: number[], endOffset: number[]) {
-    accountNameArray.forEach(accountName =>{
+    accountNameArray.forEach(accountName => {
       this.showErrInput(accountName, startOffset, endOffset);
     })
   }
@@ -241,7 +224,7 @@ struct AddStaff {
       textStyle: {
         fontSize: $r('sys.float.ohos_id_text_size_body1'),
         fontColor: this.showFlag ?
-        $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_primary')
+          $r('sys.color.ohos_id_color_handup') : $r('sys.color.ohos_id_color_text_primary')
       }
     });
   }
@@ -252,13 +235,10 @@ struct AddStaff {
     this.showFlag = false;
   }
 
-  private dealError(inputId: string, startOffset: number[], endOffset: number[]) {
-    this.errInput = [];
-    this.deleteBuildSpan(startOffset, endOffset);
-    this.showErrInput(inputId, startOffset, endOffset);
-    this.controller.addTextSpan(this.errInput.join(';'));
+  private dealError() {
     this.showCode = EncryptProtectionShowCodeEnum.INPUT_ERROR;
     this.showFlag = true;
+    this.onErrorStyleChange();
   }
 
   async aboutToAppear() {
@@ -308,10 +288,11 @@ struct AddStaff {
             this.initShowCode();
             if (value.insertValue === Constants.ENTER_KEY_VALUE) {
               let richEditorSpans: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
-              this.controller.getSpans();
+                this.controller.getSpans();
               let inputId: string = '';
               let startOffset: number[] = [];
               let endOffset: number[] = [];
+              let isError = false;
               for (let index: number = 0; index < richEditorSpans.length; index++) {
                 let buildSpan: RichEditorTextSpanResult = richEditorSpans[index] as RichEditorTextSpanResult;
                 if (buildSpan.textStyle) {
@@ -319,10 +300,13 @@ struct AddStaff {
                   startOffset.push(buildSpan.spanPosition.spanRange[0]);
                   endOffset.push(buildSpan.spanPosition.spanRange[1]);
                   if (inputId.length > EncryptProtectionHelper.INPUT_MAX_LENGTH) {
-                    this.dealError(inputId, startOffset, endOffset);
-                    return true;
+                    this.dealError();
+                    isError = true;
                   }
                 }
+              }
+              if (isError) {
+                return true;
               }
               if (this.isAccountCheckSuccess) {
                 this.onSubmitMock(inputId, startOffset, endOffset);
@@ -334,12 +318,12 @@ struct AddStaff {
           .aboutToDelete((value: RichEditorDeleteValue) => {
             if (!value.richEditorDeleteSpans.length) {
               return false;
-            };
+            }
             this.initShowCode();
             let richEditorSpansAll: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
               this.controller.getSpans();
             let richEditorDeleteSpans: (RichEditorTextSpanResult | RichEditorImageSpanResult)[] =
-            value.richEditorDeleteSpans;
+              value.richEditorDeleteSpans;
             let len = richEditorDeleteSpans[richEditorDeleteSpans.length - 1].spanPosition.spanIndex;
             let textNum: number = 0;
             for (let i = 0; i <= len; i++) {
@@ -370,7 +354,7 @@ struct AddStaff {
 
       Divider()
         .strokeWidth(this.focusFlag ?
-        px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER2) : px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER))
+          px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER2) : px2vp(Constants.ENCRYPTION_ADD_STAFF_BORDER))
         .color((EncryptProtectionHelper.isShowErr(this.showCode, this.staffArrayLength))
           ? $r('sys.color.ohos_id_color_handup') :
           this.focusFlag ? $r('sys.color.ohos_id_color_primary') : $r('sys.color.ohos_id_color_list_separator'))
