@@ -59,6 +59,7 @@
         <filteritem type="filepath" name="AppScope/resources/base/media/.*" desc="original icons that application required."/>
         <filteritem type="filepath" name="entry/src/main/resources/base/media/.*" desc="original icons that application required."/>
         <filteritem type="filepath" name="figures/application-framework.png" desc="original application framework."/>
+        <filteritem type="filepath" name="entry/src/ohosTest/resources/base/media/.*" desc="original icons that application required."/>
       </filefilter>
     </filefilterlist>
   </oatconfig>
