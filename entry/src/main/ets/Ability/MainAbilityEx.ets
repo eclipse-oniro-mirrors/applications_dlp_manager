@@ -163,7 +163,10 @@ export default class MainAbility extends UIExtensionAbility {
     }
     if (this.authPerm === dlpPermission.DLPFileAccess.FULL_CONTROL) {
       let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
-      let checkFlag = await AccountManager.checkAccountInfo(accountInfo?.domainInfo?.accountName);
+      let checkFlag = await Promise.race<boolean>([
+        AccountManager.checkAccountInfo(accountInfo?.domainInfo?.accountName),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000))
+      ]);
       if (!checkFlag) {
         this.gotoAlertPage(session, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         return;
@@ -388,7 +391,10 @@ export default class MainAbility extends UIExtensionAbility {
           let accountName: string = getAccountNameFromErrMsg(msg);
           if (!CommonUtil.isEmptyStr(accountName)) {
             ansErr.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
-            accountFlag = await AccountManager.checkAccountInfo(accountName);
+            accountFlag = await Promise.race<boolean>([
+                AccountManager.checkAccountInfo(accountName),
+                new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000))
+            ]);
           }
         }
         if (!accountFlag) {
