@@ -386,4 +386,6 @@ export default class Constants {
   public static readonly DEFAULT_ERROR_CODE = -1;
   public static readonly VALID_URI_PREFIX = 'file://';
   public static readonly MSG_CONTACT = ', contact:';
+
+  public static CONNECTION_TIMEOUT = 3000;
 }

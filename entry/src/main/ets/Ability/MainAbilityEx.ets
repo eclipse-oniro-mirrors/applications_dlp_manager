@@ -165,7 +165,7 @@ export default class MainAbility extends UIExtensionAbility {
       let accountInfo: osAccount.OsAccountInfo = GlobalContext.load('accountInfo');
       let checkFlag = await Promise.race<boolean>([
         AccountManager.checkAccountInfo(accountInfo?.domainInfo?.accountName),
-        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000))
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), Constants.CONNECTION_TIMEOUT))
       ]);
       if (!checkFlag) {
         this.gotoAlertPage(session, { code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
@@ -393,7 +393,7 @@ export default class MainAbility extends UIExtensionAbility {
             ansErr.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
             accountFlag = await Promise.race<boolean>([
                 AccountManager.checkAccountInfo(accountName),
-                new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000))
+                new Promise<boolean>((resolve) => setTimeout(() => resolve(false), Constants.CONNECTION_TIMEOUT))
             ]);
           }
         }
