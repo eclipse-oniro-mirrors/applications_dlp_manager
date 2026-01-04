@@ -1,0 +1,10 @@
+{
+  "include": [    // 配置参与覆盖率统计的文件或文件夹，仅支持模块名开头的绝对路径，暂不支持通配符
+  ],
+  "exclude": [    // 配置不参与覆盖率统计的文件或文件夹，仅支持模块名开头的绝对路径，暂不支持通配符
+    "entry/src/main/ets/Ability",
+    "entry/src/main/ets/Application",
+    "entry/src/main/ets/cleanDlpCache",
+    "entry/src/main/ets/pages"
+  ]
+}

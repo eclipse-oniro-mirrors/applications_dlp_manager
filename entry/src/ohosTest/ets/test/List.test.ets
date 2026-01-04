@@ -13,8 +13,10 @@
  * limitations under the License.
  */
 
-import utilsTest from './utils.test'
+import AccountAssociationTest from './AccountAssociationTest.test';
+import UtilsTest from './UtilsTest.test'
 
 export default function testsuite() {
-  utilsTest()
+  AccountAssociationTest();
+  UtilsTest();
 }
