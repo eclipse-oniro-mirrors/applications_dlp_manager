@@ -15,7 +15,11 @@
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect, TestType } from '@ohos/hypium'
 import { HiLog } from '../../../../../main/ets/common/HiLog';
-import { getFileFd } from '../../../../../main/ets/common/FileUtils/utils';
+import {
+  defaultDlpFile,
+  getFileFd,
+  getFileUriByPath
+} from '../../../../../main/ets/common/FileUtils/utils';
 
 const TAG = 'UtilsTest';
 
@@ -47,6 +51,24 @@ export default function UtilsTest() {
       let dlpFd = getFileFd(String(testUri))
       expect(dlpFd.errcode).assertEqual(-1);
       HiLog.info(TAG, `UtilsTest_getFileFd ends.`);
+    })
+
+    it('UtilsTest_defaultDlpFile', 0, async () => {
+      let num = 1;
+      defaultDlpFile.recoverDLPFile(num);
+      defaultDlpFile.closeDLPFile();
+      defaultDlpFile.addDLPLinkFile('1');
+      defaultDlpFile.stopFuseLink();
+      defaultDlpFile.resumeFuseLink();
+      defaultDlpFile.replaceDLPLinkFile('1');
+      defaultDlpFile.deleteDLPLinkFile('1');
+      expect(num).not().assertNull();
+    })
+
+    it('UtilsTest_getFileUriByPath', 0, async () => {
+      let testUri = 'testKey';
+      getFileUriByPath(testUri);
+      expect(testUri).not().assertNull();
     })
   })
 }

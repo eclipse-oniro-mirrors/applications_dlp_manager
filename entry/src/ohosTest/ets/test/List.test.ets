@@ -19,6 +19,9 @@ import OpenDlpFileManagerTest from './openDlpFile/OpenDlpFileManagerTest.test';
 import SupportedTypesCfgTest from './common/SupportedTypesCfgTest.test';
 import UtilsTest from './common/FileUtils/UtilsTest.test'
 import UriValidatorTest from './validator/UriValidatorTest.test';
+import GetAlertMessageTest from './common/AlertMessage/GetAlertMessageTest.test';
+import FileUtilTest from './common/external/FileUtilTest.test';
+import FileUtilsTest from './common/FileUtils/FileUtilsTest.test';
 
 export default function testsuite() {
   AssociationSerTest();
@@ -27,4 +30,7 @@ export default function testsuite() {
   OpenDlpFileManagerTest();
   SupportedTypesCfgTest();
   UriValidatorTest();
+  GetAlertMessageTest();
+  FileUtilTest();
+  FileUtilsTest();
 }
