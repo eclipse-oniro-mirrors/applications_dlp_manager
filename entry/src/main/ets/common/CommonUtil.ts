@@ -74,15 +74,4 @@ export default class CommonUtil {
     AppStorage.setOrCreate(key, newVal);
     return newVal;
   }
-
-  /**
-   * delay
-   * @param delay unit is mill sec
-   */
-  public static delay(delay: number): void {
-    let currentTime = new Date().getTime();
-    while (new Date().getTime() < currentTime + delay) {
-      continue;
-    }
-  }
 }

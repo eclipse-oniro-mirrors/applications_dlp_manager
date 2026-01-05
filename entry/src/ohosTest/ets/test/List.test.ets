@@ -14,9 +14,13 @@
  */
 
 import AccountAssociationTest from './AccountAssociationTest.test';
+import CommonUtilTest from './common/CommonUtilTest.test';
+import OpenDlpFileManagerTest from './openDlpFile/OpenDlpFileManagerTest.test';
 import UtilsTest from './UtilsTest.test'
 
 export default function testsuite() {
   AccountAssociationTest();
   UtilsTest();
+  CommonUtilTest();
+  OpenDlpFileManagerTest();
 }
