@@ -14,11 +14,13 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium'
-import ApplyEfficiencyManager from '../../../../main/ets/OpenDlpFile/manager/ApplyEfficiencyManager';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import { FileClassification, SupportTypesConfig } from '../../../../main/ets/common/SupportTypesConfig';
+import { HiLog } from '../../../../main/ets/common/HiLog';
 
-export default function OpenDlpFileManagerTest() {
-  describe('OpenDlpFileManagerTest', () => {
+const TAG: string = 'SptTypesCfgTest';
+
+export default function SupportedTypesCfgTest() {
+  describe('SupportedTypesCfgTest', () => {
     // Defines a test suite. Two parameters are supported: test suite name and test suite function.
     beforeAll(() => {
       // Presets an action, which is performed only once before all test cases of the test suite start.
@@ -39,11 +41,30 @@ export default function OpenDlpFileManagerTest() {
       // This API supports only one parameter: clear action function.
     })
 
-    it('ApplyEfficiencyManager', 0, async () => {
-      ApplyEfficiencyManager.getInstance().applyEfficiency();
-      ApplyEfficiencyManager.getInstance().releaseEfficiency();
-      const ctx = AppStorageMgr.getContext('test1');
-      expect(ctx).assertEqual(undefined);
+    it('SupportedTypesCfgTest_supportedTypes_checkType', 0, () => {
+      expect(SupportTypesConfig.checkType('txt')).assertTrue();
+      expect(SupportTypesConfig.checkType('unknown')).assertFalse();
+      HiLog.info(TAG, 'SupportedTypesCfgTest_supportedTypes_checkType ends.');
+    })
+
+    it('SupportedTypesCfgTest_supportedTypes_isTypeOf', 0, () => {
+      const fileExtDoc = 'txt';
+      const fileExtImg = 'jpg';
+      const fileExtVideo = 'mp4';
+      const fileExtAudio = 'mp3';
+      const fileExtUnk = 'unknown';
+
+      expect(SupportTypesConfig.isTypeOf(fileExtDoc, FileClassification.DOCUMENT)).assertTrue();
+      expect(SupportTypesConfig.isTypeOf(fileExtImg, FileClassification.IMAGE)).assertTrue();
+      expect(SupportTypesConfig.isTypeOf(fileExtVideo, FileClassification.VIDEO)).assertTrue();
+      expect(SupportTypesConfig.isTypeOf(fileExtAudio, FileClassification.AUDIO)).assertTrue();
+      expect(SupportTypesConfig.isTypeOf(fileExtUnk, FileClassification.UNKNOWN)).assertTrue();
+
+      expect(SupportTypesConfig.isTypeOf(fileExtDoc, FileClassification.AUDIO)).assertFalse();
+      expect(SupportTypesConfig.isTypeOf(fileExtImg, FileClassification.VIDEO)).assertFalse();
+      expect(SupportTypesConfig.isTypeOf(fileExtVideo, FileClassification.DOCUMENT)).assertFalse();
+      expect(SupportTypesConfig.isTypeOf(fileExtUnk, FileClassification.IMAGE)).assertFalse();
+      HiLog.info(TAG, 'SupportedTypesCfgTest_supportedTypes_isTypeOf ends.');
     })
   })
 }

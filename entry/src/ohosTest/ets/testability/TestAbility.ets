@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
-import abilityDelegatorRegistry from '@ohos.app.ability.abilityDelegatorRegistry';
+import AbilityDelegatorRegistry from '@ohos.app.ability.abilityDelegatorRegistry';
 import AppStorageConstant from '../../../main/ets/common/AppStorageConstant';
 import AppStorageMgr from '../../../main/ets/common/AppStorageMgr';
 import { HiLog } from '../../../main/ets/common/HiLog';
@@ -30,8 +30,8 @@ export default class TestAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     HiLog.info(TAG, 'TestAbility onCreate');
     AppStorageMgr.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, this.context, true);
-    let abilityDelegator = abilityDelegatorRegistry.getAbilityDelegator();
-    let abilityDelegatorArguments = abilityDelegatorRegistry.getArguments();
+    let abilityDelegator = AbilityDelegatorRegistry.getAbilityDelegator();
+    let abilityDelegatorArguments = AbilityDelegatorRegistry.getArguments();
     HiLog.info(TAG, 'Start run testcase!');
     Hypium.hypiumTest(abilityDelegator, abilityDelegatorArguments, testsuite);
   }

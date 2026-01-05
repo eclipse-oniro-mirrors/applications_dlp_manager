@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,18 @@
  * limitations under the License.
  */
 
-import AccountAssociationTest from './AccountAssociationTest.test';
+import AssociationSerTest from './service/AssociationSerTest.test';
 import CommonUtilTest from './common/CommonUtilTest.test';
 import OpenDlpFileManagerTest from './openDlpFile/OpenDlpFileManagerTest.test';
-import UtilsTest from './UtilsTest.test'
+import SupportedTypesCfgTest from './common/SupportedTypesCfgTest.test';
+import UtilsTest from './common/FileUtils/UtilsTest.test'
+import UriValidatorTest from './validator/UriValidatorTest.test';
 
 export default function testsuite() {
-  AccountAssociationTest();
+  AssociationSerTest();
   UtilsTest();
   CommonUtilTest();
   OpenDlpFileManagerTest();
+  SupportedTypesCfgTest();
+  UriValidatorTest();
 }
