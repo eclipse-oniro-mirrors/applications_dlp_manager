@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "@ohos/hypium"
-import AccountAssociationService from "../../../main/ets/service/AccountAssociationService";
-import AppStorageMgr from "../../../main/ets/common/AppStorageMgr";
-import Constants from "../../../main/ets/common/constant";
-import FileUtil from "../../../main/ets/common/external/FileUtil";
-import { HiLog } from "../../../main/ets/common/HiLog";
-import { isInvalidStr } from "../../../main/ets/common/FileUtils/utils";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium'
+import AccountAssociationService from '../../../../main/ets/service/AccountAssociationService';
+import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import Constants from '../../../../main/ets/common/constant';
+import FileUtil from '../../../../main/ets/common/external/FileUtil';
+import { HiLog } from '../../../../main/ets/common/HiLog';
+import { isInvalidStr } from '../../../../main/ets/common/FileUtils/utils';
 
-const TAG: string = 'AssociationTest';
+const TAG: string = 'AssocSerTest';
 
-export default function AccountAssociationTest() {
-  describe('AccountAssociationTest', () => {
+export default function AssociationSerTest() {
+  describe('AssociationSerTest', () => {
     // Defines a test suite. Two parameters are supported: test suite name and test suite function.
     beforeAll(() => {
       // Presets an action, which is performed only once before all test cases of the test suite start.
@@ -45,7 +45,7 @@ export default function AccountAssociationTest() {
       // This API supports only one parameter: clear action function.
     })
 
-    it('AccountAssociationService_getAndSetAuthorizedAccount', 0, async () => {
+    it('AssociationSerTest_getAndSetAuthorizedAccount', 0, async () => {
       const ctx = AppStorageMgr.getApplicationContext();
       if (!ctx) {
         HiLog.error(TAG, 'Get application context failed.');
