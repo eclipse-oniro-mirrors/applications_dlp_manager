@@ -16,10 +16,22 @@
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect, TestType } from '@ohos/hypium'
 import { HiLog } from '../../../../../main/ets/common/HiLog';
 import {
+  AuthAccount,
+  checkDomainAccountInfo,
   defaultDlpFile,
+  getAuthPerm,
   getFileFd,
-  getFileUriByPath
+  getFileUriByPath,
+  getUserId,
+  judgeIsSandBox,
+  removeDuplicate,
+  terminateSelfWithResult
 } from '../../../../../main/ets/common/FileUtils/utils';
+import account_osAccount from '@ohos.account.osAccount';
+import osAccount from '@ohos.account.osAccount';
+import { distributedAccount } from '@kit.BasicServicesKit';
+import { dlpPermission } from '@kit.DataProtectionKit';
+import Want from '@ohos.app.ability.Want';
 
 const TAG = 'UtilsTest';
 
@@ -69,6 +81,103 @@ export default function UtilsTest() {
       let testUri = 'testKey';
       getFileUriByPath(testUri);
       expect(testUri).not().assertNull();
+    })
+
+    it('UtilsTest_checkDomainAccountInfo', 0, async () => {
+      let distributedInfos: distributedAccount.DistributedInfo = {
+        name: '',
+        id: '',
+        event: ''
+      };
+      let domainInfos: osAccount.DomainAccountInfo = {
+        domain: '',
+        accountName: ''
+      };
+      let accountInfo: account_osAccount.OsAccountInfo = {
+        localId: 0,
+        localName: '',
+        type: osAccount.OsAccountType.ADMIN,
+        constraints: [],
+        isVerified: false,
+        isUnlocked: false,
+        photo: '',
+        createTime: 0,
+        lastLoginTime: 0,
+        serialNumber: 0,
+        isActived: false,
+        isActivated: false,
+        isCreateCompleted: false,
+        distributedInfo: distributedInfos,
+        domainInfo: domainInfos
+      };
+      checkDomainAccountInfo(accountInfo);
+      domainInfos.isAuthenticated = true;
+      checkDomainAccountInfo(accountInfo);
+      domainInfos.accountId = '';
+      checkDomainAccountInfo(accountInfo);
+      expect(accountInfo).not().assertNull();
+    })
+
+    it('UtilsTest_getUserId', 0, async () => {
+      let test = 'testKey';
+      getUserId();
+      expect(test).not().assertNull();
+    })
+
+    it('UtilsTest_getAuthPerm', 0, async () => {
+      let accountName = 'test';
+      let everyoneAccessLists: Array<dlpPermission.DLPFileAccess> = [
+        dlpPermission.DLPFileAccess.NO_PERMISSION,
+        dlpPermission.DLPFileAccess.READ_ONLY,
+        dlpPermission.DLPFileAccess.CONTENT_EDIT,
+        dlpPermission.DLPFileAccess.FULL_CONTROL
+      ];
+      let authUser: dlpPermission.AuthUser = {
+        authAccount: 'test',
+        authAccountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
+        dlpFileAccess: dlpPermission.DLPFileAccess.NO_PERMISSION,
+        permExpiryTime: 0
+      };
+      let authUserLists: Array<dlpPermission.AuthUser> = [authUser];
+      let property: dlpPermission.DLPProperty = {
+        ownerAccount: '',
+        ownerAccountID: '',
+        ownerAccountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
+        contactAccount: '',
+        offlineAccess: false
+      }
+      let access = getAuthPerm(accountName, property);
+      property.ownerAccount = 'test';
+      access = getAuthPerm(accountName, property);
+      property.ownerAccount = '';
+      property.everyoneAccessList = everyoneAccessLists;
+      access = getAuthPerm(accountName, property);
+      property.authUserList = authUserLists;
+      access = getAuthPerm(accountName, property);
+      expect(access).not().assertNull();
+    })
+
+    it('UtilsTest_terminateSelfWithResult', 0, async () => {
+      let test = 'testKey';
+      terminateSelfWithResult(1, test);
+      expect(test).not().assertNull();
+    })
+
+    it('UtilsTest_judgeIsSandBox', 0, async () => {
+      let want: Want = {
+        bundleName: ''
+      }
+      judgeIsSandBox(want);
+      expect(want).not().assertNull();
+    })
+
+    it('UtilsTest_removeDuplicate', 0, async () => {
+      let auth : AuthAccount = {
+        authAccount: ''
+      }
+      let arr: AuthAccount[] = [auth]
+      removeDuplicate(arr, '1');
+      expect(auth).not().assertNull();
     })
   })
 }
