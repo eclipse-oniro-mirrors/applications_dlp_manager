@@ -13,7 +13,19 @@
  * limitations under the License.
  */
 
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium'
+import {
+  afterAll,
+  afterEach,
+  ArgumentMatchers,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  MockKit,
+  when
+} from '@ohos/hypium'
+import AccountAssociationManager from '../../../../main/ets/manager/AccountAssociationManager';
 import AccountAssociationService from '../../../../main/ets/service/AccountAssociationService';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import Constants from '../../../../main/ets/common/constant';
@@ -75,6 +87,19 @@ export default function AssociationSerTest() {
       expect(ret.length).assertEqual(Constants.ASSOCIATION_MAX_SIZE);
 
       FileUtil.rmdirSync(ctx.preferencesDir);
+    })
+
+    it('AssociationSerTest_associationMgr_invalid', 0, async () => {
+      const mocker: MockKit = new MockKit();
+
+      const mockAssoc = mocker.mockFunc(AccountAssociationManager, AccountAssociationManager.getInstance);
+      when(mockAssoc)(ArgumentMatchers.any).afterReturn(null);
+
+      await AccountAssociationService.getInstance().setAuthorizedAccount('test_1');
+      const ret = await AccountAssociationService.getInstance().getAuthorizedAccount();
+      expect(ret.length).assertEqual(0);
+
+      mocker.ignoreMock(AccountAssociationManager, AccountAssociationManager.getInstance);
     })
   })
 }

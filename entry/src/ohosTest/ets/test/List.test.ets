@@ -14,19 +14,25 @@
  */
 
 import AssociationSerTest from './service/AssociationSerTest.test';
+import AssocValidatorTest from './validator/AssocValidatorTest.test';
 import CommonUtilTest from './common/CommonUtilTest.test';
+import DataUtilsTest from './openDlpFile/common/DataUtils/DataUtilsTest.test';
+import DlpFileOpenReportTest from './openDlpFile/DlpFileOpenReportTest.test';
+import FileUtilTest from './common/external/FileUtilTest.test';
+import FileUtilsTest from './common/FileUtils/FileUtilsTest.test';
+import GetAlertMessageTest from './common/AlertMessage/GetAlertMessageTest.test';
 import OpenDlpFileManagerTest from './openDlpFile/OpenDlpFileManagerTest.test';
 import SupportedTypesCfgTest from './common/SupportedTypesCfgTest.test';
 import UtilsTest from './common/FileUtils/UtilsTest.test'
 import UriValidatorTest from './validator/UriValidatorTest.test';
-import GetAlertMessageTest from './common/AlertMessage/GetAlertMessageTest.test';
-import FileUtilTest from './common/external/FileUtilTest.test';
-import FileUtilsTest from './common/FileUtils/FileUtilsTest.test';
 
 export default function testsuite() {
   AssociationSerTest();
+  AssocValidatorTest();
   UtilsTest();
   CommonUtilTest();
+  DataUtilsTest();
+  DlpFileOpenReportTest();
   OpenDlpFileManagerTest();
   SupportedTypesCfgTest();
   UriValidatorTest();

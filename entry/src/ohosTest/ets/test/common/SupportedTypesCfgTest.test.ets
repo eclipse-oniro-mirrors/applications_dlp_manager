@@ -41,13 +41,13 @@ export default function SupportedTypesCfgTest() {
       // This API supports only one parameter: clear action function.
     })
 
-    it('SupportedTypesCfgTest_supportedTypes_checkType', 0, () => {
+    it('SupportedTypesCfgTest_checkType', 0, () => {
       expect(SupportTypesConfig.checkType('txt')).assertTrue();
       expect(SupportTypesConfig.checkType('unknown')).assertFalse();
-      HiLog.info(TAG, 'SupportedTypesCfgTest_supportedTypes_checkType ends.');
+      HiLog.info(TAG, 'SupportedTypesCfgTest_checkType ends.');
     })
 
-    it('SupportedTypesCfgTest_supportedTypes_isTypeOf', 0, () => {
+    it('SupportedTypesCfgTest_isTypeOf', 0, () => {
       const fileExtDoc = 'txt';
       const fileExtImg = 'jpg';
       const fileExtVideo = 'mp4';
@@ -64,7 +64,12 @@ export default function SupportedTypesCfgTest() {
       expect(SupportTypesConfig.isTypeOf(fileExtImg, FileClassification.VIDEO)).assertFalse();
       expect(SupportTypesConfig.isTypeOf(fileExtVideo, FileClassification.DOCUMENT)).assertFalse();
       expect(SupportTypesConfig.isTypeOf(fileExtUnk, FileClassification.IMAGE)).assertFalse();
-      HiLog.info(TAG, 'SupportedTypesCfgTest_supportedTypes_isTypeOf ends.');
+      HiLog.info(TAG, 'SupportedTypesCfgTest_isTypeOf ends.');
+    })
+
+    it('SupportedTypesCfgTest_getFileClassification', 0, () => {
+      expect(SupportTypesConfig.getFileClassification(undefined)).assertEqual(FileClassification.UNKNOWN);
+      HiLog.info(TAG, 'SupportedTypesCfgTest_getFileClassification ends.');
     })
   })
 }
