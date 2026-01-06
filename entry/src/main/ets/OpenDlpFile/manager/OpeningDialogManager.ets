@@ -452,24 +452,6 @@ export default class OpeningDialogManager {
     this.printAllDecryptingMap();
   }
 
-  // 解密任务失败，不管因为啥失败，都会调用
-  public async setNeedShowToast(requestId: string): Promise<void> {
-    this.printAllDecryptingMap();
-    HiLog.info(TAG, `OpeningDialogManager setNeedShowToast requestId ${requestId}`);
-    const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
-    if (!decryptingState) {
-      HiLog.info(TAG, 'setNeedShowToast uri is not decrypting');
-      return;
-    }
-    decryptingState.needShowErr = true;
-    this.printAllDecryptingMap();
-    HiLog.info(TAG, `setNeedShowToast showDialogState ${this._showDialogState}`);
-    if (!this._showDialogState) {
-      return;
-    }
-    await this.hideDialog();
-  }
-
   // 因为各种原因解密失败，需要取消“正在打开”动效
   public async hideOpeningDialogByFailed(requestId: string | undefined): Promise<void> {
     if (!requestId) {
