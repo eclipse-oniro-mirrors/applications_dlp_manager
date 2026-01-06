@@ -16,22 +16,54 @@
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect, TestType } from '@ohos/hypium'
 import { HiLog } from '../../../../../main/ets/common/HiLog';
 import {
+  anonymizeUid,
   AuthAccount,
+  calculate,
   checkDomainAccountInfo,
+  checkNetworkStatus,
+  checkValidAccountType,
+  decodeByBase64,
   defaultDlpFile,
+  directionStatus,
+  generateRandom,
+  getAccountNameFromErrMsg,
+  getAccountTypeAndRealFileType,
+  getAppId,
+  getAppIdWithUserId,
   getAuthPerm,
+  getConnectionStatus,
+  getCostTime,
+  getDLPInfo,
   getFileFd,
+  getFileSizeByUri,
+  getFileSizeByUriSync,
   getFileUriByPath,
+  getFormatTimestamp,
+  getSha256,
+  getTime,
   getUserId,
+  isDevelopmentMode,
   judgeIsSandBox,
+  logErrorShowToast,
   removeDuplicate,
-  terminateSelfWithResult
+  sendDlpFileCreateProperties,
+  sendDlpFileOpenProperties,
+  sendDlpManagerAccountLogin,
+  sendDlpManagerFileConfiguration,
+  showToast,
+  stringToUint8Array,
+  terminateSelfWithResult,
+  toggleShow
 } from '../../../../../main/ets/common/FileUtils/utils';
 import account_osAccount from '@ohos.account.osAccount';
 import osAccount from '@ohos.account.osAccount';
 import { distributedAccount } from '@kit.BasicServicesKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import Want from '@ohos.app.ability.Want';
+import Constants from '../../../../../main/ets/common/constant';
+import AppStorageMgr from '../../../../../main/ets/common/AppStorageMgr';
+import { common } from '@kit.AbilityKit';
+import { UIContext } from '@kit.ArkUI';
 
 const TAG = 'UtilsTest';
 
@@ -172,12 +204,220 @@ export default function UtilsTest() {
     })
 
     it('UtilsTest_removeDuplicate', 0, async () => {
-      let auth : AuthAccount = {
+      let auth: AuthAccount = {
         authAccount: ''
       }
-      let arr: AuthAccount[] = [auth]
+      let arr: AuthAccount[] = [auth];
       removeDuplicate(arr, '1');
       expect(auth).not().assertNull();
+    })
+
+    it('UtilsTest_calculate', 0, async () => {
+      let auth: AuthAccount = {
+        authAccount: ''
+      }
+      let arr: AuthAccount[] = [auth];
+      let pos: Position = {
+        x: 1,
+        y: 1
+      }
+      let globalPos: Position = {
+        x: 0,
+        y: 0
+      }
+      let newValue: Area = {
+        width: '',
+        height: '',
+        position: pos,
+        globalPosition: globalPos
+      }
+      calculate(newValue, arr);
+      newValue.width = '180';
+      calculate(newValue, arr);
+      expect(auth).not().assertNull();
+    })
+
+    it('UtilsTest_toggleShow', 0, async () => {
+      let auth: AuthAccount = {
+        authAccount: ''
+      }
+      let account: AuthAccount = {
+        authAccount: ''
+      }
+      let name: AuthAccount = {
+        authAccount: ''
+      }
+      let allNames: AuthAccount[] = [auth, account];
+      let showNamesArr: AuthAccount[] = [name];
+      toggleShow(allNames, showNamesArr, false, 1);
+      showNamesArr.push(auth);
+      toggleShow(allNames, showNamesArr, false, 1);
+      expect(auth).not().assertNull();
+    })
+
+    it('UtilsTest_directionStatus', 0, async () => {
+      let callback: Callback<number> = (data: number) => {
+      };
+      directionStatus(callback);
+      expect(callback).not().assertNull();
+    })
+
+    it('UtilsTest_getAppId', 0, async () => {
+      let callback: Callback<number> = (data: number) => {
+      };
+      getAppId('1');
+      expect(callback).not().assertNull();
+    })
+
+    it('UtilsTest_getAppIdWithUserId', 0, async () => {
+      let res = getAppIdWithUserId('1', 1);
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_getTime', 0, async () => {
+      let res = getTime();
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_getFileSizeByUri', 0, async () => {
+      let res = getFileSizeByUri('1');
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_getFileSizeByUriSync', 0, async () => {
+      let res = getFileSizeByUriSync('1');
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_getDLPInfo', 0, async () => {
+      let res = getDLPInfo();
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_sendDlpManagerAccountLogin', 0, async () => {
+      let auth: AuthAccount = {
+        authAccount: ''
+      }
+      sendDlpManagerAccountLogin(Constants.ERR_CODE_GET_BUNDLE_INFO_ERROR);
+      expect(auth).not().assertNull();
+    })
+
+    it('UtilsTest_sendDlpManagerFileConfiguration', 0, async () => {
+      let auth: AuthAccount = {
+        authAccount: ''
+      }
+      sendDlpManagerFileConfiguration();
+      expect(auth).not().assertNull();
+    })
+
+    it('UtilsTest_sendDlpFileCreateProperties', 0, async () => {
+      let auth: AuthAccount = {
+        authAccount: ''
+      }
+      sendDlpFileCreateProperties(1);
+      expect(auth).not().assertNull();
+    })
+
+    it('UtilsTest_sendDlpFileOpenProperties', 0, async () => {
+      let auth: AuthAccount = {
+        authAccount: ''
+      }
+      sendDlpFileOpenProperties();
+      expect(auth).not().assertNull();
+    })
+
+    it('UtilsTest_getAccountTypeAndRealFileType', 0, async () => {
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      let res = getAccountTypeAndRealFileType(context, 1);
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_getConnectionStatus', 0, async () => {
+      let res = getConnectionStatus(false);
+      expect(res).not().assertTrue();
+    })
+
+    it('UtilsTest_checkNetworkStatus', 0, async () => {
+      checkNetworkStatus();
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      expect(context).not().assertNull();
+    })
+
+    it('UtilsTest_showToast', 0, async () => {
+      const context = AppStorageMgr.getApplicationContext() as common.UIAbilityContext;
+      let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
+      showToast(uiContext, 'err');
+      expect(context).not().assertNull();
+    })
+
+    it('UtilsTest_logErrorShowToast', 0, async () => {
+      const context = AppStorageMgr.getApplicationContext() as common.UIAbilityContext;
+      logErrorShowToast(context, 'err', 'err');
+      expect(context).not().assertNull();
+    })
+
+    it('UtilsTest_generateRandom', 0, async () => {
+      let res = generateRandom(-1);
+      expect(res).assertNull();
+    })
+
+    it('UtilsTest_decodeByBase64', 0, async () => {
+      let res = decodeByBase64('');
+      expect(res).assertNull();
+    })
+
+    it('UtilsTest_stringToUint8Array', 0, async () => {
+      let res = stringToUint8Array('');
+      expect(res).assertNull();
+
+      let repeatedString: string = 'A'.repeat(50001);
+      res = stringToUint8Array(repeatedString);
+      expect(res).assertNull();
+    })
+
+    it('UtilsTest_getCostTime', 0, async () => {
+      let res = getCostTime(undefined);
+      expect(res).assertUndefined();
+
+      res = getCostTime(1);
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_anonymizeUid', 0, async () => {
+      let res = anonymizeUid('');
+      expect(res).assertUndefined();
+
+      res = anonymizeUid('abc');
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_getFormatTimestamp', 0, async () => {
+      let res = getFormatTimestamp(1);
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_getAccountNameFromErrMsg', 0, async () => {
+      let res = getAccountNameFromErrMsg('1');
+      expect(res).not().assertNull();
+
+      res = getAccountNameFromErrMsg('test' + Constants.MSG_CONTACT + 'test');
+      expect(res).not().assertNull();
+
+      res = getAccountNameFromErrMsg('test');
+      expect(res).not().assertNull();
+    })
+
+    it('UtilsTest_checkValidAccountType', 0, async () => {
+      let res = checkValidAccountType(3);
+      expect(res).assertFalse();
+
+      expect(checkValidAccountType(1)).assertTrue();
+
+      expect(checkValidAccountType(Number.NaN)).assertFalse();
+    })
+
+    it('UtilsTest_isDevelopmentMode', 0, async () => {
+      expect(isDevelopmentMode()).assertTrue();
     })
   })
 }
