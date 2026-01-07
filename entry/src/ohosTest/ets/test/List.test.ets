@@ -26,6 +26,9 @@ import SupportedTypesCfgTest from './common/SupportedTypesCfgTest.test';
 import UtilsTest from './common/FileUtils/UtilsTest.test'
 import UriValidatorTest from './validator/UriValidatorTest.test';
 import HuksCipherUtilTest from './common/huks/HuksCipherUtilTest.test';
+import TerminateViewTest from './openDlpFile/TerminateViewTest.test';
+import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
+import BeanTest from './bean/BeanTest.test';
 
 export default function testsuite() {
   AssociationSerTest();
@@ -41,4 +44,7 @@ export default function testsuite() {
   FileUtilTest();
   FileUtilsTest();
   HuksCipherUtilTest();
+  TerminateViewTest();
+  ViewProcessorTest();
+  BeanTest();
 }
