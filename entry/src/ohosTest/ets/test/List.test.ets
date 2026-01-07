@@ -25,6 +25,11 @@ import OpenDlpFileManagerTest from './openDlpFile/OpenDlpFileManagerTest.test';
 import SupportedTypesCfgTest from './common/SupportedTypesCfgTest.test';
 import UtilsTest from './common/FileUtils/UtilsTest.test'
 import UriValidatorTest from './validator/UriValidatorTest.test';
+import HuksCipherUtilTest from './common/huks/HuksCipherUtilTest.test';
+import TerminateViewTest from './openDlpFile/TerminateViewTest.test';
+import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
+import BeanTest from './bean/BeanTest.test';
+import OpenDlpFileHandlerTest from './openDlpFile/OpenDlpFileHandlerTest.test';
 
 export default function testsuite() {
   AssociationSerTest();
@@ -39,4 +44,9 @@ export default function testsuite() {
   GetAlertMessageTest();
   FileUtilTest();
   FileUtilsTest();
+  HuksCipherUtilTest();
+  TerminateViewTest();
+  ViewProcessorTest();
+  BeanTest();
+  OpenDlpFileHandlerTest();
 }
