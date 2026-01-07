@@ -29,6 +29,7 @@ import HuksCipherUtilTest from './common/huks/HuksCipherUtilTest.test';
 import TerminateViewTest from './openDlpFile/TerminateViewTest.test';
 import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
 import BeanTest from './bean/BeanTest.test';
+import OpenDlpFileHandlerTest from './openDlpFile/OpenDlpFileHandlerTest.test';
 
 export default function testsuite() {
   AssociationSerTest();
@@ -47,4 +48,5 @@ export default function testsuite() {
   TerminateViewTest();
   ViewProcessorTest();
   BeanTest();
+  OpenDlpFileHandlerTest();
 }
