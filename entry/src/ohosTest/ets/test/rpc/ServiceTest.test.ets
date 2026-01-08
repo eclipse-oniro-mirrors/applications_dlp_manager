@@ -61,7 +61,7 @@ export default function ServiceTest() {
       const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
       let service = new CredConnectServiceDomain(context);
       let ret = await service.getDomainAccountInfo(req);
-      await service.disconnectServiceAbility();
+      service.disconnectServiceAbility();
       expect(ret).assertEqual(undefined);
     })
 

@@ -24,7 +24,7 @@ import {
   it,
   MockKit,
   when
-} from '@ohos/hypium'
+} from '@ohos/hypium';
 import AccountAssociationManager from '../../../../main/ets/manager/AccountAssociationManager';
 import AccountAssociationService from '../../../../main/ets/service/AccountAssociationService';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
@@ -35,8 +35,8 @@ import { isInvalidStr } from '../../../../main/ets/common/FileUtils/utils';
 
 const TAG: string = 'AssocSerTest';
 
-export default function AssociationSerTest() {
-  describe('AssociationSerTest', () => {
+export default function AssocServiceTest() {
+  describe('AssocServiceTest', () => {
     // Defines a test suite. Two parameters are supported: test suite name and test suite function.
     beforeAll(() => {
       // Presets an action, which is performed only once before all test cases of the test suite start.
@@ -57,7 +57,7 @@ export default function AssociationSerTest() {
       // This API supports only one parameter: clear action function.
     })
 
-    it('AssociationSerTest_getAndSetAuthorizedAccount', 0, async () => {
+    it('AssocServiceTest_getAndSetAuthorizedAccount', 0, async () => {
       const ctx = AppStorageMgr.getApplicationContext();
       if (!ctx) {
         HiLog.error(TAG, 'Get application context failed.');
@@ -89,7 +89,7 @@ export default function AssociationSerTest() {
       FileUtil.rmdirSync(ctx.preferencesDir);
     })
 
-    it('AssociationSerTest_associationMgr_invalid', 0, async () => {
+    it('AssocServiceTest_associationMgr_invalid', 0, async () => {
       const mocker: MockKit = new MockKit();
 
       const mockAssoc = mocker.mockFunc(AccountAssociationManager, AccountAssociationManager.getInstance);
