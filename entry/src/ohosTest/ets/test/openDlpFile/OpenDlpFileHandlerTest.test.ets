@@ -24,10 +24,23 @@ import {
   it,
   MockKit,
   when
-} from '@ohos/hypium'
+} from '@ohos/hypium';
+import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import Constants from '../../../../main/ets/common/constant';
+import DecryptHandler from '../../../../main/ets/OpenDlpFile/handler/DecryptHandler';
 import ErrorHandler from '../../../../main/ets/OpenDlpFile/handler/ErrorHandler';
+import FileIdHandler from '../../../../main/ets/OpenDlpFile/handler/FileIdHandler';
 import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';
+import DataUtilsMock from './mock/DataUtilsMock';
+import { common } from '@kit.AbilityKit';
+import {
+  DecryptState,
+  DecryptStatus,
+  OpenDlpFileManager
+} from '../../../../main/ets/OpenDlpFile/manager/OpenDlpFileManager';
+import { ResultMsg } from '../../../../main/ets/common/ResultMsg';
+import { AccountHandlerFactory } from '../../../../main/ets/OpenDlpFile/handler/AccountHandler';
+import StartSandboxHandler from '../../../../main/ets/OpenDlpFile/handler/StartSandboxHandler';
 
 export default function OpenDlpFileHandlerTest() {
   describe('OpenDlpFileHandlerTest', () => {
@@ -70,6 +83,135 @@ export default function OpenDlpFileHandlerTest() {
       ret = await ErrorHandler.getInstance().startHandleError('', error);
       expect(ret.errcode).assertEqual(Constants.ERR_CODE_SUCCESS);
       mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanShowToast);
+    })
+
+    it('FileIdHandler', 0, async () => {
+      const content = DataUtilsMock.getFileIdHandlerDecryptContent();
+      FileIdHandler.getInstance().saveFileId(content);
+
+      FileIdHandler.getInstance().dialogCancel('');
+      FileIdHandler.getInstance().dialogCancel('id');
+      FileIdHandler.getInstance().dialogCancel('id', 'fileIdHandler');
+
+      FileIdHandler.getInstance().saveFileId(content);
+      FileIdHandler.getInstance().dialogCancel('fileIdHandler');
+      expect('test').not().assertNull();
+    })
+
+    it('DecryptHandler_normal', 0, async () => {
+      const content = DataUtilsMock.getFileIdHandlerDecryptContent();
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const handler = new DecryptHandler();
+      const ret = await handler.getDecryptData(content, context);
+      expect(ret.errcode).not().assertEqual(0);
+    })
+
+    it('DecryptHandler_mock_state', 0, async () => {
+      const content = DataUtilsMock.getFileIdHandlerDecryptContent();
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const handler = new DecryptHandler();
+
+      const mocker = new MockKit();
+      const mock: Function =
+        mocker.mockFunc(OpenDlpFileManager.getInstance(), OpenDlpFileManager.getInstance().getStatus);
+      const state: DecryptStatus = {
+        state: DecryptState.DECRYPTED
+      }
+      const result = ResultMsg.buildResult(0, '', state);
+      when(mock)(ArgumentMatchers.any).afterReturn(result);
+      const ret = await handler.getDecryptData(content, context);
+      expect(ret.errcode).not().assertEqual(0);
+      mocker.ignoreMock(OpenDlpFileManager.getInstance(), OpenDlpFileManager.getInstance().getStatus);
+    })
+
+    it('DecryptHandler_mock_undefined_state', 0, async () => {
+      const content = DataUtilsMock.getFileIdHandlerDecryptContent();
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const handler = new DecryptHandler();
+      let ret = await handler.getDecryptData(content, context);
+      expect(ret.errcode).not().assertEqual(0);
+
+      const mocker = new MockKit();
+      const mock: Function =
+        mocker.mockFunc(OpenDlpFileManager.getInstance(), OpenDlpFileManager.getInstance().getStatus);
+      const result = ResultMsg.buildResult(1, '', undefined);
+      when(mock)(ArgumentMatchers.any).afterReturn(result);
+      ret = await handler.getDecryptData(content, context);
+      expect(ret.errcode).not().assertEqual(0);
+      mocker.ignoreMock(OpenDlpFileManager.getInstance(), OpenDlpFileManager.getInstance().getStatus);
+    })
+
+    it('AccountHandler', 0, async () => {
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      let content = DataUtilsMock.getDecryptContentWithAccountType(1);
+      let ret = AccountHandlerFactory.createAccountHandler(content);
+      expect(ret.errcode).assertEqual(0);
+      let handleRet = await ret.result?.handle(content, context);
+      expect(handleRet?.errcode).not().assertEqual(0);
+
+      content = DataUtilsMock.getDecryptContentWithAccountType(2);
+      ret = AccountHandlerFactory.createAccountHandler(content);
+      expect(ret.errcode).assertEqual(0);
+      handleRet = await ret.result?.handle(content, context);
+      expect(handleRet?.errcode).not().assertEqual(0);
+
+      content = DataUtilsMock.getPluginDecryptContent();
+      ret = AccountHandlerFactory.createAccountHandler(content);
+      expect(ret.errcode).assertEqual(0);
+      handleRet = await ret.result?.handle(content, context);
+      expect(handleRet?.errcode).assertEqual(0);
+
+      content = DataUtilsMock.getDecryptContentWithAccountType(4);
+      ret = AccountHandlerFactory.createAccountHandler(content);
+      expect(ret.errcode).assertEqual(0);
+      handleRet = await ret.result?.handle(content, context);
+      expect(handleRet?.errcode).assertEqual(0);
+
+      content = DataUtilsMock.getDecryptContentWithAccountType(999);
+      ret = AccountHandlerFactory.createAccountHandler(content);
+      expect(ret.errcode).not().assertEqual(0);
+    })
+
+    it('StartSandboxHandler', 0, async () => {
+      let ret = await StartSandboxHandler.getInstance().startSandbox();
+      expect(ret.errcode).not().assertEqual(0);
+
+      let content = DataUtilsMock.getDecryptContent();
+      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      expect(ret.errcode).not().assertEqual(0);
+    })
+
+    it('StartSandboxHandler_mock', 0, async () => {
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      AppStorage.setOrCreate('viewContext', context);
+
+      const mocker = new MockKit();
+      const mock: Function =
+        mocker.mockFunc(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanStartAbility);
+      when(mock)(ArgumentMatchers.any).afterReturn(false);
+
+      const mock2: Function =
+        mocker.mockFunc(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getNeedStartAbility);
+      when(mock2)(ArgumentMatchers.any).afterReturn(true);
+
+      let content = DataUtilsMock.getSandboxHandlerRawDecryptContent();
+      let ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      expect(ret.errcode).not().assertEqual(0);
+
+      content = DataUtilsMock.getSandboxHandlerZipDecryptContent();
+      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      expect(ret.errcode).not().assertEqual(0);
+
+      when(mock)(ArgumentMatchers.any).afterReturn(true);
+      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      expect(ret.errcode).not().assertEqual(0);
+
+      when(mock2)(ArgumentMatchers.any).afterReturn(false);
+      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      expect(ret.errcode).assertEqual(0);
+
+      mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanStartAbility);
+      mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getNeedStartAbility);
     })
   })
 }

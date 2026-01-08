@@ -332,8 +332,8 @@ export default class StartSandboxHandler {
   private async startSandboxApp(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
     HiLog.info(TAG, 'start sandbox begin');
-    this.prepareWantParams(decryptContent);
     try {
+      this.prepareWantParams(decryptContent);
       await ViewAbilityService.getInstance().sendDisconnectMsg();
       await context.startAbility(decryptContent.openDlpFileData.want);
       HiLog.info(TAG, `startAbility success startId: ${decryptContent.openDlpFileData.startId}`);
