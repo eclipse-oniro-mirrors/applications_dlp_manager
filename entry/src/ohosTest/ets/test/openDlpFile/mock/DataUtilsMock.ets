@@ -22,12 +22,37 @@ import { HiLog } from '../../../../../main/ets/common/HiLog';
 import OpenDlpFileData from '../../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 import Result from '../../../../../main/ets/common/Result';
 import Want from '@ohos.app.ability.Want';
+import { FileParseType } from '../../../../../main/ets/bean/data/FileParseType';
 
 const TAG: string = 'DataUtilsMock';
 
 export default class DataUtilsMock {
   public static getDecryptContent(): DecryptContent {
     HiLog.info(TAG, 'Enter getDecryptContent.');
+    return DataUtilsMock.getDecryptContentWithAccountType(dlpPermission.AccountType.CLOUD_ACCOUNT);
+  }
+
+  public static getDecryptContentWithAccountType(type: dlpPermission.AccountType): DecryptContent {
+    HiLog.info(TAG, 'Enter getDecryptContentWithAccountType.');
+    const fileMetaInfo: FileMetaInfo = {
+      accountType: type,
+      fileType: '',
+      ownerAccount: '',
+      fileSize: 0,
+      fileId: '',
+      allowedOpenCount: 0,
+      waterMarkConfig: false,
+      countdown: 0
+    };
+
+    const want: Want = {};
+    const openDlpFileData = new OpenDlpFileData(want, 0);
+    openDlpFileData.uri = 'test';
+    return new DecryptContent(fileMetaInfo, openDlpFileData);
+  }
+
+  public static getSandboxHandlerRawDecryptContent(): DecryptContent {
+    HiLog.info(TAG, 'Enter getSandboxHandlerRawDecryptContent.');
     const fileMetaInfo: FileMetaInfo = {
       accountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
       fileType: '',
@@ -42,8 +67,76 @@ export default class DataUtilsMock {
     const want: Want = {};
     const openDlpFileData = new OpenDlpFileData(want, 0);
     openDlpFileData.uri = 'test';
+    openDlpFileData.needShowToast = true;
+    openDlpFileData.fileParse = FileParseType.RAW;
+    let content = new DecryptContent(fileMetaInfo, openDlpFileData);
+    content.hasDecrypted = true;
+    return content;
+  }
 
+  public static getSandboxHandlerZipDecryptContent(): DecryptContent {
+    HiLog.info(TAG, 'Enter getSandboxHandlerZipDecryptContent.');
+    const fileMetaInfo: FileMetaInfo = {
+      accountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
+      fileType: '',
+      ownerAccount: '',
+      fileSize: 0,
+      fileId: '',
+      allowedOpenCount: 0,
+      waterMarkConfig: false,
+      countdown: 0
+    };
+
+    const want: Want = {};
+    const openDlpFileData = new OpenDlpFileData(want, 0);
+    openDlpFileData.uri = 'test';
+    openDlpFileData.needShowToast = true;
+    openDlpFileData.fileParse = FileParseType.ZIP;
+    let content = new DecryptContent(fileMetaInfo, openDlpFileData);
+    content.hasDecrypted = true;
+    return content;
+  }
+
+  public static getPluginDecryptContent(): DecryptContent {
+    HiLog.info(TAG, 'Enter getPluginDecryptContent.');
+    const fileMetaInfo: FileMetaInfo = {
+      accountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
+      fileType: '',
+      ownerAccount: '',
+      fileSize: 0,
+      fileId: '',
+      allowedOpenCount: 0,
+      waterMarkConfig: false,
+      countdown: 0
+    };
+
+    const want: Want = {};
+    const openDlpFileData = new OpenDlpFileData(want, 0);
+    openDlpFileData.uri = 'test';
+    openDlpFileData.isFromPlugin = true;
     return new DecryptContent(fileMetaInfo, openDlpFileData);
+  }
+
+  public static getFileIdHandlerDecryptContent(): DecryptContent {
+    HiLog.info(TAG, 'Enter getFileIdHandlerDecryptContent.');
+    const fileMetaInfo: FileMetaInfo = {
+      accountType: dlpPermission.AccountType.DOMAIN_ACCOUNT,
+      fileType: '',
+      ownerAccount: 'owner',
+      fileSize: 0,
+      fileId: 'fileIdHandler',
+      allowedOpenCount: 1,
+      waterMarkConfig: false,
+      countdown: 0
+    };
+
+    const want: Want = {};
+    const openDlpFileData = new OpenDlpFileData(want, 0);
+    openDlpFileData.uri = 'test';
+    openDlpFileData.requestId = 'fileIdHandler';
+    let content = new DecryptContent(fileMetaInfo, openDlpFileData);
+    content.distributedInfoName = 'other';
+    return content;
   }
 
   public static getStatusSuccess(): Result<DecryptStatus> {

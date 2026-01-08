@@ -30,6 +30,9 @@ import TerminateViewTest from './openDlpFile/TerminateViewTest.test';
 import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
 import BeanTest from './bean/BeanTest.test';
 import OpenDlpFileHandlerTest from './openDlpFile/OpenDlpFileHandlerTest.test';
+import ServiceTest from './rpc/ServiceTest.test';
+import StubTest from './rpc/StubTest.test';
+import ComponentTest from './component/ComponentTest.test';
 
 export default function testsuite() {
   AssociationSerTest();
@@ -49,4 +52,7 @@ export default function testsuite() {
   ViewProcessorTest();
   BeanTest();
   OpenDlpFileHandlerTest();
+  ServiceTest();
+  StubTest();
+  ComponentTest();
 }
