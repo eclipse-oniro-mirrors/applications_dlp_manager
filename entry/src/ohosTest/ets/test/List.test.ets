@@ -13,46 +13,52 @@
  * limitations under the License.
  */
 
-import AssociationSerTest from './service/AssociationSerTest.test';
+import AccountManagerTest from './manager/AccountManagerTest.test';
+import AssocConvertorTest from './convertor/AssocConvertorTest.test';
+import AssocServiceTest from './service/AssocServiceTest.test';
 import AssocValidatorTest from './validator/AssocValidatorTest.test';
+import BeanTest from './bean/BeanTest.test';
 import CommonUtilTest from './common/CommonUtilTest.test';
+import ComponentTest from './component/ComponentTest.test';
 import DataUtilsTest from './openDlpFile/common/DataUtils/DataUtilsTest.test';
 import DlpFileOpenReportTest from './openDlpFile/DlpFileOpenReportTest.test';
+import DomainAccountConvertorTest from './convertor/DomainAccountConvertorTest.test';
 import FileUtilTest from './common/external/FileUtilTest.test';
 import FileUtilsTest from './common/FileUtils/FileUtilsTest.test';
 import GetAlertMessageTest from './common/AlertMessage/GetAlertMessageTest.test';
-import OpenDlpFileManagerTest from './openDlpFile/OpenDlpFileManagerTest.test';
-import SupportedTypesCfgTest from './common/SupportedTypesCfgTest.test';
-import UtilsTest from './common/FileUtils/UtilsTest.test'
-import UriValidatorTest from './validator/UriValidatorTest.test';
 import HuksCipherUtilTest from './common/huks/HuksCipherUtilTest.test';
-import TerminateViewTest from './openDlpFile/TerminateViewTest.test';
-import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
-import BeanTest from './bean/BeanTest.test';
+import OpenDlpFileManagerTest from './openDlpFile/OpenDlpFileManagerTest.test';
 import OpenDlpFileHandlerTest from './openDlpFile/OpenDlpFileHandlerTest.test';
 import ServiceTest from './rpc/ServiceTest.test';
 import StubTest from './rpc/StubTest.test';
-import ComponentTest from './component/ComponentTest.test';
+import SupportedTypesCfgTest from './common/SupportedTypesCfgTest.test';
+import TerminateViewTest from './openDlpFile/TerminateViewTest.test';
+import UriValidatorTest from './validator/UriValidatorTest.test';
+import UtilsTest from './common/FileUtils/UtilsTest.test'
+import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
 
 export default function testsuite() {
-  AssociationSerTest();
+  AssocConvertorTest();
+  AssocServiceTest();
   AssocValidatorTest();
-  UtilsTest();
+  BeanTest();
   CommonUtilTest();
   DataUtilsTest();
   DlpFileOpenReportTest();
-  OpenDlpFileManagerTest();
-  SupportedTypesCfgTest();
-  UriValidatorTest();
-  GetAlertMessageTest();
+  DomainAccountConvertorTest();
   FileUtilTest();
   FileUtilsTest();
+  GetAlertMessageTest();
   HuksCipherUtilTest();
+  OpenDlpFileManagerTest();
+  SupportedTypesCfgTest();
   TerminateViewTest();
+  UriValidatorTest();
+  UtilsTest();
   ViewProcessorTest();
-  BeanTest();
   OpenDlpFileHandlerTest();
   ServiceTest();
   StubTest();
   ComponentTest();
+  AccountManagerTest();
 }

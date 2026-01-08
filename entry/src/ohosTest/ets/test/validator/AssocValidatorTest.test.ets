@@ -24,7 +24,7 @@ import {
   it,
   MockKit,
   when
-} from '@ohos/hypium'
+} from '@ohos/hypium';
 import AccountAssociation from '../../../../main/ets/bean/data/AccountAssociation';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import AssociationDecryptValidator from '../../../../main/ets/validator/AccountAssociation/AssociationDecryptValidator';

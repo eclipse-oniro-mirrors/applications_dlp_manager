@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
 import AppStorageConstant from '../../../../main/ets/common/AppStorageConstant';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import CommonEventManager from '../../../../main/ets/common/CommonEventManager';

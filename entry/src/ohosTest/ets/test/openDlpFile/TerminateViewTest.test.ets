@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
-import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium'
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr'
-import { common } from '@kit.AbilityKit'
-import TerminateView from '../../../../main/ets/OpenDlpFile/TerminateView/TerminateView'
-
+import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
+import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import { common } from '@kit.AbilityKit';
+import TerminateView from '../../../../main/ets/OpenDlpFile/TerminateView/TerminateView';
 
 export default function TerminateViewTest() {
   describe('TerminateViewTest', () => {

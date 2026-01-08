@@ -13,15 +13,14 @@
  * limitations under the License.
  */
 
-import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium'
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr'
-import { common } from '@kit.AbilityKit'
-import { OpenDlpFileProcessor } from '../../../../main/ets/OpenDlpFile/ViewProcessor/ViewProcessor'
-import { BusinessError } from '@ohos.base'
-import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent'
-import FileMetaInfo from '../../../../main/ets/bean/data/FileMetaInfo'
-import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData'
-
+import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
+import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import { common } from '@kit.AbilityKit';
+import { OpenDlpFileProcessor } from '../../../../main/ets/OpenDlpFile/ViewProcessor/ViewProcessor';
+import { BusinessError } from '@ohos.base';
+import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
+import FileMetaInfo from '../../../../main/ets/bean/data/FileMetaInfo';
+import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 
 export default function ViewProcessorTest() {
   describe('ViewProcessorTest', () => {
@@ -47,7 +46,7 @@ export default function ViewProcessorTest() {
 
     it('ViewProcessorTest_process', 0, async () => {
       const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
-      const processer = new OpenDlpFileProcessor();
+      const processor = new OpenDlpFileProcessor();
       let want: Want = {
         bundleName: 'com.asiainfo_sec.aisedr_hm',
         abilityName: 'ViewAbility',
@@ -58,18 +57,18 @@ export default function ViewProcessorTest() {
         }
       };
 
-      let processRes = processer.process(want, 1, context);
+      let processRes = processor.process(want, 1, context);
       expect(processRes).not().assertNull();
     })
 
     it('ViewProcessorTest_processErrcode', 0, async () => {
-      const processer = new OpenDlpFileProcessor();
+      const processor = new OpenDlpFileProcessor();
       let error: BusinessError = {
         code: 0,
         name: '',
         message: ''
       }
-      await processer.processErrcode(error);
+      await processor.processErrcode(error);
 
       let fileMetaInfo: FileMetaInfo = {
         accountType: 4,
@@ -92,7 +91,7 @@ export default function ViewProcessorTest() {
       };
       let openDlpFileData = new OpenDlpFileData(want, 1)
       let decryptContent = new DecryptContent(fileMetaInfo, openDlpFileData);
-      await processer.processErrcode(error, decryptContent);
+      await processor.processErrcode(error, decryptContent);
       expect(error).not().assertNull();
     })
   })

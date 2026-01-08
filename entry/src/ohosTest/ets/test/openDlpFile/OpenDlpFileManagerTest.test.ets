@@ -24,7 +24,7 @@ import {
   it,
   MockKit,
   when
-} from '@ohos/hypium'
+} from '@ohos/hypium';
 import ApplyEfficiencyManager from '../../../../main/ets/OpenDlpFile/manager/ApplyEfficiencyManager';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import {
@@ -91,7 +91,7 @@ export default function OpenDlpFileManagerTest() {
       deleteStatusRet = await manager.deleteStatusButNotHasDecrypted('uri');
       expect(deleteStatusRet.errcode).assertEqual(Constants.ERR_CODE_SUCCESS);
 
-      const getContentRet = await manager.getHasDecryptedContent('uri');
+      const getContentRet = manager.getHasDecryptedContent('uri');
       expect(getContentRet.errcode).assertEqual(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
 
       const removeRet = await manager.removeAllByUri('uri');
@@ -114,7 +114,7 @@ export default function OpenDlpFileManagerTest() {
 
     it('OpeningDialogManager', 0, async () => {
       await OpeningDialogManager.getInstance().setHasDecrypted('id');
-      await OpeningDialogManager.getInstance().setNeedStartAbility('id');
+      OpeningDialogManager.getInstance().setNeedStartAbility('id');
       await OpeningDialogManager.getInstance().dialogDisappear('id');
       await OpeningDialogManager.getInstance().dialogTimeout('id');
       await OpeningDialogManager.getInstance().checkShowDialogState();

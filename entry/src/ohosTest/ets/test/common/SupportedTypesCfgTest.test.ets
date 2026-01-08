@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
 import { FileClassification, SupportTypesConfig } from '../../../../main/ets/common/SupportTypesConfig';
 import { HiLog } from '../../../../main/ets/common/HiLog';
 

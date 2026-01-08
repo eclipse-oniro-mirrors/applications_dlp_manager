@@ -24,7 +24,7 @@ import {
   it,
   MockKit,
   when
-} from '@ohos/hypium'
+} from '@ohos/hypium';
 import CommonUtil from '../../../../../main/ets/common/CommonUtil';
 import FileUtil from '../../../../../main/ets/common/external/FileUtil';
 

@@ -24,7 +24,7 @@ import {
   it,
   MockKit,
   when
-} from '@ohos/hypium'
+} from '@ohos/hypium';
 import { common } from '@kit.AbilityKit';
 import AppStorageMgr from '../../../../../main/ets/common/AppStorageMgr';
 import { GetAlertMessage } from '../../../../../main/ets/common/AlertMessage/GetAlertMessage';

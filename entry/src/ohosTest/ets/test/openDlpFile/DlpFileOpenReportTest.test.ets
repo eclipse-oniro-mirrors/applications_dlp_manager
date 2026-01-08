@@ -21,7 +21,7 @@ import {
   describe,
   expect,
   it
-} from '@ohos/hypium'
+} from '@ohos/hypium';
 import { HiLog } from '../../../../main/ets/common/HiLog';
 import { DlpFileOpenReport } from '../../../../main/ets/OpenDlpFile/common/DlpFileOpenReport';
 import DataUtilsMock from './mock/DataUtilsMock';

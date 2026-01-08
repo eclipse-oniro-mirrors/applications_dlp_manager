@@ -14,11 +14,10 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
-import { AccountTips, AccountTipsConfig } from '../../../../main/ets/component/AccountTipsConfig';
-import EncryptProtectionHelper from '../../../../main/ets/component/helper/EncryptProtectionHelper';
+import DomainAccountConvertor from '../../../../main/ets/convertor/DomainAccountConvertor';
 
-export default function ComponentTest() {
-  describe('ComponentTest', () => {
+export default function DomainAccountConvertorTest() {
+  describe('DomainAccountConvertorTest', () => {
     // Defines a test suite. Two parameters are supported: test suite name and test suite function.
     beforeAll(() => {
       // Presets an action, which is performed only once before all test cases of the test suite start.
@@ -39,25 +38,20 @@ export default function ComponentTest() {
       // This API supports only one parameter: clear action function.
     })
 
-    it('EncryptProtectionHelper', 0, async () => {
-      let ret = EncryptProtectionHelper.convertErrorCodeToShowCode(12300013);
-      expect(ret).assertEqual(1);
-
-      ret = EncryptProtectionHelper.convertErrorCodeToShowCode(12300003);
-      expect(ret).assertEqual(2);
-
-      ret = EncryptProtectionHelper.convertErrorCodeToShowCode(999);
-      expect(ret).assertEqual(3);
+    it('DomainAccountConvertorTest_convertBatchToDomainAccountReq', 0, async () => {
+      const ret = DomainAccountConvertor.convertBatchToDomainAccountReq([], '', '');
+      expect(ret).not().assertNull();
     })
 
-    it('AccountTipsConfig', 0, async () => {
-      let ret: AccountTips[] = [];
-      await AccountTipsConfig.getConfigTips().then((array: Array<AccountTips>) => {
-        ret = array;
-      }).catch(() => {
-        ret = [];
-      });
-      expect(ret.length).assertEqual(0);
+    it('DomainAccountConvertorTest_convertToDomainAccountResp', 0, async () => {
+      let ret = DomainAccountConvertor.convertToDomainAccountResp('');
+      expect(ret.getErrorCode()).assertEqual(undefined);
+
+      ret = DomainAccountConvertor.convertToDomainAccountResp(JSON.stringify({ errorCode: 0 }));
+      expect(ret.getErrorCode()).assertEqual(0);
+
+      ret = DomainAccountConvertor.convertToDomainAccountResp('{}');
+      expect(ret.getErrorCode()).assertEqual(undefined);
     })
   })
 }
