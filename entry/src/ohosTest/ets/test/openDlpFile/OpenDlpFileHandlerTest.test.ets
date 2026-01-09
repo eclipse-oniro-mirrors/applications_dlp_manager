@@ -95,7 +95,7 @@ export default function OpenDlpFileHandlerTest() {
 
       FileIdHandler.getInstance().saveFileId(content);
       FileIdHandler.getInstance().dialogCancel('fileIdHandler');
-      expect('test').not().assertNull();
+      expect(content).not().assertNull();
     })
 
     it('DecryptHandler_normal', 0, async () => {

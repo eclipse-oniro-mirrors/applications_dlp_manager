@@ -13,14 +13,43 @@
  * limitations under the License.
  */
 
-import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
+import {
+  describe,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+  it,
+  expect,
+  MockKit,
+  when,
+  ArgumentMatchers
+} from '@ohos/hypium';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
-import { common } from '@kit.AbilityKit';
-import { OpenDlpFileProcessor } from '../../../../main/ets/OpenDlpFile/ViewProcessor/ViewProcessor';
 import { BusinessError } from '@ohos.base';
+import { common } from '@kit.AbilityKit';
+import Constants from '../../../../main/ets/common/constant';
 import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import FileMetaInfo from '../../../../main/ets/bean/data/FileMetaInfo';
+import { FileParseFactory } from '../../../../main/ets/OpenDlpFile/handler/FileParseHandler';
+import { FileParseType } from '../../../../main/ets/bean/data/FileParseType';
 import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
+import OpenDlpFileDataMock from './data/mock/OpenDlpFileDataMock';
+import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';
+import { OpenDlpFileProcessor } from '../../../../main/ets/OpenDlpFile/ViewProcessor/ViewProcessor';
+import Result from '../../../../main/ets/common/Result';
+
+abstract class FileParseBase {
+  protected metaInfo?: FileMetaInfo;
+  public fileSize: number = 0;
+  public parseType?: FileParseType;
+
+  constructor(fileSize: number) {
+    this.fileSize = fileSize;
+  }
+
+  public abstract parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>>;
+}
 
 export default function ViewProcessorTest() {
   describe('ViewProcessorTest', () => {
@@ -93,6 +122,33 @@ export default function ViewProcessorTest() {
       let decryptContent = new DecryptContent(fileMetaInfo, openDlpFileData);
       await processor.processErrcode(error, decryptContent);
       expect(error).not().assertNull();
+    })
+
+    it('ViewProcessorTest_process_checkAndGetState_error', 0, async () => {
+      const processor = new OpenDlpFileProcessor();
+      const want = OpenDlpFileDataMock.getViewProcessorWant();
+      want.uri = '';
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const ret = await processor.process(want, 0, context);
+      expect(ret).not().assertNull();
+    })
+
+    it('ViewProcessorTest_process_handleAccount_error', 0, async () => {
+      OpeningDialogManager.getInstance().setIsWaitingShowToast(false);
+      const processor = new OpenDlpFileProcessor();
+      const want = OpenDlpFileDataMock.getViewProcessorWant();
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+
+      const mocker: MockKit = new MockKit();
+      const mockCreateRes: Result<FileParseBase> = {
+        errcode: Constants.ERR_CODE_SUCCESS
+      };
+      const mockCreateFileParse = mocker.mockFunc(FileParseFactory, FileParseFactory.createFileParse);
+      when(mockCreateFileParse)(ArgumentMatchers.any).afterReturn(mockCreateRes);
+      const ret = await processor.process(want, 0, context);
+      expect(ret).not().assertNull();
+
+      mocker.ignoreMock(FileParseFactory, FileParseFactory.createFileParse);
     })
   })
 }
