@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect, TestType } from '@ohos/hypium'
+import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect, TestType } from '@ohos/hypium';
 import { HiLog } from '../../../../../main/ets/common/HiLog';
 import {
   anonymizeUid,
@@ -263,10 +263,11 @@ export default function UtilsTest() {
     })
 
     it('UtilsTest_getAppId', 0, async () => {
-      let callback: Callback<number> = (data: number) => {
-      };
-      getAppId('1');
-      expect(callback).not().assertNull();
+      let bundleName = '1';
+      getAppId(bundleName);
+      bundleName = Constants.DLP_CREDMGR_BUNDLE_NAME;
+      getAppId(bundleName);
+      expect(bundleName).not().assertNull();
     })
 
     it('UtilsTest_getAppIdWithUserId', 0, async () => {
@@ -276,6 +277,15 @@ export default function UtilsTest() {
 
     it('UtilsTest_getTime', 0, async () => {
       let res = getTime();
+
+      AppStorageMgr.setOrCreate('permanent', true);
+      getTime();
+      AppStorageMgr.setOrCreate('permanent', undefined);
+
+      AppStorageMgr.setOrCreate('validity', 1);
+      getTime();
+      AppStorageMgr.setOrCreate('validity', undefined);
+
       expect(res).not().assertNull();
     })
 
@@ -315,6 +325,21 @@ export default function UtilsTest() {
         authAccount: ''
       }
       sendDlpFileCreateProperties(1);
+      let srcType: string[] = ['1', '2'];
+      let srcSize: string[] = ['1', '2', '3'];
+      let srcPolicy: string[] = ['1', '2'];
+      AppStorage.setOrCreate('hiFileTypeArray', srcType);
+      AppStorage.setOrCreate('hiFileSizeArray', srcSize);
+      AppStorage.setOrCreate('hiPolicySizeEncArray', srcPolicy);
+      sendDlpFileCreateProperties(1);
+
+      srcSize = ['1', '2'];
+      AppStorage.setOrCreate('hiFileSizeArray', srcSize);
+      sendDlpFileCreateProperties(1);
+
+      AppStorage.setOrCreate('hiFileTypeArray', undefined);
+      AppStorage.setOrCreate('hiFileSizeArray', undefined);
+      AppStorage.setOrCreate('hiPolicySizeEncArray', undefined);
       expect(auth).not().assertNull();
     })
 
@@ -333,8 +358,8 @@ export default function UtilsTest() {
     })
 
     it('UtilsTest_getConnectionStatus', 0, async () => {
-      let res = getConnectionStatus(false);
-      expect(res).not().assertTrue();
+      let res = await getConnectionStatus(false);
+      expect(res).assertTrue();
     })
 
     it('UtilsTest_checkNetworkStatus', 0, async () => {
@@ -347,6 +372,9 @@ export default function UtilsTest() {
       const context = AppStorageMgr.getApplicationContext() as common.UIAbilityContext;
       let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
       showToast(uiContext, 'err');
+      AppStorage.setOrCreate(Constants.FONT_SIZE_SCALE_KEY, 3);
+      showToast(uiContext, 'err');
+      AppStorage.setOrCreate(Constants.FONT_SIZE_SCALE_KEY, undefined);
       expect(context).not().assertNull();
     })
 
