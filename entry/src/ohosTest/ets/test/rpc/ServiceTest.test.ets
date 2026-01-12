@@ -22,6 +22,8 @@ import { common } from '@kit.AbilityKit';
 import CredConnectServiceDomain from '../../../../main/ets/rpc/CredConnectServiceDomain';
 import DomainAccountConvertor from '../../../../main/ets/convertor/DomainAccountConvertor';
 import CredConnectServiceFileId from '../../../../main/ets/rpc/CredConnectServiceFileId';
+import CredConnectService from '../../../../main/ets/rpc/CredConnectService';
+import Constants from '../../../../main/ets/common/constant';
 
 export default function ServiceTest() {
   describe('ServiceTest', () => {
@@ -70,6 +72,18 @@ export default function ServiceTest() {
       CredConnectServiceFileId.getInstance().cancelFileId('id');
       CredConnectServiceFileId.getInstance().disconnectServiceAbility();
       expect('test').not().assertNull();
+    })
+
+    it('CredConnectService', 0, async () => {
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      let res = new CredConnectService(context);
+      res.setCloudPhone('1');
+      res.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);
+      res.connectServiceShareAbility(Constants.COMMAND_GET_ACCOUNT_INFO);
+      res.connectServiceShareAbility(Constants.COMMAND_BATCH_REFRESH);
+      res.connectServiceShareAbility(Constants.HEADER_COLUMN_PADDING_LEFT);
+      CredConnectServiceFileId.getInstance().disconnectServiceAbility();
+      expect(res).not().assertNull();
     })
   })
 }

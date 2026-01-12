@@ -41,6 +41,9 @@ import {
 import { ResultMsg } from '../../../../main/ets/common/ResultMsg';
 import { AccountHandlerFactory } from '../../../../main/ets/OpenDlpFile/handler/AccountHandler';
 import StartSandboxHandler from '../../../../main/ets/OpenDlpFile/handler/StartSandboxHandler';
+import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
+import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
+import { FileParseFactory } from '../../../../main/ets/OpenDlpFile/handler/FileParseHandler';
 
 export default function OpenDlpFileHandlerTest() {
   describe('OpenDlpFileHandlerTest', () => {
@@ -96,6 +99,15 @@ export default function OpenDlpFileHandlerTest() {
       FileIdHandler.getInstance().saveFileId(content);
       FileIdHandler.getInstance().dialogCancel('fileIdHandler');
       expect('test').not().assertNull();
+
+      const mocker = new MockKit();
+      const mock: Function =
+        mocker.mockFunc(DecryptContent, DecryptContent.isNotOwnerAndReadOnce);
+      when(mock)(ArgumentMatchers.any).afterReturn(false);
+      FileIdHandler.getInstance().saveFileId(content);
+      mocker.ignoreMock(DecryptContent, DecryptContent.isNotOwnerAndReadOnce);
+
+      FileIdHandler.getInstance().deleteFileId('fileIdHandler', 'fileIdHandler');
     })
 
     it('DecryptHandler_normal', 0, async () => {
@@ -212,6 +224,13 @@ export default function OpenDlpFileHandlerTest() {
 
       mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanStartAbility);
       mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getNeedStartAbility);
+    })
+
+    it('FileParseFactory', 0, async () => {
+      let want: Want = {};
+      let openDlpFileData = new OpenDlpFileData(want, 1);
+      let res = await FileParseFactory.createFileParse(openDlpFileData);
+      expect(res).not().assertEqual(Constants.ERR_CODE_OPEN_FILE_ERROR);
     })
   })
 }

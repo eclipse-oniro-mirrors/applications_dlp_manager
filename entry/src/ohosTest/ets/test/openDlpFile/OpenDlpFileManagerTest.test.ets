@@ -37,6 +37,9 @@ import { StartFileManager } from '../../../../main/ets/OpenDlpFile/manager/Start
 import { common } from '@kit.AbilityKit';
 import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';
 import { ErrorHandlerFactory } from '../../../../main/ets/OpenDlpFile/manager/ErrorManager';
+import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
+import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
+import FileMetaInfo from '../../../../main/ets/bean/data/FileMetaInfo';
 
 export default function OpenDlpFileManagerTest() {
   describe('OpenDlpFileManagerTest', () => {
@@ -61,6 +64,7 @@ export default function OpenDlpFileManagerTest() {
     })
 
     it('ApplyEfficiencyManager', 0, async () => {
+      ApplyEfficiencyManager.getInstance().applyEfficiency();
       ApplyEfficiencyManager.getInstance().applyEfficiency();
       ApplyEfficiencyManager.getInstance().releaseEfficiency();
       const ctx = AppStorageMgr.getContext('test1');
@@ -96,6 +100,24 @@ export default function OpenDlpFileManagerTest() {
 
       const removeRet = await manager.removeAllByUri('uri');
       expect(removeRet.errcode).assertEqual(Constants.ERR_CODE_SUCCESS);
+
+      let fileMetaInfo: FileMetaInfo = {
+        accountType: 0,
+        fileType: '',
+        ownerAccount: '',
+        fileSize: 0,
+        fileId: '',
+        allowedOpenCount: 0,
+        waterMarkConfig: false,
+        countdown: 0
+      };
+      let want: Want = {};
+      let openDlpFileData = new OpenDlpFileData(want, 1);
+      let content = new DecryptContent(fileMetaInfo, openDlpFileData);
+      await manager.addDecryptContent('uri', content);
+
+      let getContext = manager.getHasDecryptedContent('uri');
+      expect(getContext.errcode).assertEqual(Constants.ERR_CODE_SUCCESS);
     })
 
     it('StartFileManager', 0, async () => {
@@ -150,6 +172,36 @@ export default function OpenDlpFileManagerTest() {
       const res = await StartFileManager.startFileManager('');
       expect(res.errcode).assertEqual(Constants.ERR_JS_APP_PARAM_ERROR);
       mocker.ignoreMock(AppStorage, AppStorage.get);
+    })
+
+    it('OpeningDialogManager_supplement', 0, async () => {
+      let manager = OpeningDialogManager.getInstance();
+      manager.registerEmitEvent();
+      manager.unRegisterEmitEvent();
+      manager.setIsTerminalSelf(false);
+      let res = manager.getIsTerminalSelf();
+      expect(res).assertFalse();
+
+      res = manager.getIsDecryptingByRequestId('-1');
+      expect(res).assertFalse();
+
+      res = manager.getIsChargeDecrypting();
+      expect(res).assertFalse();
+
+      manager.dialogDisappear('-1');
+      await manager.showOpeningDialog('uri', 'id', false);
+
+      await manager.dialogDisappear('id');
+      await manager.setHasDecrypted('id');
+
+      await manager.showOpeningDialog('uri', 'id', false);
+      manager.setNeedStartAbility('id');
+
+      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      let want: Want = {};
+      let openDlpFileData: OpenDlpFileData = new OpenDlpFileData(want, 1);
+      await manager.loadOpeningDialogByFileTypeAndSize(context, Constants.DIALOG_SHOW_SIZE_ZIP, openDlpFileData, 1, 1);
+      await manager.loadOpeningDialogByFileTypeAndSize(context, Constants.DIALOG_SHOW_SIZE_ZIP, openDlpFileData, 3, 3);
     })
 
     it('PhoneManager', 0, async () => {
