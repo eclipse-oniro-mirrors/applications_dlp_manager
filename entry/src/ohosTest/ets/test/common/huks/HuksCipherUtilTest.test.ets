@@ -16,6 +16,7 @@
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
 import { huks } from '@kit.UniversalKeystoreKit';
 import HuksCipherUtils from '../../../../../main/ets/common/huks/HuksCipherUtil';
+import { stringToUint8Array } from '../../../../../main/ets/common/FileUtils/utils';
 
 export default function HuksCipherUtilTest() {
   describe('HuksCipherUtilTest', () => {
@@ -45,12 +46,44 @@ export default function HuksCipherUtilTest() {
     })
 
     it('HuksCipherUtilTest_generateKey', 0, async () => {
-      let options: huks.HuksOptions = {};
+      let options: huks.HuksOptions | undefined = {};
       let res = await HuksCipherUtils.generateKey('', options);
       expect(res).assertFalse();
       res = await HuksCipherUtils.generateKey('test', options);
       expect(res).assertFalse();
+      options = undefined;
+      res = await HuksCipherUtils.generateKey('test', options!);
+      expect(res).assertFalse();
     })
 
+    it('HuksCipherUtilTest_encrypt_checkHuksParams_error', 0, async () => {
+      let data: Uint8Array | undefined = undefined;
+      let params: huks.HuksParam[] | undefined = [];
+      let res = await HuksCipherUtils.encrypt('', data!, params);
+      expect(res).assertEqual(undefined);
+
+      res = await HuksCipherUtils.encrypt('test', data!, params);
+      expect(res).assertEqual(undefined);
+
+      data = stringToUint8Array('test') as Uint8Array;
+      params = undefined;
+      res = await HuksCipherUtils.encrypt('test', data, params!);
+      expect(res).assertEqual(undefined);
+    })
+
+    it('HuksCipherUtilTest_decrypt_checkHuksParams_error', 0, async () => {
+      let data: Uint8Array | undefined = undefined;
+      let params: huks.HuksParam[] | undefined = [];
+      let res = await HuksCipherUtils.decrypt('', data!, params);
+      expect(res).assertEqual(undefined);
+
+      res = await HuksCipherUtils.decrypt('test', data!, params);
+      expect(res).assertEqual(undefined);
+
+      data = stringToUint8Array('test') as Uint8Array;
+      params = undefined;
+      res = await HuksCipherUtils.decrypt('test', data, params!);
+      expect(res).assertEqual(undefined);
+    })
   })
 }

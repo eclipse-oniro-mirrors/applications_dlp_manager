@@ -55,7 +55,7 @@ export default function ServiceTest() {
       const context = AppStorageMgr.getApplicationContext() as common.UIExtensionContext;
       OpeningDialogService.getInstance().setContext(context);
       await OpeningDialogService.getInstance().terminateOpeningDialog();
-      expect('test').not().assertNull();
+      expect(context).not().assertNull();
     })
 
     it('CredConnectServiceDomain', 0, async () => {
@@ -71,7 +71,7 @@ export default function ServiceTest() {
       CredConnectServiceFileId.getInstance().cancelFileId('');
       CredConnectServiceFileId.getInstance().cancelFileId('id');
       CredConnectServiceFileId.getInstance().disconnectServiceAbility();
-      expect('test').not().assertNull();
+      expect(CredConnectServiceFileId.getInstance()).not().assertNull();
     })
 
     it('CredConnectService', 0, async () => {

@@ -98,7 +98,7 @@ export default function OpenDlpFileHandlerTest() {
 
       FileIdHandler.getInstance().saveFileId(content);
       FileIdHandler.getInstance().dialogCancel('fileIdHandler');
-      expect('test').not().assertNull();
+      expect(content).not().assertNull();
 
       const mocker = new MockKit();
       const mock: Function =

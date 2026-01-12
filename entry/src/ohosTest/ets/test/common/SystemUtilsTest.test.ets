@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
-import DomainAccountConvertor from '../../../../main/ets/convertor/DomainAccountConvertor';
+import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
+import i18n from '@ohos.i18n';
+import { SystemUtils } from '../../../../main/ets/common/systemUtils';
 
-export default function DomainAccountConvertorTest() {
-  describe('DomainAccountConvertorTest', () => {
+export default function SystemUtilsTest() {
+  describe('SystemUtilsTest', () => {
     // Defines a test suite. Two parameters are supported: test suite name and test suite function.
     beforeAll(() => {
       // Presets an action, which is performed only once before all test cases of the test suite start.
@@ -38,23 +39,10 @@ export default function DomainAccountConvertorTest() {
       // This API supports only one parameter: clear action function.
     })
 
-    it('DomainAccountConvertorTest_convertBatchToDomainAccountReq', 0, async () => {
-      const ret = DomainAccountConvertor.convertBatchToDomainAccountReq([], '', '');
-      expect(ret).not().assertNull();
-    })
-
-    it('DomainAccountConvertorTest_convertToDomainAccountResp', 0, async () => {
-      let ret = DomainAccountConvertor.convertToDomainAccountResp('');
-      expect(ret.getErrorCode()).assertEqual(undefined);
-
-      ret = DomainAccountConvertor.convertToDomainAccountResp(JSON.stringify({ errorCode: 0 }));
-      expect(ret.getErrorCode()).assertEqual(0);
-
-      ret = DomainAccountConvertor.convertToDomainAccountResp('{}');
-      expect(ret.getErrorCode()).assertEqual(undefined);
-
-      ret = DomainAccountConvertor.convertToDomainAccountResp('{:}');
-      expect(ret.getErrorCode()).assertEqual(undefined);
+    it('SystemUtilsTest_isRTL', 0, () => {
+      const locale = i18n.System.getSystemLocaleInstance().language;
+      const ret = SystemUtils.isRTL();
+      expect(ret).assertEqual(i18n.isRTL(locale));
     })
   })
 }

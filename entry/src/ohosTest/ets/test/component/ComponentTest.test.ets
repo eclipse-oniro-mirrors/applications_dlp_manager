@@ -16,6 +16,11 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
 import { AccountTips, AccountTipsConfig } from '../../../../main/ets/component/AccountTipsConfig';
 import EncryptProtectionHelper from '../../../../main/ets/component/helper/EncryptProtectionHelper';
+import { HiLog } from '../../../../main/ets/common/HiLog';
+import Constants from '../../../../main/ets/common/constant';
+import EncryptProtectionShowCodeEnum from '../../../../main/ets/common/enum/EncryptProtectionShowCodeEnum';
+
+const TAG: string = 'ComponentTest';
 
 export default function ComponentTest() {
   describe('ComponentTest', () => {
@@ -48,15 +53,23 @@ export default function ComponentTest() {
 
       ret = EncryptProtectionHelper.convertErrorCodeToShowCode(999);
       expect(ret).assertEqual(3);
+
+      const ret1 = EncryptProtectionHelper.isParamError(Constants.ERR_JS_ACCOUNT_NOT_FOUND);
+      expect(ret1).assertTrue();
+      const ret2 = EncryptProtectionHelper.getShowErr(EncryptProtectionShowCodeEnum.NET_ERROR);
+      expect(ret2).not().assertNull();
+      const ret3 = EncryptProtectionHelper.isShowErr(EncryptProtectionShowCodeEnum.NET_ERROR, true);
+      expect(ret3).assertTrue();
     })
 
     it('AccountTipsConfig', 0, async () => {
       let ret: AccountTips[] = [];
-      await AccountTipsConfig.getConfigTips().then((array: Array<AccountTips>) => {
-        ret = array;
-      }).catch(() => {
+      try {
+        ret = await AccountTipsConfig.getConfigTips();
+      } catch (err) {
+        HiLog.wrapError(TAG, err, 'Get config tips failed.');
         ret = [];
-      });
+      }
       expect(ret.length).assertEqual(0);
     })
   })

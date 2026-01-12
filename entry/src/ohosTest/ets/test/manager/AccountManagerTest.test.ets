@@ -26,7 +26,7 @@ import {
   when
 } from '@ohos/hypium';
 import AccountManager from '../../../../main/ets/manager/AccountManager';
-import AccountManagerMock from '../openDlpFile/mock/AccountManagerMock';
+import AccountManagerMock from './mock/AccountManagerMock';
 import AppStorageConstant from '../../../../main/ets/common/AppStorageConstant';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import common from '@ohos.app.ability.common';
