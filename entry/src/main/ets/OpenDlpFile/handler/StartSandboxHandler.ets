@@ -167,6 +167,15 @@ const suffixMimeTypeMap: Map<string, string> = new Map([
   ['ra', 'audio/x-pn-realaudio'],
   ['snd', 'audio/basic'],
   ['mp2', 'audio/mpeg'],
+  ['csv', 'text/csv'],
+  ['rtf', 'text/rtf'],
+  ['xml', 'text/xml'],
+  ['cpp', 'text/x-c++src'],
+  ['cxx', 'text/x-c++src'],
+  ['cc', 'text/x-c++src'],
+  ['html', 'text/html'],
+  ['htm', 'text/html'],
+  ['java', 'text/x-java'],
 ]);
 
 export default class StartSandboxHandler {

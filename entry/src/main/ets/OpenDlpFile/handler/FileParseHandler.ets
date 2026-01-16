@@ -167,6 +167,15 @@ const NUM_TO_TYPE_MAP = new Map<number, string>([
   [132, 'ra'],
   [133, 'snd'],
   [134, 'mp2'],
+  [135, 'csv'],
+  [136, 'rtf'],
+  [137, 'xml'],
+  [138, 'cpp'],
+  [139, 'cxx'],
+  [140, 'cc'],
+  [141, 'html'],
+  [142, 'htm'],
+  [143, 'java'],
 ]);
 
 interface DlpGeneralInfo {

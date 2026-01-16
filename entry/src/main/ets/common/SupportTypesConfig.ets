@@ -27,7 +27,9 @@ export const enum FileClassification {
 }
 
 export class SupportTypesConfig {
-  private static readonly documentTypes: string[] = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'pot'];
+  private static readonly documentTypes: string[] =
+    ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'pot', 'csv', 'rtf', 'xml', 'cpp', 'cxx', 'cc', 'html',
+      'htm', 'java'];
   private static readonly imageTypes: string[] =
     ['bmp', 'bm', 'dng', 'gif', 'heic', 'heics', 'heif', 'heifs', 'hif', 'jpg', 'jpeg', 'jpe', 'png', 'webp', 'cur',
       'raf', 'ico', 'nrw', 'rw2', 'pef', 'srw', 'arw', 'svg', 'wbmp', 'nef', 'cr2', 'avif', 'svgz', 'raw', 'ief',
