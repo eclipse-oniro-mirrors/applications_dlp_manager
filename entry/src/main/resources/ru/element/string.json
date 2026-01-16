@@ -525,7 +525,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"File_damaged",
             "value":"Сбой открытия. Файл поврежден.",
             "attr":{

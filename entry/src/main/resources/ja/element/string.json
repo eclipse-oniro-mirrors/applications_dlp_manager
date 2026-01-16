@@ -525,7 +525,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"File_damaged",
             "value":"このファイルは破損しているため、開くことができません。",
             "attr":{

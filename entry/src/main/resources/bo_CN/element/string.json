@@ -532,7 +532,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"File_damaged",
             "value":"ཡིག་ཆར་སྐྱོན་ཤོར། ཁ་འབྱེད་མི་ཐུབ།",
             "attr":{

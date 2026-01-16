@@ -525,7 +525,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"File_damaged",
             "value":"Este archivo está dañado y no se puede abrir.",
             "attr":{

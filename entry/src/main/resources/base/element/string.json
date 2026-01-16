@@ -559,7 +559,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"Share_File_Count_Error",
             "value":"A maximum of %d files can be encrypted at a time",
             "attr":{

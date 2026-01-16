@@ -280,7 +280,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"Share_File_has_been_Encrypted",
             "value":"ไฟล์นี้ได้รับการเข้ารหัสแล้ว",
             "attr":{

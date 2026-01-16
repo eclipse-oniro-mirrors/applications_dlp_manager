@@ -280,7 +280,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"Share_File_has_been_Encrypted",
             "value":"ໄຟ​ລ໌​ນີ້​ໄດ້​ຖືກ​ໃສ່​ລະ​ຫັດ​ຮຽບ​ຮ້ອຍ​ແລ້ວ.",
             "attr":{

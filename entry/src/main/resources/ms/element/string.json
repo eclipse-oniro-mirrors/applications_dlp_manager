@@ -301,7 +301,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"Share_File_has_been_Encrypted",
             "value":"Fail ini sudah disulitkan.",
             "attr":{

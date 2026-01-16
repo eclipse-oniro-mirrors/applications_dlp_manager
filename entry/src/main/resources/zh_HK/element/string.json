@@ -532,7 +532,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"File_damaged",
             "value":"檔案已損壞，無法開啟",
             "attr":{

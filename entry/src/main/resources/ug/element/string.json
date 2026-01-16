@@ -532,7 +532,7 @@
                 "priority":"LT"
             }
         },
-      {
+        {
             "name":"File_damaged",
             "value":"ھۆججەت بۇزۇلغان، ئېچىلمايدۇ.",
             "attr":{
