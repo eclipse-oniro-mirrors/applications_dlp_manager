@@ -280,14 +280,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"Kesalahan jaringan. Tidak dapat memverifikasi ID HUAWEI Anda.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"Share_File_has_been_Encrypted",
             "value":"File ini sudah dienkripsi.",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"Izin File",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Tidak dapat melakukan ini sekarang. Coba lagi nanti.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

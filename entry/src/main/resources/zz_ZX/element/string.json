@@ -209,10 +209,6 @@
             "value":"[TS_850756]_Read-only"
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"[TS_850762]_Unable to do this right now. Try again later."
-        },
-        {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
             "value":"[TS_948030]_This file cannot be encrypted."
         },
@@ -319,10 +315,6 @@
         {
             "name":"MESSAGE_NO_SPACE_ERROR",
             "value":"[TS_1017669]_Insufficient storage. Delete files you don't need to free up space."
-        },
-        {
-            "name":"Network_anomaly",
-            "value":"[TS_1073165]_Network error. Unable to verify your HUAWEI ID."
         },
         {
             "name":"File_no_permission",

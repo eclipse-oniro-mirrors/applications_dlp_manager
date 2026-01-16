@@ -280,14 +280,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"Błąd sieci. Nie można zweryfikować ID HUAWEI.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"Share_File_has_been_Encrypted",
             "value":"Ten plik jest już zaszyfrowany.",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"Uprawnienia pliku",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Teraz nie można wykonać tej czynności. Spróbuj ponownie później.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

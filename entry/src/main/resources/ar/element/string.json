@@ -344,13 +344,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"يتعذر إجراء هذا الآن. يُرجى إعادة المحاولة لاحقًا.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
             "value":"يتعذر تشفير هذا الملف",
             "attr":{
@@ -532,14 +525,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"مشكلة في الشبكة، يتعذر التحقق من حساب هواوي الخاص بك",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"File_damaged",
             "value":"هذا الملف تالف ولا يمكن فتحه",
             "attr":{

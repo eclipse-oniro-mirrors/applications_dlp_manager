@@ -301,14 +301,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"Ralat rangkaian. Tidak dapat mengesahkan ID HUAWEI anda.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"Share_File_has_been_Encrypted",
             "value":"Fail ini sudah disulitkan.",
             "attr":{
@@ -544,13 +537,6 @@
             "value":"Kebenaran Fail",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Tidak dapat melakukan ini sekarang. Cuba sebentar lagi.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

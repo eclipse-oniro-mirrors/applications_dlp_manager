@@ -288,13 +288,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"目前無法操作，請稍後重試。",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"save_as",
             "value":"另存新檔",
             "attr":{
@@ -539,14 +532,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"網路異常，無法驗證您的華為 ID",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"File_damaged",
             "value":"檔案已損壞，無法開啟",
             "attr":{

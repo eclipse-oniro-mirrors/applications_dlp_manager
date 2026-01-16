@@ -344,13 +344,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Это действие сейчас недоступно. Повторите попытку позже.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
             "value":"Этот файл невозможно зашифровать.",
             "attr":{
@@ -532,14 +525,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"Ошибка сети. Сбой подтверждения аккаунта HUAWEI.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"File_damaged",
             "value":"Сбой открытия. Файл поврежден.",
             "attr":{

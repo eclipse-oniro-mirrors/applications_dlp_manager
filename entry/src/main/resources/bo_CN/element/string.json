@@ -288,13 +288,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"མིག་སྔར་བཀོལ་སྤྱོད་བྱེད་ཐབས་བྲལ། ཏོག་ཙམ་ནས་ཡང་བསྐྱར་ཚོད་ལྟ་གནང་རོགས།",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"save_as",
             "value":"ལོགས་སུ་ཉར་ཚགས།",
             "attr":{
@@ -539,14 +532,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"དྲ་རྒྱ་རྒྱུན་ལྡན་མིན། ཧྭ་ཝེ་ཐོ་ཨང་ར་སྤྲོད་བྱེད་མི་ཐུབ།",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"File_damaged",
             "value":"ཡིག་ཆར་སྐྱོན་ཤོར། ཁ་འབྱེད་མི་ཐུབ།",
             "attr":{

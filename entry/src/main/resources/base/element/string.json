@@ -294,13 +294,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Unable to do this right now. Try again later.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
             "value":"This app can't open this file.",
             "attr":{
@@ -566,14 +559,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"Network error. Unable to verify your HUAWEI ID.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"Share_File_Count_Error",
             "value":"A maximum of %d files can be encrypted at a time",
             "attr":{

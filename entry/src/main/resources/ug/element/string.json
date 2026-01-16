@@ -288,13 +288,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"مەشغۇلات يۈرمىدى، كېيىنرەك قايتا سىناڭ.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"save_as",
             "value":"باشقا ساقلاش",
             "attr":{
@@ -539,14 +532,7 @@
                 "priority":"LT"
             }
         },
-        {
-            "name":"Network_anomaly",
-            "value":"توردا خاتالىق بار. خۇاۋېي ھېسابى دەلىللەنمىدى.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
+      {
             "name":"File_damaged",
             "value":"ھۆججەت بۇزۇلغان، ئېچىلمايدۇ.",
             "attr":{
