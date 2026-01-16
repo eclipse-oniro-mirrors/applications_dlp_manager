@@ -281,13 +281,6 @@
             }
         },
         {
-            "name":"Network_anomaly",
-            "value":"ข้อผิดพลาดเครือข่าย ไม่สามารถยืนยัน HUAWEI ID ของคุณได้",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"Share_File_has_been_Encrypted",
             "value":"ไฟล์นี้ได้รับการเข้ารหัสแล้ว",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"การอนุญาตสิทธิ์ไฟล์",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"ไม่สามารถทำสิ่งนี้ได้ในขณะนี้ ลองอีกครั้งในภายหลัง",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

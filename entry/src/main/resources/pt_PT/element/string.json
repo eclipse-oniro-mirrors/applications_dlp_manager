@@ -281,13 +281,6 @@
             }
         },
         {
-            "name":"Network_anomaly",
-            "value":"Erro de rede.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"Share_File_has_been_Encrypted",
             "value":"Este ficheiro já foi encriptado.",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"Permissões do ficheiro",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Não é possível fazer isto neste momento. Tente mais tarde.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

@@ -344,13 +344,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"No se puede hacer esto en este momento. Vuelve a intentarlo más tarde.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
             "value":"Este archivo no se puede cifrar.",
             "attr":{
@@ -530,13 +523,6 @@
             "value":"No se puede abrir este archivo. Vuelve a intentarlo más tarde.",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"Network_anomaly",
-            "value":"Error de red. No se ha podido verificar tu ID de HUAWEI.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

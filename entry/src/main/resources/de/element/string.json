@@ -281,13 +281,6 @@
             }
         },
         {
-            "name":"Network_anomaly",
-            "value":"Netzwerkfehler, Bestätigung Ihrer HUAWEI ID nicht möglich.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"Share_File_has_been_Encrypted",
             "value":"Diese Datei wurde bereits verschlüsselt.",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"Dateiberechtigungen",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Vorgang jetzt nicht möglich, versuchen Sie es später erneut.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

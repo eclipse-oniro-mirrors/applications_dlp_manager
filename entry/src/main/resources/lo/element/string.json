@@ -281,13 +281,6 @@
             }
         },
         {
-            "name":"Network_anomaly",
-            "value":"ເຄືອຂ່າຍຜິດພາດ. ບໍ່​ສາ​ມາດກວດ​ສອບ HUAWEI ID ຂອງ​ທ່ານ​ໄດ້​.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"Share_File_has_been_Encrypted",
             "value":"ໄຟ​ລ໌​ນີ້​ໄດ້​ຖືກ​ໃສ່​ລະ​ຫັດ​ຮຽບ​ຮ້ອຍ​ແລ້ວ.",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"ການ​ອະ​ນຸ​ຍາດ​ໄຟ​ລ໌",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"ບໍ່​ສາ​ມາດ​ເຮັດ​ສິ່ງ​ນີ້​ໄດ້​ໃນ​ຂະ​ນະ​ນີ້. ລອງ​ໃໝ່​ອີກໃນ​ພາຍຫຼັງ.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

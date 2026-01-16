@@ -344,13 +344,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Cette action a échoué pour le moment. Veuillez réessayer ultérieurement.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
             "value":"Ce fichier ne peut pas être crypté.",
             "attr":{
@@ -530,13 +523,6 @@
             "value":"L'ouverture de ce fichier a échoué. Veuillez réessayer ultérieurement.",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"Network_anomaly",
-            "value":"Erreur réseau. La vérification de votre Compte HUAWEI a échoué.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

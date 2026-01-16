@@ -281,13 +281,6 @@
             }
         },
         {
-            "name":"Network_anomaly",
-            "value":"Errore di rete. Impossibile verificare il tuo HUAWEI ID.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"Share_File_has_been_Encrypted",
             "value":"Questo file è già stato criptato.",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"Autorizzazioni di file",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Impossibile farlo al momento. Riprova più tardi.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

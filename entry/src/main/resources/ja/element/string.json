@@ -344,13 +344,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"現在、この操作を実行できません。後で再試行してください。",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
             "value":"このファイルは暗号化できません。",
             "attr":{
@@ -530,13 +523,6 @@
             "value":"このファイルを開けません。後で再試行してください。",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"Network_anomaly",
-            "value":"ネットワークエラーです。HUAWEI IDを検証できません。",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

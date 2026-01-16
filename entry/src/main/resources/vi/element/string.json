@@ -344,13 +344,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Không thực hiện được thao tác này bây giờ. Hãy thử lại sau.",
-            "attr":{
-                "priority":"LT"
-            }
-        },
-        {
             "name":"THIS_FILE_NOT_SUPPORT_ENCRYPTION_PROTECTION",
             "value":"Không mã hóa được tệp tin này.",
             "attr":{
@@ -530,13 +523,6 @@
             "value":"Không mở được tệp tin này. Hãy thử lại sau.",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"Network_anomaly",
-            "value":"Lỗi mạng. Không xác minh được ID HUAWEI của bạn.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {

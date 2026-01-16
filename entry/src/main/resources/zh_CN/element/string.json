@@ -294,13 +294,6 @@
             }
         },
         {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"当前无法操作，请稍后重试。",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"MESSAGE_NOT_AUTHORIZED_APPLICATION",
             "value":"该应用无法打开此文件。",
             "attr":{
@@ -562,13 +555,6 @@
         {
             "name":"File_cannot_be_opened",
             "value":"无法打开此文件，请稍后再试",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
-            "name":"Network_anomaly",
-            "value":"网络异常，无法验证您的华为账号",
             "attr":{
                 "priority":"translate"
             }

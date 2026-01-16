@@ -281,13 +281,6 @@
             }
         },
         {
-            "name":"Network_anomaly",
-            "value":"Ağ hatası. HUAWEI Kimliğiniz doğrulanamıyor.",
-            "attr":{
-                "priority":"translate"
-            }
-        },
-        {
             "name":"Share_File_has_been_Encrypted",
             "value":"Bu dosya zaten şifrelenmiş.",
             "attr":{
@@ -516,13 +509,6 @@
             "value":"Dosya izinleri",
             "attr":{
                 "priority":"LT"
-            }
-        },
-        {
-            "name":"MESSAGE_SERVICE_INSIDE_ERROR",
-            "value":"Şu anda bu yapılamıyor. Daha sonra tekrar deneyin.",
-            "attr":{
-                "priority":"translate"
             }
         },
         {
