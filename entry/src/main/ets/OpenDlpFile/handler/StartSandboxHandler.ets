@@ -280,7 +280,8 @@ export default class StartSandboxHandler {
     const isOwner: boolean = decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName;
     want.type = suffixMimeTypeMap.get(fileSuffix);
     HiLog.info(TAG, `Type restriction from ${fileSuffix} to ${want.type}`);
-    HiLog.info(TAG, `countdown isOwner:${isOwner} countdown:${decryptContent.fileMetaInfo.countdown}`);
+    HiLog.info(TAG, `isOwner:${isOwner},countdown:${decryptContent.fileMetaInfo.countdown},
+    hasDecrypted:${decryptContent.hasDecrypted}`);
     let dlpWant: Want = {
       parameters: {
         'linkFileName': {
@@ -311,6 +312,7 @@ export default class StartSandboxHandler {
         'ohos.dlp.params.waterMarkConfig': decryptContent.fileMetaInfo.waterMarkConfig,
         'ohos.dlp.params.countdown': decryptContent.fileMetaInfo.countdown && !isOwner ?
         decryptContent.fileMetaInfo.countdown : 0,
+        'ohos.dlp.params.needRefreshCountdown': !decryptContent.hasDecrypted,
       }
     };
     ObjectUtil.Assign(want.parameters, dlpWant.parameters);
