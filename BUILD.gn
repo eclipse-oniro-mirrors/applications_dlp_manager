@@ -33,7 +33,7 @@ ohos_app("dlp_manager") {
   build_modules = [ "entry" ]
   if (defined(sign_hap_py_path)) {
     certificate_profile = "${certificate_profile_path}"
-    key_alias = "dlpmanager"
+    key_alias = "dlpmanager V2"
     compatible_version = "9"
   }
 }
