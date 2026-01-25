@@ -94,16 +94,7 @@ export class OpenDlpFileProcessor {
       HiLog.error(TAG, 'decryptAndInstall error');
       return ResultMsg.buildResult(decryptResult.errcode, decryptResult.errmsg, decryptContent);
     }
-
-    // 5.1 判断是否是预览应用，给低权限文件预览授权
-    if(decryptContent.openDlpFileData.sandboxBundleName === HIPREVIEW_HIGH &&
-      decryptContent.bindAppIndex && decryptContent.bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
-      const flag = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
-      HiLog.error(TAG, 'grant uri, bindAppIndex is' + decryptContent.bindAppIndex + 'link file: ' + decryptContent.linkUri);
-      uriPermissionManager.grantUriPermission(decryptContent.linkUri, flag, HIPREVIEW_LOW, decryptContent.bindAppIndex ).catch(() => {
-        HiLog.error(TAG, 'grantUriPermission error');
-      });
-    }
+    grantForHiPreview(decryptContent);
 
     // 6. start sandbox 不需要拉起“正在打开”的动效，可以直接拉起沙箱（拉起沙箱，情况一）
     const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox(decryptContent);
@@ -234,5 +225,18 @@ export class OpenDlpFileProcessor {
       err.message = Constants.NO_PERMISSION_OR_EXPIRATION;
     }
     DlpFileOpenReport.sendDlpFileOpenFault(err.code, decryptContent, err);
+  }
+}
+
+function grantForHiPreview(decryptContent: DecryptContent) {
+  if (decryptContent.openDlpFileData.sandboxBundleName === HIPREVIEW_HIGH &&
+  decryptContent.bindAppIndex && decryptContent.bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
+    const flag = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+    HiLog.error(TAG,
+      'grant uri, bindAppIndex is' + decryptContent.bindAppIndex + 'link file: ' + decryptContent.linkUri);
+    uriPermissionManager.grantUriPermission(decryptContent.linkUri, flag, HIPREVIEW_LOW, decryptContent.bindAppIndex)
+      .catch(() => {
+        HiLog.error(TAG, 'grantUriPermission error');
+      });
   }
 }
