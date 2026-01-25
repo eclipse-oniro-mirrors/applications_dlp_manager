@@ -38,8 +38,8 @@ import { uriPermissionManager, wantConstant } from '@kit.AbilityKit';
 const TAG: string = 'OpenDlpFileProcessor';
 const COMMON_ENTERPRISE_EVENT: string =  'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
 const ENTERPRISE_ACCOUNT: number = 4;
-const HIPREVIEW_HIGH = "com.huawei.hmos.hipreview";
-const HIPREVIEW_LOW = "com.huawei.hmos.hipreviewext";
+const HIPREVIEW_HIGH = 'com.huawei.hmos.hipreview';
+const HIPREVIEW_LOW = 'com.huawei.hmos.hipreviewext';
 const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
 
 export class OpenDlpFileProcessor {
