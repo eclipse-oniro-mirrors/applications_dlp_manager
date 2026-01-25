@@ -315,6 +315,7 @@ export default class StartSandboxHandler {
         'allowedOpenCount': (decryptContent.dlpFile.dlpProperty.allowedOpenCount && !isOwner) ?
         decryptContent.dlpFile.dlpProperty.allowedOpenCount : 0,
         'ohos.dlp.params.index': decryptContent.appInfo.appIndex,
+        'ohos.dlp.params.bindindex': decryptContent.bindAppIndex,
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
         'ohos.dlp.params.securityFlag': decryptContent.authPerm ===
         dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
@@ -322,6 +323,8 @@ export default class StartSandboxHandler {
         'ohos.dlp.params.countdown': decryptContent.fileMetaInfo.countdown && !isOwner ?
         decryptContent.fileMetaInfo.countdown : 0,
         'ohos.dlp.params.needRefreshCountdown': !decryptContent.hasDecrypted,
+        'ohos.dlp.params.bindSecurityFlag': decryptContent.authPerm ===
+        dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
       }
     };
     ObjectUtil.Assign(want.parameters, dlpWant.parameters);
