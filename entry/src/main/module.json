@@ -24,7 +24,7 @@
         "icon": "$media:icon",
         "description": "DialogUIExtAbility",
         "type": "sys/commonUI",
-        "exported": true,
+        "exported": false,
         "srcEntry": "./ets/Ability/DialogUIExtAbility.ets"
       },
       {
@@ -54,7 +54,8 @@
         "srcEntry": "./ets/Ability/DataAbility.ets",
         "icon": "$media:icon",
         "description": "$string:ViewAbility_desc",
-        "type": "service"
+        "type": "service",
+        "exported": false
       },
       {
         "name": "DlpFileProcessAbility",
@@ -79,7 +80,7 @@
         "icon": "$media:icon",
         "description": "OpeningDialogUIExtAbility",
         "type": "sys/commonUI",
-        "exported": true,
+        "exported": false,
         "srcEntry": "./ets/Ability/OpeningDialogUIExtAbility.ets"
       },
       {
@@ -87,7 +88,7 @@
         "icon": "$media:icon",
         "description": "PhoneDialogUIExtAbility",
         "type": "sys/commonUI",
-        "exported": true,
+        "exported": false,
         "srcEntry": "./ets/Ability/PhoneDialogUIExtAbility.ets"
       }
     ],
