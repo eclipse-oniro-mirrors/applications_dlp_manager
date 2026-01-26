@@ -335,7 +335,12 @@ struct encryptedSharing {
       if (res && res.error === undefined) {
         continue;
       }
-      const errRes = JSON.parse(res?.error ?? '') as BusinessError;
+      let errRes: BusinessError | undefined = undefined;
+      try {
+        errRes = JSON.parse(res?.error ?? '') as BusinessError;
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'JSON parse failed.');
+      }
       AppStorage.setOrCreate('commandSearchUserInfo', '');
       if (errRes && errRes.code === Constants.SHARE_FILE_NAME_TOO_LONG) {
         showToast(this.getUIContext(), EncryptSharingHelper.getShowErr(EncryptSharingShowCodeEnum.FILE_NAME_TOO_LONG));
@@ -409,18 +414,23 @@ struct encryptedSharing {
     let dlpFilePathArray: string[] = [];
     let dlpFileNameArray: string[] = [];
     let taskGroup: taskpool.TaskGroup = new taskpool.TaskGroup();
-    for (const inputUri of this.inputUriArray) {
-      let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
-      let dlpFileName: string = srcFileMsg.fileName + srcFileMsg.fileType + Constants.DLP_FILE_SUFFIX;
-      let dlpFilePath = filePath + dlpFileName;
+    let taskResults: GenerateDlpFileResult[] = [];
+    try {
+      for (const inputUri of this.inputUriArray) {
+        let srcFileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(inputUri);
+        let dlpFileName: string = srcFileMsg.fileName + srcFileMsg.fileType + Constants.DLP_FILE_SUFFIX;
+        let dlpFilePath = filePath + dlpFileName;
 
-      let task: taskpool.Task =
-        new taskpool.Task(generateDlpFile, dlpFilePath, inputUri, this.dlpProperty);
-      taskGroup.addTask(task);
-      dlpFilePathArray.push(dlpFilePath);
-      dlpFileNameArray.push(dlpFileName);
+        let task: taskpool.Task =
+          new taskpool.Task(generateDlpFile, dlpFilePath, inputUri, this.dlpProperty);
+        taskGroup.addTask(task);
+        dlpFilePathArray.push(dlpFilePath);
+        dlpFileNameArray.push(dlpFileName);
+      }
+      taskResults = await taskpool.execute(taskGroup) as GenerateDlpFileResult[];
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'taskpool error.');
     }
-    let taskResults: GenerateDlpFileResult[] = await taskpool.execute(taskGroup) as GenerateDlpFileResult[];
     await this.processTaskResults(taskResults, dlpFilePathArray, dlpFileNameArray);
   }
 
@@ -442,9 +452,9 @@ struct encryptedSharing {
       let generalFile: Record<string, Test[]> = {};
       generalFile[this.generalType] = generatedFiles;
       this.actionWant.parameters['ability.picker.records'] = generalFile;
-      setTimeout(() => {
+      setTimeout(async () => {
         try {
-          this.session!.terminateSelfWithResult({
+          await this.session!.terminateSelfWithResult({
             resultCode: EncryptSharingTerminateCode.SUCCESS,
             want: this.actionWant
           });
@@ -699,10 +709,10 @@ struct encryptedSharing {
               value: $r('sys.media.ohos_ic_public_cancel'),
               isEnabled: true,
               label: $r('app.string.ban'),
-              action: () => {
+              action: async () => {
                 if (this.session !== undefined) {
                   try {
-                    this.session.terminateSelfWithResult({
+                    await this.session.terminateSelfWithResult({
                       'resultCode': EncryptSharingTerminateCode.CANCEL,
                     });
                   } catch (error) {
@@ -713,10 +723,10 @@ struct encryptedSharing {
             }
           ],
           isSaveIconRequired: false,
-          onCancel: () => {
+          onCancel: async () => {
             if (this.session !== undefined) {
               try {
-                this.session.terminateSelfWithResult({
+                await this.session.terminateSelfWithResult({
                   'resultCode': EncryptSharingTerminateCode.BACK,
                 });
               } catch (error) {
@@ -736,9 +746,9 @@ struct encryptedSharing {
                 .id('phoneInput')
                 .padding({
                   left: SystemUtils.isRTL() ?
-                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
+                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT,
                   right: SystemUtils.isRTL() ?
-                  Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
+                    Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_LEFT : Constants.SHARE_TEXT_INPUT_CONTENT_PADDING_RIGHT
                 })
                 .enabled(this.isTextInputEnabled)
                 .constraintSize({ minHeight: Constants.SHARE_TEXT_INPUT_HEIGHT })
@@ -794,9 +804,9 @@ struct encryptedSharing {
 
             Stack({ alignContent: Alignment.TopStart }) {
               Text(this.phoneFormatTips ?
-              this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
+                this.credentialCallBackMsg : $r('app.string.Share_Enter_Mobile_Number', this.osVersion))
                 .fontColor(this.phoneFormatTips ?
-                $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
+                  $r('sys.color.ohos_id_color_warning') : $r('sys.color.ohos_id_color_text_secondary'))
                 .fontSize($r('sys.float.ohos_id_text_size_body3'))
                 .fontWeight(FontWeight.Regular)
                 .margin({ top: Constants.ENCRYPTION_ADD_STAFF_BORDER_MARGIN_TOP })

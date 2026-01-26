@@ -318,10 +318,15 @@ struct changeEncryption {
           .delete(GlobalContext.load('uri') as string)
       }
       abilityResult.resultCode = 0;
+      const ctx: common.UIAbilityContext | undefined = this.getUIContext().getHostContext() as common.UIAbilityContext;
+      if (!ctx) {
+        HiLog.error(TAG, 'Get UIAbilityContext failed.');
+        return;
+      }
       try {
-        (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+        ctx.terminateSelfWithResult(abilityResult);
       } catch (error) {
-        HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed');
+        HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed.');
       }
     }
   }

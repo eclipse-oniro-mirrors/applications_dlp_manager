@@ -69,6 +69,9 @@ struct permissionTypeSelect {
     }
     setTimeout(() => {
       let selectIndex = this.selectedItem.index === -1 ? 0 : this.selectedItem.index;
+      if (selectIndex >= this.permissionTypes.length) {
+        selectIndex = 0;
+      }
       this.selectedItem = this.permissionTypes[selectIndex];
     }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
   }
@@ -145,6 +148,10 @@ struct validDateTypeMenu {
     { value: $r('app.string.Appointed_day'), data: 'Appointed_day', index: 1 }
   ];
 
+  isValidSelectedIndex(selectedIndex: number): boolean {
+    return !(isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= this.validDateTypes.length);
+  }
+
   @Builder
   ValidDateMenuItem() {
     validDateTypeMenuItem({ selectedIndex: $selectedIndex });
@@ -152,7 +159,7 @@ struct validDateTypeMenu {
 
   build() {
     Row() {
-      Text(this.validDateTypes[this.selectedIndex].value)
+      Text(this.validDateTypes[this.isValidSelectedIndex(this.selectedIndex) ? this.selectedIndex : 0].value)
         .fontSize($r('sys.float.ohos_id_text_size_body2'))
         .fontWeight(FontWeight.Medium)
         .fontColor($r('sys.color.ohos_id_color_text_secondary'));

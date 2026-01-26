@@ -144,6 +144,19 @@ struct PermissionStatus {
     }
   ];
 
+  async terminateDialog(abilityResult: ability.AbilityResult) {
+    const ctx: common.UIAbilityContext | undefined = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    if (!ctx) {
+      HiLog.error(TAG, 'Get context failed.');
+      return;
+    }
+    try {
+      ctx.terminateSelfWithResult(abilityResult);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed.');
+    }
+  }
+
   aboutToAppear() {
     HiLog.info(TAG, `aboutToAppear`);
     this.authPerm = AppStorage.get('authPerm') ?? 1;
@@ -322,7 +335,7 @@ struct PermissionStatus {
                         (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
                       }
                       abilityResult.resultCode = 0;
-                      (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                      this.terminateDialog(abilityResult);
                     }
                   })
               }
