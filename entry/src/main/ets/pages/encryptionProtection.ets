@@ -86,7 +86,7 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 
 @Component
 struct DlpDialog {
-  private storage : LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
+  private storage: LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
   @State dlpProperty: dlpDataType =
     GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
   @State session: UIExtensionContentSession | undefined =
@@ -615,7 +615,8 @@ struct DlpDialog {
   }
 
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
-    let routerParams: Record<string, AuthAccount[]> = this.getUIContext().getRouter().getParams() as Record<string, AuthAccount[]>;
+    let routerParams: Record<string, AuthAccount[]> =
+      this.getUIContext().getRouter().getParams() as Record<string, AuthAccount[]>;
     this.permissionDict.forEach(async (item, index) => {
       try {
         this.permissionDict[index].value =
@@ -952,9 +953,9 @@ struct DlpDialog {
               })
               .margin({
                 right: SystemUtils.isRTL() ?
-                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
                 left: SystemUtils.isRTL() ?
-                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
               })
             Button($r('app.string.sure'), { type: ButtonType.Capsule, stateEffect: true })
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
@@ -994,9 +995,9 @@ struct DlpDialog {
               })
               .margin({
                 right: SystemUtils.isRTL() ?
-                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                 left: SystemUtils.isRTL() ?
-                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
               })
           }
           .margin({
