@@ -26,6 +26,10 @@ export default class ClearDlpCacheStub extends rpc.RemoteObject {
     super(des);
   }
 
+  private isDlpHap(tokenId: number): boolean {
+    return (tokenId & Constant.DLP_HAP_TOKEN_FLAG_POSITION) !== Constant.DLP_HAP_TOKEN_FLAG_COMPARE;
+  }
+
   private checkParams(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): boolean {
     if (Number.isNaN(code) || !data || !reply) {
       HiLog.error(TAG, 'ClearDlpCacheStub params is invalid');
@@ -34,6 +38,11 @@ export default class ClearDlpCacheStub extends rpc.RemoteObject {
     try {
       if (data.readInterfaceToken() !== Constants.HI_PREVIEW_TOKEN) {
         HiLog.error(TAG, 'ClearDlpCacheStub InterfaceToken unmatched.');
+        return false;
+      }
+      let callerTokenId = rpc.IPCSkeleton.getCallingTokenId();
+      if (!this.isDlpHap(callerTokenId)) {
+        HiLog.error(TAG, 'RpcServer: getCallingTokenid is not in dlp sandbox');
         return false;
       }
     } catch (error) {

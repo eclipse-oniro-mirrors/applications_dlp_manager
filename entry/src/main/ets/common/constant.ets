@@ -388,4 +388,8 @@ export default class Constants {
   public static readonly MSG_CONTACT = ', contact:';
 
   public static CONNECTION_TIMEOUT = 3000;
+
+  // dlp hap tokenId flag bit position
+  public static DLP_HAP_TOKEN_FLAG_POSITION = 1 << 26;
+  public static DLP_HAP_TOKEN_FLAG_COMPARE = 0;
 }

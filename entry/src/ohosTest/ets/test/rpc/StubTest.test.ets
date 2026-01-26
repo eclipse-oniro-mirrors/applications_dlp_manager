@@ -142,7 +142,7 @@ export default function StubTest() {
       data.writeInterfaceToken(Constants.HI_PREVIEW_TOKEN);
       data.writeRemoteObject(remote);
       let ret = await stub.onRemoteMessageRequest(1, data, reply);
-      expect(ret).assertEqual(true);
+      expect(ret).assertEqual(false);
 
       data = new rpc.MessageSequence();
       data.writeInterfaceToken(Constants.HI_PREVIEW_TOKEN);
