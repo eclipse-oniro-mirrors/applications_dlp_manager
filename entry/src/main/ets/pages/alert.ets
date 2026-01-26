@@ -33,14 +33,13 @@ let abilityResult: ability.AbilityResult = {
   'want': {}
 };
 
-let storage = LocalStorage.getShared();
-
-@Entry(storage)
+@Entry()
 @Component
 struct Index {
+  private storage : LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
   @State dialogUIExtWant: Want | undefined = GlobalContext.load('dialogUIExtWant');
   @State session: UIExtensionContentSession | undefined =
-    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
   @State title: ResourceStr = '';
   @State message: ResourceStr = '';
   @State cancel: ResourceStr = '';
@@ -214,7 +213,7 @@ struct Index {
         accountType = this.dialogUIExtWant?.parameters?.accountType as number;
       } else {
         // use session error
-        errorMsg = storage.get('error') as BusinessError;
+        errorMsg = this.storage?.get('error') as BusinessError;
         messageCode = errorMsg.code;
         accountType = dlpPermission.AccountType.DOMAIN_ACCOUNT;
       }

@@ -54,6 +54,8 @@ struct Index {
             bundleName: 'com.huawei.hmos.settings',
             abilityName: 'com.huawei.hmos.settings.MainAbility',
             uri: 'hms_account_home_settings'
+          }).catch(() => {
+            HiLog.error(TAG,  'startAbility error');
           });
           this.cancelAction();
         }

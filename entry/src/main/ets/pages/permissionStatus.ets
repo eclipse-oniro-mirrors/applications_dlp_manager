@@ -39,11 +39,11 @@ class TitleContent {
   public content: StatusContent[] = []
 }
 
-let storage = LocalStorage.getShared();
-@Entry(storage)
+@Entry()
 @Component
 struct PermissionStatus {
-  @State session: UIExtensionContentSession | undefined = storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+  private storage : LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
+  @State session: UIExtensionContentSession | undefined = this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
   @State directionStatus: number = 0;
   @State authPerm: number = Constants.PP_IMAGE_PAD;
   @State authPermFlag: boolean = false;

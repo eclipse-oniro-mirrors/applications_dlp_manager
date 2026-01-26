@@ -45,15 +45,14 @@ function customizeText() {
   .fontWeight(FontWeight.Medium)
 }
 
-let storage: LocalStorage = LocalStorage.getShared();
-
-@Entry(storage)
+@Entry()
 @Component
 struct encryptionSuccess {
+  private storage : LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
   @State session: UIExtensionContentSession | undefined =
-    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
   private routerParams: Record<string, AuthAccount[] | PermissionType> =
-    router.getParams() as Record<string, AuthAccount[] | PermissionType>;
+    this.getUIContext().getRouter().getParams() as Record<string, AuthAccount[] | PermissionType>;
   @State directionStatus: number = 0;
   @State flag: boolean = false;
   @State editFlag: boolean = false;

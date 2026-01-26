@@ -37,7 +37,7 @@ export class GetAlertMessage {
   ): Promise<void> {
     try {
       const resource = GetAlertMessage.getToastMessage(error);
-      const toastMessage = await context.resourceManager.getStringValue(resource);
+      const toastMessage = await context.resourceManager.getStringValue(resource.id);
       const uiContext = UIContextUtil.getInstance().getUIContext(context);
       if (!uiContext) {
         HiLog.error(TAG, 'Get UIContext failed.');

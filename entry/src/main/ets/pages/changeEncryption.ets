@@ -70,13 +70,12 @@ function customizeText() {
   .fontWeight(FontWeight.Medium)
 }
 
-let storage = LocalStorage.getShared();
-
-@Entry(storage)
+@Entry()
 @Component
 struct changeEncryption {
+  private storage : LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
   @State session: UIExtensionContentSession | undefined =
-    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
   dlpAlertDialog?: CustomDialogController;
   srcFileName: string = '';
   linkFileName: string = '';
@@ -376,7 +375,7 @@ struct changeEncryption {
   }
 
   async getRouterParams() {
-    let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
+    let routerParams: Record<string, AuthAccount[]> = this.getUIContext().getRouter().getParams() as Record<string, AuthAccount[]>;
     if (routerParams !== undefined) { // router
       this.staffDataArrayReadOnly = routerParams.staffDataArrayReadOnly as AuthAccount[];
       this.staffDataArrayEdit = routerParams.staffDataArrayEdit as AuthAccount[];
