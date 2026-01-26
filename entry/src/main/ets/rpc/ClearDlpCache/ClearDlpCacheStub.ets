@@ -27,8 +27,7 @@ export default class ClearDlpCacheStub extends rpc.RemoteObject {
   }
 
   private isDlpHap(tokenId: number): boolean {
-    const mask = 1 << 26;
-    return (tokenId & mask) !== 0;
+    return (tokenId & Constant.DLP_HAP_TOKEN_FLAG_POSITION) !== Constant.DLP_HAP_TOKEN_FLAG_COMPARE;
   }
 
   private checkParams(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence): boolean {
