@@ -70,13 +70,12 @@ function customizeText() {
   .fontWeight(FontWeight.Medium)
 }
 
-let storage = LocalStorage.getShared();
-
-@Entry(storage)
+@Entry()
 @Component
 struct changeEncryption {
+  private storage: LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
   @State session: UIExtensionContentSession | undefined =
-    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
   dlpAlertDialog?: CustomDialogController;
   srcFileName: string = '';
   linkFileName: string = '';
@@ -376,7 +375,8 @@ struct changeEncryption {
   }
 
   async getRouterParams() {
-    let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
+    let routerParams: Record<string, AuthAccount[]> =
+      this.getUIContext().getRouter().getParams() as Record<string, AuthAccount[]>;
     if (routerParams !== undefined) { // router
       this.staffDataArrayReadOnly = routerParams.staffDataArrayReadOnly as AuthAccount[];
       this.staffDataArrayEdit = routerParams.staffDataArrayEdit as AuthAccount[];
@@ -646,7 +646,7 @@ struct changeEncryption {
                                     .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.readOnlyFlag ?
-                                      Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
@@ -692,7 +692,7 @@ struct changeEncryption {
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
                             .fontSize($r('sys.float.ohos_id_text_size_body2'))
                           Text(this.selectedPermissionTypeEdit.data === 'all' ?
-                          $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
+                            $r('app.string.PERMISSION_TYPE_SELECT_ALL') : $r('app.string.PERMISSION_TYPE_SELECT_SELF'))
                             .fontFamily($r('app.string.typeface'))
                             .fontWeight(FontWeight.Regular)
                             .fontColor($r('sys.color.ohos_id_color_text_primary'))
@@ -801,7 +801,7 @@ struct changeEncryption {
                                     .fontColor([$r('sys.color.ohos_id_color_secondary')])
                                     .rotate({
                                       angle: !this.editFlag ?
-                                      Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
+                                        Constants.PP_BUTTON_PAD : Constants.ENCRYPTION_SUCCESS_TRANSLATE
                                     })
                                     .transition({ type: TransitionType.All, opacity: Constants.PP_BUTTON_PAD })
                                 }
@@ -896,9 +896,9 @@ struct changeEncryption {
                     })
                     .margin({
                       right: SystemUtils.isRTL() ?
-                      Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                        Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
                       left: SystemUtils.isRTL() ?
-                      Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                        Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                     })
                   Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })
                     .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
@@ -924,9 +924,9 @@ struct changeEncryption {
                     })
                     .margin({
                       right: SystemUtils.isRTL() ?
-                      Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                        Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                       left: SystemUtils.isRTL() ?
-                      Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                        Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
                     })
                 }
                 .margin({

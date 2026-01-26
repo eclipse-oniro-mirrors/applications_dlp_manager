@@ -19,6 +19,6 @@ const TAG = 'systemUtils';
 
 export class SystemUtils {
   public static isRTL(): boolean {
-    return I18n.isRTL(I18n.System.getSystemLocale());
+    return I18n.isRTL(I18n.System.getSystemLocaleInstance().language);
   }
 }

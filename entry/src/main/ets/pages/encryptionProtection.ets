@@ -86,10 +86,11 @@ let defaultDlpProperty: dlpPermission.DLPProperty = {
 
 @Component
 struct DlpDialog {
+  private storage: LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
   @State dlpProperty: dlpDataType =
     GlobalContext.load('dlpProperty') !== undefined ? GlobalContext.load('dlpProperty') : defaultDlpProperty;
   @State session: UIExtensionContentSession | undefined =
-    storage === undefined ? undefined : storage.get<UIExtensionContentSession>('session');
+    this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
   srcFileName: string = '';
   isDlpFile: boolean = false;
   linkFileName: string = '';
@@ -397,7 +398,7 @@ struct DlpDialog {
         GlobalContext.store('dlpProperty', _dlp);
         sendDlpManagerFileConfiguration();
         try {
-          router.replaceUrl({
+          this.getUIContext().getRouter().replaceUrl({
             url: 'pages/encryptionSuccess',
             params: {
               staffDataArrayReadOnly: this.staffDataArrayReadOnly,
@@ -405,6 +406,8 @@ struct DlpDialog {
               selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
               selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
             }
+          }).catch((error: Error) => {
+            HiLog.wrapError(TAG, error, 'replaceUrl error');
           })
         } catch (error) {
           HiLog.wrapError(TAG, error, 'replaceUrl error');
@@ -503,7 +506,7 @@ struct DlpDialog {
         this.processing = false;
         sendDlpManagerFileConfiguration();
         try {
-          router.replaceUrl({
+          this.getUIContext().getRouter().replaceUrl({
             url: 'pages/encryptionSuccess',
             params: {
               staffDataArrayReadOnly: this.staffDataArrayReadOnly,
@@ -511,6 +514,8 @@ struct DlpDialog {
               selectedPermissionTypeReadOnly: this.selectedPermissionTypeReadOnly,
               selectedPermissionTypeEdit: this.selectedPermissionTypeEdit,
             }
+          }).catch((error: Error) => {
+            HiLog.wrapError(TAG, error, 'replaceUrl error');
           })
         } catch (error) {
           HiLog.wrapError(TAG, error, 'replaceUrl error');
@@ -610,7 +615,8 @@ struct DlpDialog {
   }
 
   async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
-    let routerParams: Record<string, AuthAccount[]> = router.getParams() as Record<string, AuthAccount[]>;
+    let routerParams: Record<string, AuthAccount[]> =
+      this.getUIContext().getRouter().getParams() as Record<string, AuthAccount[]>;
     this.permissionDict.forEach(async (item, index) => {
       try {
         this.permissionDict[index].value =
@@ -696,7 +702,7 @@ struct DlpDialog {
       }, Constants.ENCRYPTION_SET_TIMEOUT_TIME)
       return
     } else {
-      let routerParams = router.getParams();
+      let routerParams = this.getUIContext().getRouter().getParams();
       if (routerParams !== undefined) { // is a dlp file
         HiLog.info(TAG, `encryption request from router`);
         this.srcFileName = GlobalContext.load('dlpFileName') as string;
@@ -947,9 +953,9 @@ struct DlpDialog {
               })
               .margin({
                 right: SystemUtils.isRTL() ?
-                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
                 left: SystemUtils.isRTL() ?
-                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
               })
             Button($r('app.string.sure'), { type: ButtonType.Capsule, stateEffect: true })
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
@@ -989,9 +995,9 @@ struct DlpDialog {
               })
               .margin({
                 right: SystemUtils.isRTL() ?
-                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+                  Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                 left: SystemUtils.isRTL() ?
-                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+                  Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
               })
           }
           .margin({
@@ -1012,9 +1018,7 @@ struct DlpDialog {
   }
 }
 
-let storage = LocalStorage.getShared();
-
-@Entry(storage)
+@Entry()
 @Component
 struct encryptionProtection {
   aboutToAppear() {
