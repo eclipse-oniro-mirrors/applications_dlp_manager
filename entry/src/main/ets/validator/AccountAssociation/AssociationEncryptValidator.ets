@@ -269,6 +269,25 @@ export default class AssociationEncryptValidator {
       .setNext(new DataStorageHandler(storageUtil));
 
     const context = new EncryptionContext(accountAssociation, saveFileName);
-    return chain.handle(context);
+    const res = chain.handle(context);
+    this.resetContext(context);
+    return res;
+  }
+
+  private resetContext(context: EncryptionContext) {
+    this.fillArray(context.aad);
+    this.fillArray(context.associationCipherData);
+    context.associationCipherBase64 = '';
+    this.fillArray(context.data);
+    context.accountAssociation = null;
+    this.fillArray(context.nonce);
+    context.nonceBase64 = '';
+  }
+
+  private fillArray(arr: Uint8Array | undefined | null): void {
+    if (!arr) {
+      return;
+    }
+    arr.fill(0);
   }
 }

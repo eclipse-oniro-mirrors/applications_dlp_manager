@@ -32,11 +32,13 @@ export default class AccountAssociationUtil {
       return null;
     }
     let accountIdSha256: Uint8Array | null = await getSha256(accountIdUint8);
+    accountIdUint8.fill(0);
     if (!accountIdSha256) {
       HiLog.error(TAG, 'Get accountIdSha256 failed.');
       return null;
     }
     const accountIdSha256Str: string | null = uint8ArrayToHexString(accountIdSha256);
+    accountIdSha256.fill(0);
     if (isInvalidStr(accountIdSha256Str)) {
       HiLog.error(TAG, 'Uint8Array to hex string failed.');
       return null;
