@@ -559,6 +559,7 @@ async function handleZipFile(context: common.ServiceExtensionContext | common.UI
     let infoArray = dlpInfo.split('accountType');
     let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
     GlobalContext.store('accountType', Number(type));
+    infoArray.fill('');
 
     let generalInfo = fs.readTextSync(generalInfoPath);
     let generalInfoArray = generalInfo.split('realFileType');
@@ -569,6 +570,7 @@ async function handleZipFile(context: common.ServiceExtensionContext | common.UI
         realFileType = realFileTypeStr[Constants.NUMBER_TWO];
       }
     }
+    generalInfoArray.fill('');
 
     let result: DLPGeneralInfo = {
       accountType: Number(type),
@@ -596,6 +598,7 @@ async function handleNonZipFile(fd: number, buf: Uint32Array): Promise<Result<DL
     let infoArray = fdString.split('accountType');
     let type = infoArray[1].slice(Constants.TYPE_START, Constants.TYPE_END);
     GlobalContext.store('accountType', Number(type));
+    infoArray.fill('');
     let result: DLPGeneralInfo = {
       accountType: Number(type),
       realFileType: '',

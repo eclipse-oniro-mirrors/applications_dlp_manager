@@ -287,6 +287,28 @@ export default class AssociationDecryptValidator {
       .setNext(new AssociationConversionHandler());
 
     const context = new DecryptionContext(ownerAccountId);
-    return chain.handle(context);
+    const res = chain.handle(context);
+    this.resetContext(context);
+    return res;
+  }
+
+  private resetContext(context: DecryptionContext): void {
+    this.fillArray(context.aad);
+    context.associationCipherBase64 = '';
+    this.fillArray(context.associationCipherData);
+    context.associationFileName = '';
+    context.associationObjStr = '';
+    context.associationObj = null;
+    this.fillArray(context.associationUint8);
+    this.fillArray(context.nonce);
+    context.nonceBase64 = '';
+    context.ownerAccountId = '';
+  }
+
+  private fillArray(arr: Uint8Array | undefined | null): void {
+    if (!arr) {
+      return;
+    }
+    arr.fill(0);
   }
 }
