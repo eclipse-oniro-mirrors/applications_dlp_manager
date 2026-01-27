@@ -29,6 +29,19 @@ struct DlpAlertDialog {
   ok?: Resource
   action?: () => void
 
+  async terminateDialog() {
+    const ctx: common.UIAbilityContext | undefined = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    if (!ctx) {
+      HiLog.error(TAG, 'Get context failed.');
+      return;
+    }
+    try {
+      ctx.terminateSelf();
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'terminateSelf failed.');
+    }
+  }
+
   build() {
     Column() {
       if (this.title) {
@@ -61,8 +74,9 @@ struct DlpAlertDialog {
         left: Constants.HEADER_COLUMN_PADDING_LEFT,
         right: Constants.HEADER_COLUMN_PADDING_RIGHT,
         top: this.title ?
-         Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
+          Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
       })
+
       Flex({ direction: FlexDirection.Row }) {
         Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
           .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
@@ -73,13 +87,9 @@ struct DlpAlertDialog {
           .onClick(async (event) => {
             this.controller?.close()
             if (this.action != null) {
-              this.action()
+              this.action();
             } else {
-              try {
-                (getContext(this) as common.UIAbilityContext).terminateSelf();
-              } catch (error) {
-                HiLog.wrapError(TAG, error, 'terminateSelf exception');
-              }
+              this.terminateDialog();
             }
           })
           .margin({
@@ -95,11 +105,7 @@ struct DlpAlertDialog {
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .controlSize(ControlSize.NORMAL)
             .onClick(async (event) => {
-              try {
-                (getContext(this) as common.UIAbilityContext).terminateSelf();
-              } catch (error) {
-                HiLog.wrapError(TAG, error, 'terminateSelf exception');
-              }
+              this.terminateDialog();
             })
             .margin({
               right: SystemUtils.isRTL() ?

@@ -60,8 +60,21 @@ struct Index {
     maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
   });
 
+  async terminateDialog(context: common.UIAbilityContext | common.UIExtensionContext | undefined,
+    abilityResult: ability.AbilityResult) {
+    if (!context) {
+      HiLog.error(TAG, 'Get context failed.');
+      return;
+    }
+    try {
+      context.terminateSelfWithResult(abilityResult);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed.');
+    }
+  }
+
   async authWithPop(): Promise<void> {
-    HiLog.info(TAG, 'authwithpop start');
+    HiLog.info(TAG, 'authWithPop start');
     try {
       await checkNetworkStatus();
     } catch {
@@ -74,7 +87,9 @@ struct Index {
         value: this.cancel ? this.cancel : $r('app.string.da_button'),
         background: $r('sys.color.ohos_id_color_button_normal'), action: () => {
           abilityResult.resultCode = 0;
-          (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+          const ctx: common.UIAbilityContext | undefined =
+            this.getUIContext().getHostContext() as common.UIAbilityContext;
+          this.terminateDialog(ctx, abilityResult);
         }
       }];
       this.dialogControllerButton?.open();
@@ -90,7 +105,9 @@ struct Index {
         }
       })
       abilityResult.resultCode = 0;
-      (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+      const ctx: common.UIAbilityContext | undefined =
+        this.getUIContext().getHostContext() as common.UIAbilityContext;
+      this.terminateDialog(ctx, abilityResult);
     } catch (err) {
       HiLog.wrapError(TAG, err, 'auth failed');
     }
@@ -139,7 +156,9 @@ struct Index {
       value: this.cancel ? this.cancel : $r('app.string.da_button'),
       background: $r('sys.color.ohos_id_color_button_normal'), action: () => {
         abilityResult.resultCode = 0;
-        (getContext(this) as common.UIExtensionContext).terminateSelfWithResult(abilityResult);
+        const ctx: common.UIExtensionContext | undefined =
+          this.getUIContext().getHostContext() as common.UIExtensionContext;
+        this.terminateDialog(ctx, abilityResult);
       }
     }];
     if (errInfo.ok) {
@@ -153,11 +172,15 @@ struct Index {
             if (!ctx) {
               return;
             }
-            ctx.startAbility({
-              bundleName: 'com.huawei.hmos.settings',
-              abilityName: 'com.huawei.hmos.settings.MainAbility',
-              uri: 'hms_account_home_settings'
-            });
+            try {
+              ctx.startAbility({
+                bundleName: 'com.huawei.hmos.settings',
+                abilityName: 'com.huawei.hmos.settings.MainAbility',
+                uri: 'hms_account_home_settings'
+              });
+            } catch (error) {
+              HiLog.wrapError(TAG, error, 'startAbility failed.');
+            }
             this.cancelAction();
           } else {
             this.authWithPop();
@@ -245,7 +268,9 @@ struct Index {
     .onDisAppear(() => {
       HiLog.info(TAG, 'buildContent onDisAppear');
       abilityResult.resultCode = 0;
-      (getContext(this) as common.UIExtensionContext).terminateSelfWithResult(abilityResult);
+      const ctx: common.UIExtensionContext | undefined =
+        this.getUIContext().getHostContext() as common.UIExtensionContext;
+      this.terminateDialog(ctx, abilityResult);
     })
   }
 }

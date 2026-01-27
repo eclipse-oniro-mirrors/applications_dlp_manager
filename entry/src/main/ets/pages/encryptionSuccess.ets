@@ -68,6 +68,19 @@ struct encryptionSuccess {
   @State staffDataArrayReadOnly: AuthAccount[] = this.routerParams.staffDataArrayReadOnly as AuthAccount[];
   @State staffDataArrayEdit: AuthAccount[] = this.routerParams.staffDataArrayEdit as AuthAccount[];
 
+  async terminateDialog(abilityResult: ability.AbilityResult) {
+    const ctx: common.UIAbilityContext | undefined = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    if (!ctx) {
+      HiLog.error(TAG, 'Get context failed.');
+      return;
+    }
+    try {
+      ctx.terminateSelfWithResult(abilityResult);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed.');
+    }
+  }
+
   @Builder
   popupBuilderReadOnly() {
     Row() {
@@ -635,7 +648,7 @@ struct encryptionSuccess {
                           .delete(GlobalContext.load('uri') as string)
                       }
                       abilityResult.resultCode = 0;
-                      (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+                      this.terminateDialog(abilityResult);
                     }
                   })
               }

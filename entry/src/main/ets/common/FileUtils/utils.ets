@@ -197,10 +197,15 @@ function terminateSelfWithResult(resultCode: number, result: string): void {
       }
     }
   };
+  const ctx: common.UIAbilityContext | undefined = getContext() as common.UIAbilityContext;
+  if (!ctx) {
+    HiLog.error(TAG, 'Get UIAbilityContext failed.');
+    return;
+  }
   try {
-    (getContext() as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
+    ctx.terminateSelfWithResult(abilityResult);
   } catch (error) {
-    HiLog.wrapError(TAG, error, 'terminateSelfWithResult exception');
+    HiLog.wrapError(TAG, error, 'terminateSelfWithResult exception.');
   }
 }
 
@@ -385,7 +390,6 @@ async function getDLPInfo(): Promise<Result<DLPInfo>> {
     return ResultMsg.getErrMsg(Constants.ERR_CODE_GET_BUNDLE_INFO_ERROR);
   }
 }
-
 
 
 function sendDlpManagerAccountLogin(errorCode: number) {
@@ -703,19 +707,27 @@ function showToast(uiContext: UIContext, msg: Resource | string): void {
   if (currentFontSizeScale > 1) {
     showMode = promptAction.ToastShowMode.SYSTEM_TOP_MOST;
   }
-  uiContext.getPromptAction().showToast({
-    message: msg,
-    duration: Constants.SHARE_SET_TIMEOUT,
-    showMode: showMode,
-  });
+  try {
+    uiContext.getPromptAction().showToast({
+      message: msg,
+      duration: Constants.SHARE_SET_TIMEOUT,
+      showMode: showMode,
+    });
+  } catch (error) {
+    HiLog.wrapError(TAG, error, 'showToast failed.');
+  }
 }
 
 function logErrorShowToast(context: common.UIAbilityContext | common.UIExtensionContext, logMsg: string,
   toastMsg: Resource | string): void {
   HiLog.error(TAG, logMsg);
-  let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
-  showToast(uiContext, toastMsg);
-  UIContext.destroyUIContextWithoutWindow();
+  try {
+    let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
+    showToast(uiContext, toastMsg);
+    UIContext.destroyUIContextWithoutWindow();
+  } catch (error) {
+    HiLog.wrapError(TAG, error, 'UIContext operation failed.');
+  }
 }
 
 async function getSha256(inputData: Uint8Array): Promise<Uint8Array | null> {
@@ -874,7 +886,7 @@ function getFormatTimestamp(timestamp: number): string {
   const minutes = String(date.getMinutes()).padStart(2, '0');
   const seconds = String(date.getSeconds()).padStart(2, '0');
   // timestamp, format is YYYYMMDDHHMMSS
-  return '${year}${month}${day}${hours}${minutes}${seconds}';
+  return `${year}${month}${day}${hours}${minutes}${seconds}`;
 }
 
 function checkValidAccountType(accountType: number): boolean {

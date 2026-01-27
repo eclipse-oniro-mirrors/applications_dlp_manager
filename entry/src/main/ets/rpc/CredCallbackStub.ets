@@ -189,6 +189,10 @@ export default class CredCallbackStub extends rpc.RemoteObject {
   disconnectServiceShareAbility(connectionKey: string) {
     let connectionId: number | undefined = AppStorage.get(connectionKey);
     HiLog.info(TAG, `disconnectServiceShareAbility: ${connectionId}`);
+    if (connectionId === undefined || isNaN(connectionId)) {
+      HiLog.error(TAG, 'The connectionId is invalid.');
+      return;
+    }
     let context: common.UIAbilityContext = getContext(this) as common.UIAbilityContext;
     try {
       context.disconnectServiceExtensionAbility(connectionId);
