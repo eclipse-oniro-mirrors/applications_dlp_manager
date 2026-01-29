@@ -98,7 +98,7 @@ export default function OpenDlpFileManagerTest() {
       const getContentRet = manager.getHasDecryptedContent('uri');
       expect(getContentRet.errcode).assertEqual(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
 
-      const removeRet = await manager.removeAllByUri('uri');
+      const removeRet = await manager.removeAllByUriAndTokenId('uri', 1001);
       expect(removeRet.errcode).assertEqual(Constants.ERR_CODE_SUCCESS);
 
       let fileMetaInfo: FileMetaInfo = {

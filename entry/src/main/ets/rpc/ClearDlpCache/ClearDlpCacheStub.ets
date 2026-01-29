@@ -40,7 +40,7 @@ export default class ClearDlpCacheStub extends rpc.RemoteObject {
         HiLog.error(TAG, 'ClearDlpCacheStub InterfaceToken unmatched.');
         return false;
       }
-      let callerTokenId = rpc.IPCSkeleton.getCallingTokenId();
+      const callerTokenId = rpc.IPCSkeleton.getCallingTokenId();
       if (!this.isDlpHap(callerTokenId)) {
         HiLog.error(TAG, 'RpcServer: getCallingTokenid is not in dlp sandbox');
         return false;
@@ -68,7 +68,8 @@ export default class ClearDlpCacheStub extends rpc.RemoteObject {
           HiLog.wrapError(TAG, error, 'read string uri exception');
           return false;
         }
-        await clearDlpInfoByUri(uri);
+        const callerTokenId = rpc.IPCSkeleton.getCallingTokenId();
+        await clearDlpInfoByUri(uri, callerTokenId);
         try {
           reply.writeInt(Constant.INTERFACE_SUCCESS);
         } catch (error) {

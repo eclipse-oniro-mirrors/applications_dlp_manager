@@ -17,7 +17,7 @@ import { HiLog } from '../../common/HiLog';
 import Result from '../../common/Result';
 import { ResultMsg } from '../../common/ResultMsg';
 import DecryptContent from '../data/DecryptContent';
-import { ArkTSUtils } from '@kit.ArkTS';
+import { ArkTSUtils, LinkedList } from '@kit.ArkTS';
 import Constants from '../../common/constant';
 import FileUtils from '../../common/FileUtils/FileUtils';
 
@@ -38,12 +38,12 @@ export interface DecryptStatus {
 export class OpenDlpFileManager {
   private static instance: OpenDlpFileManager;
   private statusMap: Map<string, DecryptStatus>;
-  private contentMap: Map<string, DecryptContent>;
+  private contentMap: Map<string, LinkedList<DecryptContent>>;
   private lock: ArkTSUtils.locks.AsyncLock;
 
   private constructor() {
     this.statusMap = new Map<string, DecryptStatus>();
-    this.contentMap = new Map<string, DecryptContent>();
+    this.contentMap = new Map<string, LinkedList<DecryptContent>>();
     this.lock = new ArkTSUtils.locks.AsyncLock();
   }
 
@@ -52,6 +52,17 @@ export class OpenDlpFileManager {
       OpenDlpFileManager.instance = new OpenDlpFileManager();
     }
     return OpenDlpFileManager.instance;
+  }
+
+  private printContentMap(): void {
+    HiLog.debug(TAG, `printContentMap contentMap.size ${this.contentMap.size}`);
+    this.contentMap.forEach((value, key) => {
+      HiLog.debug(TAG, `${
+      JSON.stringify({
+        uri: FileUtils.getFileNameByUri(key),
+        'contentSize': value.length,
+      })}`);
+    });
   }
 
   public async setStatus(uri: string, status: DecryptStatus): Promise<Result<void>> {
@@ -106,10 +117,29 @@ export class OpenDlpFileManager {
 
   public async addDecryptContent(uri: string, content: DecryptContent): Promise<Result<void>> {
     HiLog.info(TAG, `addDecryptContent filename: ${FileUtils.getFileNameByUri(uri)}`);
+    this.printContentMap();
     try {
       await this.lock.lockAsync(() => {
-        this.contentMap.set(uri, content);
+        let decryptContentList: LinkedList<DecryptContent> =
+          this.contentMap.get(uri) ?? new LinkedList<DecryptContent>();
+        let hasInsert = false;
+        for (const element of decryptContentList) {
+          if (element.appInfo.tokenID === content.appInfo.tokenID) {
+            HiLog.info(TAG, `fileid ${content.fileMetaInfo.fileId} has benn insert`);
+            hasInsert = true;
+            break;
+          }
+        }
+        if (!hasInsert) {
+          try {
+            decryptContentList.add(content);
+          } catch (error) {
+            HiLog.wrapError(TAG, error, 'decryptContentList add error');
+          }
+        }
+        this.contentMap.set(uri, decryptContentList);
         this.statusMap.set(uri, { state: DecryptState.DECRYPTED });
+        this.printContentMap();
       });
       return ResultMsg.buildSuccess();
     } catch (error) {
@@ -118,70 +148,103 @@ export class OpenDlpFileManager {
     }
   }
 
+  public getHasDecryptedContentByUriAndTokenId(uri: string, callerTokenId: number): Result<DecryptContent> {
+    const decryptContentList: LinkedList<DecryptContent> = this.contentMap.get(uri) ?? new LinkedList<DecryptContent>();
+    for (const content of decryptContentList) {
+      if (content.appInfo.tokenID === callerTokenId) {
+        HiLog.info(TAG, 'getHasDecryptedContentByUriAndTokenId found');
+        return ResultMsg.buildSuccess(content);
+      }
+    }
+    HiLog.error(TAG, 'getHasDecryptedContentByUriAndTokenId error');
+    return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+  }
+
   public getHasDecryptedContent(uri: string): Result<DecryptContent> {
-    let content = this.contentMap.get(uri);
-    if (!content) {
+    const decryptContentList: LinkedList<DecryptContent> = this.contentMap.get(uri) ?? new LinkedList<DecryptContent>();
+    if (decryptContentList.length < 1) {
       HiLog.error(TAG, 'getHasDecryptedContent error');
+      return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
+    }
+    let content: DecryptContent;
+    try {
+      content = decryptContentList.get(decryptContentList.length - 1);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'decryptContentList get error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
     }
     return ResultMsg.buildSuccess(content);
   }
 
-  private getContentByLinkFileName(linkFileName: string): DecryptContent | undefined {
-    for (const entry of this.contentMap) {
-      if (entry[1].linkFileName === linkFileName) {
-        HiLog.info(TAG, 'getContentByLinkFileName found');
-        return entry[1];
-      }
-    }
-    HiLog.info(TAG, 'getContentByLinkFileName not found');
-    return undefined;
-  }
-
   public getHasDecryptedContentByLinkFileName(linkFileName: string): Result<DecryptContent> {
-    const content = this.getContentByLinkFileName(linkFileName);
-    return ResultMsg.buildSuccess(content);
-  }
-
-  private getContentByTokenId(tokenId: number): DecryptContent | undefined {
     for (const entry of this.contentMap) {
-      if (entry[1].appInfo.tokenID === tokenId) {
-        HiLog.info(TAG, 'getContentByTokenId found');
-        return entry[1];
+      const decryptContentList = entry[1];
+      for (const content of decryptContentList) {
+        if (content.linkFileName === linkFileName) {
+          HiLog.info(TAG, 'getHasDecryptedContentByLinkFileName found');
+          return ResultMsg.buildSuccess(content);
+        }
       }
     }
-    HiLog.info(TAG, 'getContentByTokenId not found');
-    return undefined;
+    HiLog.info(TAG, 'getHasDecryptedContentByLinkFileName not found');
+    return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
   }
 
   public getHasDecryptedContentByTokenId(tokenId: number): Result<DecryptContent> {
-    const content = this.getContentByTokenId(tokenId);
-    return ResultMsg.buildSuccess(content);
+    for (const entry of this.contentMap) {
+      const decryptContentList = entry[1];
+      for (const content of decryptContentList) {
+        if (content.appInfo.tokenID === tokenId) {
+          HiLog.info(TAG, 'getHasDecryptedContentByTokenId found');
+          return ResultMsg.buildSuccess(content);
+        }
+      }
+    }
+    HiLog.info(TAG, 'getHasDecryptedContentByTokenId not found');
+    return ResultMsg.getErrMsg(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
   }
 
   private removeMatchingEntries(bundleName: string, sandboxAppIndex: number): Set<DecryptContent> {
     let decryptContents = new Set<DecryptContent>();
     const entries = Array.from(this.contentMap.entries());
-    entries.forEach(entry => {
-      const key = entry[0];
-      const value = entry[1];
-      if (value.openDlpFileData.sandboxBundleName === bundleName &&
-        value.appInfo.appIndex === sandboxAppIndex) {
-        decryptContents.add(value);
-        this.contentMap.delete(key);
-        this.statusMap.delete(key);
+    for (const entry of entries) {
+      const uri = entry[0];
+      let decryptContentList = entry[1];
+      let contentsToRemove: DecryptContent[] = [];
+      for (const content of decryptContentList) {
+        if (content.openDlpFileData.sandboxBundleName === bundleName &&
+          content.appInfo.appIndex === sandboxAppIndex) {
+          decryptContents.add(content);
+          contentsToRemove.push(content);
+        }
       }
-    });
+      for (const content of contentsToRemove) {
+        try {
+          decryptContentList.remove(content);
+        } catch (error) {
+          HiLog.wrapError(TAG, error, 'decryptContentList remove error');
+        }
+      }
+      if (decryptContentList.length == 0) {
+        HiLog.info(TAG, `all ${FileUtils.getFileNameByUri(uri)} file has been closed`);
+        this.contentMap.delete(uri);
+        this.statusMap.delete(uri);
+      } else {
+        this.contentMap.set(uri, decryptContentList);
+      }
+    }
     return decryptContents;
   }
 
   public async removeByBundleNameAndAppIndex(bundleName: string, sandboxAppIndex: number):
     Promise<Result<Set<DecryptContent>>> {
+    this.printContentMap();
     try {
       let decryptContents: Set<DecryptContent> = new Set<DecryptContent>();
       await this.lock.lockAsync(() => {
         decryptContents = this.removeMatchingEntries(bundleName, sandboxAppIndex);
       });
+      this.printContentMap();
       return ResultMsg.buildSuccess(decryptContents);
     } catch (error) {
       HiLog.wrapError(TAG, error, 'removeByBundleNameAndAppIndex lockAsync error');
@@ -194,12 +257,38 @@ export class OpenDlpFileManager {
     return ResultMsg.buildSuccess(size);
   }
 
-  public async removeAllByUri(uri: string): Promise<Result<void>> {
+  private removeMatchingEntriesByUriAndTokenId(uri: string, tokenId: number): void {
+    let decryptContentList: LinkedList<DecryptContent> = this.contentMap.get(uri) ?? new LinkedList<DecryptContent>();
+    let contentsToRemove: DecryptContent[] = [];
+    for (const content of decryptContentList) {
+      if (content.appInfo.tokenID === tokenId) {
+        HiLog.info(TAG, 'removeMatchingEntriesByUriAndTokenId find');
+        contentsToRemove.push(content);
+      }
+    }
+    for (const content of contentsToRemove) {
+      try {
+        decryptContentList.remove(content);
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'decryptContentList remove error');
+      }
+    }
+    if (decryptContentList.length == 0) {
+      HiLog.info(TAG, `all ${FileUtils.getFileNameByUri(uri)} file has been closed`);
+      this.contentMap.delete(uri);
+      this.statusMap.delete(uri);
+    } else {
+      this.contentMap.set(uri, decryptContentList);
+    }
+  }
+
+  public async removeAllByUriAndTokenId(uri: string, tokenId: number): Promise<Result<void>> {
+    this.printContentMap();
     try {
       await this.lock.lockAsync(() => {
-        this.statusMap.delete(uri);
-        this.contentMap.delete(uri);
+        this.removeMatchingEntriesByUriAndTokenId(uri, tokenId);
       });
+      this.printContentMap();
       return ResultMsg.buildSuccess();
     } catch (error) {
       HiLog.wrapError(TAG, error, 'removeContentByUri lockAsync error');
