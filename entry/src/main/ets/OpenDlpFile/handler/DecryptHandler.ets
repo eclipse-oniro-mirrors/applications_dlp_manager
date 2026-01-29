@@ -41,10 +41,11 @@ import GlobalContext from '../../common/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
 import CommonUtil from '../../common/CommonUtil';
 import FileIdHandler from './FileIdHandler';
+const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
 
 const TAG: string = 'DecryptHandler';
 
-const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
+
 
 interface TimeoutData {
   timeout: number | undefined;
