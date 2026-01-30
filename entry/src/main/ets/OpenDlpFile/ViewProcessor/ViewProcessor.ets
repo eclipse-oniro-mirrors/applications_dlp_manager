@@ -33,10 +33,14 @@ import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import ErrorManager from '../handler/ErrorHandler';
 import StartSandboxHandler from '../handler/StartSandboxHandler';
 import { commonEventManager } from '@kit.BasicServicesKit';
+import { uriPermissionManager, wantConstant } from '@kit.AbilityKit';
 
 const TAG: string = 'OpenDlpFileProcessor';
 const COMMON_ENTERPRISE_EVENT: string =  'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
 const ENTERPRISE_ACCOUNT: number = 4;
+const HIPREVIEW_HIGH = 'com.huawei.hmos.hipreview';
+const HIPREVIEW_LOW = 'com.huawei.hmos.hipreviewext';
+const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
 
 export class OpenDlpFileProcessor {
   public async process(want: Want, startId: number, context: common.ServiceExtensionContext): Promise<Result<void>> {
@@ -90,6 +94,7 @@ export class OpenDlpFileProcessor {
       HiLog.error(TAG, 'decryptAndInstall error');
       return ResultMsg.buildResult(decryptResult.errcode, decryptResult.errmsg, decryptContent);
     }
+    grantForHiPreview(decryptContent);
 
     // 6. start sandbox 不需要拉起“正在打开”的动效，可以直接拉起沙箱（拉起沙箱，情况一）
     const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox(decryptContent);
@@ -220,5 +225,17 @@ export class OpenDlpFileProcessor {
       err.message = Constants.NO_PERMISSION_OR_EXPIRATION;
     }
     DlpFileOpenReport.sendDlpFileOpenFault(err.code, decryptContent, err);
+  }
+}
+
+function grantForHiPreview(decryptContent: DecryptContent) {
+  if (decryptContent.openDlpFileData.sandboxBundleName === HIPREVIEW_HIGH &&
+  decryptContent.bindAppIndex && decryptContent.bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
+    const flag = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+    try {
+      uriPermissionManager.grantUriPermission(decryptContent.linkUri, flag, HIPREVIEW_LOW, decryptContent.bindAppIndex);
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'getConfigTips failed');
+    }
   }
 }

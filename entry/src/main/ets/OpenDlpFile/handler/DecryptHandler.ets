@@ -41,8 +41,11 @@ import GlobalContext from '../../common/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
 import CommonUtil from '../../common/CommonUtil';
 import FileIdHandler from './FileIdHandler';
+const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
 
 const TAG: string = 'DecryptHandler';
+
+
 
 interface TimeoutData {
   timeout: number | undefined;
@@ -77,11 +80,11 @@ export default class DecryptHandler {
     hiTraceMeter.startTrace('DlpInstallSandboxJs', decryptContent.openDlpFileData.startId);
     const getAppInfoRet = await this.getAppInfo(decryptContent);
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', decryptContent.openDlpFileData.startId);
-    if (getAppInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !getAppInfoRet.result) {
+    const appInfo = this.getRealAppInfoRet(getAppInfoRet, decryptContent);
+    if (getAppInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !appInfo) {
       HiLog.error(TAG, 'getAppInfo error');
       return ResultMsg.buildMsg(getAppInfoRet.errcode, getAppInfoRet.errmsg);
     }
-    const appInfo = getAppInfoRet.result;
 
     // 4. If has decrypted, check appInfo consistent
     if (hasDecrypted) {
@@ -110,6 +113,16 @@ export default class DecryptHandler {
     // 6. setNeedStartAbility
     OpeningDialogManager.getInstance().setNeedStartAbility(decryptContent.openDlpFileData.requestId);
     return ResultMsg.buildSuccess();
+  }
+
+  private getRealAppInfoRet(getAppInfoRet: Result<dlpPermission.DLPSandboxInfo>,
+    decryptContent: DecryptContent): dlpPermission.DLPSandboxInfo|undefined {
+    let tmpAppInfo = getAppInfoRet.result;
+    if (tmpAppInfo && tmpAppInfo.appIndex > HIPREVIEW_SANDBOX_LOW_BOUND * HIPREVIEW_SANDBOX_LOW_BOUND) {
+      decryptContent.bindAppIndex = tmpAppInfo.appIndex % HIPREVIEW_SANDBOX_LOW_BOUND + HIPREVIEW_SANDBOX_LOW_BOUND;
+      tmpAppInfo.appIndex = Math.floor(tmpAppInfo.appIndex / HIPREVIEW_SANDBOX_LOW_BOUND);
+    }
+    return tmpAppInfo;
   }
 
   private async getDecryptState(decryptContent: DecryptContent): Promise<Result<boolean>> {
