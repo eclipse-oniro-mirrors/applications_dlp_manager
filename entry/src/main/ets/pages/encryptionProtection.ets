@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -571,12 +571,9 @@ struct DlpDialog {
   }
 
   propertyAddData(property: dlpPermission.DLPProperty) {
-    let isReadyOnlyAll = this.selectedPermissionTypeReadOnly.data === 'all';
-    if (isReadyOnlyAll) {
-      property.everyoneAccessList = [dlpPermission.DLPFileAccess.READ_ONLY];
-    }
     if (this.selectedPermissionTypeReadOnly.data === 'all') {
-      this.staffDataArrayReadOnly = []
+      property.everyoneAccessList = [dlpPermission.DLPFileAccess.READ_ONLY];
+      this.staffDataArrayReadOnly = [];
     }
     if (['all', 'self'].includes(this.selectedPermissionTypeEdit.data)) {
       this.staffDataArrayEdit = [];
