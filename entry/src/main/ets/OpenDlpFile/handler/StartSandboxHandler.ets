@@ -277,21 +277,30 @@ export default class StartSandboxHandler {
     return ResultMsg.buildSuccess();
   }
 
-  private prepareWantParams(decryptContent: DecryptContent): void {
-    let want = decryptContent.openDlpFileData.want;
+  private initWant(decryptContent: DecryptContent): Want {
+    const want = decryptContent.openDlpFileData.want;
     want.bundleName = decryptContent.openDlpFileData.sandboxBundleName;
     want.abilityName = decryptContent.openDlpFileData.sandboxAbilityName;
     want.moduleName = decryptContent.openDlpFileData.sandboxModuleName;
     want.uri = decryptContent.linkUri;
     want.flags = decryptContent.linkFileWriteable ?
-    wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
-    let fileSuffix: string = FileUtils.getFileSuffixByFileName(decryptContent.linkFileName);
-    const isOwner: boolean = decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName;
+      wantConstant.Flags.FLAG_AUTH_WRITE_URI_PERMISSION : wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+
+    const fileSuffix: string = FileUtils.getFileSuffixByFileName(decryptContent.linkFileName);
     want.type = suffixMimeTypeMap.get(fileSuffix);
     HiLog.info(TAG, `Type restriction from ${fileSuffix} to ${want.type}`);
-    HiLog.info(TAG, `isOwner:${isOwner},countdown:${decryptContent.fileMetaInfo.countdown},
-    hasDecrypted:${decryptContent.hasDecrypted}`);
-    let dlpWant: Want = {
+    return want;
+  }
+
+  private buildDlpWant(decryptContent: DecryptContent, isOwner: boolean): Want {
+    let fileName = '';
+    try {
+      fileName = decodeURIComponent(decryptContent.fileName);
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'decodeURIComponent fileName failed.');
+      fileName = decryptContent.fileName;
+    }
+    const dlpWant: Want = {
       parameters: {
         'linkFileName': {
           'name': decryptContent.linkFileName
@@ -309,11 +318,11 @@ export default class StartSandboxHandler {
           'name': decryptContent.linkFileWriteable
         },
         'fileName': {
-          'name': decodeURIComponent(decryptContent.fileName)
+          'name': fileName
         },
         'accountType': decryptContent.fileMetaInfo.accountType,
         'allowedOpenCount': (decryptContent.dlpFile.dlpProperty.allowedOpenCount && !isOwner) ?
-        decryptContent.dlpFile.dlpProperty.allowedOpenCount : 0,
+          decryptContent.dlpFile.dlpProperty.allowedOpenCount : 0,
         'ohos.dlp.params.index': decryptContent.appInfo.appIndex,
         'ohos.dlp.params.bindindex': decryptContent.bindAppIndex,
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
@@ -321,13 +330,24 @@ export default class StartSandboxHandler {
         dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
         'ohos.dlp.params.waterMarkConfig': decryptContent.fileMetaInfo.waterMarkConfig,
         'ohos.dlp.params.countdown': decryptContent.fileMetaInfo.countdown && !isOwner ?
-        decryptContent.fileMetaInfo.countdown : 0,
+          decryptContent.fileMetaInfo.countdown : 0,
         'ohos.dlp.params.needRefreshCountdown': !decryptContent.hasDecrypted,
         'ohos.dlp.params.bindSecurityFlag': decryptContent.authPerm ===
-        dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
+        dlpPermission.DLPFileAccess.READ_ONLY ? true : false
       }
     };
+    return dlpWant;
+  }
+
+  private prepareWantParams(decryptContent: DecryptContent): void {
+    const isOwner: boolean = decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName;
+    HiLog.info(TAG,
+      `isOwner: ${isOwner}, countdown: ${decryptContent.fileMetaInfo.countdown}, hasDecrypted: ${decryptContent.hasDecrypted}`);
+
+    const want: Want = this.initWant(decryptContent);
+    const dlpWant: Want = this.buildDlpWant(decryptContent, isOwner);
     ObjectUtil.Assign(want.parameters, dlpWant.parameters);
+
     if (want.parameters) {
       want.parameters['ability.params.stream'] = '';
     }

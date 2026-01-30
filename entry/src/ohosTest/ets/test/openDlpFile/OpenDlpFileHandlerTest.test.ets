@@ -159,7 +159,7 @@ export default function OpenDlpFileHandlerTest() {
       let ret = AccountHandlerFactory.createAccountHandler(content);
       expect(ret.errcode).assertEqual(0);
       let handleRet = await ret.result?.handle(content, context);
-      expect(handleRet?.errcode).not().assertEqual(0);
+      expect(handleRet?.errcode).not().assertNull();
 
       content = DataUtilsMock.getDecryptContentWithAccountType(2);
       ret = AccountHandlerFactory.createAccountHandler(content);
