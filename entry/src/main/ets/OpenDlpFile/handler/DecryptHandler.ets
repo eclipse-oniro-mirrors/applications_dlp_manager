@@ -119,8 +119,8 @@ export default class DecryptHandler {
     decryptContent: DecryptContent): dlpPermission.DLPSandboxInfo|undefined {
     let tmpAppInfo = getAppInfoRet.result;
     if (tmpAppInfo && tmpAppInfo.appIndex > HIPREVIEW_SANDBOX_LOW_BOUND * HIPREVIEW_SANDBOX_LOW_BOUND) {
-      tmpAppInfo.appIndex = Math.floor(tmpAppInfo.appIndex / HIPREVIEW_SANDBOX_LOW_BOUND);
       decryptContent.bindAppIndex = tmpAppInfo.appIndex % HIPREVIEW_SANDBOX_LOW_BOUND + HIPREVIEW_SANDBOX_LOW_BOUND;
+      tmpAppInfo.appIndex = Math.floor(tmpAppInfo.appIndex / HIPREVIEW_SANDBOX_LOW_BOUND);
     }
     return tmpAppInfo;
   }
