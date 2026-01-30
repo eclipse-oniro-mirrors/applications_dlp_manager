@@ -79,7 +79,7 @@ export default function DataUtilsTest() {
 
     it('DataUtilsTest_clearDlpInfoByUri_error', 0, async () => {
       const uri = 'file://test.txt.dlp';
-      await clearDlpInfoByUri(uri);
+      await clearDlpInfoByUri(uri, 1001);
       expect(uri).not().assertNull();
       HiLog.info(TAG, 'DataUtilsTest_clearDlpInfoByUri_error ends.');
     })
@@ -98,15 +98,15 @@ export default function DataUtilsTest() {
       const mockRemoveAllByUriRet: Result<void> = {
         errcode: Constants.ERR_CODE_OPEN_FILE_ERROR
       };
-      const mockRemoveAllByUri: Function = mocker.mockFunc(manager, manager.removeAllByUri);
+      const mockRemoveAllByUri: Function = mocker.mockFunc(manager, manager.removeAllByUriAndTokenId);
       when(mockRemoveAllByUri)(ArgumentMatchers.any).afterReturn(mockRemoveAllByUriRet);
 
       const uri = 'file://test.txt.dlp';
-      await clearDlpInfoByUri(uri);
+      await clearDlpInfoByUri(uri, 1001);
       expect(uri).not().assertNull();
 
       mocker.ignoreMock(manager, manager.getHasDecryptedContent);
-      mocker.ignoreMock(manager, manager.removeAllByUri);
+      mocker.ignoreMock(manager, manager.removeAllByUriAndTokenId);
       HiLog.info(TAG, 'DataUtilsTest_clearDlpInfoByUri_removeAllByUri_error ends.');
     })
 

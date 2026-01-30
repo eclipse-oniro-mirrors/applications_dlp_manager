@@ -451,9 +451,11 @@ export default class DecryptHandler {
 
   private async deleteDecryptData(decryptContent: DecryptContent): Promise<void> {
     const manager = OpenDlpFileManager.getInstance();
-    const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
+    const rmRet =
+      await manager.removeAllByUriAndTokenId(decryptContent.openDlpFileData.uri, decryptContent.appInfo.tokenID);
     if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, 'deleteDecryptData failed');
+      HiLog.error(TAG, 'deleteDecryptData failed and retry');
+      await manager.removeAllByUriAndTokenId(decryptContent.openDlpFileData.uri, decryptContent.appInfo.tokenID);
     }
   }
 

@@ -27,7 +27,7 @@ const TAG = 'DataUtils';
 
 async function clearDlpInfoByError(decryptContent: DecryptContent): Promise<void> {
   HiLog.info(TAG, 'start clearDlpInfoByError');
-  clearIsDecrypting(decryptContent);
+  await clearIsDecrypting(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
   FileUtil.closeSync(decryptContent.dlpFd);
@@ -35,21 +35,22 @@ async function clearDlpInfoByError(decryptContent: DecryptContent): Promise<void
 
 async function clearDlpInfoByCancelSandbox(decryptContent: DecryptContent): Promise<void> {
   HiLog.info(TAG, 'start clearDlpInfoByCancelSandbox');
-  deleteDecryptData(decryptContent);
+  await deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
   FileUtil.closeSync(decryptContent.dlpFd);
 }
 
-async function clearDlpInfoByUri(uri: string): Promise<void> {
+async function clearDlpInfoByUri(uri: string, callerTokenId: number): Promise<void> {
   HiLog.info(TAG, `start clearDlpInfoByUri uri ${FileUtils.getFileNameByUri(uri)}`);
   const manager = OpenDlpFileManager.getInstance();
-  const getRet = manager.getHasDecryptedContent(uri);
+  const getRet = manager.getHasDecryptedContentByUriAndTokenId(uri, callerTokenId);
   if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
+    HiLog.error(TAG, 'getHasDecryptedContentByUriAndTokenId failed');
     return;
   }
   const decryptContent = getRet.result;
-  deleteDecryptData(decryptContent);
+  await deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
   FileUtil.closeSync(decryptContent.dlpFd);
@@ -57,9 +58,11 @@ async function clearDlpInfoByUri(uri: string): Promise<void> {
 
 async function deleteDecryptData(decryptContent: DecryptContent): Promise<void> {
   const manager = OpenDlpFileManager.getInstance();
-  const rmRet = await manager.removeAllByUri(decryptContent.openDlpFileData.uri);
+  const rmRet =
+    await manager.removeAllByUriAndTokenId(decryptContent.openDlpFileData.uri, decryptContent.appInfo.tokenID);
   if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-    HiLog.error(TAG, 'deleteDecryptData failed');
+    HiLog.error(TAG, 'deleteDecryptData failed and retry');
+    await manager.removeAllByUriAndTokenId(decryptContent.openDlpFileData.uri, decryptContent.appInfo.tokenID);
   }
 }
 
@@ -118,13 +121,19 @@ async function deleteDlpLinkFile(decryptContent: DecryptContent): Promise<void> 
   }
 }
 
-function clearIsDecrypting(decryptContent: DecryptContent): void {
+async function clearIsDecrypting(decryptContent: DecryptContent): Promise<void> {
   if (decryptContent.openDlpFileData?.uri) {
     const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
     if (getRet.errcode === Constants.ERR_CODE_SUCCESS &&
       (getRet.result?.state === DecryptState.NOT_STARTED || getRet.result?.state === DecryptState.DECRYPTING)) {
       OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
-      OpenDlpFileManager.getInstance().removeAllByUri(decryptContent.openDlpFileData.uri);
+      const rmRet = await OpenDlpFileManager.getInstance()
+        .removeAllByUriAndTokenId(decryptContent.openDlpFileData.uri, decryptContent.appInfo.tokenID);
+      if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {
+        HiLog.error(TAG, 'deleteDecryptData failed and retry');
+        await OpenDlpFileManager.getInstance()
+          .removeAllByUriAndTokenId(decryptContent.openDlpFileData.uri, decryptContent.appInfo.tokenID);
+      }
     }
   }
 }
