@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"translate"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Impossibile visualizzare i file crittografati",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

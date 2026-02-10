@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"No se pueden ver los archivos cifrados",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

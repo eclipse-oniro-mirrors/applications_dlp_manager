@@ -156,7 +156,7 @@ class Base64DecodingHandler extends DecryptionHandler {
     }
 
     context.associationCipherData = decodeByBase64(context.associationCipherBase64);
-    if (!context.associationCipherData) {
+    if (!context.associationCipherData || context.associationCipherBase64.length - Constants.AE_TAG_SLICE_LENGTH < 0) {
       HiLog.error(TAG, 'Get associationCipherData failed.');
       return null;
     }

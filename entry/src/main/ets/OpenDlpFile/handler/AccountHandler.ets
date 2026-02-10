@@ -26,6 +26,7 @@ import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import AccountManager from '../../manager/AccountManager';
 
 const TAG: string = 'AccountHandler';
+const ENTERPRISE_ACCOUNT: number = 4;
 
 abstract class AccountHandlerBase {
   protected accountInfo?: account_osAccount.OsAccountInfo;
@@ -137,7 +138,7 @@ export class AccountHandlerFactory {
       HiLog.info(TAG, 'create DomainAccountHandle');
       return ResultMsg.buildSuccess(new DomainAccountHandle());
     }
-    if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+    if (decryptContent.fileMetaInfo.accountType === ENTERPRISE_ACCOUNT) {
       HiLog.info(TAG, 'create EnterpriseAccountHandle');
       return ResultMsg.buildSuccess(new EnterpriseAccountHandle());
     }

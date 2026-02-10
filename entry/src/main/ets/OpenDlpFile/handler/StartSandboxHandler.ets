@@ -333,7 +333,7 @@ export default class StartSandboxHandler {
           decryptContent.fileMetaInfo.countdown : 0,
         'ohos.dlp.params.needRefreshCountdown': !decryptContent.hasDecrypted,
         'ohos.dlp.params.bindSecurityFlag': decryptContent.authPerm ===
-        dlpPermission.DLPFileAccess.READ_ONLY ? true : false
+        dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
       }
     };
     return dlpWant;

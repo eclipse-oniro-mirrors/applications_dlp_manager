@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"translate"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Şifreli dosyalar görüntülenemiyor",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

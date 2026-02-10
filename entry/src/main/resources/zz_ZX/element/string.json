@@ -383,10 +383,6 @@
         {
             "name":"no_longer_have_permission_view_file",
             "value":"[TS_1129658]_You no longer have permission to view this file."
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"[TS_1147362]_Unable to view encrypted files"
         }
     ]
 }

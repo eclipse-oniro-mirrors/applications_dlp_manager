@@ -656,13 +656,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Unable to view encrypted files",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

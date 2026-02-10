@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Сбой просмотра зашифрованных файлов",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }
