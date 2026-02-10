@@ -2,8 +2,8 @@
   "app": {
     "bundleName": "com.ohos.dlpmanager",
     "vendor": "ohos",
-    "versionCode": 60100318,
-    "versionName": "6.1.0.318",
+    "versionCode": 60100319,
+    "versionName": "6.1.0.319",
     "icon": "$media:app_icon",
     "label": "$string:app_name",
     "minAPIVersion": 12,

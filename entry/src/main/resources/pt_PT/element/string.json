@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"translate"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Não é possível ver ficheiros encriptados",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

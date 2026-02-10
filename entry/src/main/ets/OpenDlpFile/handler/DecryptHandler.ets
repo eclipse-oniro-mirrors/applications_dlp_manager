@@ -44,8 +44,7 @@ import FileIdHandler from './FileIdHandler';
 const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
 
 const TAG: string = 'DecryptHandler';
-
-
+const ENTERPRISE_ACCOUNT: number = 4;
 
 interface TimeoutData {
   timeout: number | undefined;
@@ -474,7 +473,7 @@ export default class DecryptHandler {
 
   private async checkDistributedInfoId(decryptContent: DecryptContent): Promise<boolean> {
     if (decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT ||
-      decryptContent.fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+      decryptContent.fileMetaInfo.accountType === ENTERPRISE_ACCOUNT) {
       HiLog.info(TAG, 'domain account no need to checkDistributedInfoId');
       return true;
     }

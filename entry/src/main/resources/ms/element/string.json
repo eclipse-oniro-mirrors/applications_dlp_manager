@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Tidak dapat melihat fail disulitkan",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

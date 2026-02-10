@@ -31,6 +31,7 @@ import OpenDlpFileData from '../data/OpenDlpFileData';
 import FileUtils from '../../common/FileUtils/FileUtils';
 
 const TAG: string = 'FileParse';
+const ENTERPRISE_ACCOUNT: number = 4;
 
 const NUM_TO_TYPE_MAP = new Map<number, string>([
   [1, 'txt'],

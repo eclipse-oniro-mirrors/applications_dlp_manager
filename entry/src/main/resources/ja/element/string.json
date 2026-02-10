@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"暗号化済みファイルの表示に失敗しました",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }
