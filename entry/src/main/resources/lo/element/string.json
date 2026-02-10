@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"translate"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"ບໍ່ສາມາດເບິ່ງໄຟລ໌ທີ່ໃສ່ລະຫັດແລ້ວໄດ້",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

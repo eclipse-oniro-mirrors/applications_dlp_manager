@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Không thể xem các tệp tin được mã hóa",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

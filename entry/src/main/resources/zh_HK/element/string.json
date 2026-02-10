@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"不支援檢視加密檔案",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

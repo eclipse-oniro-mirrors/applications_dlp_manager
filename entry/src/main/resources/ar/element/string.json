@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"يتعذر عرض الملفات المُشفرة",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

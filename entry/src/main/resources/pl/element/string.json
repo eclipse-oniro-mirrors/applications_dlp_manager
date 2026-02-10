@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"translate"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"Nie można wyświetlić zaszyfrowanych plików",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

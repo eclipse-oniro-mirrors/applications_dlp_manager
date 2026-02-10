@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"암호화된 파일 확인 불가",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

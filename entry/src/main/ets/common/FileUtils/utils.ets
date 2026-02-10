@@ -897,9 +897,10 @@ function checkValidAccountType(accountType: number): boolean {
     HiLog.error(TAG, 'AccountType NAN');
     return false;
   }
+  const ENTERPRISE_ACCOUNT: number = 4;
   if (accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT &&
     accountType !== dlpPermission.AccountType.DOMAIN_ACCOUNT &&
-    accountType !== dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+    accountType !== ENTERPRISE_ACCOUNT) {
     HiLog.error(TAG, `Error accountType: ${accountType}`);
     return false;
   }

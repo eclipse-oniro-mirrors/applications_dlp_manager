@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"གསང་སྡོམ་ཡིག་ཆར་ལྟ་ཞིབ་བྱེད་པར་རྒྱབ་སྐྱོར་མི་བྱེད།",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }

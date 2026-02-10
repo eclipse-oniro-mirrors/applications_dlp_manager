@@ -636,13 +636,6 @@
             "attr":{
                 "priority":"LT"
             }
-        },
-        {
-            "name":"restore_minor_dialog_title",
-            "value":"L'affichage de fichiers cryptés a échoué",
-            "attr":{
-                "priority":"translate"
-            }
         }
     ]
 }
