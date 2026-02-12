@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -124,7 +124,7 @@ struct encryptionSuccess {
   }
 
   aboutToAppear() {
-    HiLog.info(TAG, `aboutToAppear, encrypt success`);
+    HiLog.info(TAG, 'aboutToAppear, encrypt success.');
     this.directionStatus = (getContext(this) as common.UIAbilityContext).config.direction ?? -1;
     directionStatus((counter) => {
       this.directionStatus = counter;
@@ -591,7 +591,7 @@ struct encryptionSuccess {
                                   params: this.routerParams
                                 })
                               } catch (error) {
-                                HiLog.wrapError(TAG, error, 'replaceUrl error');
+                                HiLog.wrapError(TAG, error, 'replaceUrl error.');
                               }
                             })
                         }
@@ -621,7 +621,7 @@ struct encryptionSuccess {
                     if (!(GlobalContext.load('requestIsFromSandBox') as boolean)) {
                       let dlpFileName: string = GlobalContext.load('dlpFileName') as string;
                       try {
-                        HiLog.info(TAG, `closeDLPFile: ${dlpFileName}`);
+                        HiLog.info(TAG, 'closeDLPFile begin.');
                         let dlpRpcProxy: IdDlpRpcServiceProxy = GlobalContext.load('dlpRpcProxy');
                         await new Promise<void>((resolve, reject) => {
                           dlpRpcProxy.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
@@ -632,7 +632,7 @@ struct encryptionSuccess {
                           });
                         })
                       } catch (err) {
-                        HiLog.wrapError(TAG, err, `closeDLPFile: ${dlpFileName}, failed`);
+                        HiLog.wrapError(TAG, err, 'closeDLPFile failed.');
                       }
                     }
                     if (this.session !== undefined) {

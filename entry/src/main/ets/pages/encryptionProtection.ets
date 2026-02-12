@@ -257,7 +257,7 @@ struct DlpDialog {
   async catchProcess() {
     this.processing = false;
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-      HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
+      HiLog.info(TAG, 'resumeFuseLink begin.');
       if (!this.dlpRpcProxy) {
         HiLog.error(TAG, 'dlpRpcProxy null');
         return;
@@ -298,7 +298,7 @@ struct DlpDialog {
     let dlpFileName: string = GlobalContext.load('uri') as string;
     let srcFileMsg: FileMsg = FileUtils.getAllSuffixByUri(dlpFileName);
     let realFileType: string = GlobalContext.load('realFileType') ?? '';
-    HiLog.debug(TAG, `dlpFileName: ${dlpFileName} fileType: ${srcFileMsg.fileType} realFileType: ${realFileType}`);
+    HiLog.debug(TAG, `fileType: ${srcFileMsg.fileType} -- realFileType: ${realFileType}`);
     if (isInvalidStr(realFileType)) {
       realFileType = srcFileMsg.fileType;
     }
@@ -334,7 +334,7 @@ struct DlpDialog {
       this.dlpRpcProxy.recoverDlpFile(GlobalContext.load('uri'), filePathUri, async (err: number) => {
         if (err !== 0) {
           FileUtil.unlinkSync(filePath);
-          HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
+          HiLog.error(TAG, `recoverDLPFile failed: ${err}`);
           let errorInfo =
             { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
           this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -418,7 +418,7 @@ struct DlpDialog {
 
   async beginEncrypt() {
     this.processing = true;
-    HiLog.info(TAG, `begin encryption for: ${this.srcFileName}`);
+    HiLog.info(TAG, 'begin encryption.');
     let uri: string = '';
     let displayName: string = this.srcFileName;
     await this.setUserStat();

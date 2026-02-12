@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -171,7 +171,7 @@ struct changeEncryption {
 
   async catchProcess() {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-      HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
+      HiLog.info(TAG, 'resumeFuseLink begin.');
       this.dlpRpcProxy?.resumeFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
@@ -198,7 +198,7 @@ struct changeEncryption {
     return new Promise<void>((resolve, reject) => {
       this.dlpRpcProxy?.recoverDlpFile(GlobalContext.load('uri'), plainUri, async (err: number) => {
         if (err !== 0) {
-          HiLog.error(TAG, `recoverDLPFile: ${this.srcFileName}, failed: ${err}`);
+          HiLog.error(TAG, `recoverDLPFile failed: ${err}`);
           let errorInfo =
             { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
           this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -219,7 +219,7 @@ struct changeEncryption {
         return;
       }
     }
-    HiLog.info(TAG, `Decrypt DLP file: ${this.srcFileName}`);
+    HiLog.info(TAG, 'Decrypt DLP file.');
     try {
       let srcFileUri: string = GlobalContext.load('uri');
       if (!isValidPath(srcFileUri)) {
@@ -243,20 +243,20 @@ struct changeEncryption {
         try {
           await this.fileDecryption(saveRes);
         } catch {
-          HiLog.error(TAG, `file decryption fail`);
+          HiLog.error(TAG, 'File decryption failed.');
         }
       }).catch((code: number) => {
         HiLog.error(TAG, `DocumentViewPicker save failed: ${JSON.stringify(code)}`);
       });
     } catch (err) {
-      HiLog.wrapError(TAG, err, `Decrypt DLP file: ${this.srcFileName}, failed`);
+      HiLog.wrapError(TAG, err, 'Decrypt DLP file failed.');
     }
   }
 
   async fileDecryption(saveRes: Array<string>): Promise<void> {
     let plainUri = saveRes[0];
     if (!isValidPath(plainUri)) {
-      HiLog.error(TAG, `pick save uri is invalid`);
+      HiLog.error(TAG, 'Picker save uri is invalid.');
       return;
     }
     let uriInfo: fileUri.FileUri | undefined = undefined;
@@ -264,13 +264,13 @@ struct changeEncryption {
     try {
       uriInfo = new fileUri.FileUri(plainUri);
     } catch (err) {
-      HiLog.wrapError(TAG, err, 'fileUri failed');
+      HiLog.wrapError(TAG, err, 'fileUri failed.');
     }
     try {
       file = await fs.open(plainUri, fs.OpenMode.READ_WRITE);
       await this.recoverDLPFileHome(plainUri);
     } catch (err) {
-      HiLog.wrapError(TAG, err, `recoverDLPFile: ${this.srcFileName}, failed`);
+      HiLog.wrapError(TAG, err, 'recoverDLPFile failed.');
       await FileUtil.unlink(uriInfo!.path);
       let errorInfo =
         { 'title': '', 'msg': $r('app.string.MESSAGE_RECOVER_DLP_ERROR') } as Record<string, string | Resource>;
@@ -287,14 +287,14 @@ struct changeEncryption {
 
   async terminateSelfWithResult() {
     if (GlobalContext.load('requestIsFromSandBox') as boolean) { //no need close dlp file in sandbox
-      HiLog.info(TAG, `resumeFuseLink: ${this.srcFileName}`);
+      HiLog.info(TAG, 'resumeFuseLink begin.');
       this.dlpRpcProxy?.resumeFuseLink(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `resumeFuseLink failed: ${err}`);
         }
       });
     } else {
-      HiLog.info(TAG, `closeDLPFile: ${this.srcFileName}`);
+      HiLog.info(TAG, 'closeDLPFile begin.');
       this.dlpRpcProxy?.closeDlpFile(GlobalContext.load('uri'), (err: number) => {
         if (err !== 0) {
           HiLog.error(TAG, `closeDLPFile failed: ${err}`);
@@ -310,7 +310,7 @@ struct changeEncryption {
           },
         });
       } catch (error) {
-        HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed');
+        HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed.');
       }
     } else {
       if (GlobalContext.load('fileOpenHistoryFromMain')) {
@@ -434,7 +434,7 @@ struct changeEncryption {
     try {
       GlobalContext.store('accountInfo', await getOsAccountInfo());
     } catch (err) {
-      HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
+      HiLog.wrapError(TAG, err, 'getOsAccountInfo failed.');
       if (this.session !== undefined) {
         let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
@@ -451,11 +451,11 @@ struct changeEncryption {
       return;
     }
     if (GlobalContext.load('requestIsFromSandBox') as boolean) {
-      HiLog.info(TAG, `request from sandbox`);
+      HiLog.info(TAG, 'request from sandbox.');
       this.linkFileName = GlobalContext.load('linkFileName') as string;
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
     } else {
-      HiLog.info(TAG, `request from normal`);
+      HiLog.info(TAG, 'request from normal.');
       this.srcFileName = GlobalContext.load('dlpFileName') as string;
     }
     await this.showData(GlobalContext.load('dlpProperty'));
@@ -924,7 +924,7 @@ struct changeEncryption {
                           params: this.routerData
                         })
                       } catch (error) {
-                        HiLog.wrapError(TAG, error, 'replaceUrl error');
+                        HiLog.wrapError(TAG, error, 'replaceUrl error.');
                       }
                     })
                     .margin({
