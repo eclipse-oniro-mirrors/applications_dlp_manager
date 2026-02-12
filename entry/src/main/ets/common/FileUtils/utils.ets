@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -137,7 +137,7 @@ function getFileFd(uri: string, mode?: number): Result<number> {
   mode = mode || fs.OpenMode.READ_ONLY;
   try {
     let file = fs.openSync(uri, mode);
-    HiLog.info(TAG, `open filename: ${FileUtils.getFileNameByUri(uri)}, as: ${file.fd}`);
+    HiLog.info(TAG, `Open file fd: ${file.fd}`);
     return ResultMsg.buildSuccess(file.fd);
   } catch (err) {
     HiLog.wrapError(TAG, err, 'openSync error');
@@ -351,7 +351,7 @@ async function getFileSizeByUri(uri: string): Promise<number> {
     HiLog.info(TAG, `get file info success, the size of file is: ${stat.size}`);
     return stat.size;
   } catch (err) {
-    HiLog.wrapError(TAG, err, `open filename: ${FileUtils.getFileNameByUri(uri)}, failed`);
+    HiLog.wrapError(TAG, err, 'Get file size by uri failed.');
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {
@@ -367,7 +367,7 @@ function getFileSizeByUriSync(uri: string): number {
     let stat = fs.statSync(inFile.fd);
     return stat.size;
   } catch (err) {
-    HiLog.wrapError(TAG, err, `open Syncfilename: ${FileUtils.getFileNameByUri(uri)}, failed`);
+    HiLog.wrapError(TAG, err, 'Get file size by uri failed.');
     return Constants.ERR_CODE_OPEN_FILE_ERROR;
   } finally {
     if (inFile) {

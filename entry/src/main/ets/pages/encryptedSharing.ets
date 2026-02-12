@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -435,7 +435,7 @@ struct encryptedSharing {
   }
 
   backToPages(filePathUriArray: string[], dlpFileNameArray: string[]) {
-    HiLog.info(TAG, `backToPages start: ${dlpFileNameArray}`);
+    HiLog.info(TAG, 'backToPages start.');
     if (this.actionWant && this.actionWant.parameters) {
       this.actionWant.flags = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
       this.actionWant.parameters[Constants.PARAMS_STREAM] = filePathUriArray;
