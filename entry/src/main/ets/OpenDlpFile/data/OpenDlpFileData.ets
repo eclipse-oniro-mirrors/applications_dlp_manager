@@ -19,6 +19,7 @@ import FileUtils from '../../common/FileUtils/FileUtils';
 import { getCurrentTime, isInvalidStr, isValidPath } from '../../common/FileUtils/utils';
 import { HiLog } from '../../common/HiLog';
 import Want from '@ohos.app.ability.Want';
+import CommonUtil from '../../common/CommonUtil';
 
 const TAG: string = 'OpenDlpFileData';
 const EXPECTED_APPID: string = '5765880207854533797';
@@ -225,7 +226,7 @@ export default class OpenDlpFileData {
     this._fileName = strArray[strArray.length - 1];
 
     const tempRandom = Date.now() + String(Math.random()).substring(Constants.RAND_START, Constants.RAND_END);
-    this._requestId = this._fileName + tempRandom;
+    this._requestId = FileUtils.anonymizedFileName(this._fileName) + tempRandom;
     HiLog.info(TAG, `checkAndSetWantParams requestId ${this._requestId}`);
 
     this._callerBundleName =

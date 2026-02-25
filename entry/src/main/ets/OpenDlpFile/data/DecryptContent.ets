@@ -225,7 +225,6 @@ export default class DecryptContent {
     let timestamp = new Date().getTime();
     let splitNames = this._fileName.split('.');
 
-    HiLog.debug(TAG, `splitNames: ${splitNames}`);
     if (splitNames.length < Constants.NUMBER_TWO) {
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_INSIDE_ERROR);
     }
@@ -253,7 +252,7 @@ export default class DecryptContent {
       this._linkUriStat = fs.statSync(this._uriInfo.path);
       return ResultMsg.buildSuccess();
     } catch (error) {
-      HiLog.wrapError(TAG, error, `open: ${FileUtils.getFileNameByUri(this._openDlpFileData.uri)} failed`);
+      HiLog.wrapError(TAG, error, `open: ${FileUtils.getAnonymizedFilenameByUri(this._openDlpFileData.uri)} failed`);
       return ResultMsg.getErrMsg(Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR);
     }
   }

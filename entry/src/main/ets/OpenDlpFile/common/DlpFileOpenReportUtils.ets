@@ -18,7 +18,6 @@ import { ToggleState } from '../../common/enum/EncryptSharingShowCodeEnum';
 import DecryptContent from '../data/DecryptContent';
 
 interface FileInfo {
-  fileName: string;
   fileSize: number;
 }
 
@@ -46,7 +45,6 @@ export class DlpFileOpenReportUtils {
 
   public static getFileInfoString(decryptContent: DecryptContent): string {
     const fileInfo: FileInfo = {
-      fileName: decryptContent.fileName ?? '',
       fileSize: decryptContent.fileMetaInfo?.fileSize ?? -1
     }
     return JSON.stringify(fileInfo);

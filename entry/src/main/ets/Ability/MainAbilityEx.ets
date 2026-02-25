@@ -321,7 +321,7 @@ export default class MainAbility extends UIExtensionAbility {
     }
     HiLog.info(TAG, `isDlpSuffix: ${isDlpSuffix}`);
     if (!isDlpSuffix) {
-      HiLog.error(TAG, `${fileName} is not a dlp file`);
+      HiLog.error(TAG, `${FileUtils.anonymizedFileName(fileName)} is not a dlp file`);
       GlobalContext.store('originFileName', fileName);
       GlobalContext.store('originFd', getFileFd(GlobalContext.load('uri') as string));
       let storage: LocalStorage = new LocalStorage({
@@ -373,7 +373,6 @@ export default class MainAbility extends UIExtensionAbility {
     try {
       let callerBundleName = Constants.DLP_MANAGER_BUNDLE_NAME;
       callerAppId = await getAppId(callerBundleName);
-      HiLog.info(TAG, `get AppId: ${callerAppId}`);
     } catch {
       HiLog.error(TAG, `get AppId failed`);
       return;

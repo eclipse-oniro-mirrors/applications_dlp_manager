@@ -42,7 +42,7 @@ async function clearDlpInfoByCancelSandbox(decryptContent: DecryptContent): Prom
 }
 
 async function clearDlpInfoByUri(uri: string, callerTokenId: number): Promise<void> {
-  HiLog.info(TAG, `start clearDlpInfoByUri uri ${FileUtils.getFileNameByUri(uri)}`);
+  HiLog.info(TAG, `start clearDlpInfoByUri uri ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
   const manager = OpenDlpFileManager.getInstance();
   const getRet = manager.getHasDecryptedContentByUriAndTokenId(uri, callerTokenId);
   if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
@@ -77,7 +77,7 @@ async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
   }
   const decryptContents = rmRet.result;
   for (const decryptContent of decryptContents) {
-    HiLog.debug(TAG, `clearDlpInfoByCancelSandbox fileName ${decryptContent.fileName}`);
+    HiLog.debug(TAG, `clearDlpInfoByCancelSandbox fileName ${FileUtils.anonymizedFileName(decryptContent.fileName)}`);
     await clearDlpInfoByCancelSandbox(decryptContent);
   }
 

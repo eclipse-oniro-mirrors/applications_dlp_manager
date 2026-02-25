@@ -72,7 +72,7 @@ export default class OpeningDialogManager {
       HiLog.debug(TAG, `${
       JSON.stringify({
         requestId: key,
-        uri: FileUtils.getFileNameByUri(value.uri),
+        uri: FileUtils.getAnonymizedFilenameByUri(value.uri),
         dialogTimeout: value.dialogTimeout,
         needStartAbility: value.needStartAbility,
         hasDecrypted: value.hasDecrypted,

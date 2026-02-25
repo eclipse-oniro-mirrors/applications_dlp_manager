@@ -17,6 +17,7 @@ import { HiLog } from '../../common/HiLog';
 import DecryptContent from '../data/DecryptContent';
 import CommonUtil from '../../common/CommonUtil';
 import CredConnectServiceFileId from '../../rpc/CredConnectServiceFileId';
+import FileUtils from '../../common/FileUtils/FileUtils';
 
 const TAG = 'FileIdHandler';
 
@@ -41,13 +42,13 @@ export default class FileIdHandler {
   // dlpmanager本地保存fileId队列
   public saveFileId(decryptContent: DecryptContent): void {
     HiLog.info(TAG,
-      `start saveFileId ${JSON.stringify(CommonUtil.anonymizedFileId(decryptContent.fileMetaInfo.fileId))}`);
+      `start saveFileId ${JSON.stringify(FileUtils.anonymizedFileId(decryptContent.fileMetaInfo.fileId))}`);
     if (!DecryptContent.isNotOwnerAndReadOnce(decryptContent)) {
       HiLog.info(TAG, 'isNotOwnerAndReadOnce false');
       return;
     }
     this.connectAbility();
-    HiLog.debug(TAG, `saveFileId add fileId ${CommonUtil.anonymizedFileId(decryptContent.fileMetaInfo.fileId)}
+    HiLog.debug(TAG, `saveFileId add fileId ${FileUtils.anonymizedFileId(decryptContent.fileMetaInfo.fileId)}
       requestId ${decryptContent.openDlpFileData.requestId}`);
     this.fileIdSet.add(decryptContent.fileMetaInfo.fileId);
     this.fileIdMap.set(decryptContent.openDlpFileData.requestId, decryptContent.fileMetaInfo.fileId);
@@ -55,21 +56,21 @@ export default class FileIdHandler {
 
   // 弹框消失的回调，判断队列里有没有fileId，有的话就是openDlpFile期间取消的，需要调用dlpcredmgr
   public dialogCancel(requestId: string, fileId?: string): void {
-    HiLog.info(TAG, `start dialogCancel fileId ${CommonUtil.anonymizedFileId(fileId)}`);
+    HiLog.info(TAG, `start dialogCancel fileId ${FileUtils.anonymizedFileId(fileId)}`);
     if (CommonUtil.isEmptyStr(requestId) && CommonUtil.isEmptyStr(fileId)) {
       HiLog.debug(TAG, 'requestId and fileId null');
       return;
     }
     if (fileId !== undefined && this.fileIdSet.has(fileId)) {
-      HiLog.debug(TAG, `fileIdSet has ${CommonUtil.anonymizedFileId(fileId)}`);
+      HiLog.debug(TAG, `fileIdSet has ${FileUtils.anonymizedFileId(fileId)}`);
       this.cancelFileId(fileId);
       return;
     }
     if (this.fileIdMap.has(requestId)) {
       let value = this.fileIdMap.get(requestId);
-      HiLog.debug(TAG, `fileIdMap has requestId ${requestId}, fileId is ${CommonUtil.anonymizedFileId(value)}`);
+      HiLog.debug(TAG, `fileIdMap has requestId ${requestId}, fileId is ${FileUtils.anonymizedFileId(value)}`);
       if (value !== undefined && this.fileIdSet.has(value)) {
-        HiLog.debug(TAG, `fileIdSet has ${CommonUtil.anonymizedFileId(value)}`);
+        HiLog.debug(TAG, `fileIdSet has ${FileUtils.anonymizedFileId(value)}`);
         this.cancelFileId(value);
       }
     }
@@ -77,7 +78,7 @@ export default class FileIdHandler {
 
   // openDlpFile接口返回，删除fileId，并且如果fileId清空，断开跟dlpcredmgr的链接
   public deleteFileId(requestId: string, fileId: string): void {
-    HiLog.debug(TAG, `fileIdSet delete ${fileId}`);
+    HiLog.debug(TAG, `fileIdSet delete ${FileUtils.anonymizedFileId(fileId)}`);
     this.fileIdSet.delete(fileId);
     this.fileIdMap.delete(requestId);
     if (this.fileIdSet.size === 0) {
@@ -93,7 +94,7 @@ export default class FileIdHandler {
   }
 
   private cancelFileId(fileId: string): void {
-    HiLog.debug(TAG, `FileIdHandler cancelFileId fileId ${CommonUtil.anonymizedFileId(fileId)}`);
+    HiLog.debug(TAG, `FileIdHandler cancelFileId fileId ${FileUtils.anonymizedFileId(fileId)}`);
     CredConnectServiceFileId.getInstance().cancelFileId(fileId);
   }
 

@@ -41,6 +41,8 @@ import GlobalContext from '../../common/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
 import CommonUtil from '../../common/CommonUtil';
 import FileIdHandler from './FileIdHandler';
+import FileUtils from '../../common/FileUtils/FileUtils';
+
 const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
 
 const TAG: string = 'DecryptHandler';
@@ -206,7 +208,7 @@ export default class DecryptHandler {
     }
     decryptContent.dlpFd = getFileFdRet.result;
 
-    HiLog.info(TAG, `decryptData: ${decryptContent.fileName}, dlpFd: ${decryptContent.dlpFd}`);
+    HiLog.info(TAG, `decryptData: ${FileUtils.anonymizedFileName(decryptContent.fileName)}, dlpFd: ${decryptContent.dlpFd}`);
     const sandboxBundleName = decryptContent.openDlpFileData.sandboxBundleName;
     const userId = decryptContent.userId;
     let getAppIdRet = await getAppIdWithUserId(sandboxBundleName, userId);

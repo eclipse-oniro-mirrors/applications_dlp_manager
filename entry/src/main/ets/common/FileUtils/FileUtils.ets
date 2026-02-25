@@ -17,6 +17,7 @@ import { HiLog } from '../HiLog';
 import FileUtil from '../external/FileUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import fs from '@ohos.file.fs';
+import CommonUtil from '../CommonUtil';
 
 const TAG = 'FileUtils';
 
@@ -27,6 +28,9 @@ export interface FileMsg {
 }
 
 export default class FileUtils {
+  public static readonly FILE_ID_ANONYMIZED_SUFFIX_LENGTH: number = 8;
+  public static readonly FILE_NAME_ANONYMIZED_SUFFIX_LENGTH: number = 8;
+
   static getSuffixFileMsgByUri(uri: string): FileMsg {
     let strArray: string[] = uri.split('/');
     let len: number = strArray.length;
@@ -95,9 +99,36 @@ export default class FileUtils {
     return str.trim().replace(/^\./, '');
   }
 
-  static getFileNameByUri(uri: string): string {
+  public static anonymizedFileName(fileName: string): string {
+    if (CommonUtil.isEmptyStr(fileName)) {
+      return '';
+    }
+    if (fileName.length <= FileUtils.FILE_NAME_ANONYMIZED_SUFFIX_LENGTH) {
+      return '****';
+    }
+    const anonymized = fileName.substring(0, FileUtils.FILE_NAME_ANONYMIZED_SUFFIX_LENGTH) +
+    '*'.repeat(fileName.length - FileUtils.FILE_NAME_ANONYMIZED_SUFFIX_LENGTH);
+    return anonymized;
+  }
+
+  public static anonymizedFileId(fileId: string): string {
+    if (CommonUtil.isEmptyStr(fileId)) {
+      return '';
+    }
+    if (fileId.length <= FileUtils.FILE_ID_ANONYMIZED_SUFFIX_LENGTH) {
+      return fileId;
+    }
+    const anonymized = '*'.repeat(fileId.length - FileUtils.FILE_ID_ANONYMIZED_SUFFIX_LENGTH) +
+    fileId.substring(fileId.length - FileUtils.FILE_ID_ANONYMIZED_SUFFIX_LENGTH);
+    return anonymized;
+  }
+
+  public static getAnonymizedFilenameByUri(uri: string): string {
+    if (CommonUtil.isEmptyStr(uri)) {
+      return '';
+    }
     const strArray: string[] = uri.split('/');
-    return strArray[strArray.length - 1];
+    return FileUtils.anonymizedFileName(strArray[strArray.length - 1]);
   }
 
   static getFileSuffixByFileName(fileName: string): string {
