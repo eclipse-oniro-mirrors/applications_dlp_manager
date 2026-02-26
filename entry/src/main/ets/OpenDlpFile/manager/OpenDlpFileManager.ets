@@ -59,14 +59,14 @@ export class OpenDlpFileManager {
     this.contentMap.forEach((value, key) => {
       HiLog.debug(TAG, `${
       JSON.stringify({
-        uri: FileUtils.getFileNameByUri(key),
+        uri: FileUtils.getAnonymizedFilenameByUri(key),
         'contentSize': value.length,
       })}`);
     });
   }
 
   public async setStatus(uri: string, status: DecryptStatus): Promise<Result<void>> {
-    HiLog.info(TAG, `setStatus: filename: ${FileUtils.getFileNameByUri(uri)}, status = ${status.state}`);
+    HiLog.info(TAG, `setStatus: filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}, status = ${status.state}`);
     try {
       await this.lock.lockAsync(() => {
         this.statusMap.set(uri, status);
@@ -81,12 +81,12 @@ export class OpenDlpFileManager {
   public getStatus(uri: string): Result<DecryptStatus> {
     let status: DecryptStatus | undefined;
     status = this.statusMap.get(uri) || { state: DecryptState.NOT_STARTED };
-    HiLog.info(TAG, `getStatus: filename: ${FileUtils.getFileNameByUri(uri)}, status = ${status.state}`);
+    HiLog.info(TAG, `getStatus: filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}, status = ${status.state}`);
     return ResultMsg.buildSuccess(status);
   }
 
   public async deleteStatus(uri: string): Promise<Result<void>> {
-    HiLog.info(TAG, `deleteStatus: filename: ${FileUtils.getFileNameByUri(uri)}`);
+    HiLog.info(TAG, `deleteStatus: filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
     try {
       await this.lock.lockAsync(() => {
         this.statusMap.delete(uri);
@@ -99,12 +99,12 @@ export class OpenDlpFileManager {
   }
 
   public async deleteStatusButNotHasDecrypted(uri: string): Promise<Result<void>> {
-    HiLog.info(TAG, `deleteStatusButNotHasDecrypted: filename: ${FileUtils.getFileNameByUri(uri)}`);
+    HiLog.info(TAG, `deleteStatusButNotHasDecrypted: filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
     try {
       const status = this.statusMap.get(uri) || { state: DecryptState.NOT_STARTED };
       if (status.state !== DecryptState.DECRYPTED) {
         await this.lock.lockAsync(() => {
-          HiLog.info(TAG, `delete filename: ${FileUtils.getFileNameByUri(uri)}`);
+          HiLog.info(TAG, `delete filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
           this.statusMap.delete(uri);
         });
       }
@@ -116,7 +116,7 @@ export class OpenDlpFileManager {
   }
 
   public async addDecryptContent(uri: string, content: DecryptContent): Promise<Result<void>> {
-    HiLog.info(TAG, `addDecryptContent filename: ${FileUtils.getFileNameByUri(uri)}`);
+    HiLog.info(TAG, `addDecryptContent filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
     this.printContentMap();
     try {
       await this.lock.lockAsync(() => {
@@ -226,7 +226,7 @@ export class OpenDlpFileManager {
         }
       }
       if (decryptContentList.length == 0) {
-        HiLog.info(TAG, `all ${FileUtils.getFileNameByUri(uri)} file has been closed`);
+        HiLog.info(TAG, `all ${FileUtils.getAnonymizedFilenameByUri(uri)} file has been closed`);
         this.contentMap.delete(uri);
         this.statusMap.delete(uri);
       } else {
@@ -274,7 +274,7 @@ export class OpenDlpFileManager {
       }
     }
     if (decryptContentList.length == 0) {
-      HiLog.info(TAG, `all ${FileUtils.getFileNameByUri(uri)} file has been closed`);
+      HiLog.info(TAG, `all ${FileUtils.getAnonymizedFilenameByUri(uri)} file has been closed`);
       this.contentMap.delete(uri);
       this.statusMap.delete(uri);
     } else {

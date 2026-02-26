@@ -129,7 +129,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         this.inFile = await fs.open(inputUri, fs.OpenMode.READ_WRITE);
         inFileFd = this.inFile.fd;
       } catch (error) {
-        HiLog.wrapError(TAG, error, `open failed: ${FileUtils.getFileNameByUri(inputUri)}`);
+        HiLog.wrapError(TAG, error, `open failed: ${FileUtils.getAnonymizedFilenameByUri(inputUri)}`);
         reject((error as BusinessError).code);
         return;
       }
@@ -158,7 +158,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
-    HiLog.info(TAG, `openDlpFile start: ${FileUtils.getFileNameByUri(srcUri)}`);
+    HiLog.info(TAG, `openDlpFile start: ${FileUtils.getAnonymizedFilenameByUri(srcUri)}`);
     let inFile = await fs.open(srcUri, fs.OpenMode.READ_WRITE);
     let dlpFile: dlpPermission.DLPFile;
     let authUserListNew: IAuthUser[] = [];
@@ -205,12 +205,12 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
   }
 
   async stopFuseLink(uri: string, callback: stopFuseLinkCallback): Promise<void> {
-    HiLog.info(TAG, `stopFuseLink start filename: ${FileUtils.getFileNameByUri(uri)}`);
+    HiLog.info(TAG, `stopFuseLink start filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
     let dlpFile: dlpPermission.DLPFile | null = await this.getOpeningFile(uri);
     if (dlpFile !== null) {
       await dlpFile.stopFuseLink();
     } else {
-      HiLog.error(TAG, `stopFuseLink not find filename: ${FileUtils.getFileNameByUri(uri)}`);
+      HiLog.error(TAG, `stopFuseLink not find filename: ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
       callback(-1);
     }
   }
@@ -221,7 +221,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     if (dlpFile !== null) {
       await dlpFile.resumeFuseLink();
     } else {
-      HiLog.error(TAG, `resumeFuseLink not findfilename: ${FileUtils.getFileNameByUri(uri)}`);
+      HiLog.error(TAG, `resumeFuseLink not findfilename: ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
       callback(-1);
     }
   }
@@ -242,7 +242,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         HiLog.wrapError(TAG, error, 'replaceDLPLinkFile error');
       }
     } else {
-      HiLog.error(TAG, `replaceDLPLinkFile not find: ${FileUtils.getFileNameByUri(srcUri)}`);
+      HiLog.error(TAG, `replaceDLPLinkFile not find: ${FileUtils.getAnonymizedFilenameByUri(srcUri)}`);
       callback(-1);
     }
   }
@@ -261,7 +261,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
         FileUtil.closeSync(inFile);
       }
     } else {
-      HiLog.error(TAG, `recoverDlpFile not find: ${FileUtils.getFileNameByUri(srcUri)}`);
+      HiLog.error(TAG, `recoverDlpFile not find: ${FileUtils.getAnonymizedFilenameByUri(srcUri)}`);
       callback(-1);
     }
   }
@@ -290,13 +290,13 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     const manager = OpenDlpFileManager.getInstance();
     const getRet = manager.getHasDecryptedContentByLinkFileName(linkFileName);
     if (getRet.errcode !== Constants.ERR_CODE_SUCCESS || !getRet.result) {
-      HiLog.error(TAG, `request from sandbox, but can not find dlp file by linkFileName: ${linkFileName}`);
+      HiLog.error(TAG, 'request from sandbox, but can not find dlp file');
       callback(-1, _dlp, '');
       return;
     }
     const decryptContent: DecryptContent = getRet.result;
     if (decryptContent.appInfo.tokenID !== callerToken) {
-      HiLog.error(TAG, `found file, but token invalid: ${linkFileName}`);
+      HiLog.error(TAG, 'found file, but token invalid');
       callback(-1, _dlp, '');
       return;
     }
@@ -353,9 +353,9 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     const manager = OpenDlpFileManager.getInstance();
     const setRet = await manager.setStatus(uri, { state: DecryptState.ENCRYPTING });
     if (setRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, `addEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} failed.`);
+      HiLog.error(TAG, `addEncryptingState filename: ${FileUtils.getAnonymizedFilenameByUri(uri)} failed.`);
     } else {
-      HiLog.info(TAG, `addEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} success.`);
+      HiLog.info(TAG, `addEncryptingState filename: ${FileUtils.getAnonymizedFilenameByUri(uri)} success.`);
     }
   }
 
@@ -363,9 +363,9 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     const manager = OpenDlpFileManager.getInstance();
     const deleteRet = await manager.deleteStatus(uri);
     if (deleteRet.errcode !== Constants.ERR_CODE_SUCCESS) {
-      HiLog.error(TAG, `deleteEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} failed.`);
+      HiLog.error(TAG, `deleteEncryptingState filename: ${FileUtils.getAnonymizedFilenameByUri(uri)} failed.`);
     } else {
-      HiLog.info(TAG, `deleteEncryptingState filename: ${FileUtils.getFileNameByUri(uri)} success.`);
+      HiLog.info(TAG, `deleteEncryptingState filename: ${FileUtils.getAnonymizedFilenameByUri(uri)} success.`);
     }
   }
 }

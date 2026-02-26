@@ -21,6 +21,7 @@ import GlobalContext from '../../../../main/ets/common/GlobalContext';
 import CounterLock from '../../../../main/ets/common/CounterLock';
 import { HiLog } from '../../../../main/ets/common/HiLog';
 import CommonUtil from '../../../../main/ets/common/CommonUtil';
+import FileUtils from '../../../../main/ets/common/FileUtils/FileUtils';
 
 export default function CommonUtilTest() {
   describe('CommonUtilTest', () => {
@@ -104,16 +105,16 @@ export default function CommonUtilTest() {
     })
 
     it('CommonUtil_anonymizedFileId', 0, async () => {
-      let ret = CommonUtil.anonymizedFileId('');
+      let ret = FileUtils.anonymizedFileId('');
       expect(ret).assertEqual('');
 
-      ret = CommonUtil.anonymizedFileId('1234567');
+      ret = FileUtils.anonymizedFileId('1234567');
       expect(ret).assertEqual('1234567');
 
-      ret = CommonUtil.anonymizedFileId('123456789');
+      ret = FileUtils.anonymizedFileId('123456789');
       expect(ret).assertEqual('*23456789');
 
-      ret = CommonUtil.anonymizedFileId('12345678910');
+      ret = FileUtils.anonymizedFileId('12345678910');
       expect(ret).assertEqual('***45678910');
     })
 

@@ -22,7 +22,6 @@ export default class CommonUtil {
 
   public static readonly UTF_8: buffer.BufferEncoding = 'utf-8';
   public static readonly BASE64: buffer.BufferEncoding = 'base64';
-  public static readonly FILE_ID_ANONYMIZED_SUFFIX_LENGTH: number = 8;
 
   public static isEmptyStr(input: string): boolean {
     return (input == null || input === undefined || input.trim() === '' || input.length === 0);
@@ -30,18 +29,6 @@ export default class CommonUtil {
 
   public static isEmptyArray<T>(input: Array<T>): boolean {
     return (input == null || input === undefined || input.length === 0);
-  }
-
-  public static anonymizedFileId(fileId: string): string {
-    if (this.isEmptyStr(fileId)) {
-      return '';
-    }
-    if (fileId.length <= CommonUtil.FILE_ID_ANONYMIZED_SUFFIX_LENGTH) {
-      return fileId;
-    }
-    const anonymized = '*'.repeat(fileId.length - CommonUtil.FILE_ID_ANONYMIZED_SUFFIX_LENGTH) +
-    fileId.substring(fileId.length - CommonUtil.FILE_ID_ANONYMIZED_SUFFIX_LENGTH);
-    return anonymized;
   }
 
   public static encodeByBase64(data: string | undefined): string {

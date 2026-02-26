@@ -21,6 +21,7 @@ import { HiLog } from '../common/HiLog';
 import { rpc } from '@kit.IPCKit';
 import CommonUtil from '../common/CommonUtil';
 import { BusinessError } from '@ohos.base';
+import FileUtils from '../common/FileUtils/FileUtils';
 
 const TAG = 'CredConnectServiceFileId';
 
@@ -98,7 +99,7 @@ export default class CredConnectServiceFileId {
   }
 
   cancelFileId(fileId: string) {
-    HiLog.info(TAG, `cancelFileId start fileId: ${CommonUtil.anonymizedFileId(fileId)}`);
+    HiLog.info(TAG, `cancelFileId start fileId: ${FileUtils.anonymizedFileId(fileId)}`);
     if (CommonUtil.isEmptyStr(fileId)) {
       HiLog.error(TAG, 'cancelFileId fileId empty.');
       return;
