@@ -525,6 +525,7 @@ export class FileParseFactory {
     let dlpFd = getFileFdRet.result;
     const format = await FileFormatDetector.detect(dlpFd);
     if (format.errcode !== Constants.ERR_CODE_SUCCESS || !format.result) {
+      FileUtil.closeSync(dlpFd);
       HiLog.error(TAG, 'detect failed');
       return ResultMsg.buildMsg(format.errcode, format.errmsg);
     }
