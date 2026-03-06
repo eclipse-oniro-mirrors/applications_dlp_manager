@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-import Result from '../../common/Result'
-import { ResultMsg } from '../../common/ResultMsg'
-import Constants from '../../common/constant';
+import Result from '../../common/base/Result'
+import { ResultMsg } from '../../common/base/ResultMsg'
+import Constants from '../../common/constants/constant';
 import { checkDomainAccountInfo, getConnectionStatus, getOsAccountInfo, getUserId } from '../../common/FileUtils/utils';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { common } from '@kit.AbilityKit';
 import DecryptContent from '../data/DecryptContent';

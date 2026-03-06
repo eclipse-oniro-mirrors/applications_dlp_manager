@@ -14,10 +14,10 @@
  */
 
 import { rpc } from '@kit.IPCKit';
-import { HiLog } from '../../common/HiLog';
-import Constants from '../../common/constant';
+import { HiLog } from '../../common/base/HiLog';
+import Constants from '../../common/constants/constant';
 import { clearDlpInfoByUri } from '../../OpenDlpFile/common/DataUtils/DataUtils';
-import Constant from '../../common/constant';
+import Constant from '../../common/constants/constant';
 
 const TAG = 'ClearDlpCacheStub';
 

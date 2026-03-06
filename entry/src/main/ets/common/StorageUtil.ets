@@ -15,7 +15,7 @@
 
 import { common } from '@kit.AbilityKit';
 import data_preferences from '@ohos.data.preferences';
-import { HiLog } from './HiLog';
+import { HiLog } from './base/HiLog';
 
 const TAG: string = 'StorageUtil';
 

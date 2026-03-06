@@ -14,8 +14,8 @@
  */
 import DomainAccountRequest from '../bean/request/DomainAccountRequest';
 import DomainAccountResponse from '../bean/response/DomainAccountResponse';
-import CommonUtil from '../common/CommonUtil';
-import { HiLog } from '../common/HiLog';
+import CommonUtil from '../common/base/CommonUtil';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'DomainAccountConvertor';
 

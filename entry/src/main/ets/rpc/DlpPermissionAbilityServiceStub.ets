@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import rpc from '@ohos.rpc';
-import Constant from '../common/constant';
+import Constant from '../common/constants/constant';
 import fs from '@ohos.file.fs';
 import { BusinessError } from '@ohos.base';
 import FileUtil from '../common/external/FileUtil';

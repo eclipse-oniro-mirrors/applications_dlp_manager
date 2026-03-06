@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { defaultAppInfo, defaultDlpFile, getAuthPerm } from '../../common/FileUtils/utils';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { dlpPermission } from '@kit.DataProtectionKit';
-import Result from '../../common/Result';
-import { ResultMsg } from '../../common/ResultMsg';
+import Result from '../../common/base/Result';
+import { ResultMsg } from '../../common/base/ResultMsg';
 import OpenDlpFileData from './OpenDlpFileData';
 import fs from '@ohos.file.fs';
 import { fileUri } from '@kit.CoreFileKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
 import FileUtils from '../../common/FileUtils/FileUtils';
-import CommonUtil from '../../common/CommonUtil';
+import CommonUtil from '../../common/base/CommonUtil';
 
 const TAG: string = 'DecryptContent';
 

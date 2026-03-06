@@ -29,8 +29,8 @@ import {
 } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
 import IDLDLPProperty from '../../../common/dlpClass';
-import Constants from '../../../common/constant';
-import { HiLog } from '../../../common/HiLog';
+import Constants from '../../../common/constants/constant';
+import { HiLog } from '../../../common/base/HiLog';
 
 const TAG = 'service_proxy';
 

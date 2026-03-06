@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import backgroundTaskManager from '@ohos.resourceschedule.backgroundTaskManager';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 
 const TAG = 'ApplyEfficiencyManager';
 

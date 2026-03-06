@@ -15,7 +15,7 @@
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import Want from '@ohos.app.ability.Want';
 import dlpPermission from '@ohos.dlpPermission';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import { clearDlpInfoBatch } from '../OpenDlpFile/common/DataUtils/DataUtils';
 
 const TAG = 'DataAbility';

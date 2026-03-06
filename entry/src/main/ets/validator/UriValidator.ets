@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import { EncryptSharingShowCodeEnum } from '../common/enum/EncryptSharingShowCodeEnum';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
 import { FileClassification, SupportTypesConfig } from '../common/SupportTypesConfig';
 import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import { getFileSizeByUriSync, isInvalidStr, isValidPath } from '../common/FileUtils/utils';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import Singleton from '../common/Singleton';
 
 const TAG = 'UriValidator';

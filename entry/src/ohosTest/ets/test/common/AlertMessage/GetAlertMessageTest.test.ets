@@ -29,7 +29,7 @@ import { common } from '@kit.AbilityKit';
 import AppStorageMgr from '../../../../../main/ets/common/AppStorageMgr';
 import { GetAlertMessage } from '../../../../../main/ets/common/AlertMessage/GetAlertMessage';
 import UIContextUtil from '../../../../../main/ets/common/UIContextUtil';
-import Constants from '../../../../../main/ets/common/constant';
+import Constants from '../../../../../main/ets/common/constants/constant';
 
 export default function GetAlertMessageTest() {
   describe('GetAlertMessageTest', () => {

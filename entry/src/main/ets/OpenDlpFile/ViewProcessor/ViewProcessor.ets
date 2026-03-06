@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-import Result from '../../common/Result';
-import { ResultMsg } from '../../common/ResultMsg';
+import Result from '../../common/base/Result';
+import { ResultMsg } from '../../common/base/ResultMsg';
 import { FileParseFactory } from '../handler/FileParseHandler';
 import OpenDlpFileData from '../data/OpenDlpFileData';
 import common from '@ohos.app.ability.common';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import DecryptContent from '../data/DecryptContent';
 import { AccountHandlerFactory } from '../handler/AccountHandler';
 import DecryptHandler from '../handler/DecryptHandler';
 import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { clearDlpInfoByError } from '../common/DataUtils/DataUtils';
 import CredConnectService from '../../rpc/CredConnectService';
 import OpeningDialogManager from '../manager/OpeningDialogManager';

@@ -14,8 +14,8 @@
  */
 
 import { CustomContentDialog } from '@ohos.arkui.advanced.Dialog';
-import { HiLog } from '../common/HiLog';
-import Constants from '../common/constant';
+import { HiLog } from '../common/base/HiLog';
+import Constants from '../common/constants/constant';
 import { emitter } from '@kit.BasicServicesKit';
 import OpeningDialogService from '../rpc/OpeningDialog/service/OpeningDialogService';
 

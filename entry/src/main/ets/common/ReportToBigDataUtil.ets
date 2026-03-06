@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { HiLog } from './HiLog';
+import { HiLog } from './base/HiLog';
 import { getDLPInfo } from './FileUtils/utils';
-import Constants from './constant';
+import Constants from './constants/constant';
 import { ObjectUtil } from './ObjectUtil';
 import hiSysEvent from '@ohos.hiSysEvent';
 

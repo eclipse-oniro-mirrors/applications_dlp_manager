@@ -16,11 +16,11 @@
 import account_osAccount from '@ohos.account.osAccount';
 import common from '@ohos.app.ability.common';
 import { BusinessError } from '@ohos.base';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
 import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
 import { DlpAlertDialog } from '../../common/components/dlp_alert_dialog';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { SystemUtils } from '../../common/systemUtils';
 import AccountManager from '../../manager/AccountManager';
 import accountManager from '@ohos.enterprise.accountManager';

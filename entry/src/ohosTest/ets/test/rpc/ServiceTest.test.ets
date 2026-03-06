@@ -23,7 +23,7 @@ import CredConnectServiceDomain from '../../../../main/ets/rpc/CredConnectServic
 import DomainAccountConvertor from '../../../../main/ets/convertor/DomainAccountConvertor';
 import CredConnectServiceFileId from '../../../../main/ets/rpc/CredConnectServiceFileId';
 import CredConnectService from '../../../../main/ets/rpc/CredConnectService';
-import Constants from '../../../../main/ets/common/constant';
+import Constants from '../../../../main/ets/common/constants/constant';
 
 export default function ServiceTest() {
   describe('ServiceTest', () => {

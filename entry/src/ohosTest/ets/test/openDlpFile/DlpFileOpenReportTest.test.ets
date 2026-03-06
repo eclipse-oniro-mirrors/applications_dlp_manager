@@ -22,7 +22,7 @@ import {
   expect,
   it
 } from '@ohos/hypium';
-import { HiLog } from '../../../../main/ets/common/HiLog';
+import { HiLog } from '../../../../main/ets/common/base/HiLog';
 import { DlpFileOpenReport } from '../../../../main/ets/OpenDlpFile/common/DlpFileOpenReport';
 import DataUtilsMock from './mock/DataUtilsMock';
 import { dlpPermission } from '@kit.DataProtectionKit';

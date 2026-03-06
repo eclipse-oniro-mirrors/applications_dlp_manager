@@ -41,18 +41,18 @@ import {
   isInvalidStr,
   getFileSizeByUri
 } from '../common/FileUtils/utils';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import {
   permissionTypeSelect,
   validDateTypeMenu,
   validDateTypeMenuItem
 } from '../component/encryptionComponents/permission_type_select';
 import { AddStaff } from '../component/encryptionComponents/AddStaff';
-import GlobalContext from '../common/GlobalContext';
+import GlobalContext from '../common/base/GlobalContext';
 import IDLDLPProperty from '../common/dlpClass';
 import { IAuthUser } from '../common/dlpClass';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';

@@ -18,9 +18,9 @@ import AccountAssociationConvertor from '../../convertor/AccountAssociationConve
 import AccountAssociationUtil from '../../common/AssocUtil/AccountAssociationUtil';
 import AppStorageMgr from '../../common/AppStorageMgr';
 import { common } from '@kit.AbilityKit';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { decodeByBase64, isInvalidStr, stringToUint8Array, uint8ArrayToString } from '../../common/FileUtils/utils';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
 import HuksProperties from '../../common/huks/HuksProperties';
 import Singleton from '../../common/Singleton';

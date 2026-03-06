@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { FileParseType } from '../../bean/data/FileParseType';
 import FileUtils from '../../common/FileUtils/FileUtils';
 import { getCurrentTime, isInvalidStr, isValidPath } from '../../common/FileUtils/utils';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import Want from '@ohos.app.ability.Want';
-import CommonUtil from '../../common/CommonUtil';
+import CommonUtil from '../../common/base/CommonUtil';
 
 const TAG: string = 'OpenDlpFileData';
 const EXPECTED_APPID: string = '5765880207854533797';

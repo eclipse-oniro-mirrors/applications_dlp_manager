@@ -32,7 +32,7 @@ import {
   DecryptStatus,
   OpenDlpFileManager
 } from '../../../../main/ets/OpenDlpFile/manager/OpenDlpFileManager';
-import Constants from '../../../../main/ets/common/constant';
+import Constants from '../../../../main/ets/common/constants/constant';
 import { StartFileManager } from '../../../../main/ets/OpenDlpFile/manager/StartFileManager';
 import { common } from '@kit.AbilityKit';
 import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';

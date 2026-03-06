@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import Constants from '../constant';
+import Constants from '../constants/constant';
 import common from '@ohos.app.ability.common';
 import { SystemUtils } from '../systemUtils';
-import { HiLog } from '../HiLog';
+import { HiLog } from '../base/HiLog';
 
 const TAG = '[DLPManager_dialog]';
 

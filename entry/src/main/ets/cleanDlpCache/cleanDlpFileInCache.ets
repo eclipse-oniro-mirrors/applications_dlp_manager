@@ -14,11 +14,11 @@
  */
 
 import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import Want from '@ohos.app.ability.Want';
 import type rpc from '@ohos.rpc'
 import DlpPermissionAbilityServiceStub from '../rpc/DlpPermissionAbilityServiceStub';
-import Constant from '../common/constant'
+import Constant from '../common/constants/constant'
 
 const TAG = 'share';
 

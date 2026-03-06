@@ -17,9 +17,9 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import { AlertDialog } from '@kit.ArkUI';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import { common } from '@kit.AbilityKit';
 
 const TAG = 'PhoneDialog';

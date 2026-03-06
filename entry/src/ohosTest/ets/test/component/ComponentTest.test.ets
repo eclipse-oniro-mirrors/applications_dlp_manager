@@ -16,8 +16,8 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
 import { AccountTips, AccountTipsConfig } from '../../../../main/ets/component/AccountTipsConfig';
 import EncryptProtectionHelper from '../../../../main/ets/component/helper/EncryptProtectionHelper';
-import { HiLog } from '../../../../main/ets/common/HiLog';
-import Constants from '../../../../main/ets/common/constant';
+import { HiLog } from '../../../../main/ets/common/base/HiLog';
+import Constants from '../../../../main/ets/common/constants/constant';
 import EncryptProtectionShowCodeEnum from '../../../../main/ets/common/enum/EncryptProtectionShowCodeEnum';
 
 const TAG: string = 'ComponentTest';

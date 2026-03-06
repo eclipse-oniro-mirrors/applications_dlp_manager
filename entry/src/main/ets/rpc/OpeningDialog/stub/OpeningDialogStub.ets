@@ -14,8 +14,8 @@
  */
 
 import rpc from '@ohos.rpc';
-import { HiLog } from '../../../common/HiLog';
-import Constants from '../../../common/constant';
+import { HiLog } from '../../../common/base/HiLog';
+import Constants from '../../../common/constants/constant';
 import { emitter } from '@kit.BasicServicesKit';
 import OpeningDialogService from '../service/OpeningDialogService';
 
