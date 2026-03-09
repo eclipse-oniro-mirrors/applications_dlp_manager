@@ -34,7 +34,8 @@ import {
   directionStatus,
   getTime,
   isValidPath,
-  sendDlpManagerFileConfiguration
+  sendDlpManagerFileConfiguration,
+  removeDirectionStatus
 } from '../common/FileUtils/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/GlobalContext';
@@ -331,10 +332,18 @@ struct changeEncryption {
     }
   }
 
-  async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
+  updatePermissionDict() {
     this.permissionDict.forEach(async (item, index) => {
-      this.permissionDict[index].value = $r(getContext(this).resourceManager.getStringSync(item.value!.id))
+      try {
+        this.permissionDict[index].value = $r(getContext(this).resourceManager.getStringSync(item.value!.id))
+      } catch (error) {
+        HiLog.error(TAG, 'resourceManager fail to get stringSync');
+      }
     });
+  }
+
+  async showData(defaultDlpProperty: dlpPermission.DLPProperty) {
+    this.updatePermissionDict();
     let readOnlyData = (defaultDlpProperty.authUserList?.filter((item: dlpPermission.AuthUser) => {
       return item.dlpFileAccess === 1;
     })) ?? [];
@@ -467,6 +476,10 @@ struct changeEncryption {
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
+  }
+
+  async aboutToDisappear() {
+    removeDirectionStatus();
   }
 
   build() {

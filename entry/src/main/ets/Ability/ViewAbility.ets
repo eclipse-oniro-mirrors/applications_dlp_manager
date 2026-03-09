@@ -49,9 +49,9 @@ export default class ViewAbility extends ServiceExtensionAbility {
     HiLog.info(TAG, `enter onRequest startId: ${startId}`);
     AppStorage.setOrCreate('viewContext', this.context);
     let callerBundleName: string =
-      FileUtils.getParamOrDefault(want.parameters, Constants.PARAMS_CALLER_BUNDLE_NAME, '');
+      FileUtils.getParamOrDefault(want?.parameters ?? undefined, Constants.PARAMS_CALLER_BUNDLE_NAME, '');
     if (callerBundleName === Constants.SHARE_BUNDLE) {
-      const startRet = await StartFileManager.startFileManager(want.uri);
+      const startRet = await StartFileManager.startFileManager(want?.uri ?? undefined);
       if (startRet.errcode === Constants.ERR_CODE_SUCCESS) {
         HiLog.error(TAG, 'ViewAbility start fileManager success');
         return;
