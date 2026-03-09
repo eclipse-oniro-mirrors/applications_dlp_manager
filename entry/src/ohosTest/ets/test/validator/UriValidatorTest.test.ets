@@ -14,9 +14,9 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium'
-import Constants from '../../../../main/ets/common/constant';
+import Constants from '../../../../main/ets/common/constants/constant';
 import { EncryptSharingShowCodeEnum } from '../../../../main/ets/common/enum/EncryptSharingShowCodeEnum';
-import { HiLog } from '../../../../main/ets/common/HiLog';
+import { HiLog } from '../../../../main/ets/common/base/HiLog';
 import UriValidator from '../../../../main/ets/validator/UriValidator';
 
 const TAG: string = 'UriValidTest';

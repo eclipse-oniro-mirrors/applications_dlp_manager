@@ -15,11 +15,11 @@
 
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
-import Constants from '../constant';
+import Constants from '../constants/constant';
 import CounterLock from '../CounterLock';
-import GlobalContext from '../GlobalContext';
+import GlobalContext from '../base/GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
-import { HiLog } from '../HiLog';
+import { HiLog } from '../base/HiLog';
 import TerminateView from '../../OpenDlpFile/TerminateView/TerminateView';
 import { UIContext } from '@kit.ArkUI';
 import UIContextUtil from '../UIContextUtil';

@@ -14,11 +14,11 @@
  */
 
 import { common } from '@kit.AbilityKit';
-import Constants from '../../common/constant';
-import { HiLog } from '../../common/HiLog';
+import Constants from '../../common/constants/constant';
+import { HiLog } from '../../common/base/HiLog';
 import { isValidPath } from '../../common/FileUtils/utils';
-import Result from '../../common/Result';
-import { ResultMsg } from '../../common/ResultMsg';
+import Result from '../../common/base/Result';
+import { ResultMsg } from '../../common/base/ResultMsg';
 
 const TAG: string = 'StartFileManager';
 

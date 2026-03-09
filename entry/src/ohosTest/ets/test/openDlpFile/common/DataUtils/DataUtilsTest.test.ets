@@ -27,8 +27,8 @@ import {
 } from '@ohos/hypium'
 import AppStorageMgr from '../../../../../../main/ets/common/AppStorageMgr';
 import common from '@ohos.app.ability.common';
-import Constants from '../../../../../../main/ets/common/constant';
-import { HiLog } from '../../../../../../main/ets/common/HiLog';
+import Constants from '../../../../../../main/ets/common/constants/constant';
+import { HiLog } from '../../../../../../main/ets/common/base/HiLog';
 import {
   clearDlpInfoBatch,
   clearDlpInfoByError,
@@ -38,7 +38,7 @@ import {
 import DataUtilsMock from '../../mock/DataUtilsMock';
 import DecryptContent from '../../../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import { OpenDlpFileManager } from '../../../../../../main/ets/OpenDlpFile/manager/OpenDlpFileManager';
-import Result from '../../../../../../main/ets/common/Result';
+import Result from '../../../../../../main/ets/common/base/Result';
 
 const TAG: string = 'DataUtilsTest';
 

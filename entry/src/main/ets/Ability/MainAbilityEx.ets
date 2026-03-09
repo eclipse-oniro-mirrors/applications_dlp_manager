@@ -21,7 +21,7 @@ import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import { Configuration } from '@ohos.app.ability.Configuration';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import {
   getAuthPerm,
   checkDomainAccountInfo,
@@ -36,15 +36,15 @@ import {
   getAccountTypeAndRealFileType,
   getAccountNameFromErrMsg
 } from '../common/FileUtils/utils';
-import GlobalContext from '../common/GlobalContext';
+import GlobalContext from '../common/base/GlobalContext';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import FileUtils from '../common/FileUtils/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import IdDlpRpcServiceProxy from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import common from '@ohos.app.ability.common';
 import FileUtil from '../common/external/FileUtil';
-import CommonUtil from '../common/CommonUtil';
+import CommonUtil from '../common/base/CommonUtil';
 
 const TAG = 'MainEx';
 

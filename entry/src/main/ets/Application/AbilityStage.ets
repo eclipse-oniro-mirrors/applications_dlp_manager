@@ -16,8 +16,8 @@
 import AbilityStage from '@ohos.app.ability.AbilityStage'
 import AppStorageConstant from '../common/AppStorageConstant';
 import AppStorageMgr from '../common/AppStorageMgr';
-import Constants from '../common/constant';
-import { HiLog } from '../common/HiLog';
+import Constants from '../common/constants/constant';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG: string = 'MyAbilityStage';
 

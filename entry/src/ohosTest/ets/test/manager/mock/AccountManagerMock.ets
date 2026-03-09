@@ -15,8 +15,8 @@
 
 import DomainAccountInfo from '../../../../../main/ets/bean/data/DomainAccountInfo';
 import DomainAccountResponse from '../../../../../main/ets/bean/response/DomainAccountResponse';
-import Constants from '../../../../../main/ets/common/constant';
-import { HiLog } from '../../../../../main/ets/common/HiLog';
+import Constants from '../../../../../main/ets/common/constants/constant';
+import { HiLog } from '../../../../../main/ets/common/base/HiLog';
 
 const TAG: string = 'AccountMgrMock';
 

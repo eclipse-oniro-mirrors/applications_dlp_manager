@@ -15,7 +15,7 @@
 
 import { common } from '@kit.AbilityKit';
 import CounterLock from './CounterLock';
-import { HiLog } from './HiLog';
+import { HiLog } from './base/HiLog';
 import Singleton from './Singleton';
 import { UIContext } from '@kit.ArkUI';
 

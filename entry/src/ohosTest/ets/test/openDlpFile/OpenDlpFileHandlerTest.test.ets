@@ -26,7 +26,7 @@ import {
   when
 } from '@ohos/hypium';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
-import Constants from '../../../../main/ets/common/constant';
+import Constants from '../../../../main/ets/common/constants/constant';
 import DecryptHandler from '../../../../main/ets/OpenDlpFile/handler/DecryptHandler';
 import ErrorHandler from '../../../../main/ets/OpenDlpFile/handler/ErrorHandler';
 import FileIdHandler from '../../../../main/ets/OpenDlpFile/handler/FileIdHandler';
@@ -38,7 +38,7 @@ import {
   DecryptStatus,
   OpenDlpFileManager
 } from '../../../../main/ets/OpenDlpFile/manager/OpenDlpFileManager';
-import { ResultMsg } from '../../../../main/ets/common/ResultMsg';
+import { ResultMsg } from '../../../../main/ets/common/base/ResultMsg';
 import { AccountHandlerFactory } from '../../../../main/ets/OpenDlpFile/handler/AccountHandler';
 import StartSandboxHandler from '../../../../main/ets/OpenDlpFile/handler/StartSandboxHandler';
 import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';

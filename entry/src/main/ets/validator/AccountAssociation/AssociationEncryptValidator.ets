@@ -14,9 +14,9 @@
  */
 
 import AccountAssociation from '../../bean/data/AccountAssociation';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { encodeByBase64, generateRandom, isInvalidStr } from '../../common/FileUtils/utils';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
 import HuksProperties from '../../common/huks/HuksProperties';
 import Singleton from '../../common/Singleton';

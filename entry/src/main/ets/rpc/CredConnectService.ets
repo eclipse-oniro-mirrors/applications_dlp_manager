@@ -16,8 +16,8 @@
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import CredCallbackStub from './CredCallbackStub';
-import Constants from '../common/constant';
-import { HiLog } from '../common/HiLog';
+import Constants from '../common/constants/constant';
+import { HiLog } from '../common/base/HiLog';
 import { rpc } from '@kit.IPCKit';
 
 const TAG = 'CredConnectService';

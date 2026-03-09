@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../common/HiLog';
-import Result from '../../common/Result';
-import { ResultMsg } from '../../common/ResultMsg';
+import { HiLog } from '../../common/base/HiLog';
+import Result from '../../common/base/Result';
+import { ResultMsg } from '../../common/base/ResultMsg';
 import DecryptContent from '../data/DecryptContent';
 import { ArkTSUtils, LinkedList } from '@kit.ArkTS';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import FileUtils from '../../common/FileUtils/FileUtils';
 
 const TAG: string = 'OpenDlpFileManager';

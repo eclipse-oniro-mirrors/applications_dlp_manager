@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { EncryptSharingShowCodeEnum } from '../../common/enum/EncryptSharingShowCodeEnum';
 
 export default class EncryptSharingHelper {

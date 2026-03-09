@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-import Constants from '../../common/constant';
-import { ResultMsg } from '../../common/ResultMsg';
-import Result from '../../common/Result';
+import Constants from '../../common/constants/constant';
+import { ResultMsg } from '../../common/base/ResultMsg';
+import Result from '../../common/base/Result';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { BusinessError } from '@ohos.base';
 import { ErrorHandlerFactory } from '../manager/ErrorManager';
 import TerminateView from '../TerminateView/TerminateView';

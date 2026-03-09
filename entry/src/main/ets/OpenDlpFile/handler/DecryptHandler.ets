@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import Result from '../../common/Result'
-import { ResultMsg } from '../../common/ResultMsg'
-import Constants from '../../common/constant';
+import Result from '../../common/base/Result'
+import { ResultMsg } from '../../common/base/ResultMsg'
+import Constants from '../../common/constants/constant';
 import {
   getFileFd,
   getAppIdWithUserId,
@@ -24,7 +24,7 @@ import {
   getAccountNameFromErrMsg,
   isValidPath
 } from '../../common/FileUtils/utils';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import DecryptContent from '../data/DecryptContent';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
@@ -37,9 +37,9 @@ import { closeDlpFile } from '../common/DataUtils/DataUtils';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';
 import { ObjectUtil } from '../../common/ObjectUtil';
-import GlobalContext from '../../common/GlobalContext';
+import GlobalContext from '../../common/base/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
-import CommonUtil from '../../common/CommonUtil';
+import CommonUtil from '../../common/base/CommonUtil';
 import FileIdHandler from './FileIdHandler';
 import FileUtils from '../../common/FileUtils/FileUtils';
 

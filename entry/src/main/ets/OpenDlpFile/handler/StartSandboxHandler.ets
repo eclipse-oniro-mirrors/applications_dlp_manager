@@ -15,11 +15,11 @@
 
 import DecryptContent from '../data/DecryptContent';
 import { common, wantConstant } from '@kit.AbilityKit';
-import Constants from '../../common/constant';
-import { ResultMsg } from '../../common/ResultMsg';
-import Result from '../../common/Result';
+import Constants from '../../common/constants/constant';
+import { ResultMsg } from '../../common/base/ResultMsg';
+import Result from '../../common/base/Result';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import { FileParseType } from '../../bean/data/FileParseType';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';

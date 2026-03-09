@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import Constants from './constant';
+import Constants from '../constants/constant';
 import Result from './Result';
 
 export class ResultMsg {

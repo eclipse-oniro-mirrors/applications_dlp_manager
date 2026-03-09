@@ -24,7 +24,7 @@ import { BusinessError } from '@ohos.base';
 import osAccount from '@ohos.account.osAccount';
 import common from '@ohos.app.ability.common';
 import { staffItem } from '../component/encryptionComponents/staff';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import {
   AuthAccount,
   checkDomainAccountInfo,
@@ -37,15 +37,15 @@ import {
   sendDlpManagerFileConfiguration
 } from '../common/FileUtils/utils';
 import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
-import GlobalContext from '../common/GlobalContext';
+import GlobalContext from '../common/base/GlobalContext';
 import { AccountTipsConfig } from '../component/AccountTipsConfig';
 import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import { SystemUtils } from '../common/systemUtils';
 import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import AccountManager from '../manager/AccountManager';
-import CommonUtil from '../common/CommonUtil';
+import CommonUtil from '../common/base/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import { promptAction } from '@kit.ArkUI';
 import FileUtil from '../common/external/FileUtil';

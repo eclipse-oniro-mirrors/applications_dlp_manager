@@ -19,7 +19,7 @@ import resourceManager from '@ohos.resourceManager';
 import util from '@ohos.util';
 import { BusinessError } from '@ohos.base';
 import I18n from '@ohos.i18n';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'ATC';
 const SYS_LANGUAGE: string = 'zh-Hans';

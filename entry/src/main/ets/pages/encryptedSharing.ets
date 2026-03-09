@@ -15,7 +15,7 @@
 
 import AccountAssociationService from '../service/AccountAssociationService';
 import { BusinessError } from '@ohos.base';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import { common, wantConstant } from '@kit.AbilityKit';
 import { contact } from '@kit.ContactsKit';
 import CredConnectService from '../rpc/CredConnectService';
@@ -38,7 +38,7 @@ import {
   sendDlpManagerAccountLogin,
   showToast
 } from '../common/FileUtils/utils';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import { LengthMetrics } from '@ohos.arkui.node';
 import { SystemUtils } from '../common/systemUtils';
 import { systemDateTime } from '@kit.BasicServicesKit';

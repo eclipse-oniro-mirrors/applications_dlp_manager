@@ -15,17 +15,17 @@
 
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { CustomContentDialog, ButtonOptions } from '@ohos.arkui.advanced.Dialog';
-import GlobalContext from '../common/GlobalContext';
+import GlobalContext from '../common/base/GlobalContext';
 import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import dlpPermission from '@ohos.dlpPermission';
 import { sendDlpManagerAccountLogin, checkNetworkStatus } from '../common/FileUtils/utils';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'Alert';
 let abilityResult: ability.AbilityResult = {

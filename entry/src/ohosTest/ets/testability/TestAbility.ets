@@ -17,7 +17,7 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import AbilityDelegatorRegistry from '@ohos.app.ability.abilityDelegatorRegistry';
 import AppStorageConstant from '../../../main/ets/common/AppStorageConstant';
 import AppStorageMgr from '../../../main/ets/common/AppStorageMgr';
-import { HiLog } from '../../../main/ets/common/HiLog';
+import { HiLog } from '../../../main/ets/common/base/HiLog';
 import { Hypium } from '@ohos/hypium';
 import testsuite from '../test/List.test';
 import UIAbility from '@ohos.app.ability.UIAbility';

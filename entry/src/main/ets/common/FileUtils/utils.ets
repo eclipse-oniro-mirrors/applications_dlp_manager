@@ -19,7 +19,7 @@ import bundleManager from '@ohos.bundle.bundleManager';
 import { BusinessError, Callback } from '@ohos.base'
 import common from '@ohos.app.ability.common';
 import connection from '@ohos.net.connection';
-import Constants from '../constant';
+import Constants from '../constants/constant';
 import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
@@ -27,16 +27,16 @@ import fileUri from '@ohos.file.fileuri';
 import FileUtil from '../external/FileUtil';
 import FileUtils from './FileUtils';
 import fs from '@ohos.file.fs';
-import GlobalContext from '../GlobalContext';
-import { HiLog } from '../HiLog';
+import GlobalContext from '../base/GlobalContext';
+import { HiLog } from '../base/HiLog';
 import hiSysEvent from '@ohos.hiSysEvent';
 import { promptAction, UIContext } from '@kit.ArkUI';
 import { systemDateTime, systemParameterEnhance } from '@kit.BasicServicesKit';
 import util from '@ohos.util';
 import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
-import Result from '../Result';
-import { ResultMsg } from '../ResultMsg';
+import Result from '../base/Result';
+import { ResultMsg } from '../base/ResultMsg';
 
 const TAG = 'Utils';
 

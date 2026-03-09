@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../../common/HiLog';
+import { HiLog } from '../../../common/base/HiLog';
 import { DecryptState, OpenDlpFileManager } from '../../manager/OpenDlpFileManager';
 import DecryptContent from '../../data/DecryptContent';
-import Constants from '../../../common/constant';
+import Constants from '../../../common/constants/constant';
 import FileUtil from '../../../common/external/FileUtil';
 import { common } from '@kit.AbilityKit';
 import TerminateView from '../../TerminateView/TerminateView';

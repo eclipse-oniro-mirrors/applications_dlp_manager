@@ -28,9 +28,9 @@ import {
 import AccountAssociationManager from '../../../../main/ets/manager/AccountAssociationManager';
 import AccountAssociationService from '../../../../main/ets/service/AccountAssociationService';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
-import Constants from '../../../../main/ets/common/constant';
+import Constants from '../../../../main/ets/common/constants/constant';
 import FileUtil from '../../../../main/ets/common/external/FileUtil';
-import { HiLog } from '../../../../main/ets/common/HiLog';
+import { HiLog } from '../../../../main/ets/common/base/HiLog';
 import { isInvalidStr } from '../../../../main/ets/common/FileUtils/utils';
 
 const TAG: string = 'AssocSerTest';

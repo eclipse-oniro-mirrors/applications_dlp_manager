@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../../common/HiLog';
+import { HiLog } from '../../../common/base/HiLog';
 import rpc from '@ohos.rpc';
-import Constants from '../../../common/constant';
+import Constants from '../../../common/constants/constant';
 import ViewAbilityService from '../service/ViewAbilityService';
 import OpeningDialogManager from '../../../OpenDlpFile/manager/OpeningDialogManager';
 import TerminateView from '../../../OpenDlpFile/TerminateView/TerminateView';

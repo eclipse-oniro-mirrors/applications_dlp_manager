@@ -14,8 +14,8 @@
  */
 
 import fs from '@ohos.file.fs';
-import CommonUtil from '../CommonUtil';
-import { HiLog } from '../HiLog';
+import CommonUtil from '../base/CommonUtil';
+import { HiLog } from '../base/HiLog';
 
 const TAG = 'FileUtil';
 

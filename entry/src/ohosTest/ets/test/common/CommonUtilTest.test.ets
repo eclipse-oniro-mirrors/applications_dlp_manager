@@ -17,10 +17,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import AppStorageConstant from '../../../../main/ets/common/AppStorageConstant';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import CommonEventManager from '../../../../main/ets/common/CommonEventManager';
-import GlobalContext from '../../../../main/ets/common/GlobalContext';
+import GlobalContext from '../../../../main/ets/common/base/GlobalContext';
 import CounterLock from '../../../../main/ets/common/CounterLock';
-import { HiLog } from '../../../../main/ets/common/HiLog';
-import CommonUtil from '../../../../main/ets/common/CommonUtil';
+import { HiLog } from '../../../../main/ets/common/base/HiLog';
+import CommonUtil from '../../../../main/ets/common/base/CommonUtil';
 import FileUtils from '../../../../main/ets/common/FileUtils/FileUtils';
 
 export default function CommonUtilTest() {

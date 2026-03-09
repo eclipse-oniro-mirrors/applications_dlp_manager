@@ -20,9 +20,9 @@ import rpc from '@ohos.rpc';
 import DomainAccountRequest from '../bean/request/DomainAccountRequest';
 import DomainAccountResponse from '../bean/response/DomainAccountResponse';
 import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import AppStorageConstant from '../common/AppStorageConstant';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'CredConnectServiceDomain';
 

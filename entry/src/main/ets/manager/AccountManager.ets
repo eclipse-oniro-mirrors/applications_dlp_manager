@@ -17,13 +17,13 @@ import DomainAccountInfo from '../bean/data/DomainAccountInfo';
 import DomainAccountResponse from '../bean/response/DomainAccountResponse';
 import CredConnectServiceDomain from '../rpc/CredConnectServiceDomain';
 import AppStorageConstant from '../common/AppStorageConstant';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import { getOsAccountInfo } from '../common/FileUtils/utils';
 import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import account_osAccount from '@ohos.account.osAccount';
-import CommonUtil from '../common/CommonUtil';
+import CommonUtil from '../common/base/CommonUtil';
 import { common } from '@kit.AbilityKit';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 
 const TAG = 'AccountManager';
 
