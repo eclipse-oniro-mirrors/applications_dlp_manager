@@ -14,7 +14,7 @@
  */
 
 import { huks } from '@kit.UniversalKeystoreKit';
-import Constants from '../constant';
+import Constants from '../constants/constant';
 
 export default class HuksProperties {
   public static getGenerateProperties(): huks.HuksParam[] {

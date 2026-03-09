@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-import Result from '../../common/Result'
-import { ResultMsg } from '../../common/ResultMsg'
-import Constants from '../../common/constant';
+import Result from '../../common/base/Result'
+import { ResultMsg } from '../../common/base/ResultMsg'
+import Constants from '../../common/constants/constant';
 import fs, { ReadOptions } from '@ohos.file.fs';
 import { checkValidAccountType, getFileFd } from '../../common/FileUtils/utils';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import { zlib } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';
 import FileUtil from '../../common/external/FileUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import FileMetaInfo from '../../bean/data/FileMetaInfo';
-import GlobalContext from '../../common/GlobalContext';
+import GlobalContext from '../../common/base/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
 import { FileParseInfo } from '../../bean/data/FileParseInfo';
 import OpenDlpFileData from '../data/OpenDlpFileData';

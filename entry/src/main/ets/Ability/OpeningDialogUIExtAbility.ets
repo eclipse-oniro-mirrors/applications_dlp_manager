@@ -15,8 +15,8 @@
 
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
-import { HiLog } from '../common/HiLog';
-import Constants from '../common/constant';
+import { HiLog } from '../common/base/HiLog';
+import Constants from '../common/constants/constant';
 import Want from '@ohos.app.ability.Want';
 import OpeningDialogService from '../rpc/OpeningDialog/service/OpeningDialogService';
 import CommonEventManager from '../common/CommonEventManager';

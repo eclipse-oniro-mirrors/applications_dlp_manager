@@ -15,10 +15,10 @@
 
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import UIExtensionAbility from '@ohos.app.ability.UIExtensionAbility';
-import { HiLog } from '../common/HiLog';
-import Constants from '../common/constant';
+import { HiLog } from '../common/base/HiLog';
+import Constants from '../common/constants/constant';
 import Want from '@ohos.app.ability.Want';
-import GlobalContext from '../common/GlobalContext';
+import GlobalContext from '../common/base/GlobalContext';
 
 const TAG = 'PhoneDialogUIExtAbility';
 

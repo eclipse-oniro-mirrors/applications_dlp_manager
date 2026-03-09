@@ -14,7 +14,7 @@
  */
 
 import { FileParseType } from '../../../../../../main/ets/bean/data/FileParseType';
-import { HiLog } from '../../../../../../main/ets/common/HiLog';
+import { HiLog } from '../../../../../../main/ets/common/base/HiLog';
 import OpenDlpFileData from '../../../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 import Want from '@ohos.app.ability.Want';
 

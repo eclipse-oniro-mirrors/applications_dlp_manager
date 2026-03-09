@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { AuthAccount, PermissionType } from '../../common/FileUtils/utils';
 
 const TAG = 'Select';

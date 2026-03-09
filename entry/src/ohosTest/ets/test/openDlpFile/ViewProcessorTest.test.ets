@@ -28,7 +28,7 @@ import {
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import { BusinessError } from '@ohos.base';
 import { common } from '@kit.AbilityKit';
-import Constants from '../../../../main/ets/common/constant';
+import Constants from '../../../../main/ets/common/constants/constant';
 import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import FileMetaInfo from '../../../../main/ets/bean/data/FileMetaInfo';
 import { FileParseFactory } from '../../../../main/ets/OpenDlpFile/handler/FileParseHandler';
@@ -37,7 +37,7 @@ import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileDa
 import OpenDlpFileDataMock from './data/mock/OpenDlpFileDataMock';
 import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';
 import { OpenDlpFileProcessor } from '../../../../main/ets/OpenDlpFile/ViewProcessor/ViewProcessor';
-import Result from '../../../../main/ets/common/Result';
+import Result from '../../../../main/ets/common/base/Result';
 
 abstract class FileParseBase {
   protected metaInfo?: FileMetaInfo;

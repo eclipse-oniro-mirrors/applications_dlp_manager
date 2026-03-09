@@ -17,7 +17,7 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import router from '@ohos.router';
 import common from '@ohos.app.ability.common';
 import { staffItem } from '../component/encryptionComponents/staff';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import ability from '@ohos.ability.ability';
 import {
   AuthAccount,
@@ -28,8 +28,8 @@ import {
   getTime,
   removeDirectionStatus,
 } from '../common/FileUtils/utils';
-import GlobalContext from '../common/GlobalContext';
-import { HiLog } from '../common/HiLog';
+import GlobalContext from '../common/base/GlobalContext';
+import { HiLog } from '../common/base/HiLog';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 

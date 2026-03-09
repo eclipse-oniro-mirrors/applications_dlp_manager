@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import Constants from '../../../common/constant';
-import { HiLog } from '../../../common/HiLog';
+import Constants from '../../../common/constants/constant';
+import { HiLog } from '../../../common/base/HiLog';
 import { rpc } from '@kit.IPCKit';
 import { emitter } from '@kit.BasicServicesKit';
 

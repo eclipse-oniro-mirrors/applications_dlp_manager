@@ -19,7 +19,7 @@ import {
 import DlpPermissionAbilityServiceStub from '../../../../main/ets/rpc/DlpPermissionAbilityServiceStub';
 import { rpc } from '@kit.IPCKit';
 import ViewAbilityStub from '../../../../main/ets/rpc/ViewAbility/stub/ViewAbilityStub';
-import Constants from '../../../../main/ets/common/constant';
+import Constants from '../../../../main/ets/common/constants/constant';
 import OpeningDialogStub from '../../../../main/ets/rpc/OpeningDialog/stub/OpeningDialogStub';
 import ClearDlpCacheStub from '../../../../main/ets/rpc/ClearDlpCache/ClearDlpCacheStub';
 import CredCallbackStub from '../../../../main/ets/rpc/CredCallbackStub';

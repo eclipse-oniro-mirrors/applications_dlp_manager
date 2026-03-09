@@ -19,7 +19,7 @@ import DecryptContent from '../data/DecryptContent';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { DlpFileOpenReportUtils } from './DlpFileOpenReportUtils';
 import { getCostTime } from '../../common/FileUtils/utils';
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import {
   SecurityEventIdConstants,
   SecurityEventNameConstants,

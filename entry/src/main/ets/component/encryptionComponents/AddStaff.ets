@@ -14,10 +14,10 @@
  */
 
 import { staffItem } from './staff';
-import Constants from '../../common/constant';
+import Constants from '../../common/constants/constant';
 import { AccountTipsConfig } from '../AccountTipsConfig';
-import { HiLog } from '../../common/HiLog';
-import CommonUtil from '../../common/CommonUtil';
+import { HiLog } from '../../common/base/HiLog';
+import CommonUtil from '../../common/base/CommonUtil';
 import AccountManager from '../../manager/AccountManager';
 import DomainAccountResponse from '../../bean/response/DomainAccountResponse';
 import AppStorageConstant from '../../common/AppStorageConstant';

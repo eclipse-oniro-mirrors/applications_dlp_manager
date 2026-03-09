@@ -14,7 +14,7 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
-import Constants from '../../../../../main/ets/common/constant';
+import Constants from '../../../../../main/ets/common/constants/constant';
 import DataUtilsMock from '../mock/DataUtilsMock';
 import DecryptContent from '../../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import { dlpPermission } from '@kit.DataProtectionKit';

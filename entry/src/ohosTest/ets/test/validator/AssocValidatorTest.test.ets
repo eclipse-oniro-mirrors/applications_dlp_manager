@@ -30,7 +30,7 @@ import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import AssociationDecryptValidator from '../../../../main/ets/validator/AccountAssociation/AssociationDecryptValidator';
 import AssociationEncryptValidator from '../../../../main/ets/validator/AccountAssociation/AssociationEncryptValidator';
 import { common } from '@kit.AbilityKit';
-import { HiLog } from '../../../../main/ets/common/HiLog';
+import { HiLog } from '../../../../main/ets/common/base/HiLog';
 import HuksCipherUtils from '../../../../main/ets/common/huks/HuksCipherUtil';
 import StorageUtil from '../../../../main/ets/common/StorageUtil';
 

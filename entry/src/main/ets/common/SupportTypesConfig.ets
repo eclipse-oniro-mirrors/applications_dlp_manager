@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { HiLog } from './HiLog';
+import { HiLog } from './base/HiLog';
 import { isInvalidStr } from './FileUtils/utils';
 
 const TAG: string = 'SupportedTypes';

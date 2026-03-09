@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../common/HiLog';
+import { HiLog } from '../../common/base/HiLog';
 import DecryptContent from '../data/DecryptContent';
-import CommonUtil from '../../common/CommonUtil';
+import CommonUtil from '../../common/base/CommonUtil';
 import CredConnectServiceFileId from '../../rpc/CredConnectServiceFileId';
 import FileUtils from '../../common/FileUtils/FileUtils';
 

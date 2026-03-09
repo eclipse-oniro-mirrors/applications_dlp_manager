@@ -14,7 +14,7 @@
  */
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect, TestType } from '@ohos/hypium';
-import { HiLog } from '../../../../../main/ets/common/HiLog';
+import { HiLog } from '../../../../../main/ets/common/base/HiLog';
 import {
   anonymizeUid,
   AuthAccount,
@@ -60,7 +60,7 @@ import osAccount from '@ohos.account.osAccount';
 import { distributedAccount } from '@kit.BasicServicesKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import Want from '@ohos.app.ability.Want';
-import Constants from '../../../../../main/ets/common/constant';
+import Constants from '../../../../../main/ets/common/constants/constant';
 import AppStorageMgr from '../../../../../main/ets/common/AppStorageMgr';
 import { common } from '@kit.AbilityKit';
 import { UIContext } from '@kit.ArkUI';

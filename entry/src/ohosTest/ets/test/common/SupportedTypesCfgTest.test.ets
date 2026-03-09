@@ -15,7 +15,7 @@
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
 import { FileClassification, SupportTypesConfig } from '../../../../main/ets/common/SupportTypesConfig';
-import { HiLog } from '../../../../main/ets/common/HiLog';
+import { HiLog } from '../../../../main/ets/common/base/HiLog';
 
 const TAG: string = 'SptTypesCfgTest';
 

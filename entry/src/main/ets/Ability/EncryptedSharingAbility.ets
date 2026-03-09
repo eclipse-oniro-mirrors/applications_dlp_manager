@@ -15,13 +15,13 @@
 
 import ActionExtensionAbility from '@ohos.app.ability.ActionExtensionAbility';
 import { Configuration } from '@ohos.app.ability.Configuration';
-import Constants from '../common/constant';
+import Constants from '../common/constants/constant';
 import emitter from '@ohos.events.emitter';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
 import { EncryptSharingShowCodeEnum, EncryptSharingTerminateCode } from '../common/enum/EncryptSharingShowCodeEnum';
 import { EnvironmentCallback } from '@kit.AbilityKit';
 import { getDLPInfo, logErrorShowToast } from '../common/FileUtils/utils';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import UriValidator from '../validator/UriValidator';
 import Want from '@ohos.app.ability.Want';

@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { HiLog } from './HiLog';
+import { HiLog } from './base/HiLog';
 import commonEventManager from '@ohos.commonEventManager';
 import { BusinessError, emitter } from '@kit.BasicServicesKit';
-import Constants from './constant';
+import Constants from './constants/constant';
 
 const TAG = 'CommonEventManager';
 

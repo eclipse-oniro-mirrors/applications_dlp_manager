@@ -15,11 +15,11 @@
 
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import ability from '@ohos.ability.ability';
-import Constants from '../common/constant';
-import GlobalContext from '../common/GlobalContext';
+import Constants from '../common/constants/constant';
+import GlobalContext from '../common/base/GlobalContext';
 import { directionStatus, removeDirectionStatus } from '../common/FileUtils/utils';
 import common from '@ohos.app.ability.common';
-import { HiLog } from '../common/HiLog';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'PermStat';
 

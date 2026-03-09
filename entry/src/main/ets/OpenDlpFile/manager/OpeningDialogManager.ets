@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import Constants from '../../common/constant';
-import { HiLog } from '../../common/HiLog';
+import Constants from '../../common/constants/constant';
+import { HiLog } from '../../common/base/HiLog';
 import { common, Want } from '@kit.AbilityKit';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
 import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';

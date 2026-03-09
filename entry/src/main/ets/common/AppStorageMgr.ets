@@ -15,7 +15,7 @@
 
 import AppStorageConstant from './AppStorageConstant';
 import { common } from '@kit.AbilityKit';
-import { HiLog } from './HiLog';
+import { HiLog } from './base/HiLog';
 
 const TAG: string = 'AppStorageMgr';
 
