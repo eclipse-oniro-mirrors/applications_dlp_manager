@@ -36,7 +36,7 @@ import { commonEventManager } from '@kit.BasicServicesKit';
 import { uriPermissionManager, wantConstant } from '@kit.AbilityKit';
 
 const TAG: string = 'OpenDlpFileProcessor';
-const COMMON_ENTERPRISE_EVENT: string = 'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
+const COMMON_ENTERPRISE_EVENT: string =  'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
 const ENTERPRISE_ACCOUNT: number = 4;
 const HIPREVIEW_HIGH = 'com.huawei.hmos.hipreview';
 const HIPREVIEW_LOW = 'com.huawei.hmos.hipreviewext';
@@ -193,7 +193,7 @@ export class OpenDlpFileProcessor {
         code: 1,
         data: '',
         subscriberPermissions: ['ohos.permission.ENTERPRISE_ACCESS_DLP_FILE'],
-        parameters: { 'uri': decryptContent.openDlpFileData.uri, 'errcode': error.code, 'errMessage': error.message },
+        parameters: {'uri': decryptContent.openDlpFileData.uri, 'errcode': error.code, 'errMessage': error.message},
       };
       commonEventManager.publish(COMMON_ENTERPRISE_EVENT, options, (err: BusinessError) => {
         if (err) {
