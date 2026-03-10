@@ -232,8 +232,15 @@ function grantForHiPreview(decryptContent: DecryptContent) {
   if (decryptContent.openDlpFileData.sandboxBundleName === HIPREVIEW_HIGH &&
   decryptContent.bindAppIndex && decryptContent.bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
     const flag = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
+    if (decryptContent.linkUri.includes('*')) {
+      HiLog.error(TAG, 'linkUri name include *');
+      return;
+    }
     try {
-      uriPermissionManager.grantUriPermission(decryptContent.linkUri, flag, HIPREVIEW_LOW, decryptContent.bindAppIndex);
+      uriPermissionManager.grantUriPermission(decryptContent.linkUri, flag, HIPREVIEW_LOW, decryptContent.bindAppIndex)
+        .catch((error: BusinessError) => {
+          HiLog.wrapError(TAG, error, 'getConfigTips failed');
+        });
     } catch (err) {
       HiLog.wrapError(TAG, err, 'getConfigTips failed');
     }

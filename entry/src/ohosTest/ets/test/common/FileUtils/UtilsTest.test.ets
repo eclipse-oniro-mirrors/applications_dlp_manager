@@ -44,6 +44,7 @@ import {
   isDevelopmentMode,
   judgeIsSandBox,
   logErrorShowToast,
+  removeDirectionStatus,
   removeDuplicate,
   sendDlpFileCreateProperties,
   sendDlpFileOpenProperties,
@@ -262,6 +263,7 @@ export default function UtilsTest() {
       let callback: Callback<number> = (data: number) => {
       };
       directionStatus(callback);
+      removeDirectionStatus();
       expect(callback).not().assertNull();
     })
 

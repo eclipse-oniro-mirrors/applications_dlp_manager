@@ -110,7 +110,7 @@ export default class MainAbility extends UIExtensionAbility {
       AppStorage.setOrCreate('hiPVersionId', dlpInfoRet.result.versionCode);
     }
     GlobalContext.store('abilityWant', want);
-    GlobalContext.store('uri', want.uri ?? '');
+    GlobalContext.store('uri', want?.uri ?? '');
     direction = this.context.config.direction ?? -1;
 
     this.connectDlpFileProcessAbility(want, session);

@@ -26,6 +26,7 @@ import {
   toggleShow,
   directionStatus,
   getTime,
+  removeDirectionStatus,
 } from '../common/FileUtils/utils';
 import GlobalContext from '../common/base/GlobalContext';
 import { HiLog } from '../common/base/HiLog';
@@ -129,6 +130,10 @@ struct encryptionSuccess {
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
+  }
+
+  aboutToDisappear() {
+    removeDirectionStatus();
   }
 
   build() {

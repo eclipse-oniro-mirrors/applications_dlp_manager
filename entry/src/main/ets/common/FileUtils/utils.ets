@@ -293,6 +293,10 @@ function directionStatus(func: Callback<number>) {
   });
 }
 
+function removeDirectionStatus() {
+  emitter.off(Constants.ENCRYPTION_EMIT_DIRECTION_STATUS);
+}
+
 function getAppId(bundleName: string) {
   return new Promise<string>(async (resolve, reject) => {
     let bundleFlags: number = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_SIGNATURE_INFO;
@@ -931,6 +935,7 @@ export {
   calculate,
   toggleShow,
   directionStatus,
+  removeDirectionStatus,
   getAppId,
   getCurrentTime,
   getTime,

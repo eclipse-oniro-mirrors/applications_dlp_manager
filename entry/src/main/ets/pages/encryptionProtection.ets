@@ -39,7 +39,8 @@ import {
   sendDlpManagerFileConfiguration,
   isValidPath,
   isInvalidStr,
-  getFileSizeByUri
+  getFileSizeByUri,
+  removeDirectionStatus
 } from '../common/FileUtils/utils';
 import Constants from '../common/constants/constant';
 import {
@@ -727,6 +728,10 @@ struct DlpDialog {
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
+  }
+
+  async aboutToDisappear() {
+    removeDirectionStatus();
   }
 
   build() {

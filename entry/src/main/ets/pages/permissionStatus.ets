@@ -17,7 +17,7 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import ability from '@ohos.ability.ability';
 import Constants from '../common/constants/constant';
 import GlobalContext from '../common/base/GlobalContext';
-import { directionStatus } from '../common/FileUtils/utils';
+import { directionStatus, removeDirectionStatus } from '../common/FileUtils/utils';
 import common from '@ohos.app.ability.common';
 import { HiLog } from '../common/base/HiLog';
 
@@ -166,6 +166,10 @@ struct PermissionStatus {
     directionStatus((counter) => {
       this.directionStatus = counter;
     })
+  }
+
+  aboutToDisappear() {
+    removeDirectionStatus();
   }
 
   getTime(validity: number) {

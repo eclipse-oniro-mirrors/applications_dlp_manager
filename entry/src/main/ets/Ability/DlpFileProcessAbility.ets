@@ -372,20 +372,20 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
 export default class DlpFileProcessAbility extends ServiceExtensionAbility {
   onCreate(want: Want) {
-    HiLog.info(TAG, `onCreate, want: ${want.abilityName}`);
+    HiLog.info(TAG, `onCreate, want: ${want?.abilityName ?? 'unknown'}`);
   }
 
   onRequest(want: Want, startId: number) {
-    HiLog.info(TAG, `onRequest, want: ${want.abilityName}`);
+    HiLog.info(TAG, `onRequest, want: ${want?.abilityName ?? 'unknown'}`);
   }
 
   onConnect(want: Want) {
-    HiLog.info(TAG, `service onConnect, want: ${want.abilityName}`);
+    HiLog.info(TAG, `service onConnect, want: ${want?.abilityName ?? 'unknown'}`);
     return new DlpRpcServiceStub('dlpRpc service stub');
   }
 
   onDisconnect(want: Want): void {
-    HiLog.info(TAG, `onDisconnect, want: ${want.abilityName}`);
+    HiLog.info(TAG, `onDisconnect, want: ${want?.abilityName ?? 'unknown'}`);
   }
 
   onDestroy(): void {
