@@ -598,6 +598,11 @@ struct encryptedSharing {
     })
   }
 
+  unsubscribeLanguageChange() {
+    HiLog.info(TAG, 'unsubscribeLanguageChange');
+    emitter.off('onConfigurationUpdate');
+  }
+
   getExternalResourceString(bundle: string, module: string, resourceName: string): string {
     try {
       let ctx = this.context.createModuleContext(bundle, module);
@@ -695,6 +700,11 @@ struct encryptedSharing {
     str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'hmos_version_label');
     this.osVersion = str.length > 0 ? str : '';
     this.getContactPersonString();
+  }
+
+  aboutToDisappear(): void {
+    HiLog.info(TAG, 'Enter aboutToDisappear.');
+    this.unsubscribeLanguageChange();
   }
 
   build() {
