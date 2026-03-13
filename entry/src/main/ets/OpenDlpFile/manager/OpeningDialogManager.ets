@@ -47,7 +47,7 @@ export default class OpeningDialogManager {
   private _decryptingMap: Map<string, DecryptingState>;// 正在解密的requestId和解密过程的信息
   private _isTerminalSelf: boolean = false;
   private _isWaitingShowToast: boolean = false;
-  private _callbackTimeOut: number|null = null;
+  private _callbackTimeOut: number | null = null;
   private checkShowDialogStateEvent = async () => {
     HiLog.info(TAG, 'receive CHECK_SHOW_DIALOG_STATE');
     this.checkShowDialogState();
