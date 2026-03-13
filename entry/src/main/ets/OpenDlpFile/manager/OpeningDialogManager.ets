@@ -536,10 +536,15 @@ export default class OpeningDialogManager {
     }
   }
   private setupTimeoutToOpenDialog(requestId: string): Promise<void> {
+    // 清除之前的定时器
+    if (this._callbackTimeOut) {
+      clearTimeout(this._callbackTimeOut);
+    }
     // 调用requestModalUIExtension接口等待3秒
-    return new Promise<void>(() => {
+    return new Promise<void>((resolve) => {
       this._callbackTimeOut = setTimeout(() => {
         this.callbackTimeOut(requestId);
+        resolve();
       }, Constants.TO_OPEN_DIALOG_TIMEOUT_TIME);
     });
   }
