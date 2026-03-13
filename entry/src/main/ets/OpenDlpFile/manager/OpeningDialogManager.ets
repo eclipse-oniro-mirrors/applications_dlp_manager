@@ -515,10 +515,12 @@ export default class OpeningDialogManager {
     await this.hideDialog();
     await ViewAbilityService.getInstance().sendDisconnectMsg();
   }
+  
   private async clearTimeOut(): Promise<void> {
     clearTimeout(this._callbackTimeOut);
     this._callbackTimeOut = null;
   }
+
   private async callbackTimeOut(requestId: string): Promise<void> {
     HiLog.info(TAG, 'to Open Dialog operation timed out after 3 seconds');
     let hasCallback = this.getHasCallback();
@@ -535,6 +537,7 @@ export default class OpeningDialogManager {
       await TerminateView.terminate();
     }
   }
+
   private setupTimeoutToOpenDialog(requestId: string): Promise<void> {
     // 清除之前的定时器
     if (this._callbackTimeOut) {
