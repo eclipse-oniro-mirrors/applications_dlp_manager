@@ -47,6 +47,7 @@ export default class OpeningDialogManager {
   private _decryptingMap: Map<string, DecryptingState>;// 正在解密的requestId和解密过程的信息
   private _isTerminalSelf: boolean = false;
   private _isWaitingShowToast: boolean = false;
+  private _callbackTimeOut: number | null = null;
   private checkShowDialogStateEvent = async () => {
     HiLog.info(TAG, 'receive CHECK_SHOW_DIALOG_STATE');
     this.checkShowDialogState();
@@ -415,7 +416,7 @@ export default class OpeningDialogManager {
       HiLog.info(TAG, 'showOpeningDialogByTimeout is showing OpeningDialog');
       return;
     }
-    await this.loadOpeningDialogUIExtAbility(viewContext);
+    await this.loadOpeningDialogUIExtAbility(viewContext, requestId);
     await this.showDialog(requestId);
   }
 
@@ -481,7 +482,7 @@ export default class OpeningDialogManager {
       (parseType === FileParseType.RAW && fileSize >= Constants.DIALOG_SHOW_SIZE_RAW)) {
       HiLog.info(TAG, 'need show opening dialog');
       openDlpFileData.needShowToast = true;
-      await this.loadOpeningDialogUIExtAbility(context);
+      await this.loadOpeningDialogUIExtAbility(context, openDlpFileData.requestId);
       if (parseType === FileParseType.ZIP) {
         // 只有zip格式会提前把状态设置为解密中，因为zip格式解析时间久
         HiLog.info(TAG, 'zip type show opening dialog advance');
@@ -514,9 +515,46 @@ export default class OpeningDialogManager {
     await this.hideDialog();
     await ViewAbilityService.getInstance().sendDisconnectMsg();
   }
+  
+  private async clearTimeOut(): Promise<void> {
+    clearTimeout(this._callbackTimeOut);
+    this._callbackTimeOut = null;
+  }
+
+  private async callbackTimeOut(requestId: string): Promise<void> {
+    HiLog.info(TAG, 'to Open Dialog operation timed out after 3 seconds');
+    let hasCallback = this.getHasCallback();
+    if (!hasCallback) {
+      this.setHasCallback(true);
+      const decryptingState: DecryptingState | undefined = this._decryptingMap.get(requestId);
+      if (decryptingState) {
+        await OpenDlpFileManager.getInstance().deleteStatus(decryptingState.uri);
+      }
+      this.deleteRequestId(requestId);
+      this.setIsChargeDecrypting(false);
+      this.printAllDecryptingMap();
+      this.clearTimeOut();
+      await TerminateView.terminate();
+    }
+  }
+
+  private setupTimeoutToOpenDialog(requestId: string): Promise<void> {
+    // 清除之前的定时器
+    if (this._callbackTimeOut) {
+      clearTimeout(this._callbackTimeOut);
+    }
+    // 调用requestModalUIExtension接口等待3秒
+    return new Promise<void>((resolve) => {
+      this._callbackTimeOut = setTimeout(() => {
+        this.callbackTimeOut(requestId);
+        resolve();
+      }, Constants.TO_OPEN_DIALOG_TIMEOUT_TIME);
+    });
+  }
 
   // SEA拉起UEA
-  private async loadOpeningDialogUIExtAbility(context: common.ServiceExtensionContext): Promise<boolean> {
+  private async loadOpeningDialogUIExtAbility(context: common.ServiceExtensionContext,
+    requestId: string): Promise<boolean> {
     HiLog.info(TAG, 'begin loadOpeningDialogUIExtAbility');
     this.setHasCallback(false);
     let uiExtWant: Want = {
@@ -527,6 +565,7 @@ export default class OpeningDialogManager {
         'ability.want.params.uiExtensionType': 'sys/commonUI',
       }
     };
+    this.setupTimeoutToOpenDialog(requestId);
     try {
       await context.requestModalUIExtension(uiExtWant);
       HiLog.info(TAG, 'requestModalUIExtension success');
