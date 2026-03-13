@@ -520,7 +520,7 @@ export default class OpeningDialogManager {
     this._callbackTimeOut = null;
   }
   private async callbackTimeOut(requestId: string): Promise<void> {
-    HiLog.error(TAG, 'to Open Dialog operation timed out after 3 seconds');
+    HiLog.info(TAG, 'to Open Dialog operation timed out after 3 seconds');
     let hasCallback = this.getHasCallback();
     if (!hasCallback) {
       this.setHasCallback(true);
