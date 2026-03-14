@@ -229,15 +229,16 @@ export class OpenDlpFileProcessor {
 }
 
 function grantForHiPreview(decryptContent: DecryptContent) {
+  const bindAppIndex = decryptContent.appInfo.bindAppIndex;
   if (decryptContent.openDlpFileData.sandboxBundleName === HIPREVIEW_HIGH &&
-  decryptContent.bindAppIndex && decryptContent.bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
+  bindAppIndex && bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
     const flag = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
     if (decryptContent.linkUri.includes('*')) {
       HiLog.error(TAG, 'linkUri name include *');
       return;
     }
     try {
-      uriPermissionManager.grantUriPermission(decryptContent.linkUri, flag, HIPREVIEW_LOW, decryptContent.bindAppIndex)
+      uriPermissionManager.grantUriPermission(decryptContent.linkUri, flag, HIPREVIEW_LOW, bindAppIndex)
         .catch((error: BusinessError) => {
           HiLog.wrapError(TAG, error, 'getConfigTips failed');
         });

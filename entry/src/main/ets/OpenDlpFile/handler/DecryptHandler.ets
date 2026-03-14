@@ -118,12 +118,7 @@ export default class DecryptHandler {
 
   private getRealAppInfoRet(getAppInfoRet: Result<dlpPermission.DLPSandboxInfo>,
     decryptContent: DecryptContent): dlpPermission.DLPSandboxInfo|undefined {
-    let tmpAppInfo = getAppInfoRet.result;
-    if (tmpAppInfo && tmpAppInfo.appIndex > HIPREVIEW_SANDBOX_LOW_BOUND * HIPREVIEW_SANDBOX_LOW_BOUND) {
-      decryptContent.bindAppIndex = tmpAppInfo.appIndex % HIPREVIEW_SANDBOX_LOW_BOUND + HIPREVIEW_SANDBOX_LOW_BOUND;
-      tmpAppInfo.appIndex = Math.floor(tmpAppInfo.appIndex / HIPREVIEW_SANDBOX_LOW_BOUND);
-    }
-    return tmpAppInfo;
+    return getAppInfoRet.result;
   }
 
   private async getDecryptState(decryptContent: DecryptContent): Promise<Result<boolean>> {

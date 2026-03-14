@@ -213,14 +213,6 @@ export default class DecryptContent {
     return this._hasDecrypted;
   }
 
-  public set bindAppIndex(value: number) {
-    this._bindAppIndex = value;
-  }
-
-  public get bindAppIndex(): number {
-    return this._bindAppIndex;
-  }
-
   public generateLinkFileName(): Result<string> {
     let timestamp = new Date().getTime();
     let splitNames = this._fileName.split('.');
