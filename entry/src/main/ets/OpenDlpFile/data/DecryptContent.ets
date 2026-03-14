@@ -46,7 +46,6 @@ export default class DecryptContent {
   private _linkFileWriteable: boolean = false;
   private _uriInfo: fileUri.FileUri = new fileUri.FileUri('');
   private _hasDecrypted: boolean = false;
-  private _bindAppIndex: number = -1;
 
   constructor(fileMetaInfo: FileMetaInfo, openDlpFileData: OpenDlpFileData) {
     this._fileMetaInfo = fileMetaInfo;
@@ -73,7 +72,6 @@ export default class DecryptContent {
     clone.linkFileWriteable = this._linkFileWriteable;
     clone.uriInfo = this._uriInfo;
     clone.hasDecrypted = this._hasDecrypted;
-    clone.bindAppIndex = this._bindAppIndex;
     return clone;
   }
 
