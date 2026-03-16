@@ -81,11 +81,11 @@ export default class DecryptHandler {
     hiTraceMeter.startTrace('DlpInstallSandboxJs', decryptContent.openDlpFileData.startId);
     const getAppInfoRet = await this.getAppInfo(decryptContent);
     hiTraceMeter.finishTrace('DlpInstallSandboxJs', decryptContent.openDlpFileData.startId);
-    const appInfo = this.getRealAppInfoRet(getAppInfoRet, decryptContent);
-    if (getAppInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !appInfo) {
+    if (getAppInfoRet.errcode !== Constants.ERR_CODE_SUCCESS || !getAppInfoRet.result) {
       HiLog.error(TAG, 'getAppInfo error');
       return ResultMsg.buildMsg(getAppInfoRet.errcode, getAppInfoRet.errmsg);
     }
+    const appInfo = getAppInfoRet.result;
 
     // 4. If has decrypted, check appInfo consistent
     if (hasDecrypted) {
@@ -114,16 +114,6 @@ export default class DecryptHandler {
     // 6. setNeedStartAbility
     OpeningDialogManager.getInstance().setNeedStartAbility(decryptContent.openDlpFileData.requestId);
     return ResultMsg.buildSuccess();
-  }
-
-  private getRealAppInfoRet(getAppInfoRet: Result<dlpPermission.DLPSandboxInfo>,
-    decryptContent: DecryptContent): dlpPermission.DLPSandboxInfo|undefined {
-    let tmpAppInfo = getAppInfoRet.result;
-    if (tmpAppInfo && tmpAppInfo.appIndex > HIPREVIEW_SANDBOX_LOW_BOUND * HIPREVIEW_SANDBOX_LOW_BOUND) {
-      decryptContent.bindAppIndex = tmpAppInfo.appIndex % HIPREVIEW_SANDBOX_LOW_BOUND + HIPREVIEW_SANDBOX_LOW_BOUND;
-      tmpAppInfo.appIndex = Math.floor(tmpAppInfo.appIndex / HIPREVIEW_SANDBOX_LOW_BOUND);
-    }
-    return tmpAppInfo;
   }
 
   private async getDecryptState(decryptContent: DecryptContent): Promise<Result<boolean>> {

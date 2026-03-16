@@ -324,7 +324,7 @@ export default class StartSandboxHandler {
         'allowedOpenCount': (decryptContent.dlpFile.dlpProperty.allowedOpenCount && !isOwner) ?
           decryptContent.dlpFile.dlpProperty.allowedOpenCount : 0,
         'ohos.dlp.params.index': decryptContent.appInfo.appIndex,
-        'ohos.dlp.params.bindindex': decryptContent.bindAppIndex,
+        'ohos.dlp.params.bindindex': decryptContent.appInfo.bindAppIndex ?? -1,
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
         'ohos.dlp.params.securityFlag': decryptContent.authPerm ===
         dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
