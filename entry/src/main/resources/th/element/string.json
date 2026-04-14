@@ -86,7 +86,7 @@
         },
         {
             "name":"Document_valid",
-            "value":"ระยะเวลาใช้งาน",
+            "value":"ระยะเวลาที่ใช้งานได้",
             "attr":{
                 "priority":"LT"
             }
@@ -219,7 +219,7 @@
         },
         {
             "name":"MESSAGE_APP_GET_FILE_PERMISSION_ERROR",
-            "value":"ไม่สามารถรับสิทธิ์อนุญาตไฟล์ได้ ลองอีกครั้งในภายหลัง",
+            "value":"ไม่สามารถรับการอนุญาตไฟล์ได้ ลองอีกครั้งในภายหลัง",
             "attr":{
                 "priority":"translate"
             }
@@ -506,7 +506,7 @@
         },
         {
             "name":"header_title",
-            "value":"การอนุญาตสิทธิ์ไฟล์",
+            "value":"การอนุญาตไฟล์",
             "attr":{
                 "priority":"LT"
             }
