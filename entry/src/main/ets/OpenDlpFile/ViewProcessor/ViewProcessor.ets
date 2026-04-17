@@ -187,6 +187,10 @@ export class OpenDlpFileProcessor {
   }
 
   public async processErrcode(error: BusinessError, decryptContent?: DecryptContent): Promise<Result<void>> {
+    if (decryptContent) {
+      clearDlpInfoByError(decryptContent);
+      this.sendDlpFileOpenFault(error, decryptContent);
+    }
     if (decryptContent?.fileMetaInfo.accountType == ENTERPRISE_ACCOUNT) {
       let options: commonEventManager.CommonEventPublishData = {
         bundleName: 'com.asiainfo_sec.aisedr_hm',
@@ -204,10 +208,6 @@ export class OpenDlpFileProcessor {
     }
     // 不需要拉起“正在打开”的动效，可以直接进行错误处理（错误处理，情况一）
     await ErrorManager.getInstance().startHandleError(decryptContent?.openDlpFileData?.requestId ?? '', error);
-    if (decryptContent) {
-      clearDlpInfoByError(decryptContent);
-      this.sendDlpFileOpenFault(error, decryptContent);
-    }
     return ResultMsg.buildSuccess();
   }
 
