@@ -940,6 +940,7 @@ export {
   checkDomainAccountInfo,
   getUserId,
   getAuthPerm,
+  getAuthPermForEnterprise,
   terminateSelfWithResult,
   judgeIsSandBox,
   getFileFd,

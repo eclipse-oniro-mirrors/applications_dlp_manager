@@ -14,7 +14,7 @@
  */
 
 import { HiLog } from '../../common/base/HiLog';
-import { defaultAppInfo, defaultDlpFile, getAuthPerm } from '../../common/FileUtils/utils';
+import { defaultAppInfo, defaultDlpFile, getAuthPerm, getAuthPermForEnterprise } from '../../common/FileUtils/utils';
 import Constants from '../../common/constants/constant';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import Result from '../../common/base/Result';
