@@ -188,6 +188,19 @@ function getAuthPerm(accountName: string, dlpProperty: dlpPermission.DLPProperty
   return perm;
 }
 
+function getAuthPermForEnterprise(dlpProperty: dlpPermission.DLPProperty): dlpPermission.DLPFileAccess {
+  let perm: dlpPermission.DLPFileAccess = dlpPermission.DLPFileAccess.READ_ONLY;
+  if ((dlpProperty.everyoneAccessList !== undefined) && (dlpProperty.everyoneAccessList.length > 0)) {
+    perm = Math.max(...dlpProperty.everyoneAccessList);
+  }
+  let authUserList = dlpProperty.authUserList ?? [];
+  if (authUserList.length > 0) {
+    let authUser = authUserList[0];
+    perm = Math.max(perm, authUser.dlpFileAccess);
+  }
+  return perm;
+}
+
 function terminateSelfWithResult(resultCode: number, result: string): void {
   let abilityResult: ability.AbilityResult = {
     resultCode: resultCode,
@@ -927,6 +940,7 @@ export {
   checkDomainAccountInfo,
   getUserId,
   getAuthPerm,
+  getAuthPermForEnterprise,
   terminateSelfWithResult,
   judgeIsSandBox,
   getFileFd,

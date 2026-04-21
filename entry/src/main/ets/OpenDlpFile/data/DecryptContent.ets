@@ -14,7 +14,7 @@
  */
 
 import { HiLog } from '../../common/base/HiLog';
-import { defaultAppInfo, defaultDlpFile, getAuthPerm } from '../../common/FileUtils/utils';
+import { defaultAppInfo, defaultDlpFile, getAuthPerm, getAuthPermForEnterprise } from '../../common/FileUtils/utils';
 import Constants from '../../common/constants/constant';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import Result from '../../common/base/Result';
@@ -249,9 +249,10 @@ export default class DecryptContent {
 
   public setDlpGetAuthPerm(): Result<void> {
     if (!this._openDlpFileData.isFromPlugin &&
-      (this._fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT ||
-        this._fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT)) {
+      this._fileMetaInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
       this._authPerm = getAuthPerm(this._accountName ?? '', this._dlpFile.dlpProperty);
+    } else if (this._fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
+      this._authPerm = getAuthPermForEnterprise(this._dlpFile.dlpProperty);
     } else {
       this._authPerm = dlpPermission.DLPFileAccess.READ_ONLY;
     }
