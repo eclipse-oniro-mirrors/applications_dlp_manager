@@ -16,6 +16,7 @@
 import { anonymizeUid, isDevelopmentMode } from '../../common/FileUtils/utils';
 import { ToggleState } from '../../common/enum/EncryptSharingShowCodeEnum';
 import DecryptContent from '../data/DecryptContent';
+import dlpPermission from '@ohos.dlpPermission';
 
 interface FileInfo {
   fileSize: number;
@@ -57,5 +58,18 @@ export class DlpFileOpenReportUtils {
       sandboxBundleName: openFileBundleName ?? ''
     };
     return JSON.stringify(bundleInfo);
+  }
+
+  public static getAnyViewCount(decryptContent: DecryptContent): number {
+    const everyoneAccessList = decryptContent.dlpFile.dlpProperty.everyoneAccessList;
+    const authUserList = decryptContent.dlpFile.dlpProperty.authUserList;
+    if (!everyoneAccessList) {
+      return 0;
+    }
+    if (everyoneAccessList.length === 1 && everyoneAccessList[0] === dlpPermission.DLPFileAccess.READ_ONLY &&
+      !authUserList && decryptContent.dlpFile.dlpProperty.allowedOpenCount === 1) {
+      return 1;
+    }
+    return 0;
   }
 }

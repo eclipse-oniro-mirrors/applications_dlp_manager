@@ -56,7 +56,8 @@ export class DlpFileOpenReport {
       'FILE_CLASSIFICATION': SupportTypesConfig.getFileClassification(decryptContent.fileMetaInfo?.fileType),
       'CALLER_PKGNAME': decryptContent.openDlpFileData?.callerBundleName ?? '',
       'DEV_MODE': DlpFileOpenReportUtils.getDevModeState(),
-      'FILE_INFO': DlpFileOpenReportUtils.getFileInfoString(decryptContent)
+      'FILE_INFO': DlpFileOpenReportUtils.getFileInfoString(decryptContent),
+      'ANY_VIEW_COUNT': DlpFileOpenReportUtils.getAnyViewCount(decryptContent)
     };
     return msg;
   }
