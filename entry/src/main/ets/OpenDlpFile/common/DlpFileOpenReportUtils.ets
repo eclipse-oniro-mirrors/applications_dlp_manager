@@ -67,7 +67,7 @@ export class DlpFileOpenReportUtils {
       return 0;
     }
     if (everyoneAccessList.length === 1 && everyoneAccessList[0] === dlpPermission.DLPFileAccess.READ_ONLY &&
-      !authUserList && decryptContent.dlpFile.dlpProperty.allowedOpenCount === 1) {
+      authUserList?.length === 0 && decryptContent.dlpFile.dlpProperty.allowedOpenCount === 1) {
       return 1;
     }
     return 0;
