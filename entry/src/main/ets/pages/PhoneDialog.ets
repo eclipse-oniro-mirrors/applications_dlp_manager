@@ -21,6 +21,7 @@ import { HiLog } from '../common/base/HiLog';
 import { AlertDialog } from '@kit.ArkUI';
 import Constants from '../common/constants/constant';
 import { common } from '@kit.AbilityKit';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
 
 const TAG = 'PhoneDialog';
 
@@ -65,7 +66,10 @@ struct Index {
     }),
     cancel: () => {
       this.cancelAction();
-    }
+    },
+    systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+    edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+    distortionMode: DistortionMode.DISTORTION_AUTO
   })
 
   getExternalResourceString(bundle: string, module: string, resourceName: string): string {
@@ -107,7 +111,10 @@ struct Index {
         }),
         cancel: () => {
           this.cancelAction();
-        }
+        },
+        systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+        edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+        distortionMode: DistortionMode.DISTORTION_AUTO
       });
     }
   }

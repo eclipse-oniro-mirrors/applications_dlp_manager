@@ -17,6 +17,7 @@ import Constants from '../constants/constant';
 import common from '@ohos.app.ability.common';
 import { SystemUtils } from '../systemUtils';
 import { HiLog } from '../base/HiLog';
+import { DLPMaterialUtil, MaterialType } from '../DLPMaterialUtil';
 
 const TAG = '[DLPManager_dialog]';
 
@@ -79,6 +80,7 @@ struct DlpAlertDialog {
 
       Flex({ direction: FlexDirection.Row }) {
         Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
+          .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
           .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
           .width(this.ok ? Constants.HEADER_TEXT_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_BUTTON)
           .focusable(false)
@@ -100,6 +102,7 @@ struct DlpAlertDialog {
           });
         if (this.ok) {
           Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
+            .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
             .width(Constants.HEADER_TEXT_WIDTH)
             .focusable(false)
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))

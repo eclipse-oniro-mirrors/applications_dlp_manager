@@ -32,6 +32,7 @@ import GlobalContext from '../common/base/GlobalContext';
 import { HiLog } from '../common/base/HiLog';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
 
 const TAG = 'EncSucc';
 let abilityResult: ability.AbilityResult = {
@@ -280,7 +281,8 @@ struct encryptionSuccess {
                                 if (!e.isVisible) {
                                   this.handlePopupReadOnly = false
                                 }
-                              }
+                              },
+                              systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                             })
                         }
                         .width(Constants.FOOTER_ROW_WIDTH)
@@ -323,7 +325,8 @@ struct encryptionSuccess {
                                   if (!e.isVisible) {
                                     this.handlePopupReadOnly = false
                                   }
-                                }
+                                },
+                                systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                               })
                           }
                           .width(Constants.FOOTER_ROW_WIDTH)
@@ -436,7 +439,8 @@ struct encryptionSuccess {
                                 if (!e.isVisible) {
                                   this.handlePopupEdit = false
                                 }
-                              }
+                              },
+                              systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                             })
                         }
                         .justifyContent(FlexAlign.Start)
@@ -480,7 +484,8 @@ struct encryptionSuccess {
                                   if (!e.isVisible) {
                                     this.handlePopupEdit = false
                                   }
-                                }
+                                },
+                                systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                               })
                           }
                           .justifyContent(FlexAlign.Start)
@@ -618,6 +623,7 @@ struct encryptionSuccess {
 
               Row() {
                 Button($r('app.string.finished'), { type: ButtonType.Capsule, stateEffect: true })
+                  .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
                   .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .fontWeight(FontWeight.Medium)
                   .width(Constants.FOOTER_WIDTH_BUTTON)

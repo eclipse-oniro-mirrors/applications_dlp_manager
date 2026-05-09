@@ -37,6 +37,7 @@ import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
 import Result from '../base/Result';
 import { ResultMsg } from '../base/ResultMsg';
+import { DLPMaterialUtil, MaterialType } from '../DLPMaterialUtil';
 
 const TAG = 'Utils';
 
@@ -732,6 +733,7 @@ function showToast(uiContext: UIContext, msg: Resource | string): void {
       message: msg,
       duration: Constants.SHARE_SET_TIMEOUT,
       showMode: showMode,
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.TOAST)
     });
   } catch (error) {
     HiLog.wrapError(TAG, error, 'showToast failed.');

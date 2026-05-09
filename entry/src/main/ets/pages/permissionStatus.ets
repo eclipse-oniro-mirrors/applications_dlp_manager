@@ -20,6 +20,7 @@ import GlobalContext from '../common/base/GlobalContext';
 import { directionStatus, removeDirectionStatus } from '../common/FileUtils/utils';
 import common from '@ohos.app.ability.common';
 import { HiLog } from '../common/base/HiLog';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
 
 const TAG = 'PermStat';
 
@@ -322,6 +323,7 @@ struct PermissionStatus {
 
               Row() {
                 Button($r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
+                  .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
                   .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)

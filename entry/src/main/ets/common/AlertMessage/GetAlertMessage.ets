@@ -25,6 +25,7 @@ import { UIContext } from '@kit.ArkUI';
 import UIContextUtil from '../UIContextUtil';
 import { OpenDlpFileError } from '../../OpenDlpFile/common/OpenDlpFileError/OpenDlpFileError';
 import { getAccountNameFromErrMsg } from '../FileUtils/utils';
+import { DLPMaterialUtil, MaterialType } from '../DLPMaterialUtil';
 
 const TAG = 'AlertMessage';
 
@@ -46,7 +47,8 @@ export class GetAlertMessage {
       uiContext.getPromptAction().showToast({
         message: toastMessage,
         duration: Constants.SHARE_SET_TIMEOUT,
-        bottom: Constants.TOAST_BOTTOM
+        bottom: Constants.TOAST_BOTTOM,
+        systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.TOAST)
       });
       HiLog.info(TAG, 'showToast success');
     } catch (error) {

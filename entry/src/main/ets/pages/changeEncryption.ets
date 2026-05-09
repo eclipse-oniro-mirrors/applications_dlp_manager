@@ -50,6 +50,7 @@ import CommonUtil from '../common/base/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import { promptAction } from '@kit.ArkUI';
 import FileUtil from '../common/external/FileUtil';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
 
 const TAG = 'ModEnc';
 
@@ -165,7 +166,10 @@ struct changeEncryption {
       autoCancel: false,
       customStyle: true,
       maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
-      showInSubWindow: true
+      showInSubWindow: true,
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+      edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+      distortionMode: DistortionMode.DISTORTION_AUTO
     });
     this.dlpAlertDialog.open();
   }
@@ -584,7 +588,8 @@ struct changeEncryption {
                                 if (!e.isVisible) {
                                   this.handlePopupReadOnly = false
                                 }
-                              }
+                              },
+                              systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                             })
                         }
                         .width(Constants.FOOTER_ROW_WIDTH)
@@ -627,7 +632,8 @@ struct changeEncryption {
                                   if (!e.isVisible) {
                                     this.handlePopupReadOnly = false
                                   }
-                                }
+                                },
+                                systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                               })
                           }
                           .width(Constants.FOOTER_ROW_WIDTH)
@@ -738,7 +744,8 @@ struct changeEncryption {
                                 if (!e.isVisible) {
                                   this.handlePopupEdit = false
                                 }
-                              }
+                              },
+                              systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                             })
                         }
                         .justifyContent(FlexAlign.Start)
@@ -782,7 +789,8 @@ struct changeEncryption {
                                   if (!e.isVisible) {
                                     this.handlePopupEdit = false
                                   }
-                                }
+                                },
+                                systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                               })
                           }
                           .justifyContent(FlexAlign.Start)
@@ -898,6 +906,7 @@ struct changeEncryption {
 
                 Flex({ direction: FlexDirection.Row }) {
                   Button($r('app.string.unencrypted'), { type: ButtonType.Capsule, stateEffect: true })
+                    .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
                     .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .controlSize(ControlSize.NORMAL)
@@ -919,6 +928,7 @@ struct changeEncryption {
                         Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                     })
                   Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })
+                    .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
                     .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
@@ -928,7 +938,8 @@ struct changeEncryption {
                         this.staffDataArrayEdit.length > Constants.ENCRYPTION_ADD_STAFF_LENGTH_MAX) {
                         promptAction.showToast({
                           message: $r('app.string.MESSAGE_APP_GET_ACCOUNT_ERROR'),
-                          duration: Constants.SHARE_SET_TIMEOUT
+                          duration: Constants.SHARE_SET_TIMEOUT,
+                          systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.TOAST)
                         });
                       }
                       try {

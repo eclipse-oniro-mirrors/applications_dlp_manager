@@ -14,6 +14,7 @@
  */
 
 import Constants from '../../common/constants/constant';
+import { DLPMaterialUtil, MaterialType } from '../../common/DLPMaterialUtil';
 import { AuthAccount, PermissionType } from '../../common/FileUtils/utils';
 
 const TAG = 'Select';
@@ -112,7 +113,11 @@ struct permissionTypeSelect {
     }
     .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
     .enabled(this.isDisable ? false : true)
-    .bindMenu(this.PermissionTypeMenu, { placement: Placement.BottomRight, showInSubWindow: false });
+    .bindMenu(this.PermissionTypeMenu, {
+      placement: Placement.BottomRight,
+      showInSubWindow: false,
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.MENU)
+    });
   }
 }
 
@@ -174,7 +179,11 @@ struct validDateTypeMenu {
     }
     .opacity(this.isDisable ? Constants.DU_LINE_WIDTH : Constants.FOOTER_OPACITY_ONE)
     .enabled(this.isDisable ? false : true)
-    .bindMenu(this.ValidDateMenuItem(), { placement: Placement.BottomRight, showInSubWindow: false });
+    .bindMenu(this.ValidDateMenuItem(), {
+      placement: Placement.BottomRight,
+      showInSubWindow: false,
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.MENU)
+    });
   }
 }
 
