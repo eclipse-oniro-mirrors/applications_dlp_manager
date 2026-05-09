@@ -14,6 +14,7 @@
  */
 
 import hilog from '@ohos.hilog';
+import { DLPMaterialUtil, MaterialType } from '../../../../main/ets/common/DLPMaterialUtil';
 
 @Entry
 @Component
@@ -35,6 +36,7 @@ struct Index {
           Text('DlpManager')
             .fontSize(30)
             .fontWeight(FontWeight.Bold)
+            .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
         }
         .type(ButtonType.Capsule)
         .margin({

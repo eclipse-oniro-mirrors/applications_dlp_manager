@@ -41,6 +41,7 @@ import UriValidatorTest from './validator/UriValidatorTest.test';
 import UtilsTest from './common/FileUtils/UtilsTest.test'
 import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
 import AccountAssociationUtilTest from './common/AccountAssociationUtilTest.test';
+import DLPMaterialUtilTest from './common/DLPMaterialUtilTest.test';
 
 export default function testsuite() {
   AssocConvertorTest();
@@ -71,4 +72,5 @@ export default function testsuite() {
   ComponentTest();
   AccountManagerTest();
   AccountAssociationUtilTest();
+  DLPMaterialUtilTest();
 }

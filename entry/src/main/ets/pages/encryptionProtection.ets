@@ -17,7 +17,6 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import ability from '@ohos.ability.ability';
 import dlpPermission from '@ohos.dlpPermission';
 import hiSysEvent from '@ohos.hiSysEvent';
-import router from '@ohos.router';
 import picker from '@ohos.file.picker';
 import fileUri from '@ohos.file.fileuri';
 import fs from '@ohos.file.fs';
@@ -58,6 +57,7 @@ import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import FileUtil from '../common/external/FileUtil';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {
@@ -193,7 +193,10 @@ struct DlpDialog {
       autoCancel: false,
       customStyle: true,
       maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
-      showInSubWindow: true
+      showInSubWindow: true,
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+      edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+      distortionMode: DistortionMode.DISTORTION_AUTO
     })
     this.dlpAlertDialog.open();
   }
@@ -208,7 +211,10 @@ struct DlpDialog {
       autoCancel: false,
       customStyle: true,
       maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
-      showInSubWindow: true
+      showInSubWindow: true,
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+      edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+      distortionMode: DistortionMode.DISTORTION_AUTO
     })
     this.dlpAlertDialog.open();
   }
@@ -795,7 +801,8 @@ struct DlpDialog {
                       if (!e.isVisible) {
                         this.handlePopupReadOnly = false
                       }
-                    }
+                    },
+                    systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                   })
                 Blank()
                 permissionTypeSelect({
@@ -848,7 +855,8 @@ struct DlpDialog {
                       if (!e.isVisible) {
                         this.handlePopupEdit = false
                       }
-                    }
+                    },
+                    systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
                   })
                 Blank()
                 permissionTypeSelect({
@@ -896,7 +904,11 @@ struct DlpDialog {
                     right: Constants.VALIDITY_IMAGE_PADDING_RIGHT,
                     left: Constants.VALIDITY_IMAGE_PADDING_LEFT
                   })
-                  .bindMenu(this.MenuBuilder, { placement: Placement.BottomRight, showInSubWindow: false })
+                  .bindMenu(this.MenuBuilder, {
+                    placement: Placement.BottomRight,
+                    showInSubWindow: false,
+                    systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.MENU)
+                  })
                 } else {
                   validDateTypeMenu({
                     selectedIndex: $selectedIndex,
@@ -921,6 +933,7 @@ struct DlpDialog {
 
           Flex({ direction: FlexDirection.Row }) {
             Button($r('app.string.ban'), { type: ButtonType.Capsule, stateEffect: true })
+              .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(true)
@@ -947,7 +960,8 @@ struct DlpDialog {
                   });
                 } else {
                   if (GlobalContext.load('fileOpenHistoryFromMain')) {
-                    (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)
+                    (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(
+                      GlobalContext.load('uri') as string)
                   }
                   abilityResult.resultCode = 0;
                   (getContext(this) as common.UIAbilityContext).terminateSelfWithResult(abilityResult);
@@ -960,6 +974,7 @@ struct DlpDialog {
                   Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
               })
             Button($r('app.string.sure'), { type: ButtonType.Capsule, stateEffect: true })
+              .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(true)
@@ -968,8 +983,8 @@ struct DlpDialog {
                 this.isAccountCheckSuccess &&
                   (this.staffDataArrayReadOnly.length > 0 ||
                     this.staffDataArrayEdit.length > 0 ||
-                  ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') ||
-                  ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? ''))
+                    ['all', 'self'].includes(this.selectedPermissionTypeReadOnly.data ?? '') ||
+                    ['all', 'self'].includes(this.selectedPermissionTypeEdit.data ?? ''))
               )
               .controlSize(ControlSize.NORMAL)
               .onClick(async (event) => {

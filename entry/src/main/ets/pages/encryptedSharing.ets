@@ -46,6 +46,7 @@ import taskpool from '@ohos.taskpool';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
 import FileUtil from '../common/external/FileUtil';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
 
 const TAG = 'encryptedSharing';
 
@@ -679,7 +680,7 @@ struct encryptedSharing {
   getScrollHeight(newValue: SizeOptions) {
     const height = newValue.height as number;
     this.scrollHeight = height - Constants.SHARE_BUTTON_COLUMN_BOTTOM - Constants.SHARE_TITLE_HEAD_HEIGHT -
-    Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
+      Constants.SHARE_TITLE_HEAD_MARGIN_TOP - Constants.SHARE_TITLE_HEAD_MARGIN_BOTTOM;
     if (this.scrollHeight > Constants.SHARE_TEXTAREA_MAX_HEIGHT) {
       this.scrollHeight = Constants.SHARE_TEXTAREA_MAX_HEIGHT;
     }
@@ -807,7 +808,9 @@ struct encryptedSharing {
                     this.isShowSheet = false;
                   },
                   backgroundColor: Color.Transparent,
-                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
+                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK,
+                  systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_SHEET),
+                  edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO
                 })
               }
             }
@@ -840,6 +843,7 @@ struct encryptedSharing {
 
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
+            .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
             .enabled(this.isConfirmButtonEnabled)
             .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .width(Constants.SHARE_BUTTON_WIDTH)

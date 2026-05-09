@@ -18,6 +18,7 @@ import { HiLog } from '../common/base/HiLog';
 import Constants from '../common/constants/constant';
 import { emitter } from '@kit.BasicServicesKit';
 import OpeningDialogService from '../rpc/OpeningDialog/service/OpeningDialogService';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
 
 const TAG = 'OpeningDialog';
 
@@ -37,7 +38,10 @@ struct Index {
     }),
     autoCancel: false,
     customStyle: false,
-    alignment: DialogAlignment.Center
+    alignment: DialogAlignment.Center,
+    systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+    edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+    distortionMode: DistortionMode.DISTORTION_AUTO
   });
   private handleShowDialog = (eventData: emitter.EventData) => {
     HiLog.info(TAG, 'receive SHOW_DIALOG_EVENT');

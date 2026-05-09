@@ -26,6 +26,7 @@ import account_osAccount from '@ohos.account.osAccount';
 import dlpPermission from '@ohos.dlpPermission';
 import { sendDlpManagerAccountLogin, checkNetworkStatus } from '../common/FileUtils/utils';
 import { HiLog } from '../common/base/HiLog';
+import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil'
 
 const TAG = 'Alert';
 let abilityResult: ability.AbilityResult = {
@@ -36,7 +37,7 @@ let abilityResult: ability.AbilityResult = {
 @Entry()
 @Component
 struct Index {
-  private storage : LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
+  private storage: LocalStorage | undefined = this.getUIContext()?.getSharedLocalStorage();
   @State dialogUIExtWant: Want | undefined = GlobalContext.load('dialogUIExtWant');
   @State session: UIExtensionContentSession | undefined =
     this.storage === undefined ? undefined : this.storage.get<UIExtensionContentSession>('session');
@@ -57,7 +58,10 @@ struct Index {
       buttons: this.buttonOptions
     }),
     autoCancel: false,
-    maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR
+    maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
+    systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+    edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+    distortionMode: DistortionMode.DISTORTION_AUTO
   });
 
   async terminateDialog(context: common.UIAbilityContext | common.UIExtensionContext | undefined,

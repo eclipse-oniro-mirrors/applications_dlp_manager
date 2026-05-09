@@ -13,18 +13,15 @@
  * limitations under the License.
  */
 
-import account_osAccount from '@ohos.account.osAccount';
 import common from '@ohos.app.ability.common';
-import { BusinessError } from '@ohos.base';
 import Constants from '../../common/constants/constant';
 import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
-import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
 import { DlpAlertDialog } from '../../common/components/dlp_alert_dialog';
 import { HiLog } from '../../common/base/HiLog';
 import { SystemUtils } from '../../common/systemUtils';
 import AccountManager from '../../manager/AccountManager';
-import accountManager from '@ohos.enterprise.accountManager';
 import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
+import { DLPMaterialUtil, MaterialType } from '../../common/DLPMaterialUtil';
 
 const TAG = 'staff';
 
@@ -105,7 +102,10 @@ struct staffItem {
       }),
       autoCancel: false,
       customStyle: true,
-      showInSubWindow: true
+      showInSubWindow: true,
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
+      edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
+      distortionMode: DistortionMode.DISTORTION_AUTO
     });
     this.dlpAlertDialog.open();
   }
@@ -188,7 +188,8 @@ struct staffItem {
         if (!e.isVisible) {
           this.handlePopupTips = false;
         }
-      }
+      },
+      systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_POPUP)
     })
     .height(Constants.ENCRYPTION_ADD_STAFF_HEIGHT)
     .alignItems(VerticalAlign.Center)
