@@ -808,9 +808,7 @@ struct encryptedSharing {
                     this.isShowSheet = false;
                   },
                   backgroundColor: Color.Transparent,
-                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK,
-                  systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.BIND_SHEET),
-                  edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO
+                  blurStyle: BlurStyle.COMPONENT_ULTRA_THICK
                 })
               }
             }

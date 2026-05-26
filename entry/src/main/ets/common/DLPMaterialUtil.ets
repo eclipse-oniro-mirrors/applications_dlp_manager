@@ -39,10 +39,10 @@ export class DLPMaterialUtil {
     style: uiMaterial.ImmersiveStyle.THIN
   });
   private static readonly DIALOG_MATERIAL: uiMaterial.Material = new uiMaterial.ImmersiveMaterial({
-    style: uiMaterial.ImmersiveStyle.ULTRA_THIN
+    style: uiMaterial.ImmersiveStyle.ULTRA_THICK
   });
   private static readonly BIND_SHEET_MATERIAL: uiMaterial.Material = new uiMaterial.ImmersiveMaterial({
-    style: uiMaterial.ImmersiveStyle.ULTRA_THIN
+    style: uiMaterial.ImmersiveStyle.ULTRA_THICK
   });
   private static readonly BIND_POPUP_MATERIAL: uiMaterial.Material = new uiMaterial.ImmersiveMaterial({
     style: uiMaterial.ImmersiveStyle.THICK

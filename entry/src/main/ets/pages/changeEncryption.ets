@@ -946,6 +946,8 @@ struct changeEncryption {
                         router.replaceUrl({
                           url: 'pages/encryptionProtection',
                           params: this.routerData
+                        }).catch(() => {
+                          HiLog.error(TAG, 'replaceUrl error.');
                         })
                       } catch (error) {
                         HiLog.wrapError(TAG, error, 'replaceUrl error.');
