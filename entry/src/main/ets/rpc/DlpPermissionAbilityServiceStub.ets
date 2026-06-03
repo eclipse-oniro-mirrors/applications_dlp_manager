@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,7 +48,7 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
     try {
       let token = data.readInterfaceToken();
       if (token !== Constant.SA_INTERFACE_TOKEN) {
-        HiLog.error(TAG, `Interface token is invalid`);
+        HiLog.error(TAG, 'Interface token is invalid');
         return false;
       }
       return true;
@@ -61,21 +61,29 @@ export default class DlpPermissionAbilityServiceStub extends rpc.RemoteObject {
   onRemoteMessageRequest(code: number, data: rpc.MessageSequence, reply: rpc.MessageSequence,
     options: rpc.MessageOption): boolean {
     if (Number.isNaN(code) || !data || !reply) {
-      HiLog.error(TAG, `Input params is invalid`);
+      HiLog.error(TAG, 'Input params is invalid');
       return false;
     }
     if (!this.checkCallerIdentity(data)) {
-      HiLog.error(TAG, `onRemoteMessageRequest: check clean called failed`);
-      reply.writeInt(Constant.INTERFACE_SUCCESS);
+      HiLog.error(TAG, 'onRemoteMessageRequest: check clean called failed');
+      try {
+        reply.writeInt(Constant.INTERFACE_SUCCESS);
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'onRemoteMessageRequest reply writeInt failed');
+      }
       return false;
     }
     try {
       this.clearAllExistDlpFileInCache();
       reply.writeInt(Constant.INTERFACE_SUCCESS);
     } catch (error) {
-      HiLog.error(TAG, `onRemoteMessageRequest clean dlp file failed`);
-      reply.writeInt(Constant.INTERFACE_SUCCESS);
+      HiLog.error(TAG, 'onRemoteMessageRequest clean dlp file failed');
+      try {
+        reply.writeInt(Constant.INTERFACE_SUCCESS);
+      } catch (error) {
+        HiLog.wrapError(TAG, error, 'onRemoteMessageRequest reply writeInt failed');
+      }
     }
     return true
   }
-};
+}
