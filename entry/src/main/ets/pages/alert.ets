@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,6 +49,7 @@ struct Index {
   private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
   private loginDialogTitle: ResourceStr = '';
   private loginButtonContent: ResourceStr = '';
+  private loginContent: ResourceStr = '';
   dialogControllerButton: CustomDialogController | null = new CustomDialogController({
     builder: CustomContentDialog({
       primaryTitle: this.title,
@@ -139,7 +140,7 @@ struct Index {
     } else if ([Constants.ERR_JS_ACCOUNT_NOT_LOGIN].includes(messageCode)) {
       errInfo = {
         'title': this.loginDialogTitle,
-        'msg': $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'),
+        'msg': this.loginContent,
         'cancel': $r('app.string.ban'),
         'ok': this.loginButtonContent
       } as Record<string, Resource>;
@@ -226,6 +227,8 @@ struct Index {
     this.loginDialogTitle = str.length > 0 ? str : '';
     str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
     this.loginButtonContent = str.length > 0 ? str : '';
+    str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'view_file_verify_account');
+    this.loginContent = str.length > 0 ? str : '';
     try {
       let messageCode = -1;
       let errorMsg = {} as BusinessError;

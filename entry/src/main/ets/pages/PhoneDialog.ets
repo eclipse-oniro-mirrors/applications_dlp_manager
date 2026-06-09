@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,10 +34,11 @@ struct Index {
   private context: common.UIExtensionContext = this.getUIContext().getHostContext() as common.UIExtensionContext;
   private loginDialogTitle: ResourceStr = '';
   private loginButtonContent: ResourceStr = '';
+  private loginContent: ResourceStr = '';
   private loginDialog: CustomDialogController = new CustomDialogController({
     builder: AlertDialog({
       primaryTitle: this.loginDialogTitle,
-      content: $r('app.string.MESSAGE_APP_NO_ACCOUNT_ERROR'),
+      content: this.loginContent,
       primaryButton: {
         value: $r('app.string.ban'),
         action: async () => {
@@ -146,7 +147,9 @@ struct Index {
     this.loginDialogTitle = str.length > 0 ? str : '';
     str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'encrypt_page_login_action');
     this.loginButtonContent = str.length > 0 ? str : '';
-    this.showErrorDialog();
+    str = this.getExternalResourceString(Constants.DLP_CREDMGR_BUNDLE_NAME, 'entry', 'view_file_verify_account');
+    this.loginContent = str.length > 0 ? str : '';
+    this.showErrorDialog(); 
   }
 
   aboutToDisappear() {
