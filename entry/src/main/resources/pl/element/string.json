@@ -541,7 +541,7 @@
         },
         {
             "name":"MESSAGE_APP_NO_ACCOUNT_ERROR",
-            "value":"Zaloguj się na konto i spróbuj ponownie.",
+            "value":"Zaloguj się do konta i spróbuj ponownie.",
             "attr":{
                 "priority":"translate"
             }
