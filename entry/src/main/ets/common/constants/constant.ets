@@ -363,6 +363,7 @@ export default class Constants {
   public static readonly SHOW_DIALOG_EVENT: string = 'SHOW_DIALOG_EVENT';
   public static readonly SCREEN_OFF_EVENT: string = 'SCREEN_OFF_EVENT';
   public static readonly CHECK_SHOW_DIALOG_STATE: string = 'CHECK_SHOW_DIALOG_STATE';
+  public static readonly DESTROY_OPEN_DIALOG: string = 'DESTROY_OPEN_DIALOG';
 
   // bundleName
   public static readonly SHARE_BUNDLE: string = 'com.huawei.hmos.instantshare';
