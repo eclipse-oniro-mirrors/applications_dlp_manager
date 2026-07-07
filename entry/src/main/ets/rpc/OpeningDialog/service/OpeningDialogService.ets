@@ -19,7 +19,7 @@ import Constants from '../../../common/constants/constant';
 import { HiLog } from '../../../common/base/HiLog';
 import { rpc } from '@kit.IPCKit';
 import OpeningDialogStub from '../stub/OpeningDialogStub';
-import { ability } from '@kit.AbilityKit';
+import { emitter } from '@kit.BasicServicesKit';
 
 const TAG = 'OpeningDialogService';
 
@@ -29,15 +29,23 @@ export default class OpeningDialogService {
   private remoteProxy: rpc.IRemoteObject | null = null;
   private connectionId: number | undefined;
   private _disconnectTimer: number | null = null;
+  private destroy = async () => {
+    HiLog.info(TAG, 'receive destroy event');
+    this.disconnectViewAbility();
+    this.terminateOpeningDialog();
+  };
   private connectOptions: common.ConnectOptions = {
     onConnect: async (elementName, remoteProxy) => {
       HiLog.info(TAG, 'OpeningDialogService onConnect success');
       this.remoteProxy = remoteProxy;
       await this.setRemoteObject();
+
+      emitter.on(Constants.DESTROY_OPEN_DIALOG, this.destroy);
     },
     onDisconnect: (elementName) => {
       this.remoteProxy = null;
       HiLog.info(TAG, 'OpeningDialogService onDisconnect');
+      emitter.off(Constants.DESTROY_OPEN_DIALOG);
     },
     onFailed: () => {
       HiLog.info(TAG, 'OpeningDialogService onFailed');

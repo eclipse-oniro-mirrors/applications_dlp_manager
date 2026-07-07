@@ -17,7 +17,6 @@ import rpc from '@ohos.rpc';
 import { HiLog } from '../../../common/base/HiLog';
 import Constants from '../../../common/constants/constant';
 import { emitter } from '@kit.BasicServicesKit';
-import OpeningDialogService from '../service/OpeningDialogService';
 
 const TAG = 'OpeningDialogStub';
 
@@ -75,8 +74,7 @@ export default class OpeningDialogStub extends rpc.RemoteObject {
         return true;
       }
       case Constants.COMMAND_DISCONNECT: {
-        await OpeningDialogService.getInstance().disconnectViewAbility();
-        await OpeningDialogService.getInstance().terminateOpeningDialog();
+        emitter.emit(Constants.DESTROY_OPEN_DIALOG);
         return true;
       }
       default: {
