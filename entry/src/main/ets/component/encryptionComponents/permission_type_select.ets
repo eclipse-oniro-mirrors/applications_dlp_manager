@@ -14,7 +14,7 @@
  */
 
 import Constants from '../../common/constants/constant';
-import { DLPMaterialUtil, MaterialType } from '../../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../../utils/DLPMaterialUtil';
 import { AuthAccount, PermissionType } from '../../common/FileUtils/utils';
 
 const TAG = 'Select';

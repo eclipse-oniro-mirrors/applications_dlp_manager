@@ -46,7 +46,7 @@ import taskpool from '@ohos.taskpool';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
 import FileUtil from '../common/external/FileUtil';
-import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
 
 const TAG = 'encryptedSharing';
 

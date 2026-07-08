@@ -18,7 +18,7 @@ import { HiLog } from '../common/base/HiLog';
 import Constants from '../common/constants/constant';
 import { emitter } from '@kit.BasicServicesKit';
 import OpeningDialogService from '../rpc/OpeningDialog/service/OpeningDialogService';
-import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
 
 const TAG = 'OpeningDialog';
 

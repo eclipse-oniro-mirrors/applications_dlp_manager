@@ -21,7 +21,7 @@ import { HiLog } from '../../common/base/HiLog';
 import { SystemUtils } from '../../common/systemUtils';
 import AccountManager from '../../manager/AccountManager';
 import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
-import { DLPMaterialUtil, MaterialType } from '../../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../../utils/DLPMaterialUtil';
 
 const TAG = 'staff';
 

@@ -17,7 +17,7 @@ import Constants from '../constants/constant';
 import common from '@ohos.app.ability.common';
 import { SystemUtils } from '../systemUtils';
 import { HiLog } from '../base/HiLog';
-import { DLPMaterialUtil, MaterialType } from '../DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../../utils/DLPMaterialUtil';
 
 const TAG = '[DLPManager_dialog]';
 

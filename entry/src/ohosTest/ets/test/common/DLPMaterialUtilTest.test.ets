@@ -14,7 +14,7 @@
  */
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
-import { DLPMaterialUtil, MaterialType } from '../../../../main/ets/common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../../../../main/ets/utils/DLPMaterialUtil';
 
 export default function DLPMaterialUtilTest() {
   describe('DLPMaterialUtilTest', () => {

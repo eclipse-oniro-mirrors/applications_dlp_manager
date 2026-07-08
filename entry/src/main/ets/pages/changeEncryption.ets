@@ -50,7 +50,7 @@ import CommonUtil from '../common/base/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import { promptAction } from '@kit.ArkUI';
 import FileUtil from '../common/external/FileUtil';
-import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
 
 const TAG = 'ModEnc';
 

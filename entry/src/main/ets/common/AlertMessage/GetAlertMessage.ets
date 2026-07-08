@@ -25,7 +25,7 @@ import { UIContext } from '@kit.ArkUI';
 import UIContextUtil from '../UIContextUtil';
 import { OpenDlpFileError } from '../../OpenDlpFile/common/OpenDlpFileError/OpenDlpFileError';
 import { getAccountNameFromErrMsg } from '../FileUtils/utils';
-import { DLPMaterialUtil, MaterialType } from '../DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../../utils/DLPMaterialUtil';
 
 const TAG = 'AlertMessage';
 
