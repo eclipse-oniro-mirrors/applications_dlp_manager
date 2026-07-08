@@ -20,7 +20,7 @@ import GlobalContext from '../common/base/GlobalContext';
 import { directionStatus, removeDirectionStatus } from '../common/FileUtils/utils';
 import common from '@ohos.app.ability.common';
 import { HiLog } from '../common/base/HiLog';
-import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
 
 const TAG = 'PermStat';
 

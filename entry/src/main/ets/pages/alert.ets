@@ -26,7 +26,7 @@ import account_osAccount from '@ohos.account.osAccount';
 import dlpPermission from '@ohos.dlpPermission';
 import { sendDlpManagerAccountLogin, checkNetworkStatus } from '../common/FileUtils/utils';
 import { HiLog } from '../common/base/HiLog';
-import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil'
+import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil'
 
 const TAG = 'Alert';
 let abilityResult: ability.AbilityResult = {

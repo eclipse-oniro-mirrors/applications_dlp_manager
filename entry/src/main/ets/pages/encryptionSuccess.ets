@@ -32,7 +32,7 @@ import GlobalContext from '../common/base/GlobalContext';
 import { HiLog } from '../common/base/HiLog';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
-import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
 
 const TAG = 'EncSucc';
 let abilityResult: ability.AbilityResult = {

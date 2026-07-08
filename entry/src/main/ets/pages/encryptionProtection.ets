@@ -57,7 +57,7 @@ import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import { SystemUtils } from '../common/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import FileUtil from '../common/external/FileUtil';
-import { DLPMaterialUtil, MaterialType } from '../common/DLPMaterialUtil';
+import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {
