@@ -38,6 +38,7 @@ import OpenDlpFileDataMock from './data/mock/OpenDlpFileDataMock';
 import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';
 import { OpenDlpFileProcessor } from '../../../../main/ets/OpenDlpFile/ViewProcessor/ViewProcessor';
 import Result from '../../../../main/ets/common/base/Result';
+import TerminateManager from '../../../../main/ets/OpenDlpFile/manager/TerminateManager';
 
 abstract class FileParseBase {
   protected metaInfo?: FileMetaInfo;
@@ -134,7 +135,7 @@ export default function ViewProcessorTest() {
     })
 
     it('ViewProcessorTest_process_handleAccount_error', 0, async () => {
-      OpeningDialogManager.getInstance().setIsWaitingShowToast(false);
+      TerminateManager.getInstance().setIsWaitingShowToast(false);
       const processor = new OpenDlpFileProcessor();
       const want = OpenDlpFileDataMock.getViewProcessorWant();
       const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;

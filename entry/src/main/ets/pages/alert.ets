@@ -16,7 +16,7 @@
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import { CustomContentDialog, ButtonOptions } from '@ohos.arkui.advanced.Dialog';
 import GlobalContext from '../common/base/GlobalContext';
-import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
+import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
@@ -83,7 +83,7 @@ struct Index {
     try {
       await checkNetworkStatus();
     } catch {
-      let errInfo = GetAlertMessage.getAlertMessage(
+      let errInfo = AlertManager.getAlertMessage(
         { code: Constants.ERR_JS_APP_NETWORK_INVALID } as BusinessError);
       this.title = '';
       this.message = errInfo.msg;
@@ -130,13 +130,13 @@ struct Index {
       Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED,
       Constants.ERR_JS_DOMAIN_NO_ACCOUNT
     ].includes(messageCode)) {
-      errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
+      errInfo = AlertManager.getAlertTitleMessage(errorMsg);
     } else if ([Constants.ERR_JS_APP_SYSTEM_IS_AUTHENTICATED].includes(messageCode)) {
-      errInfo = GetAlertMessage.getAlertButtonMessage(errorMsg);
+      errInfo = AlertManager.getAlertButtonMessage(errorMsg);
     } else if ([Constants.ERR_JS_USER_NO_PERMISSION_2B].includes(messageCode)) {
-      errInfo = GetAlertMessage.getAlertTitleMessage(errorMsg);
+      errInfo = AlertManager.getAlertTitleMessage(errorMsg);
     } else if ([Constants.ERR_JS_USER_NO_PERMISSION_2C].includes(messageCode)) {
-      errInfo = GetAlertMessage.getAlertMessage(errorMsg);
+      errInfo = AlertManager.getAlertMessage(errorMsg);
     } else if ([Constants.ERR_JS_ACCOUNT_NOT_LOGIN].includes(messageCode)) {
       errInfo = {
         'title': this.loginDialogTitle,
@@ -145,7 +145,7 @@ struct Index {
         'ok': this.loginButtonContent
       } as Record<string, Resource>;
     } else {
-      errInfo = GetAlertMessage.getAlertMessage(errorMsg);
+      errInfo = AlertManager.getAlertMessage(errorMsg);
     }
     return errInfo;
   }

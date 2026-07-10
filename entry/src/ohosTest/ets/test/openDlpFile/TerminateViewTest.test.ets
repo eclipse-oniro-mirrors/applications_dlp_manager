@@ -16,7 +16,7 @@
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import { common } from '@kit.AbilityKit';
-import TerminateView from '../../../../main/ets/OpenDlpFile/TerminateView/TerminateView';
+import TerminateManager from '../../../../main/ets/OpenDlpFile/manager/TerminateManager';
 
 export default function TerminateViewTest() {
   describe('TerminateViewTest', () => {
@@ -42,7 +42,7 @@ export default function TerminateViewTest() {
 
     it('TerminateViewTest_terminate', 0, async () => {
       const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
-      await TerminateView.terminate(false);
+      await TerminateManager.getInstance().terminate(false);
       expect(context).not().assertNull();
     })
   })

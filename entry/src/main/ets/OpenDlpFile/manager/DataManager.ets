@@ -13,17 +13,16 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../../common/base/HiLog';
-import { DecryptState, OpenDlpFileManager } from '../../manager/OpenDlpFileManager';
-import DecryptContent from '../../data/DecryptContent';
-import Constants from '../../../common/constants/constant';
-import FileUtil from '../../../common/external/FileUtil';
+import { HiLog } from '../../common/base/HiLog';
+import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
+import DecryptContent from '../data/DecryptContent';
+import Constants from '../../common/constants/constant';
+import FileUtil from '../../common/external/FileUtil';
 import { common } from '@kit.AbilityKit';
-import TerminateView from '../../TerminateView/TerminateView';
-import OpeningDialogManager from '../../manager/OpeningDialogManager';
-import FileUtils from '../../../common/FileUtils/FileUtils';
+import TerminateManager from './TerminateManager';
+import FileUtils from '../../common/FileUtils/FileUtils';
 
-const TAG = 'DataUtils';
+const TAG = 'DataManager';
 
 async function clearDlpInfoByError(decryptContent: DecryptContent): Promise<void> {
   HiLog.info(TAG, 'start clearDlpInfoByError');
@@ -93,7 +92,7 @@ async function terminateDataAbility(dataContext: common.ServiceExtensionContext)
   HiLog.info(TAG, 'terminateDataAbility start');
   await terminateSelf(dataContext);
   HiLog.info(TAG, 'TerminateView terminate by terminateDataAbility');
-  await TerminateView.terminate();
+  await TerminateManager.getInstance().terminate();
 }
 
 async function terminateSelf(context: common.ServiceExtensionContext): Promise<void> {
@@ -126,7 +125,7 @@ async function clearIsDecrypting(decryptContent: DecryptContent): Promise<void> 
     const getRet = OpenDlpFileManager.getInstance().getStatus(decryptContent.openDlpFileData.uri);
     if (getRet.errcode === Constants.ERR_CODE_SUCCESS &&
       (getRet.result?.state === DecryptState.NOT_STARTED || getRet.result?.state === DecryptState.DECRYPTING)) {
-      OpeningDialogManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
+      TerminateManager.getInstance().deleteRequestId(decryptContent.openDlpFileData.requestId);
       const rmRet = await OpenDlpFileManager.getInstance()
         .removeAllByUriAndTokenId(decryptContent.openDlpFileData.uri, decryptContent.appInfo.tokenID);
       if (rmRet.errcode !== Constants.ERR_CODE_SUCCESS) {

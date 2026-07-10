@@ -15,21 +15,21 @@
 
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
-import Constants from '../constants/constant';
-import CounterLock from '../CounterLock';
-import GlobalContext from '../base/GlobalContext';
+import Constants from '../../common/constants/constant';
+import CounterLock from '../../common/CounterLock';
+import GlobalContext from '../../common/base/GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
-import { HiLog } from '../base/HiLog';
-import TerminateView from '../../OpenDlpFile/TerminateView/TerminateView';
+import { HiLog } from '../../common/base/HiLog';
+import TerminateManager from './TerminateManager';
 import { UIContext } from '@kit.ArkUI';
-import UIContextUtil from '../UIContextUtil';
-import { OpenDlpFileError } from '../../OpenDlpFile/common/OpenDlpFileError/OpenDlpFileError';
-import { getAccountNameFromErrMsg } from '../FileUtils/utils';
+import UIContextUtil from '../../common/UIContextUtil';
+import { OpenDlpFileError } from '../common/OpenDlpFileError/OpenDlpFileError';
+import { getAccountNameFromErrMsg } from '../../common/FileUtils/utils';
 import { DLPMaterialUtil, MaterialType } from '../../utils/DLPMaterialUtil';
 
-const TAG = 'AlertMessage';
+const TAG = 'AlertManager';
 
-export class GetAlertMessage {
+export class AlertManager {
   private static _counterLock: CounterLock = new CounterLock();
 
   private static async showToast(
@@ -37,7 +37,7 @@ export class GetAlertMessage {
     error: BusinessError
   ): Promise<void> {
     try {
-      const resource = GetAlertMessage.getToastMessage(error);
+      const resource = AlertManager.getToastMessage(error);
       const toastMessage = await context.resourceManager.getStringValue(resource.id);
       const uiContext = UIContextUtil.getInstance().getUIContext(context);
       if (!uiContext) {
@@ -60,25 +60,26 @@ export class GetAlertMessage {
     context: common.ServiceExtensionContext,
     error: BusinessError
   ): Promise<void> {
-    await GetAlertMessage._counterLock.acquire();
-    let viewAbilityPhoneToastCount = TerminateView.getViewAbilityPhoneToastCount();
+    await AlertManager._counterLock.acquire();
+    const terminateManager = TerminateManager.getInstance();
+    let viewAbilityPhoneToastCount = terminateManager.getViewAbilityPhoneToastCount();
     HiLog.debug(TAG, `showToast ++ ToastCount ${viewAbilityPhoneToastCount}`);
-    TerminateView.setViewAbilityPhoneToastCount(++viewAbilityPhoneToastCount);
-    GetAlertMessage._counterLock.release();
-    await GetAlertMessage.showToast(context, error);
+    terminateManager.setViewAbilityPhoneToastCount(++viewAbilityPhoneToastCount);
+    AlertManager._counterLock.release();
+    await AlertManager.showToast(context, error);
     setTimeout(async () => {
-      await GetAlertMessage._counterLock.acquire();
+      await AlertManager._counterLock.acquire();
       try {
-        let viewAbilityPhoneToastCount = TerminateView.getViewAbilityPhoneToastCount();
+        let viewAbilityPhoneToastCount = terminateManager.getViewAbilityPhoneToastCount();
         HiLog.debug(TAG, `showToast -- ToastCount ${viewAbilityPhoneToastCount}`);
-        TerminateView.setViewAbilityPhoneToastCount(--viewAbilityPhoneToastCount);
+        terminateManager.setViewAbilityPhoneToastCount(--viewAbilityPhoneToastCount);
         if (viewAbilityPhoneToastCount === 0) {
           UIContext.destroyUIContextWithoutWindow();
           HiLog.info(TAG, 'TerminateView terminate by destroyUIContextWithoutWindow');
-          await TerminateView.terminate();
+          await terminateManager.terminate();
         }
       } finally {
-        GetAlertMessage._counterLock.release();
+        AlertManager._counterLock.release();
       }
     }, Constants.SHARE_SET_TIMEOUT);
   }
@@ -87,7 +88,7 @@ export class GetAlertMessage {
     context: common.UIAbilityContext | common.ServiceExtensionContext | common.UIExtensionContext,
     error: BusinessError
   ): Promise<void> {
-    await GetAlertMessage.showToast(context, error);
+    await AlertManager.showToast(context, error);
     setTimeout(async () => {
       try {
         UIContext.destroyUIContextWithoutWindow();
@@ -161,8 +162,8 @@ export class GetAlertMessage {
 
   public static getAlertTitleMessage(err: BusinessError) {
     if (err && err.code) {
-      const titleResource = GetAlertMessage.ERROR_MESSAGE_TITLE_MAP.get((err.code));
-      const msgResource = GetAlertMessage.ERROR_MESSAGE_MSG_MAP.get((err.code));
+      const titleResource = AlertManager.ERROR_MESSAGE_TITLE_MAP.get((err.code));
+      const msgResource = AlertManager.ERROR_MESSAGE_MSG_MAP.get((err.code));
       if (titleResource && msgResource) {
         return {
           'title': titleResource,
@@ -254,7 +255,7 @@ export class GetAlertMessage {
   public static async requestModalUIExtension(context: common.UIAbilityContext | common.ServiceExtensionContext,
     error: BusinessError) {
     if (deviceInfo.deviceType !== Constants.DEVICE_2IN1 && !OpenDlpFileError.NEED_DIALOG.has(error.code)) {
-      GetAlertMessage.phoneHandle(context, error);
+      AlertManager.phoneHandle(context, error);
       return;
     }
     // system dialog with UIExtension window, only support one depth want param.

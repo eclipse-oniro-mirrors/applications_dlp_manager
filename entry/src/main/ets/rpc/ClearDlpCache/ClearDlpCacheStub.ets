@@ -16,7 +16,7 @@
 import { rpc } from '@kit.IPCKit';
 import { HiLog } from '../../common/base/HiLog';
 import Constants from '../../common/constants/constant';
-import { clearDlpInfoByUri } from '../../OpenDlpFile/common/DataUtils/DataUtils';
+import { clearDlpInfoByUri } from '../../OpenDlpFile/manager/DataManager';
 import Constant from '../../common/constants/constant';
 
 const TAG = 'ClearDlpCacheStub';

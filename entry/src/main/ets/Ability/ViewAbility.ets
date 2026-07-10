@@ -25,6 +25,7 @@ import Want from '@ohos.app.ability.Want';
 import { StartFileManager } from '../OpenDlpFile/manager/StartFileManager';
 import FileUtils from '../common/FileUtils/FileUtils';
 import FileIdHandler from '../OpenDlpFile/handler/FileIdHandler';
+import TerminateManager from '../OpenDlpFile/manager/TerminateManager';
 
 const TAG = 'View';
 
@@ -58,14 +59,14 @@ export default class ViewAbility extends ServiceExtensionAbility {
       }
     }
     hiTraceMeter.startTrace('DlpOpenFileJs', startId);
-    if (OpeningDialogManager.getInstance().getIsChargeDecrypting() ||
-    OpeningDialogManager.getInstance().getIsTerminalSelf()) {
+    const terminateManager = TerminateManager.getInstance();
+    if (terminateManager.getIsChargeDecrypting() || terminateManager.getIsTerminalSelf()) {
       HiLog.error(TAG, 'ViewAbility isChargeDecrypting or isTerminalSelf');
       hiTraceMeter.finishTrace('DlpOpenFileJs', startId);
       return;
     }
-    OpeningDialogManager.getInstance().setIsChargeDecrypting(true);
-    OpeningDialogManager.getInstance().setIsTerminalSelf(false);
+    terminateManager.setIsChargeDecrypting(true);
+    terminateManager.setIsTerminalSelf(false);
     const processor = new OpenDlpFileProcessor();
     let processRet = await processor.process(want, startId, this.context);
     if (processRet.errcode !== Constants.ERR_CODE_SUCCESS) {
