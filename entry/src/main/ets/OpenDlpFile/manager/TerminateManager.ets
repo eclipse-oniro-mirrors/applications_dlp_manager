@@ -15,7 +15,6 @@
 
 import { common } from '@kit.AbilityKit';
 import Constants from '../../common/constants/constant';
-import OpeningDialogManager from './OpeningDialogManager';
 import { HiLog } from '../../common/base/HiLog';
 import { OpenDlpFileManager } from './OpenDlpFileManager';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
@@ -158,14 +157,14 @@ export default class TerminateManager {
     HiLog.info(TAG, 'start executeTerminate');
     try {
       ApplyEfficiencyManager.getInstance().releaseEfficiency();
-      OpeningDialogManager.getInstance().setIsTerminalSelf(true);
+      this.setIsTerminalSelf(true);
       await ViewAbilityService.getInstance().sendDisconnectMsg();
       await viewContext.terminateSelf();
       HiLog.info(TAG, 'viewAbility terminateSelf success');
     } catch (error) {
       HiLog.wrapError(TAG, error, 'terminateSelf exception');
     }
-    OpeningDialogManager.getInstance().setIsTerminalSelf(false);
+    this.setIsTerminalSelf(false);
   }
 
   public async terminate(highPriority?: boolean): Promise<void> {
@@ -183,10 +182,10 @@ export default class TerminateManager {
       return;
     }
     const hasDecryptedSize = getSizeRet.result;
-    const hasCallback = OpeningDialogManager.getInstance().getHasCallback();
-    const isDecrypting = OpeningDialogManager.getInstance().getIsDecrypting();
+    const hasCallback = this.getHasCallback();
+    const isDecrypting = this.getIsDecrypting();
     const toastSize = this._viewAbilityPhoneToastCount;
-    const isWaitingShowToast = OpeningDialogManager.getInstance().getIsWaitingShowToast();
+    const isWaitingShowToast = this.getIsWaitingShowToast();
     HiLog.info(TAG, `TerminateView hasDecryptedSize: ${hasDecryptedSize}, hasCallback: ${hasCallback},
     isDecrypting: ${isDecrypting}, toastSize: ${toastSize}, isWaitingShowToast: ${isWaitingShowToast},
     highPriority: ${highPriority}`);
