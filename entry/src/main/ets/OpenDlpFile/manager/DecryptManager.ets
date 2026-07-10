@@ -56,7 +56,7 @@ export default class DecryptHandler {
   constructor() {
   }
 
-  public async getDecryptData(decryptContent: DecryptContent):
+  public async getDecryptData(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
     Promise<Result<void>> {
     // 1. Check if decrypted
     const statusRet = await this.getDecryptState(decryptContent);
