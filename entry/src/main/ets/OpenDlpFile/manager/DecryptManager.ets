@@ -28,22 +28,21 @@ import { HiLog } from '../../common/base/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import DecryptContent from '../data/DecryptContent';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
-import { DecryptState, DecryptStatus, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
+import { DecryptState, DecryptStatus, OpenDlpFileManager } from './OpenDlpFileManager';
 import fs from '@ohos.file.fs';
 import { BusinessError } from '@kit.BasicServicesKit';
 import AccountManager from '../../manager/AccountManager';
-import { common, uriPermissionManager, wantConstant } from '@kit.AbilityKit';
-import { closeDlpFile } from '../common/DataUtils/DataUtils';
-import OpeningDialogManager from '../manager/OpeningDialogManager';
-import ApplyEfficiencyManager from '../manager/ApplyEfficiencyManager';
+import { common } from '@kit.AbilityKit';
+import { closeDlpFile } from './DataManager';
+import OpeningDialogManager from './OpeningDialogManager';
+import ApplyEfficiencyManager from './ApplyEfficiencyManager';
 import { ObjectUtil } from '../../common/ObjectUtil';
 import GlobalContext from '../../common/base/GlobalContext';
 import { FileParseType } from '../../bean/data/FileParseType';
 import CommonUtil from '../../common/base/CommonUtil';
-import FileIdHandler from './FileIdHandler';
+import FileIdHandler from '../handler/FileIdHandler';
 import FileUtils from '../../common/FileUtils/FileUtils';
-
-const HIPREVIEW_SANDBOX_LOW_BOUND: number = 1000;
+import TerminateManager from './TerminateManager';
 
 const TAG: string = 'DecryptHandler';
 const ENTERPRISE_ACCOUNT: number = 4;
@@ -57,7 +56,7 @@ export default class DecryptHandler {
   constructor() {
   }
 
-  public async getDecryptData(decryptContent: DecryptContent, context: common.ServiceExtensionContext):
+  public async getDecryptData(decryptContent: DecryptContent):
     Promise<Result<void>> {
     // 1. Check if decrypted
     const statusRet = await this.getDecryptState(decryptContent);
@@ -271,7 +270,7 @@ export default class DecryptHandler {
     }
     if (decryptContent.openDlpFileData.fileParse === FileParseType.ZIP &&
     decryptContent.openDlpFileData.needShowToast) {
-      if (!OpeningDialogManager.getInstance().getIsDecryptingByRequestId(decryptContent.openDlpFileData.requestId)) {
+      if (!TerminateManager.getInstance().isDecryptingByRequestId(decryptContent.openDlpFileData.requestId)) {
         HiLog.error(TAG, 'checkZipCancelByUser user close opening dialog');
         return ResultMsg.getErrMsg(Constants.ERR_CODE_USER_STOP_DIALOG);
       }
@@ -352,7 +351,7 @@ export default class DecryptHandler {
   private async handleDecryptionError(error: BusinessError,
     decryptContent: DecryptContent): Promise<Result<dlpPermission.DLPFile>> {
     HiLog.error(TAG, 'dlpPermission.openDLPFile error');
-    if (!OpeningDialogManager.getInstance().getIsDecryptingByRequestId(decryptContent.openDlpFileData.requestId)) {
+    if (!TerminateManager.getInstance().isDecryptingByRequestId(decryptContent.openDlpFileData.requestId)) {
       HiLog.info(TAG, 'User stop Dialog');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_USER_STOP_DIALOG);
     }

@@ -15,7 +15,7 @@
 
 import { common } from '@kit.AbilityKit';
 import { deviceInfo } from '@kit.BasicServicesKit';
-import { GetAlertMessage } from '../../common/AlertMessage/GetAlertMessage';
+import { AlertManager } from './AlertManager';
 import { BusinessError } from '@ohos.base';
 import { HiLog } from '../../common/base/HiLog';
 import Constants from '../../common/constants/constant';
@@ -65,7 +65,7 @@ class PhoneManager extends ErrorManager {
       await this.requestPhoneDialog(viewContext, error);
       return;
     }
-    await GetAlertMessage.viewAbilityPhoneToast(viewContext, error);
+    await AlertManager.viewAbilityPhoneToast(viewContext, error);
   }
 }
 
@@ -81,7 +81,7 @@ class PCManager extends ErrorManager {
       HiLog.info(TAG, `PCManager not need toast, code ${error.code}`);
       return;
     }
-    await GetAlertMessage.requestModalUIExtension(viewContext, error);
+    await AlertManager.requestModalUIExtension(viewContext, error);
   }
 }
 

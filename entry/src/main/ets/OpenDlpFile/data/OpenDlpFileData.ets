@@ -29,6 +29,16 @@ interface DlpConnectionPluginIdObj {
   id: string
 }
 
+export interface DecryptingState {
+  uri: string,
+  dialogTimeout: boolean, // “正在打开”动效是否超过250ms，拉“正在打开”动效之前状态设置为false，一直到超时回调才设置为true
+  needStartAbility: boolean, // 是否需要拉沙箱
+  hasDecrypted: boolean, // 是否解密完成，openDLPFile结束后设置为true
+  needShowDialog: boolean, // 是否需要拉起“正在打开”动效
+  isZip: boolean, // 是否是zip打包格式，用于zip格式，用户取消“正在打开”动效判断
+  needShowErr: boolean, // 是否需要处理错误弹框
+}
+
 export interface DlpWantParam {
   bundleName: string,
   abilityName: string,

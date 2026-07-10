@@ -34,7 +34,7 @@ import {
   clearDlpInfoByError,
   clearDlpInfoByUri,
   closeDlpFile
-} from '../../../../../../main/ets/OpenDlpFile/common/DataUtils/DataUtils';
+} from '../../../../../../main/ets/OpenDlpFile/manager/DataManager';
 import DataUtilsMock from '../../mock/DataUtilsMock';
 import DecryptContent from '../../../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import { OpenDlpFileManager } from '../../../../../../main/ets/OpenDlpFile/manager/OpenDlpFileManager';

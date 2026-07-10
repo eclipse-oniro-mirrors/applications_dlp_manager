@@ -18,7 +18,7 @@ import rpc from '@ohos.rpc';
 import Constants from '../../../common/constants/constant';
 import ViewAbilityService from '../service/ViewAbilityService';
 import OpeningDialogManager from '../../../OpenDlpFile/manager/OpeningDialogManager';
-import TerminateView from '../../../OpenDlpFile/TerminateView/TerminateView';
+import TerminateManager from '../../../OpenDlpFile/manager/TerminateManager';
 
 const TAG = 'ViewAbilityStub';
 

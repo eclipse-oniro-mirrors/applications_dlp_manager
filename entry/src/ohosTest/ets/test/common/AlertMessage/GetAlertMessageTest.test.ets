@@ -27,7 +27,7 @@ import {
 } from '@ohos/hypium';
 import { common } from '@kit.AbilityKit';
 import AppStorageMgr from '../../../../../main/ets/common/AppStorageMgr';
-import { GetAlertMessage } from '../../../../../main/ets/common/AlertMessage/GetAlertMessage';
+import { AlertManager } from '../../../../../main/ets/OpenDlpFile/manager/AlertManager';
 import UIContextUtil from '../../../../../main/ets/common/UIContextUtil';
 import Constants from '../../../../../main/ets/common/constants/constant';
 
@@ -63,15 +63,15 @@ export default function GetAlertMessageTest() {
         name: '',
         message: ''
       }
-      await GetAlertMessage.viewAbilityPhoneToast(context, err);
+      await AlertManager.viewAbilityPhoneToast(context, err);
       mocker.ignoreMock(UIContextUtil.getInstance(), UIContextUtil.getInstance().getUIContext);
 
-      await GetAlertMessage.viewAbilityPhoneToast(context, err);
+      await AlertManager.viewAbilityPhoneToast(context, err);
 
-      mock = mocker.mockFunc(GetAlertMessage, GetAlertMessage.getToastMessage);
+      mock = mocker.mockFunc(AlertManager, AlertManager.getToastMessage);
       when(mock)(ArgumentMatchers.any).afterReturn(undefined);
-      await GetAlertMessage.viewAbilityPhoneToast(context, err);
-      mocker.ignoreMock(GetAlertMessage, GetAlertMessage.getToastMessage);
+      await AlertManager.viewAbilityPhoneToast(context, err);
+      mocker.ignoreMock(AlertManager, AlertManager.getToastMessage);
       expect(context).not().assertNull();
     })
 
@@ -83,7 +83,7 @@ export default function GetAlertMessageTest() {
         name: '',
         message: ''
       }
-      GetAlertMessage.phoneHandle(context, err);
+      AlertManager.phoneHandle(context, err);
       expect(context).not().assertNull();
     })
 
@@ -93,48 +93,48 @@ export default function GetAlertMessageTest() {
         name: '',
         message: ''
       }
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_ACCOUNT_NOT_LOGIN;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_APP_GET_FILE_ASSET_ERROR;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_CREDENTIAL_TIMEOUT;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_APP_INSIDE_ERROR;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_NOT_DLP_FILE;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION_2C;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_OTHER_APP_OPEN_FILE;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_OFFLINE;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_NO_SPACE;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.ERR_JS_DLP_ALLOWED_OPEN_COUNT_INVALID;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
       err.code = Constants.DLP_START_SANDBOX_ERROR;
-      GetAlertMessage.getAlertMessage(err);
+      AlertManager.getAlertMessage(err);
 
-      GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
+      AlertManager.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
         $r('app.string.File_cannot_be_opened'));
 
       expect(err).not().assertNull();
@@ -146,22 +146,22 @@ export default function GetAlertMessageTest() {
         name: '',
         message: ''
       }
-      GetAlertMessage.getAlertTitleMessage(err);
+      AlertManager.getAlertTitleMessage(err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
-      GetAlertMessage.getAlertTitleMessage(err);
+      AlertManager.getAlertTitleMessage(err);
 
       err.code = Constants.ERR_JS_APP_ENCRYPTING;
-      GetAlertMessage.getAlertTitleMessage(err);
+      AlertManager.getAlertTitleMessage(err);
 
       err.code = Constants.ERR_JS_FILE_EXPIRATION;
-      GetAlertMessage.getAlertTitleMessage(err);
+      AlertManager.getAlertTitleMessage(err);
 
       err.code = Constants.ERR_JS_DLP_FILE_READ_ONLY;
-      GetAlertMessage.getAlertTitleMessage(err);
+      AlertManager.getAlertTitleMessage(err);
 
       err.code = Constants.DLP_START_SANDBOX_ERROR;
-      GetAlertMessage.getAlertTitleMessage(err);
+      AlertManager.getAlertTitleMessage(err);
 
       expect(err).not().assertNull();
     })
@@ -172,10 +172,10 @@ export default function GetAlertMessageTest() {
         name: '',
         message: ''
       }
-      GetAlertMessage.getAlertButtonMessage(err);
+      AlertManager.getAlertButtonMessage(err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
-      GetAlertMessage.getAlertButtonMessage(err);
+      AlertManager.getAlertButtonMessage(err);
 
       expect(err).not().assertNull();
     })
@@ -186,40 +186,40 @@ export default function GetAlertMessageTest() {
         name: '',
         message: ''
       }
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_OFFLINE;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_NOT_DLP_FILE;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_SYSTEM_NEED_TO_BE_UPGRADED;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_APP_CANNOT_OPEN;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_OTHER_APP_OPEN_FILE;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_FILE_EXPIRATION;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_NO_SPACE;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_NOT_AUTHORIZED_APPLICATION;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION_2C;
-      GetAlertMessage.getToastMessage(err);
+      AlertManager.getToastMessage(err);
 
       expect(err).not().assertNull();
     })
@@ -231,10 +231,10 @@ export default function GetAlertMessageTest() {
         name: '',
         message: ''
       }
-      GetAlertMessage.requestModalUIExtension(context, err);
+      AlertManager.requestModalUIExtension(context, err);
 
       err.code = Constants.ERR_JS_USER_NO_PERMISSION_2B;
-      GetAlertMessage.requestModalUIExtension(context, err);
+      AlertManager.requestModalUIExtension(context, err);
       expect(context).not().assertNull();
     })
   })

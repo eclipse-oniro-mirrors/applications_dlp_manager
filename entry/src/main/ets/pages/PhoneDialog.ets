@@ -14,7 +14,7 @@
  */
 
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
-import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
+import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import { HiLog } from '../common/base/HiLog';
@@ -131,7 +131,7 @@ struct Index {
         this.loginDialog.open();
         return;
       }
-      const errInfo: Record<string, Resource> = GetAlertMessage.getAlertMessage(errorMsg);
+      const errInfo: Record<string, Resource> = AlertManager.getAlertMessage(errorMsg);
       const msg = errInfo.msg ?? '';
       this.getDialogConfig(msg);
       this.errorDialog?.open();

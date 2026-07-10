@@ -21,19 +21,19 @@ import common from '@ohos.app.ability.common';
 import Constants from '../../common/constants/constant';
 import DecryptContent from '../data/DecryptContent';
 import { AccountHandlerFactory } from '../handler/AccountHandler';
-import DecryptHandler from '../handler/DecryptHandler';
+import DecryptHandler from '../manager/DecryptManager';
 import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { HiLog } from '../../common/base/HiLog';
-import { clearDlpInfoByError } from '../common/DataUtils/DataUtils';
+import { clearDlpInfoByError } from '../manager/DataManager';
 import CredConnectService from '../../rpc/CredConnectService';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import { BusinessError } from '@ohos.base';
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
-import ErrorManager from '../handler/ErrorHandler';
-import StartSandboxHandler from '../handler/StartSandboxHandler';
+import SandboxManager from '../manager/SandboxManager';
 import { commonEventManager } from '@kit.BasicServicesKit';
 import { uriPermissionManager, wantConstant } from '@kit.AbilityKit';
+import TerminateManager from '../manager/TerminateManager';
 
 const TAG: string = 'OpenDlpFileProcessor';
 const COMMON_ENTERPRISE_EVENT: string =  'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
@@ -97,7 +97,7 @@ export class OpenDlpFileProcessor {
     grantForHiPreview(decryptContent);
 
     // 6. start sandbox 不需要拉起“正在打开”的动效，可以直接拉起沙箱（拉起沙箱，情况一）
-    const startSandboxRet = await StartSandboxHandler.getInstance().startSandbox(decryptContent);
+    const startSandboxRet = await OpeningDialogManager.getInstance().startSandbox(decryptContent);
     if (startSandboxRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       HiLog.error(TAG, 'startSandbox error');
       return ResultMsg.buildResult(startSandboxRet.errcode, startSandboxRet.errmsg, decryptContent);
@@ -158,7 +158,7 @@ export class OpenDlpFileProcessor {
 
   private checkIfContinue(state: DecryptState): Result<void> {
     HiLog.info(TAG, `checkIfContinue state is ${state}`);
-    const isDecrypting = OpeningDialogManager.getInstance().getIsDecrypting();
+    const isDecrypting = TerminateManager.getInstance().getIsDecrypting();
     if (state === DecryptState.DECRYPTING || isDecrypting) {
       HiLog.info(TAG, `in decrypting, state ${state}, isDecrypting ${isDecrypting}`);
       return ResultMsg.getErrMsg(Constants.ERR_CODE_FILE_IS_DECRYPTING_ERROR);
@@ -207,7 +207,7 @@ export class OpenDlpFileProcessor {
       return ResultMsg.buildSuccess();
     }
     // 不需要拉起“正在打开”的动效，可以直接进行错误处理（错误处理，情况一）
-    await ErrorManager.getInstance().startHandleError(decryptContent?.openDlpFileData?.requestId ?? '', error);
+    await OpeningDialogManager.getInstance().startHandleError(decryptContent?.openDlpFileData?.requestId ?? '', error);
     return ResultMsg.buildSuccess();
   }
 

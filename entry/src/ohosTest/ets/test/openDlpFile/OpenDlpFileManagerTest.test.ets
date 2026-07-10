@@ -40,6 +40,7 @@ import { ErrorHandlerFactory } from '../../../../main/ets/OpenDlpFile/manager/Er
 import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import FileMetaInfo from '../../../../main/ets/bean/data/FileMetaInfo';
+import TerminateManager from '../../../../main/ets/OpenDlpFile/manager/TerminateManager';
 
 export default function OpenDlpFileManagerTest() {
   describe('OpenDlpFileManagerTest', () => {
@@ -145,19 +146,20 @@ export default function OpenDlpFileManagerTest() {
       await OpeningDialogManager.getInstance().unLoadOpeningDialogNormal();
       await OpeningDialogManager.getInstance().unLoadOpeningDialogAbnormal();
 
-      OpeningDialogManager.getInstance().setIsWaitingShowToast(true);
-      let ret = OpeningDialogManager.getInstance().getIsWaitingShowToast();
+      const terminateManager = TerminateManager.getInstance();
+      terminateManager.setIsWaitingShowToast(true);
+      let ret = terminateManager.getIsWaitingShowToast();
       expect(ret).assertEqual(true);
 
-      OpeningDialogManager.getInstance().setIsWaitingShowToast(false);
-      ret = OpeningDialogManager.getInstance().getIsWaitingShowToast();
+      terminateManager.setIsWaitingShowToast(false);
+      ret = terminateManager.getIsWaitingShowToast();
       expect(ret).assertEqual(false);
 
       await OpeningDialogManager.getInstance().showOpeningDialog('uri', 'id', false);
       ret = OpeningDialogManager.getInstance().getCanShowToast('id');
       expect(ret).assertEqual(true);
 
-      ret = OpeningDialogManager.getInstance().getCanStartAbility('id');
+      ret = terminateManager.getCanStartAbility('id');
       expect(ret).assertEqual(true);
 
       ret = OpeningDialogManager.getInstance().getNeedStartAbility('id');
@@ -176,16 +178,17 @@ export default function OpenDlpFileManagerTest() {
 
     it('OpeningDialogManager_supplement', 0, async () => {
       let manager = OpeningDialogManager.getInstance();
+      const terminateManager = TerminateManager.getInstance();
       manager.registerEmitEvent();
       manager.unRegisterEmitEvent();
-      manager.setIsTerminalSelf(false);
-      let res = manager.getIsTerminalSelf();
+      terminateManager.setIsTerminalSelf(false);
+      let res = terminateManager.getIsTerminalSelf();
       expect(res).assertFalse();
 
-      res = manager.getIsDecryptingByRequestId('-1');
+      res = terminateManager.isDecryptingByRequestId('-1');
       expect(res).assertFalse();
 
-      res = manager.getIsChargeDecrypting();
+      res = terminateManager.getIsChargeDecrypting();
       expect(res).assertFalse();
 
       manager.dialogDisappear('-1');

@@ -51,7 +51,7 @@ import { AddStaff } from '../component/encryptionComponents/AddStaff';
 import GlobalContext from '../common/base/GlobalContext';
 import IDLDLPProperty from '../common/dlpClass';
 import { IAuthUser } from '../common/dlpClass';
-import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
+import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import { HiLog } from '../common/base/HiLog';
 import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
 import { SystemUtils } from '../common/systemUtils';
@@ -476,7 +476,7 @@ struct DlpDialog {
 
   private handlePickerError(err: BusinessError): void {
     HiLog.wrapError(TAG, err, 'DocumentViewPicker save failed');
-    let errorInfo = GetAlertMessage.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
+    let errorInfo = AlertManager.getAlertMessage(err, $r('app.string.TITLE_APP_ERROR'),
       $r('app.string.File_cannot_be_opened'));
     this.showErrorDialog(errorInfo.title, errorInfo.msg);
     this.processing = false;
@@ -497,7 +497,7 @@ struct DlpDialog {
         }
         await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        let errorInfo = GetAlertMessage.getAlertMessage({ code: err } as BusinessError);
+        let errorInfo = AlertManager.getAlertMessage({ code: err } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         this.processing = false;
         return;
@@ -665,7 +665,7 @@ struct DlpDialog {
     } catch (err) {
       HiLog.wrapError(TAG, err, 'getOsAccountInfo failed');
       if (this.session !== undefined) {
-        let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        let errorInfo = AlertManager.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       }
       return;
@@ -673,7 +673,7 @@ struct DlpDialog {
     let codeMessageRet = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
     if (codeMessageRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       if (this.session !== undefined) {
-        let errorInfo = GetAlertMessage.getAlertMessage(
+        let errorInfo = AlertManager.getAlertMessage(
           { code: codeMessageRet.errcode } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       }

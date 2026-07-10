@@ -41,7 +41,7 @@ import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
 import GlobalContext from '../common/base/GlobalContext';
 import { AccountTipsConfig } from '../component/AccountTipsConfig';
 import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
-import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
+import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import { HiLog } from '../common/base/HiLog';
 import { SystemUtils } from '../common/systemUtils';
 import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
@@ -449,7 +449,7 @@ struct changeEncryption {
     } catch (err) {
       HiLog.wrapError(TAG, err, 'getOsAccountInfo failed.');
       if (this.session !== undefined) {
-        let errorInfo = GetAlertMessage.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
+        let errorInfo = AlertManager.getAlertMessage({ code: Constants.ERR_JS_GET_ACCOUNT_ERROR } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       }
       return;
@@ -457,7 +457,7 @@ struct changeEncryption {
     let codeMessageRet = checkDomainAccountInfo(GlobalContext.load('accountInfo') as osAccount.OsAccountInfo);
     if (codeMessageRet.errcode !== Constants.ERR_CODE_SUCCESS) {
       if (this.session !== undefined) {
-        let errorInfo = GetAlertMessage.getAlertMessage(
+        let errorInfo = AlertManager.getAlertMessage(
           { code: codeMessageRet.errcode } as BusinessError);
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
       }

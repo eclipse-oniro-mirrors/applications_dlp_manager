@@ -37,7 +37,7 @@ import {
   getAccountNameFromErrMsg
 } from '../common/FileUtils/utils';
 import GlobalContext from '../common/base/GlobalContext';
-import { GetAlertMessage } from '../common/AlertMessage/GetAlertMessage';
+import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import { HiLog } from '../common/base/HiLog';
 import FileUtils from '../common/FileUtils/FileUtils';
 import AccountManager from '../manager/AccountManager';
@@ -349,7 +349,7 @@ export default class MainAbility extends UIExtensionAbility {
         if (dlpGeneralInfo.accountType === dlpPermission.AccountType.DOMAIN_ACCOUNT) {
           this.dlpFilesToEncrypt(session, want);
         } else {
-          await GetAlertMessage.phoneHandle(this.context, {
+          await AlertManager.phoneHandle(this.context, {
             code: Constants.ERR_JS_APP_CANNOT_OPEN } as BusinessError);
         }
       } catch {

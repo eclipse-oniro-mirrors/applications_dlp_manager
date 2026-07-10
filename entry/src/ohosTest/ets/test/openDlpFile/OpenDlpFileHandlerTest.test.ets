@@ -27,8 +27,7 @@ import {
 } from '@ohos/hypium';
 import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
 import Constants from '../../../../main/ets/common/constants/constant';
-import DecryptHandler from '../../../../main/ets/OpenDlpFile/handler/DecryptHandler';
-import ErrorHandler from '../../../../main/ets/OpenDlpFile/handler/ErrorHandler';
+import DecryptHandler from '../../../../main/ets/OpenDlpFile/manager/DecryptManager';
 import FileIdHandler from '../../../../main/ets/OpenDlpFile/handler/FileIdHandler';
 import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';
 import DataUtilsMock from './mock/DataUtilsMock';
@@ -40,10 +39,11 @@ import {
 } from '../../../../main/ets/OpenDlpFile/manager/OpenDlpFileManager';
 import { ResultMsg } from '../../../../main/ets/common/base/ResultMsg';
 import { AccountHandlerFactory } from '../../../../main/ets/OpenDlpFile/handler/AccountHandler';
-import StartSandboxHandler from '../../../../main/ets/OpenDlpFile/handler/StartSandboxHandler';
+import SandboxManager from '../../../../main/ets/OpenDlpFile/manager/SandboxManager';
 import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 import { FileParseFactory } from '../../../../main/ets/OpenDlpFile/handler/FileParseHandler';
+import TerminateManager from '../../../../main/ets/OpenDlpFile/manager/TerminateManager';
 
 export default function OpenDlpFileHandlerTest() {
   describe('OpenDlpFileHandlerTest', () => {
@@ -73,17 +73,18 @@ export default function OpenDlpFileHandlerTest() {
         name: '',
         message: ''
       }
-      let ret = await ErrorHandler.getInstance().startHandleError('', error);
+      const openingDialogManager = OpeningDialogManager.getInstance();
+      let ret = await openingDialogManager.startHandleError('', error);
       expect(ret.errcode).assertEqual(Constants.ERR_CODE_SUCCESS);
 
-      ret = await ErrorHandler.getInstance().startHandleError('', undefined);
+      ret = await openingDialogManager.startHandleError('', undefined);
       expect(ret.errcode).assertEqual(Constants.ERR_CODE_PARAMS_CHECK_ERROR);
 
       const mocker = new MockKit();
       const mock: Function =
         mocker.mockFunc(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanShowToast);
       when(mock)(ArgumentMatchers.any).afterReturn(undefined);
-      ret = await ErrorHandler.getInstance().startHandleError('', error);
+      ret = await openingDialogManager.startHandleError('', error);
       expect(ret.errcode).assertEqual(Constants.ERR_CODE_SUCCESS);
       mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanShowToast);
     })
@@ -185,11 +186,11 @@ export default function OpenDlpFileHandlerTest() {
     })
 
     it('StartSandboxHandler', 0, async () => {
-      let ret = await StartSandboxHandler.getInstance().startSandbox();
+      let ret = await OpeningDialogManager.getInstance().startSandbox();
       expect(ret.errcode).not().assertEqual(0);
 
       let content = DataUtilsMock.getDecryptContent();
-      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      ret = await OpeningDialogManager.getInstance().startSandbox(content);
       expect(ret.errcode).not().assertEqual(0);
     })
 
@@ -199,7 +200,7 @@ export default function OpenDlpFileHandlerTest() {
 
       const mocker = new MockKit();
       const mock: Function =
-        mocker.mockFunc(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanStartAbility);
+        mocker.mockFunc(OpeningDialogManager.getInstance(), TerminateManager.getInstance().getCanStartAbility);
       when(mock)(ArgumentMatchers.any).afterReturn(false);
 
       const mock2: Function =
@@ -207,22 +208,22 @@ export default function OpenDlpFileHandlerTest() {
       when(mock2)(ArgumentMatchers.any).afterReturn(true);
 
       let content = DataUtilsMock.getSandboxHandlerRawDecryptContent();
-      let ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      let ret = await OpeningDialogManager.getInstance().startSandbox(content);
       expect(ret.errcode).not().assertEqual(0);
 
       content = DataUtilsMock.getSandboxHandlerZipDecryptContent();
-      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      ret = await OpeningDialogManager.getInstance().startSandbox(content);
       expect(ret.errcode).not().assertEqual(0);
 
       when(mock)(ArgumentMatchers.any).afterReturn(true);
-      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      ret = await OpeningDialogManager.getInstance().startSandbox(content);
       expect(ret.errcode).not().assertEqual(0);
 
       when(mock2)(ArgumentMatchers.any).afterReturn(false);
-      ret = await StartSandboxHandler.getInstance().startSandbox(content);
+      ret = await OpeningDialogManager.getInstance().startSandbox(content);
       expect(ret.errcode).assertEqual(0);
 
-      mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getCanStartAbility);
+      mocker.ignoreMock(OpeningDialogManager.getInstance(), TerminateManager.getInstance().getCanStartAbility);
       mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getNeedStartAbility);
     })
 
