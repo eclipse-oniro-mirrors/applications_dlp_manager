@@ -492,6 +492,16 @@ struct DlpDialog {
     }
   }
 
+  private GenDlpFileshowErrorDialog(errCode: BusinessError): void {
+    let errorInfo : Record<string, Resource>;
+    if (this.checkGenDlpFileErrorCode(errCode.code)) {
+      errorInfo = { 'msg' : $r('app.string.Share_File_Encrypted_Failed' )} as Record<string, Resource>;
+    } else {
+      errorInfo = AlertManager.getAlertMessage(errCode);
+    }
+    this.showErrorDialog(errorInfo.title, errorInfo.msg);
+  }
+
   beginToGenDlpFileHome(srcFileUri: string, uri: string, uriInfo: fileUri.FileUri) {
     let _dlp = this.tempData();
     if (!this.dlpRpcProxy) {
@@ -507,14 +517,7 @@ struct DlpDialog {
         }
         await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        let errCode = { code : err } as BusinessError;
-        let errorInfo : Record<string, Resource>;
-        if (this.checkGenDlpFileErrorCode(errCode.code)) {
-          errorInfo = { 'msg' : $r('app.string.Share_File_Encrypted_Failed' )} as Record<string, Resource>;
-        } else {
-          errorInfo = AlertManager.getAlertMessage({ code: err } as BusinessError);
-        }
-        this.showErrorDialog(errorInfo.title, errorInfo.msg);
+        this.GenDlpFileshowErrorDialog({ code : err } as BusinessError);
         this.processing = false;
         return;
       } else {
