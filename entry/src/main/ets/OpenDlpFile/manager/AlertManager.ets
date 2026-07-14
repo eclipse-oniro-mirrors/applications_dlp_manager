@@ -119,6 +119,7 @@ export class AlertManager {
         return { 'msg': $r('app.string.network_invalid') } as Record<string, Resource>;
       case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
       case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
+        return { 'msg': $r('app.string.Share_File_Encrypted_Failed') } as Record<string, Resource>;
       case Constants.ERR_JS_APP_INSIDE_ERROR:
         return { 'msg': $r('app.string.File_cannot_be_opened') } as Record<string, Resource>;
       case Constants.ERR_JS_NOT_DLP_FILE:
