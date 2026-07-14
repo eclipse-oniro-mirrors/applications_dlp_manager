@@ -490,7 +490,6 @@ struct DlpDialog {
       default:
         return false;
     }
-    return false;
   }
 
   beginToGenDlpFileHome(srcFileUri: string, uri: string, uriInfo: fileUri.FileUri) {
