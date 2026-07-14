@@ -497,7 +497,15 @@ struct DlpDialog {
         }
         await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        let errorInfo = AlertManager.getAlertMessage({ code: err } as BusinessError);
+        let errCode = { code : err} as BusinessError;
+        let errInfo : Record<string, Resource>;
+        switch (errCode.code) {
+          case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
+          case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
+            errorInfo = {'msg': $r('app.string.Share_File_Encrypted_Failed')} as Record<string, Resource>;
+          default:
+            errorInfo = AlertManager.getAlertMessage({ code: err } as BusinessError);
+        }
         this.showErrorDialog(errorInfo.title, errorInfo.msg);
         this.processing = false;
         return;
