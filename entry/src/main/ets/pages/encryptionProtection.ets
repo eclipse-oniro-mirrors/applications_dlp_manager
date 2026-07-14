@@ -492,7 +492,7 @@ struct DlpDialog {
     }
   }
 
-  private GenDlpFileshowErrorDialog(errCode: BusinessError): void {
+  private GenDlpFileShowErrorDialog(errCode: BusinessError): void {
     let errorInfo : Record<string, Resource>;
     if (this.checkGenDlpFileErrorCode(errCode.code)) {
       errorInfo = { 'msg' : $r('app.string.Share_File_Encrypted_Failed' )} as Record<string, Resource>;
@@ -517,7 +517,7 @@ struct DlpDialog {
         }
         await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        this.GenDlpFileshowErrorDialog({ code : err } as BusinessError);
+        this.GenDlpFileShowErrorDialog({ code : err } as BusinessError);
         this.processing = false;
         return;
       } else {
