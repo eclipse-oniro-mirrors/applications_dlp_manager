@@ -482,7 +482,7 @@ struct DlpDialog {
     this.processing = false;
   }
 
-  private GenDlpFileShowErrorDialog(errCode: BusinessError): void {
+  private genDlpFileShowErrorDialog(errCode: BusinessError): void {
     let errorInfo: Record<string, Resource>;
     if (errCode.code === Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR ||
       errCode.code === Constants.ERR_JS_CREDENTIAL_SERVER_ERROR) {
@@ -508,7 +508,7 @@ struct DlpDialog {
         }
         await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        this.GenDlpFileShowErrorDialog({ code: err } as BusinessError);
+        this.genDlpFileShowErrorDialog({ code: err } as BusinessError);
         this.processing = false;
         return;
       } else {
