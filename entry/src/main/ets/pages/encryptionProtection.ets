@@ -490,7 +490,7 @@ struct DlpDialog {
   private GenDlpFileShowErrorDialog(errCode: BusinessError): void {
     let errorInfo: Record<string, Resource>;
     if (this.isGenDlpFileErrorCode(errCode.code)) {
-      errorInfo = { 'msg': $r('app.string.Share_File_Encrypted_Failed' )} as Record<string, Resource>;
+      errorInfo = { 'msg': $r('app.string.Share_File_Encrypted_Failed') } as Record<string, Resource>;
     } else {
       errorInfo = AlertManager.getAlertMessage(errCode);
     }
