@@ -482,19 +482,13 @@ struct DlpDialog {
     this.processing = false;
   }
 
-  private checkGenDlpFileErrorCode(errCode: number): boolean {
-    switch (errCode) {
-      case Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR:
-      case Constants.ERR_JS_CREDENTIAL_SERVER_ERROR:
-        return true;
-      default:
-        return false;
-    }
+  private isGenDlpFileErrorCode(errCode: number): boolean {
+    return errCode === Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR || errCode === Constants.ERR_JS_CREDENTIAL_SERVER_ERROR;
   }
 
   private GenDlpFileShowErrorDialog(errCode: BusinessError): void {
     let errorInfo : Record<string, Resource>;
-    if (this.checkGenDlpFileErrorCode(errCode.code)) {
+    if (this.isGenDlpFileErrorCode(errCode.code)) {
       errorInfo = { 'msg' : $r('app.string.Share_File_Encrypted_Failed' )} as Record<string, Resource>;
     } else {
       errorInfo = AlertManager.getAlertMessage(errCode);
@@ -517,7 +511,7 @@ struct DlpDialog {
         }
         await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        this.GenDlpFileShowErrorDialog({ code : err } as BusinessError);
+        this.GenDlpFileShowErrorDialog({ code: err } as BusinessError);
         this.processing = false;
         return;
       } else {
