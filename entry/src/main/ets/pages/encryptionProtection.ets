@@ -482,6 +482,17 @@ struct DlpDialog {
     this.processing = false;
   }
 
+  private genDlpFileShowErrorDialog(errCode: BusinessError): void {
+    let errorInfo: Record<string, Resource>;
+    if (errCode.code === Constants.ERR_JS_CREDENTIAL_SERVICE_ERROR ||
+      errCode.code === Constants.ERR_JS_CREDENTIAL_SERVER_ERROR) {
+      errorInfo = { 'msg': $r('app.string.Share_File_Encrypted_Failed') } as Record<string, Resource>;
+    } else {
+      errorInfo = AlertManager.getAlertMessage(errCode);
+    }
+    this.showErrorDialog(errorInfo.title, errorInfo.msg);
+  }
+
   beginToGenDlpFileHome(srcFileUri: string, uri: string, uriInfo: fileUri.FileUri) {
     let _dlp = this.tempData();
     if (!this.dlpRpcProxy) {
@@ -497,8 +508,7 @@ struct DlpDialog {
         }
         await FileUtil.unlink(uriInfo.path);
         await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
-        let errorInfo = AlertManager.getAlertMessage({ code: err } as BusinessError);
-        this.showErrorDialog(errorInfo.title, errorInfo.msg);
+        this.genDlpFileShowErrorDialog({ code: err } as BusinessError);
         this.processing = false;
         return;
       } else {
