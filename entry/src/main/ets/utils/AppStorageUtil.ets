@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-import AppStorageConstant from './AppStorageConstant';
+import AppStorageConstant from '../common/constants/AppStorageConstant';
 import { common } from '@kit.AbilityKit';
-import { HiLog } from './base/HiLog';
+import { HiLog } from '../common/base/HiLog';
 
-const TAG: string = 'AppStorageMgr';
+const TAG: string = 'AppStorageUtil';
 
-export default class AppStorageMgr {
+export default class AppStorageUtil {
   static getApplicationContext(): common.Context | undefined {
-    return AppStorageMgr.getContext(AppStorageConstant.APPLICATION_CONTEXT);
+    return AppStorageUtil.getContext(AppStorageConstant.APPLICATION_CONTEXT);
   }
 
   static getContext(key: string): common.Context | undefined {

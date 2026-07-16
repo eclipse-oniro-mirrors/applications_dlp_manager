@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { buffer } from '@kit.ArkTS';
-import { HiLog } from './HiLog';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'CommonUtil';
 

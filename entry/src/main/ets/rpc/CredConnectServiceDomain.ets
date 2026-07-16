@@ -17,11 +17,11 @@ import common from '@ohos.app.ability.common';
 import Want from '@ohos.app.ability.Want';
 import { BusinessError } from '@ohos.base';
 import rpc from '@ohos.rpc';
-import DomainAccountRequest from '../bean/request/DomainAccountRequest';
-import DomainAccountResponse from '../bean/response/DomainAccountResponse';
+import DomainAccountRequest from '../common/bean/request/DomainAccountRequest';
+import DomainAccountResponse from '../common/bean/response/DomainAccountResponse';
 import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import Constants from '../common/constants/constant';
-import AppStorageConstant from '../common/AppStorageConstant';
+import AppStorageConstant from '../common/constants/AppStorageConstant';
 import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'CredConnectServiceDomain';

@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-import AccountAssociation from '../../bean/data/AccountAssociation';
+import AccountAssociation from '../../common/bean/data/AccountAssociation';
 import Constants from '../../common/constants/constant';
-import { encodeByBase64, generateRandom, isInvalidStr } from '../../common/FileUtils/utils';
+import { encodeByBase64, generateRandom, isInvalidStr } from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
-import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
-import HuksProperties from '../../common/huks/HuksProperties';
-import Singleton from '../../common/Singleton';
-import StorageUtil from '../../common/StorageUtil';
-import { stringToUint8Array } from '../../common/FileUtils/utils';
+import HuksCipherUtils from '../../utils/HuksCipherUtil';
+import HuksProperties from '../../common/config/HuksProperties';
+import Singleton from '../../common/base/Singleton';
+import StorageUtil from '../../utils/StorageUtil';
+import { stringToUint8Array } from '../../utils/utils';
 
 const TAG: string = 'AssocEncValid';
 

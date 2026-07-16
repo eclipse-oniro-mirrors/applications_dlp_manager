@@ -21,7 +21,8 @@ import { HiLog } from '../common/base/HiLog';
 import { AlertDialog } from '@kit.ArkUI';
 import Constants from '../common/constants/constant';
 import { common } from '@kit.AbilityKit';
-import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
+import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'PhoneDialog';
 

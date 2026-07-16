@@ -33,7 +33,7 @@ export interface AccountTips {
   isTextContent?: boolean;
 }
 
-export class AccountTipsConfig {
+export class AccountTipsConfigUtil {
   public static configTipsArray: AccountTips[] = [];
   public static showContentKey: string = '';
   private static ccmConfigPath: string = 'etc/dlp_manager/account_tips.json';
@@ -42,16 +42,16 @@ export class AccountTipsConfig {
   public static getConfigTips(): Promise<Array<AccountTips>> {
     return new Promise((resolve, reject) => {
       try {
-        if (AccountTipsConfig.configTipsArray?.length === 0) {
-          AccountTipsConfig.loadCcmConfigs().then((accountTipsArray: Array<AccountTips>) => {
-            AccountTipsConfig.configTipsArray = accountTipsArray;
-            resolve(AccountTipsConfig.configTipsArray);
+        if (AccountTipsConfigUtil.configTipsArray?.length === 0) {
+          AccountTipsConfigUtil.loadCcmConfigs().then((accountTipsArray: Array<AccountTips>) => {
+            AccountTipsConfigUtil.configTipsArray = accountTipsArray;
+            resolve(AccountTipsConfigUtil.configTipsArray);
           }).catch((err: BusinessError) => {
             HiLog.wrapError(TAG, err, 'getConfigTips failed');
             reject(err);
           });
         } else {
-          let accountTipsArray: AccountTips[] = JSON.parse(JSON.stringify(AccountTipsConfig.configTipsArray));
+          let accountTipsArray: AccountTips[] = JSON.parse(JSON.stringify(AccountTipsConfigUtil.configTipsArray));
           resolve(accountTipsArray);
         }
       } catch (error) {
@@ -69,7 +69,7 @@ export class AccountTipsConfig {
   private static loadCcmConfigs(): Promise<Array<AccountTips>> {
     return new Promise((resolve, reject) => {
       try {
-        let filePath: string = configPolicy.getOneCfgFileSync(AccountTipsConfig.ccmConfigPath);
+        let filePath: string = configPolicy.getOneCfgFileSync(AccountTipsConfigUtil.ccmConfigPath);
         let isExistFile: boolean = fs.accessSync(filePath);
         let configStr: string = '';
         if (isExistFile) {
@@ -82,7 +82,7 @@ export class AccountTipsConfig {
             reject();
             return;
           }
-          let contentArray: Uint8Array = resourceManager.getRawFileContentSync(AccountTipsConfig.configName);
+          let contentArray: Uint8Array = resourceManager.getRawFileContentSync(AccountTipsConfigUtil.configName);
           let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8', { ignoreBOM: true });
           configStr = textDecoder.decodeToString(contentArray, { stream: false });
         }
@@ -93,7 +93,7 @@ export class AccountTipsConfig {
           for (let jsonObj of jsonArray) {
             let accountTips: AccountTips = jsonObj as AccountTips;
             if (accountTips.isTextContent) {
-              AccountTipsConfig.showContentKey = accountTips.key;
+              AccountTipsConfigUtil.showContentKey = accountTips.key;
             }
             accountTipsArray.push(accountTips);
           }

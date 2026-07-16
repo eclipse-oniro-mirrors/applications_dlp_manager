@@ -14,7 +14,7 @@
  */
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
-import FileUtils from '../../../../../main/ets/common/FileUtils/FileUtils';
+import FileUtils from '../../../../../main/ets/utils/FileUtils';
 
 export default function FileUtilsTest() {
   describe('FileUtilsTest', () => {

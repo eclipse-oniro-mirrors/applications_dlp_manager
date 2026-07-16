@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-import AccountAssociation from '../../bean/data/AccountAssociation';
+import AccountAssociation from '../../common/bean/data/AccountAssociation';
 import AccountAssociationConvertor from '../../convertor/AccountAssociationConvertor';
-import AccountAssociationUtil from '../../common/AssocUtil/AccountAssociationUtil';
-import AppStorageMgr from '../../common/AppStorageMgr';
+import AccountAssociationUtil from '../../utils/AccountAssociationUtil';
+import AppStorageUtil from '../../utils/AppStorageUtil';
 import { common } from '@kit.AbilityKit';
 import Constants from '../../common/constants/constant';
-import { decodeByBase64, isInvalidStr, stringToUint8Array, uint8ArrayToString } from '../../common/FileUtils/utils';
+import { decodeByBase64, isInvalidStr, stringToUint8Array, uint8ArrayToString } from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
-import HuksCipherUtils from '../../common/huks/HuksCipherUtil';
-import HuksProperties from '../../common/huks/HuksProperties';
-import Singleton from '../../common/Singleton';
-import StorageUtil from '../../common/StorageUtil';
+import HuksCipherUtils from '../../utils/HuksCipherUtil';
+import HuksProperties from '../../common/config/HuksProperties';
+import Singleton from '../../common/base/Singleton';
+import StorageUtil from '../../utils/StorageUtil';
 
 const TAG: string = 'AssocDecValid';
 
@@ -83,7 +83,7 @@ class AppContextHandler extends DecryptionHandler {
       HiLog.error(TAG, 'Get Context failed.');
       return null;
     }
-    context.appContext = AppStorageMgr.getApplicationContext();
+    context.appContext = AppStorageUtil.getApplicationContext();
     if (!context.appContext) {
       HiLog.error(TAG, 'Get Application Context failed.');
       return null;

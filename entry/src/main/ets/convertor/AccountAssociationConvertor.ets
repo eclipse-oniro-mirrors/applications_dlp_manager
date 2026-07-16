@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import AccountAssociation from '../bean/data/AccountAssociation';
-import AuthorizedAccount from '../bean/data/AuthorizedAccount';
+import AccountAssociation from '../common/bean/data/AccountAssociation';
+import AuthorizedAccount from '../common/bean/data/AuthorizedAccount';
 import { HiLog } from '../common/base/HiLog';
-import { isInvalidStr } from '../common/FileUtils/utils';
+import { isInvalidStr } from '../utils/utils';
 
 const TAG: string = 'AssocConvertor';
 

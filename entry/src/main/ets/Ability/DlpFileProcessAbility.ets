@@ -32,14 +32,14 @@ import {
   resumeFuseLinkCallback,
   stopFuseLinkCallback
 } from './data/IIdlDlpRpcServiceTs/i_id_dlpRpc_service';
-import IDLDLPProperty from '../common/dlpClass';
-import { IAuthUser } from '../common/dlpClass';
+import IDLDLPProperty from '../common/bean/data/dlpClass';
+import { IAuthUser } from '../common/bean/data/dlpClass';
 import Constants from '../common/constants/constant';
 import { HiLog } from '../common/base/HiLog';
-import FileUtil from '../common/external/FileUtil';
+import FileUtil from '../utils/external/FileUtil';
 import { DecryptState, OpenDlpFileManager } from '../OpenDlpFile/manager/OpenDlpFileManager';
 import DecryptContent from '../OpenDlpFile/data/DecryptContent';
-import FileUtils from '../common/FileUtils/FileUtils';
+import FileUtils from '../utils/FileUtils';
 
 const TAG = 'DlpRpcServiceStub';
 

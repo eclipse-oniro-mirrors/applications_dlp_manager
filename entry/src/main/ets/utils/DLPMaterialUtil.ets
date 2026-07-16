@@ -14,17 +14,9 @@
  */
 
 import { uiMaterial } from '@kit.ArkUI';
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'DLPMaterialUtil';
-
-export const enum MaterialType {
-  TOAST = 'TOAST',
-  BUTTON = 'BUTTON',
-  MENU = 'MENU',
-  DIALOG = 'DIALOG',
-  BIND_SHEET = 'BIND_SHEET',
-  BIND_POPUP = 'BIND_POPUP',
-}
 
 export class DLPMaterialUtil {
   private constructor() {

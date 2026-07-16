@@ -14,7 +14,7 @@
  */
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
-import AccountAssociationUtil from '../../../../main/ets/common/AssocUtil/AccountAssociationUtil';
+import AccountAssociationUtil from '../../../../main/ets/utils/AccountAssociationUtil';
 
 export default function AccountAssociationUtilTest() {
   describe('AccountAssociationUtilTest', () => {

@@ -17,18 +17,18 @@ import Result from '../../common/base/Result'
 import { ResultMsg } from '../../common/base/ResultMsg'
 import Constants from '../../common/constants/constant';
 import fs, { ReadOptions } from '@ohos.file.fs';
-import { checkValidAccountType, getFileFd } from '../../common/FileUtils/utils';
+import { checkValidAccountType, getFileFd } from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
 import { zlib } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';
-import FileUtil from '../../common/external/FileUtil';
+import FileUtil from '../../utils/external/FileUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
-import FileMetaInfo from '../../bean/data/FileMetaInfo';
+import FileMetaInfo from '../../common/bean/data/FileMetaInfo';
 import GlobalContext from '../../common/base/GlobalContext';
-import { FileParseType } from '../../bean/data/FileParseType';
-import { FileParseInfo } from '../../bean/data/FileParseInfo';
+import { FileParseInfo } from '../../common/bean/data/FileParseInfo';
 import OpenDlpFileData from '../data/OpenDlpFileData';
-import FileUtils from '../../common/FileUtils/FileUtils';
+import FileUtils from '../../utils/FileUtils';
+import { FileParseType } from '../../common/enum/FileEnum';
 
 const TAG: string = 'FileParse';
 const ENTERPRISE_ACCOUNT: number = 4;

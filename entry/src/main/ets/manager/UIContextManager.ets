@@ -14,39 +14,39 @@
  */
 
 import { common } from '@kit.AbilityKit';
-import CounterLock from './CounterLock';
-import { HiLog } from './base/HiLog';
-import Singleton from './Singleton';
+import CounterLock from '../common/base/CounterLock';
+import { HiLog } from '../common/base/HiLog';
+import Singleton from '../common/base/Singleton';
 import { UIContext } from '@kit.ArkUI';
 
-const TAG: string = 'UIContextUtil';
+const TAG: string = 'UIContextManager';
 
-export default class UIContextUtil {
-  private static singletonInstance: Singleton<UIContextUtil> = new Singleton<UIContextUtil>(() => new UIContextUtil());
+export default class UIContextManager {
+  private static singletonInstance: Singleton<UIContextManager> = new Singleton<UIContextManager>(() => new UIContextManager());
   private static uiContext: UIContext | undefined = undefined;
   private static locker: CounterLock = new CounterLock();
 
-  public static getInstance(): UIContextUtil {
-    return UIContextUtil.singletonInstance.getInstance();
+  public static getInstance(): UIContextManager {
+    return UIContextManager.singletonInstance.getInstance();
   }
 
   public getUIContext(
     context: common.UIAbilityContext | common.UIExtensionContext | common.ServiceExtensionContext
   ): UIContext | undefined {
     HiLog.info(TAG, 'Getting UIContext.');
-    if (!UIContextUtil.uiContext) {
-      UIContextUtil.locker.acquire();
+    if (!UIContextManager.uiContext) {
+      UIContextManager.locker.acquire();
       try {
-        if (!UIContextUtil.uiContext) {
+        if (!UIContextManager.uiContext) {
           HiLog.info(TAG, 'UIContext is undefined. Creating UIContext without window.');
-          UIContextUtil.uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
+          UIContextManager.uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
         }
       } catch(error) {
         HiLog.wrapError(TAG, error, 'Failed to create UIContext without window');
       } finally {
-        UIContextUtil.locker.release();
+        UIContextManager.locker.release();
       }
     }
-    return UIContextUtil.uiContext;
+    return UIContextManager.uiContext;
   }
 }

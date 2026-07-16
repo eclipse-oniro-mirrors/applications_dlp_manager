@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../base/HiLog';
-import FileUtil from '../external/FileUtil';
+import { HiLog } from '../common/base/HiLog';
+import FileUtil from './external/FileUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import fs from '@ohos.file.fs';
-import CommonUtil from '../base/CommonUtil';
+import CommonUtil from './CommonUtil';
 
 const TAG = 'FileUtils';
 

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { FileParseType } from './FileParseType'
+import { FileParseType } from "../../enum/FileEnum";
 
 export interface FileParseInfo {
   parseType: FileParseType,

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import IDLDLPProperty from '../../../common/dlpClass';
+import IDLDLPProperty from '../../../common/bean/data/dlpClass';
 import rpc from '@ohos.rpc';
 
 export default interface IIdDlpRpcService {

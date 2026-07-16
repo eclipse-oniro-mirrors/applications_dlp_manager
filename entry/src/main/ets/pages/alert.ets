@@ -24,9 +24,10 @@ import Constants from '../common/constants/constant';
 import ability from '@ohos.ability.ability';
 import account_osAccount from '@ohos.account.osAccount';
 import dlpPermission from '@ohos.dlpPermission';
-import { sendDlpManagerAccountLogin, checkNetworkStatus } from '../common/FileUtils/utils';
+import { sendDlpManagerAccountLogin, checkNetworkStatus } from '../utils/utils';
 import { HiLog } from '../common/base/HiLog';
-import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil'
+import { DLPMaterialUtil } from '../utils/DLPMaterialUtil'
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'Alert';
 let abilityResult: ability.AbilityResult = {

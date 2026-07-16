@@ -14,10 +14,10 @@
  */
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium'
-import AccountAssociation from '../../../../main/ets/bean/data/AccountAssociation'
-import AuthorizedAccount from '../../../../main/ets/bean/data/AuthorizedAccount'
-import DomainAccountInfo from '../../../../main/ets/bean/data/DomainAccountInfo'
-import DomainAccountResponse from '../../../../main/ets/bean/response/DomainAccountResponse'
+import AccountAssociation from '../../../../main/ets/common/bean/data/AccountAssociation'
+import AuthorizedAccount from '../../../../main/ets/common/bean/data/AuthorizedAccount'
+import DomainAccountInfo from '../../../../main/ets/common/bean/data/DomainAccountInfo'
+import DomainAccountResponse from '../../../../main/ets/common/bean/response/DomainAccountResponse'
 
 
 export default function BeanTest() {

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { anonymizeUid, isDevelopmentMode } from '../../common/FileUtils/utils';
+import { anonymizeUid, isDevelopmentMode } from '../../utils/utils';
 import { ToggleState } from '../../common/enum/EncryptSharingShowCodeEnum';
 import DecryptContent from '../data/DecryptContent';
 import dlpPermission from '@ohos.dlpPermission';

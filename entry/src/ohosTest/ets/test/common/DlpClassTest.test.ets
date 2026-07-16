@@ -14,7 +14,7 @@
  */
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
-import IDLDLPProperty, { IAuthUser } from '../../../../main/ets/common/dlpClass';
+import IDLDLPProperty, { IAuthUser } from '../../../../main/ets/common/bean/data/dlpClass';
 import rpc from '@ohos.rpc';
 import { HiLog } from '../../../../main/ets/common/base/HiLog';
 

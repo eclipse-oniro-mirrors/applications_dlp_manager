@@ -17,12 +17,12 @@ import Constants from '../../../../../main/ets/common/constants/constant';
 import DecryptContent from '../../../../../main/ets/OpenDlpFile/data/DecryptContent';
 import { DecryptState, DecryptStatus } from '../../../../../main/ets/OpenDlpFile/manager/OpenDlpFileManager';
 import { dlpPermission } from '@kit.DataProtectionKit';
-import FileMetaInfo from '../../../../../main/ets/bean/data/FileMetaInfo';
+import FileMetaInfo from '../../../../../main/ets/common/bean/data/FileMetaInfo';
 import { HiLog } from '../../../../../main/ets/common/base/HiLog';
 import OpenDlpFileData from '../../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 import Result from '../../../../../main/ets/common/base/Result';
 import Want from '@ohos.app.ability.Want';
-import { FileParseType } from '../../../../../main/ets/bean/data/FileParseType';
+import { FileParseType } from '../../../../../main/ets/common/enum/FileEnum';
 
 const TAG: string = 'DataUtilsMock';
 

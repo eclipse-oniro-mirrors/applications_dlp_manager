@@ -14,14 +14,14 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
-import AppStorageConstant from '../../../../main/ets/common/AppStorageConstant';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
-import CommonEventManager from '../../../../main/ets/common/CommonEventManager';
+import AppStorageConstant from '../../../../main/ets/common/constants/AppStorageConstant';
+import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
+import CommonEventManager from '../../../../main/ets/manager/CommonEventManager';
 import GlobalContext from '../../../../main/ets/common/base/GlobalContext';
-import CounterLock from '../../../../main/ets/common/CounterLock';
+import CounterLock from '../../../../main/ets/common/base/CounterLock';
 import { HiLog } from '../../../../main/ets/common/base/HiLog';
-import CommonUtil from '../../../../main/ets/common/base/CommonUtil';
-import FileUtils from '../../../../main/ets/common/FileUtils/FileUtils';
+import CommonUtil from '../../../../main/ets/utils/CommonUtil';
+import FileUtils from '../../../../main/ets/utils/FileUtils';
 
 export default function CommonUtilTest() {
   describe('CommonUtilTest', () => {
@@ -46,18 +46,18 @@ export default function CommonUtilTest() {
     })
 
     it('AppStorageMgrTest', 0, async () => {
-      const ctx = AppStorageMgr.getContext('test');
+      const ctx = AppStorageUtil.getContext('test');
       expect(ctx).assertEqual(undefined);
 
-      const appCtx = AppStorageMgr.getContext(AppStorageConstant.APPLICATION_CONTEXT);
-      const ret = AppStorageMgr.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, appCtx, false);
+      const appCtx = AppStorageUtil.getContext(AppStorageConstant.APPLICATION_CONTEXT);
+      const ret = AppStorageUtil.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, appCtx, false);
       expect(ret).assertEqual(true);
     })
 
     it('CommonEventManagerTest', 0, async () => {
       await CommonEventManager.getInstance().init();
       await CommonEventManager.getInstance().unsubscribe();
-      const ctx = AppStorageMgr.getContext('test');
+      const ctx = AppStorageUtil.getContext('test');
       expect(ctx).assertEqual(undefined);
     })
 

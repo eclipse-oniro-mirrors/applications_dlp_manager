@@ -16,7 +16,7 @@
 import { common } from '@kit.AbilityKit';
 import Constants from '../../common/constants/constant';
 import { HiLog } from '../../common/base/HiLog';
-import { isValidPath } from '../../common/FileUtils/utils';
+import { isValidPath } from '../../utils/utils';
 import Result from '../../common/base/Result';
 import { ResultMsg } from '../../common/base/ResultMsg';
 

@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainAccountRequest from '../bean/request/DomainAccountRequest';
-import DomainAccountResponse from '../bean/response/DomainAccountResponse';
-import CommonUtil from '../common/base/CommonUtil';
+import DomainAccountRequest from '../common/bean/request/DomainAccountRequest';
+import DomainAccountResponse from '../common/bean/response/DomainAccountResponse';
+import CommonUtil from '../utils/CommonUtil';
 import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'DomainAccountConvertor';

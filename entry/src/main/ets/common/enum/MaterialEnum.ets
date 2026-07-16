@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,11 @@
  * limitations under the License.
  */
 
-export enum FileParseType {
-  ZIP = 1,
-  RAW = 2
+export const enum MaterialType {
+  TOAST = 'TOAST',
+  BUTTON = 'BUTTON',
+  MENU = 'MENU',
+  DIALOG = 'DIALOG',
+  BIND_SHEET = 'BIND_SHEET',
+  BIND_POPUP = 'BIND_POPUP',
 }

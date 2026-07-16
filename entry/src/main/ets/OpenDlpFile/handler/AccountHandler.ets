@@ -16,7 +16,7 @@
 import Result from '../../common/base/Result'
 import { ResultMsg } from '../../common/base/ResultMsg'
 import Constants from '../../common/constants/constant';
-import { checkDomainAccountInfo, getConnectionStatus, getOsAccountInfo, getUserId } from '../../common/FileUtils/utils';
+import { checkDomainAccountInfo, getConnectionStatus, getOsAccountInfo, getUserId } from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { common } from '@kit.AbilityKit';

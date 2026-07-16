@@ -19,7 +19,7 @@ import { HiLog } from '../common/base/HiLog';
 import Constants from '../common/constants/constant';
 import Want from '@ohos.app.ability.Want';
 import OpeningDialogService from '../rpc/OpeningDialog/service/OpeningDialogService';
-import CommonEventManager from '../common/CommonEventManager';
+import CommonEventManager from '../manager/CommonEventManager';
 
 const TAG = 'OpeningDialogUIExt';
 

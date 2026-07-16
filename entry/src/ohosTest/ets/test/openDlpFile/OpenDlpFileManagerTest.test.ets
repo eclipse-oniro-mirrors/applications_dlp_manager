@@ -26,7 +26,7 @@ import {
   when
 } from '@ohos/hypium';
 import ApplyEfficiencyManager from '../../../../main/ets/OpenDlpFile/manager/ApplyEfficiencyManager';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
 import {
   DecryptState,
   DecryptStatus,
@@ -39,7 +39,7 @@ import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/Openi
 import { ErrorHandlerFactory } from '../../../../main/ets/OpenDlpFile/manager/ErrorManager';
 import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 import DecryptContent from '../../../../main/ets/OpenDlpFile/data/DecryptContent';
-import FileMetaInfo from '../../../../main/ets/bean/data/FileMetaInfo';
+import FileMetaInfo from '../../../../main/ets/common/bean/data/FileMetaInfo';
 import TerminateManager from '../../../../main/ets/OpenDlpFile/manager/TerminateManager';
 
 export default function OpenDlpFileManagerTest() {
@@ -68,7 +68,7 @@ export default function OpenDlpFileManagerTest() {
       ApplyEfficiencyManager.getInstance().applyEfficiency();
       ApplyEfficiencyManager.getInstance().applyEfficiency();
       ApplyEfficiencyManager.getInstance().releaseEfficiency();
-      const ctx = AppStorageMgr.getContext('test1');
+      const ctx = AppStorageUtil.getContext('test1');
       expect(ctx).assertEqual(undefined);
     })
 
@@ -125,7 +125,7 @@ export default function OpenDlpFileManagerTest() {
       let ret = await StartFileManager.startFileManager('');
       expect(ret.errcode).assertEqual(Constants.ERR_JS_APP_PARAM_ERROR);
 
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       AppStorage.setOrCreate('viewContext', context);
 
       ret = await StartFileManager.startFileManager('');
@@ -200,7 +200,7 @@ export default function OpenDlpFileManagerTest() {
       await manager.showOpeningDialog('uri', 'id', false);
       manager.setNeedStartAbility('id');
 
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let want: Want = {};
       let openDlpFileData: OpenDlpFileData = new OpenDlpFileData(want, 1);
       await manager.loadOpeningDialogByFileTypeAndSize(context, Constants.DIALOG_SHOW_SIZE_ZIP, openDlpFileData, 1, 1);

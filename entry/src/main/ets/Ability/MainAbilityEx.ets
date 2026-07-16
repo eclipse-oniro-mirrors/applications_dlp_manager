@@ -35,16 +35,16 @@ import {
   isValidPath,
   getAccountTypeAndRealFileType,
   getAccountNameFromErrMsg
-} from '../common/FileUtils/utils';
+} from '../utils/utils';
 import GlobalContext from '../common/base/GlobalContext';
 import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import { HiLog } from '../common/base/HiLog';
-import FileUtils from '../common/FileUtils/FileUtils';
+import FileUtils from '../utils/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import IdDlpRpcServiceProxy from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import common from '@ohos.app.ability.common';
-import FileUtil from '../common/external/FileUtil';
-import CommonUtil from '../common/base/CommonUtil';
+import FileUtil from '../utils/external/FileUtil';
+import CommonUtil from '../utils/CommonUtil';
 
 const TAG = 'MainEx';
 

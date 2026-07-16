@@ -23,7 +23,7 @@ import {
   getCurrentTime,
   getAccountNameFromErrMsg,
   isValidPath
-} from '../../common/FileUtils/utils';
+} from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import DecryptContent from '../data/DecryptContent';
@@ -36,13 +36,13 @@ import { common } from '@kit.AbilityKit';
 import { closeDlpFile } from './DataManager';
 import OpeningDialogManager from './OpeningDialogManager';
 import ApplyEfficiencyManager from './ApplyEfficiencyManager';
-import { ObjectUtil } from '../../common/ObjectUtil';
+import { ObjectUtil } from '../../utils/ObjectUtil';
 import GlobalContext from '../../common/base/GlobalContext';
-import { FileParseType } from '../../bean/data/FileParseType';
-import CommonUtil from '../../common/base/CommonUtil';
+import CommonUtil from '../../utils/CommonUtil';
 import FileIdHandler from '../handler/FileIdHandler';
-import FileUtils from '../../common/FileUtils/FileUtils';
+import FileUtils from '../../utils/FileUtils';
 import TerminateManager from './TerminateManager';
+import { FileParseType } from '../../common/enum/FileEnum';
 
 const TAG: string = 'DecryptHandler';
 const ENTERPRISE_ACCOUNT: number = 4;

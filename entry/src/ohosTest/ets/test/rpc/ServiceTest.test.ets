@@ -16,7 +16,7 @@
 import {
   afterAll, afterEach, beforeAll, beforeEach, describe, expect, it
 } from '@ohos/hypium';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
 import OpeningDialogService from '../../../../main/ets/rpc/OpeningDialog/service/OpeningDialogService';
 import { common } from '@kit.AbilityKit';
 import CredConnectServiceDomain from '../../../../main/ets/rpc/CredConnectServiceDomain';
@@ -52,7 +52,7 @@ export default function ServiceTest() {
       await OpeningDialogService.getInstance().dialogDisappear('id');
       await OpeningDialogService.getInstance().dialogTimeout('id');
 
-      const context = AppStorageMgr.getApplicationContext() as common.UIExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.UIExtensionContext;
       OpeningDialogService.getInstance().setContext(context);
       await OpeningDialogService.getInstance().terminateOpeningDialog();
       expect(context).not().assertNull();
@@ -60,7 +60,7 @@ export default function ServiceTest() {
 
     it('CredConnectServiceDomain', 0, async () => {
       const req = DomainAccountConvertor.convertBatchToDomainAccountReq([], '', '');
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let service = new CredConnectServiceDomain(context);
       let ret = await service.getDomainAccountInfo(req);
       service.disconnectServiceAbility();
@@ -75,7 +75,7 @@ export default function ServiceTest() {
     })
 
     it('CredConnectService', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let res = new CredConnectService(context);
       res.setCloudPhone('1');
       res.connectServiceShareAbility(Constants.COMMAND_SEARCH_USER_INFO);

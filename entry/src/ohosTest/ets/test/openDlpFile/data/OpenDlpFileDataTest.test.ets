@@ -14,8 +14,8 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
-import { FileParseType } from '../../../../../main/ets/bean/data/FileParseType';
 import Constants from '../../../../../main/ets/common/constants/constant';
+import { FileParseType } from '../../../../../main/ets/common/enum/FileEnum';
 import OpenDlpFileDataMock from './mock/OpenDlpFileDataMock';
 
 export default function OpenDlpFileDataTest() {

@@ -18,7 +18,6 @@ import { HiLog } from '../../common/base/HiLog';
 import { common, Want } from '@kit.AbilityKit';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
 import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
-import { FileParseType } from '../../bean/data/FileParseType';
 import OpenDlpFileData, { DecryptingState } from '../data/OpenDlpFileData';
 import { emitter } from '@kit.BasicServicesKit';
 import SandboxManager from './SandboxManager';
@@ -29,6 +28,7 @@ import { ErrorHandlerFactory } from './ErrorManager';
 import { ResultMsg } from '../../common/base/ResultMsg';
 import Result from '../../common/base/Result';
 import DecryptContent from '../data/DecryptContent';
+import { FileParseType } from '../../common/enum/FileEnum';
 
 const TAG = 'OpeningDialogManager';
 

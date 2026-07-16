@@ -14,7 +14,7 @@
  */
 
 import AuthorizedAccount from './AuthorizedAccount';
-import { HiLog } from '../../common/base/HiLog';
+import { HiLog } from '../../base/HiLog';
 
 const TAG: string = 'AccAssociation';
 
