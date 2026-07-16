@@ -37,7 +37,8 @@ import Want from '@ohos.app.ability.Want';
 import zlib from '@ohos.zlib';
 import Result from '../common/base/Result';
 import { ResultMsg } from '../common/base/ResultMsg';
-import { DLPMaterialUtil, MaterialType } from './DLPMaterialUtil';
+import { DLPMaterialUtil } from './DLPMaterialUtil';
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'Utils';
 
