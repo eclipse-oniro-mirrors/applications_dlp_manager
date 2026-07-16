@@ -22,7 +22,8 @@ import { UIContext } from '@kit.ArkUI';
 const TAG: string = 'UIContextManager';
 
 export default class UIContextManager {
-  private static singletonInstance: Singleton<UIContextManager> = new Singleton<UIContextManager>(() => new UIContextManager());
+  private static singletonInstance: Singleton<UIContextManager> =
+    new Singleton<UIContextManager>(() => new UIContextManager());
   private static uiContext: UIContext | undefined = undefined;
   private static locker: CounterLock = new CounterLock();
 
@@ -41,7 +42,7 @@ export default class UIContextManager {
           HiLog.info(TAG, 'UIContext is undefined. Creating UIContext without window.');
           UIContextManager.uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
         }
-      } catch(error) {
+      } catch (error) {
         HiLog.wrapError(TAG, error, 'Failed to create UIContext without window');
       } finally {
         UIContextManager.locker.release();
