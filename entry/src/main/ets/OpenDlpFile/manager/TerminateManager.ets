@@ -20,7 +20,7 @@ import { OpenDlpFileManager } from './OpenDlpFileManager';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
 import ApplyEfficiencyManager from './ApplyEfficiencyManager';
 import { DecryptingState } from '../data/OpenDlpFileData';
-import FileUtils from '../../common/FileUtils/FileUtils';
+import FileUtils from '../../utils/FileUtils';
 
 const TAG = 'TerminateManager';
 

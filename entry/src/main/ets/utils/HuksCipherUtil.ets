@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../base/HiLog';
-import { isInvalidStr } from '../FileUtils/utils';
+import { HiLog } from '../common/base/HiLog';
+import { isInvalidStr } from './utils';
 import { huks } from '@kit.UniversalKeystoreKit';
 
 const TAG: string = 'HuksCipherUtils';

@@ -25,14 +25,14 @@ import {
   MockKit,
   when
 } from '@ohos/hypium';
-import AccountAssociation from '../../../../main/ets/bean/data/AccountAssociation';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import AccountAssociation from '../../../../main/ets/common/bean/data/AccountAssociation';
+import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
 import AssociationDecryptValidator from '../../../../main/ets/validator/AccountAssociation/AssociationDecryptValidator';
 import AssociationEncryptValidator from '../../../../main/ets/validator/AccountAssociation/AssociationEncryptValidator';
 import { common } from '@kit.AbilityKit';
 import { HiLog } from '../../../../main/ets/common/base/HiLog';
-import HuksCipherUtils from '../../../../main/ets/common/huks/HuksCipherUtil';
-import StorageUtil from '../../../../main/ets/common/StorageUtil';
+import HuksCipherUtils from '../../../../main/ets/utils/HuksCipherUtil';
+import StorageUtil from '../../../../main/ets/utils/StorageUtil';
 
 const TAG: string = 'AssocValidTest';
 
@@ -69,7 +69,7 @@ export default function AssocValidatorTest() {
 
     it('AssocValidatorTest_encrypt_accountAssociation_error', 0, async () => {
       const encryptValidator = AssociationEncryptValidator.getInstance();
-      const appContext = AppStorageMgr.getApplicationContext() as common.Context;
+      const appContext = AppStorageUtil.getApplicationContext() as common.Context;
       const storageUtil = StorageUtil.getInstance(appContext);
       const accountAssociation: AccountAssociation | undefined = undefined;
       const ret = await encryptValidator.validate(storageUtil, accountAssociation!, 'test.txt');
@@ -79,7 +79,7 @@ export default function AssocValidatorTest() {
 
     it('AssocValidatorTest_encrypt_saveFileName_error', 0, async () => {
       const encryptValidator = AssociationEncryptValidator.getInstance();
-      const appContext = AppStorageMgr.getApplicationContext() as common.Context;
+      const appContext = AppStorageUtil.getApplicationContext() as common.Context;
       const storageUtil = StorageUtil.getInstance(appContext);
       const accountAssociation = new AccountAssociation('', []);
       const ret = await encryptValidator.validate(storageUtil, accountAssociation, '');
@@ -97,7 +97,7 @@ export default function AssocValidatorTest() {
       when(mockIsGenerated)(ArgumentMatchers.any).afterReturn(false);
 
       const encryptValidator = AssociationEncryptValidator.getInstance();
-      const appContext = AppStorageMgr.getApplicationContext() as common.Context;
+      const appContext = AppStorageUtil.getApplicationContext() as common.Context;
       const storageUtil = StorageUtil.getInstance(appContext);
       const accountAssociation = new AccountAssociation('', []);
       const ret = await encryptValidator.validate(storageUtil, accountAssociation, 'file://test.txt');
@@ -118,7 +118,7 @@ export default function AssocValidatorTest() {
       when(mockIsGenerated)(ArgumentMatchers.any).afterReturn(true);
 
       const encryptValidator = AssociationEncryptValidator.getInstance();
-      const appContext = AppStorageMgr.getApplicationContext() as common.Context;
+      const appContext = AppStorageUtil.getApplicationContext() as common.Context;
       const storageUtil = StorageUtil.getInstance(appContext);
       const accountAssociation = new AccountAssociation('', []);
       const ret = await encryptValidator.validate(storageUtil, accountAssociation, 'file://test.txt');
@@ -131,7 +131,7 @@ export default function AssocValidatorTest() {
 
     it('AssocValidatorTest_encrypt_saveResultAssociation_error', 0, async () => {
       const encryptValidator = AssociationEncryptValidator.getInstance();
-      const appContext = AppStorageMgr.getApplicationContext() as common.Context;
+      const appContext = AppStorageUtil.getApplicationContext() as common.Context;
       const storageUtil = StorageUtil.getInstance(appContext);
       const accountAssociation = new AccountAssociation('', []);
       const ret = await encryptValidator.validate(storageUtil, accountAssociation, 'file://test.txt');
@@ -143,7 +143,7 @@ export default function AssocValidatorTest() {
     it('AssocValidatorTest_encrypt_success', 0, async () => {
       const mocker: MockKit = new MockKit();
 
-      const appContext = AppStorageMgr.getApplicationContext() as common.Context;
+      const appContext = AppStorageUtil.getApplicationContext() as common.Context;
       const storageUtil = StorageUtil.getInstance(appContext);
 
       const mockSaveData: Function = mocker.mockFunc(storageUtil, storageUtil.saveData);
@@ -161,7 +161,7 @@ export default function AssocValidatorTest() {
     it('AssocValidatorTest_encrypt_associationCipherData_error', 0, async () => {
       const mocker: MockKit = new MockKit();
 
-      const appContext = AppStorageMgr.getApplicationContext() as common.Context;
+      const appContext = AppStorageUtil.getApplicationContext() as common.Context;
       const storageUtil = StorageUtil.getInstance(appContext);
 
       const mockSaveData: Function = mocker.mockFunc(storageUtil, storageUtil.saveData);
@@ -191,14 +191,14 @@ export default function AssocValidatorTest() {
     it('AssocValidatorTest_decrypt_AppContextHandler_error', 0, async () => {
       const mocker: MockKit = new MockKit();
 
-      const mockAppCtx: Function = mocker.mockFunc(AppStorageMgr, AppStorageMgr.getApplicationContext);
+      const mockAppCtx: Function = mocker.mockFunc(AppStorageUtil, AppStorageUtil.getApplicationContext);
       when(mockAppCtx)(ArgumentMatchers.any).afterReturn(undefined);
 
       const decryptValidator = AssociationDecryptValidator.getInstance();
       const ret = await decryptValidator.validate('test');
       expect(ret).assertNull();
 
-      mocker.ignoreMock(AppStorageMgr, AppStorageMgr.getApplicationContext);
+      mocker.ignoreMock(AppStorageUtil, AppStorageUtil.getApplicationContext);
       HiLog.info(TAG, 'AssocValidatorTest_decrypt_AppContextHandler_error ends.');
     })
   })

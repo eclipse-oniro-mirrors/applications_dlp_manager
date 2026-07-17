@@ -16,11 +16,12 @@
 import Constants from '../common/constants/constant';
 import { EncryptSharingShowCodeEnum } from '../common/enum/EncryptSharingShowCodeEnum';
 import EncryptSharingHelper from '../component/helper/EncryptSharingHelper';
-import { FileClassification, SupportTypesConfig } from '../common/SupportTypesConfig';
-import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
-import { getFileSizeByUriSync, isInvalidStr, isValidPath } from '../common/FileUtils/utils';
+import { SupportTypesUtil } from '../utils/SupportTypesUtil';
+import FileUtils, { FileMsg } from '../utils/FileUtils';
+import { getFileSizeByUriSync, isInvalidStr, isValidPath } from '../utils/utils';
 import { HiLog } from '../common/base/HiLog';
-import Singleton from '../common/Singleton';
+import Singleton from '../common/base/Singleton';
+import { FileClassification } from '../common/enum/FileEnum';
 
 const TAG = 'UriValidator';
 const DLP_FILE_TYPE = 'dlp';
@@ -136,7 +137,7 @@ class FileTypeValidator extends BaseValidator {
         return false;
       }
 
-      if (!SupportTypesConfig.checkType(fileType)) {
+      if (!SupportTypesUtil.checkType(fileType)) {
         context.errorCode = EncryptSharingShowCodeEnum.SUPPORTED_TYPE_ERROR;
         return false;
       }
@@ -163,7 +164,7 @@ class FileSizeValidator extends BaseValidator {
 
       const fileMsg: FileMsg = FileUtils.getSuffixFileMsgByUri(context.currentUri);
       const fileType: string = FileUtils.removeFileTypeFirstDot(fileMsg.fileType);
-      if (SupportTypesConfig.isTypeOf(fileType, FileClassification.DOCUMENT)) {
+      if (SupportTypesUtil.isTypeOf(fileType, FileClassification.DOCUMENT)) {
         if (size > Constants.SHARE_MAX_SUPPORT_SIZE_DOC) {
           context.errorCode = EncryptSharingShowCodeEnum.SINGLE_SIZE_ERROR_DOC_MB;
           return false;

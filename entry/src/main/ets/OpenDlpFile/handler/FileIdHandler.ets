@@ -15,9 +15,9 @@
 
 import { HiLog } from '../../common/base/HiLog';
 import DecryptContent from '../data/DecryptContent';
-import CommonUtil from '../../common/base/CommonUtil';
+import CommonUtil from '../../utils/CommonUtil';
 import CredConnectServiceFileId from '../../rpc/CredConnectServiceFileId';
-import FileUtils from '../../common/FileUtils/FileUtils';
+import FileUtils from '../../utils/FileUtils';
 
 const TAG = 'FileIdHandler';
 

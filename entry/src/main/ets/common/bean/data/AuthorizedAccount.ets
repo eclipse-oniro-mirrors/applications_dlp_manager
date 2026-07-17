@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { HiLog } from '../../common/base/HiLog';
+import { HiLog } from '../../base/HiLog';
 
 const TAG: string = 'AuthAccount';
 

@@ -22,11 +22,11 @@ import { HiLog } from '../../common/base/HiLog';
 import { OpenDlpFileManager } from './OpenDlpFileManager';
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
-import { ObjectUtil } from '../../common/ObjectUtil';
+import { ObjectUtil } from '../../utils/ObjectUtil';
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
 import ViewAbilityService from '../../rpc/ViewAbility/service/ViewAbilityService';
-import FileUtils from '../../common/FileUtils/FileUtils';
-import { SecurityEventIdConstants } from '../../common/ReportSecurityEventUtil';
+import FileUtils from '../../utils/FileUtils';
+import { SecurityEventIdConstants } from '../../utils/ReportSecurityEventUtil';
 
 const TAG = 'StartSandboxHandler';
 

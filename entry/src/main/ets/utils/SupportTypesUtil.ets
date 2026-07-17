@@ -13,20 +13,13 @@
  * limitations under the License.
  */
 
-import { HiLog } from './base/HiLog';
-import { isInvalidStr } from './FileUtils/utils';
+import { HiLog } from '../common/base/HiLog';
+import { FileClassification } from '../common/enum/FileEnum';
+import { isInvalidStr } from './utils';
 
 const TAG: string = 'SupportedTypes';
 
-export const enum FileClassification {
-  UNKNOWN = -1,
-  DOCUMENT = 0,
-  IMAGE = 1,
-  VIDEO = 2,
-  AUDIO = 3
-}
-
-export class SupportTypesConfig {
+export class SupportTypesUtil {
   private static readonly documentTypes: string[] =
     ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'pot', 'csv', 'rtf', 'xml', 'cpp', 'cxx', 'cc', 'html',
       'htm', 'java'];
@@ -43,23 +36,23 @@ export class SupportTypesConfig {
   private static audioTypes: string[] = ['mp3', 'flac', 'm4a', 'aac', 'wav', 'ogg', 'amr', 'm4b', 'ac3', 'imy',
     'rtttl', 'xmf', 'mxmf', 'm4p', 'm3u', 'smf', 'mka', 'ra', 'snd', 'mp2'];
   private static readonly supportTypesSet: Set<string> =
-    new Set<string>([...SupportTypesConfig.documentTypes, ...SupportTypesConfig.imageTypes,
-      ...SupportTypesConfig.videoTypes, ...SupportTypesConfig.audioTypes]);
+    new Set<string>([...SupportTypesUtil.documentTypes, ...SupportTypesUtil.imageTypes,
+      ...SupportTypesUtil.videoTypes, ...SupportTypesUtil.audioTypes]);
   private static readonly typeClassificationMap: Map<string, FileClassification> = (() => {
     const map = new Map<string, FileClassification>();
-    SupportTypesConfig.documentTypes.forEach(t => map.set(t, FileClassification.DOCUMENT));
-    SupportTypesConfig.imageTypes.forEach(t => map.set(t, FileClassification.IMAGE));
-    SupportTypesConfig.videoTypes.forEach(t => map.set(t, FileClassification.VIDEO));
-    SupportTypesConfig.audioTypes.forEach(t => map.set(t, FileClassification.AUDIO));
+    SupportTypesUtil.documentTypes.forEach(t => map.set(t, FileClassification.DOCUMENT));
+    SupportTypesUtil.imageTypes.forEach(t => map.set(t, FileClassification.IMAGE));
+    SupportTypesUtil.videoTypes.forEach(t => map.set(t, FileClassification.VIDEO));
+    SupportTypesUtil.audioTypes.forEach(t => map.set(t, FileClassification.AUDIO));
     return map;
   })();
 
   public static checkType(type: string): boolean {
-    return SupportTypesConfig.supportTypesSet.has(type.trim().toLowerCase());
+    return SupportTypesUtil.supportTypesSet.has(type.trim().toLowerCase());
   }
 
   public static isTypeOf(fileExtension: string, classification: FileClassification): boolean {
-    return SupportTypesConfig.getFileClassification(fileExtension.trim().toLowerCase()) === classification;
+    return SupportTypesUtil.getFileClassification(fileExtension.trim().toLowerCase()) === classification;
   }
 
   public static getFileClassification(fileExtension: string | undefined): FileClassification {
@@ -67,7 +60,7 @@ export class SupportTypesConfig {
       HiLog.error(TAG, `Invalid file extension: ${fileExtension}.`);
       return FileClassification.UNKNOWN;
     }
-    return SupportTypesConfig.typeClassificationMap.get(fileExtension!.trim().toLowerCase()) ??
+    return SupportTypesUtil.typeClassificationMap.get(fileExtension!.trim().toLowerCase()) ??
     FileClassification.UNKNOWN;
   }
 }

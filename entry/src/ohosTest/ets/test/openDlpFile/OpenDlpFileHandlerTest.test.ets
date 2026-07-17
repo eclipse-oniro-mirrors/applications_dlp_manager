@@ -25,7 +25,7 @@ import {
   MockKit,
   when
 } from '@ohos/hypium';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
 import Constants from '../../../../main/ets/common/constants/constant';
 import DecryptHandler from '../../../../main/ets/OpenDlpFile/manager/DecryptManager';
 import FileIdHandler from '../../../../main/ets/OpenDlpFile/handler/FileIdHandler';
@@ -113,7 +113,7 @@ export default function OpenDlpFileHandlerTest() {
 
     it('DecryptHandler_normal', 0, async () => {
       const content = DataUtilsMock.getFileIdHandlerDecryptContent();
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       const handler = new DecryptHandler();
       const ret = await handler.getDecryptData(content, context);
       expect(ret.errcode).not().assertEqual(0);
@@ -121,7 +121,7 @@ export default function OpenDlpFileHandlerTest() {
 
     it('DecryptHandler_mock_state', 0, async () => {
       const content = DataUtilsMock.getFileIdHandlerDecryptContent();
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       const handler = new DecryptHandler();
 
       const mocker = new MockKit();
@@ -139,7 +139,7 @@ export default function OpenDlpFileHandlerTest() {
 
     it('DecryptHandler_mock_undefined_state', 0, async () => {
       const content = DataUtilsMock.getFileIdHandlerDecryptContent();
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       const handler = new DecryptHandler();
       let ret = await handler.getDecryptData(content, context);
       expect(ret.errcode).not().assertEqual(0);
@@ -155,7 +155,7 @@ export default function OpenDlpFileHandlerTest() {
     })
 
     it('AccountHandler', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let content = DataUtilsMock.getDecryptContentWithAccountType(1);
       let ret = AccountHandlerFactory.createAccountHandler(content);
       expect(ret.errcode).assertEqual(0);
@@ -195,7 +195,7 @@ export default function OpenDlpFileHandlerTest() {
     })
 
     it('StartSandboxHandler_mock', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       AppStorage.setOrCreate('viewContext', context);
 
       const mocker = new MockKit();

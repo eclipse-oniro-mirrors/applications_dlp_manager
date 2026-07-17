@@ -14,12 +14,11 @@
  */
 
 import Constants from '../../common/constants/constant';
-import { FileParseType } from '../../bean/data/FileParseType';
-import FileUtils from '../../common/FileUtils/FileUtils';
-import { getCurrentTime, isInvalidStr, isValidPath } from '../../common/FileUtils/utils';
+import FileUtils from '../../utils/FileUtils';
+import { getCurrentTime, isInvalidStr, isValidPath } from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
 import Want from '@ohos.app.ability.Want';
-import CommonUtil from '../../common/base/CommonUtil';
+import { FileParseType } from '../../common/enum/FileEnum';
 
 const TAG: string = 'OpenDlpFileData';
 const EXPECTED_APPID: string = '5765880207854533797';

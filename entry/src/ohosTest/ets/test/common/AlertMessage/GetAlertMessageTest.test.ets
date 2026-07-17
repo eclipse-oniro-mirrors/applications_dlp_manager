@@ -26,9 +26,9 @@ import {
   when
 } from '@ohos/hypium';
 import { common } from '@kit.AbilityKit';
-import AppStorageMgr from '../../../../../main/ets/common/AppStorageMgr';
+import AppStorageUtil from '../../../../../main/ets/utils/AppStorageUtil';
 import { AlertManager } from '../../../../../main/ets/OpenDlpFile/manager/AlertManager';
-import UIContextUtil from '../../../../../main/ets/common/UIContextUtil';
+import UIContextManager from '../../../../../main/ets/manager/UIContextManager';
 import Constants from '../../../../../main/ets/common/constants/constant';
 
 export default function GetAlertMessageTest() {
@@ -54,9 +54,9 @@ export default function GetAlertMessageTest() {
     })
 
     it('GetAlertMessage_viewAbilityPhoneToast', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let mocker = new MockKit();
-      let mock: Function = mocker.mockFunc(UIContextUtil.getInstance(), UIContextUtil.getInstance().getUIContext);
+      let mock: Function = mocker.mockFunc(UIContextManager.getInstance(), UIContextManager.getInstance().getUIContext);
       when(mock)(ArgumentMatchers.any).afterReturn(undefined);
       let err: BusinessError = {
         code: Constants.ERR_JS_ACCOUNT_NOT_FOUND,
@@ -64,7 +64,7 @@ export default function GetAlertMessageTest() {
         message: ''
       }
       await AlertManager.viewAbilityPhoneToast(context, err);
-      mocker.ignoreMock(UIContextUtil.getInstance(), UIContextUtil.getInstance().getUIContext);
+      mocker.ignoreMock(UIContextManager.getInstance(), UIContextManager.getInstance().getUIContext);
 
       await AlertManager.viewAbilityPhoneToast(context, err);
 
@@ -77,7 +77,7 @@ export default function GetAlertMessageTest() {
 
 
     it('GetAlertMessage_phoneHandle', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let err: BusinessError = {
         code: Constants.ERR_JS_ACCOUNT_NOT_FOUND,
         name: '',
@@ -225,7 +225,7 @@ export default function GetAlertMessageTest() {
     })
 
     it('GetAlertMessage_requestModalUIExtension', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let err: BusinessError = {
         code: Constants.DLP_START_SANDBOX_ERROR,
         name: '',

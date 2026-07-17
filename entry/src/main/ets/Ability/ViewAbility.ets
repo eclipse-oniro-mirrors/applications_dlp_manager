@@ -23,7 +23,7 @@ import ServiceExtensionAbility from '@ohos.app.ability.ServiceExtensionAbility';
 import ViewAbilityStub from '../rpc/ViewAbility/stub/ViewAbilityStub';
 import Want from '@ohos.app.ability.Want';
 import { StartFileManager } from '../OpenDlpFile/manager/StartFileManager';
-import FileUtils from '../common/FileUtils/FileUtils';
+import FileUtils from '../utils/FileUtils';
 import FileIdHandler from '../OpenDlpFile/handler/FileIdHandler';
 import TerminateManager from '../OpenDlpFile/manager/TerminateManager';
 

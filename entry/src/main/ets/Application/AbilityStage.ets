@@ -14,8 +14,8 @@
  */
 
 import AbilityStage from '@ohos.app.ability.AbilityStage'
-import AppStorageConstant from '../common/AppStorageConstant';
-import AppStorageMgr from '../common/AppStorageMgr';
+import AppStorageConstant from '../common/constants/AppStorageConstant';
+import AppStorageUtil from '../utils/AppStorageUtil';
 import Constants from '../common/constants/constant';
 import { HiLog } from '../common/base/HiLog';
 
@@ -25,7 +25,7 @@ export default class MyAbilityStage extends AbilityStage {
   onCreate() {
     HiLog.info(TAG, 'MyAbilityStage onCreate');
     AppStorage.setOrCreate<number>(Constants.FONT_SIZE_SCALE_KEY, this.context.config.fontSizeScale);
-    AppStorageMgr.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, this.context.getApplicationContext(), true);
+    AppStorageUtil.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, this.context.getApplicationContext(), true);
   }
 
   onDestroy() {

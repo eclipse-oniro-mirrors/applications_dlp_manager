@@ -14,8 +14,9 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
-import { FileClassification, SupportTypesConfig } from '../../../../main/ets/common/SupportTypesConfig';
+import { SupportTypesUtil } from '../../../../main/ets/utils/SupportTypesUtil';
 import { HiLog } from '../../../../main/ets/common/base/HiLog';
+import { FileClassification } from '../../../../main/ets/common/enum/FileEnum';
 
 const TAG: string = 'SptTypesCfgTest';
 
@@ -42,8 +43,8 @@ export default function SupportedTypesCfgTest() {
     })
 
     it('SupportedTypesCfgTest_checkType', 0, () => {
-      expect(SupportTypesConfig.checkType('txt')).assertTrue();
-      expect(SupportTypesConfig.checkType('unknown')).assertFalse();
+      expect(SupportTypesUtil.checkType('txt')).assertTrue();
+      expect(SupportTypesUtil.checkType('unknown')).assertFalse();
       HiLog.info(TAG, 'SupportedTypesCfgTest_checkType ends.');
     })
 
@@ -54,21 +55,21 @@ export default function SupportedTypesCfgTest() {
       const fileExtAudio = 'mp3';
       const fileExtUnk = 'unknown';
 
-      expect(SupportTypesConfig.isTypeOf(fileExtDoc, FileClassification.DOCUMENT)).assertTrue();
-      expect(SupportTypesConfig.isTypeOf(fileExtImg, FileClassification.IMAGE)).assertTrue();
-      expect(SupportTypesConfig.isTypeOf(fileExtVideo, FileClassification.VIDEO)).assertTrue();
-      expect(SupportTypesConfig.isTypeOf(fileExtAudio, FileClassification.AUDIO)).assertTrue();
-      expect(SupportTypesConfig.isTypeOf(fileExtUnk, FileClassification.UNKNOWN)).assertTrue();
+      expect(SupportTypesUtil.isTypeOf(fileExtDoc, FileClassification.DOCUMENT)).assertTrue();
+      expect(SupportTypesUtil.isTypeOf(fileExtImg, FileClassification.IMAGE)).assertTrue();
+      expect(SupportTypesUtil.isTypeOf(fileExtVideo, FileClassification.VIDEO)).assertTrue();
+      expect(SupportTypesUtil.isTypeOf(fileExtAudio, FileClassification.AUDIO)).assertTrue();
+      expect(SupportTypesUtil.isTypeOf(fileExtUnk, FileClassification.UNKNOWN)).assertTrue();
 
-      expect(SupportTypesConfig.isTypeOf(fileExtDoc, FileClassification.AUDIO)).assertFalse();
-      expect(SupportTypesConfig.isTypeOf(fileExtImg, FileClassification.VIDEO)).assertFalse();
-      expect(SupportTypesConfig.isTypeOf(fileExtVideo, FileClassification.DOCUMENT)).assertFalse();
-      expect(SupportTypesConfig.isTypeOf(fileExtUnk, FileClassification.IMAGE)).assertFalse();
+      expect(SupportTypesUtil.isTypeOf(fileExtDoc, FileClassification.AUDIO)).assertFalse();
+      expect(SupportTypesUtil.isTypeOf(fileExtImg, FileClassification.VIDEO)).assertFalse();
+      expect(SupportTypesUtil.isTypeOf(fileExtVideo, FileClassification.DOCUMENT)).assertFalse();
+      expect(SupportTypesUtil.isTypeOf(fileExtUnk, FileClassification.IMAGE)).assertFalse();
       HiLog.info(TAG, 'SupportedTypesCfgTest_isTypeOf ends.');
     })
 
     it('SupportedTypesCfgTest_getFileClassification', 0, () => {
-      expect(SupportTypesConfig.getFileClassification(undefined)).assertEqual(FileClassification.UNKNOWN);
+      expect(SupportTypesUtil.getFileClassification(undefined)).assertEqual(FileClassification.UNKNOWN);
       HiLog.info(TAG, 'SupportedTypesCfgTest_getFileClassification ends.');
     })
   })

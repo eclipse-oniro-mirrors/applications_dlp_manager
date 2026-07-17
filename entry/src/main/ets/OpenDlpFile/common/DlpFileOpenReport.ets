@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-import { BigDataConstants, ReportToBigDataUtil } from '../../common/ReportToBigDataUtil';
+import { BigDataConstants, ReportToBigDataUtil } from '../../utils/ReportToBigDataUtil';
 import { BusinessError } from '@kit.BasicServicesKit';
 import DecryptContent from '../data/DecryptContent';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import { DlpFileOpenReportUtils } from './DlpFileOpenReportUtils';
-import { getCostTime } from '../../common/FileUtils/utils';
+import { getCostTime } from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
 import {
   SecurityEventIdConstants,
   SecurityEventNameConstants,
   ReportSecurityEventUtil
-} from '../../common/ReportSecurityEventUtil';
-import { SupportTypesConfig } from '../../common/SupportTypesConfig';
+} from '../../utils/ReportSecurityEventUtil';
+import { SupportTypesUtil } from '../../utils/SupportTypesUtil';
 
 const TAG: string = 'DlpFileOpenReport';
 
@@ -53,7 +53,7 @@ export class DlpFileOpenReport {
       'ALLOWED_OPEN_COUNT': decryptContent.fileMetaInfo?.allowedOpenCount ?? 0,
       'ALLOWED_OPEN_DURATION': decryptContent.fileMetaInfo.countdown,
       'WATERMARK': DlpFileOpenReportUtils.getWatermarkState(decryptContent),
-      'FILE_CLASSIFICATION': SupportTypesConfig.getFileClassification(decryptContent.fileMetaInfo?.fileType),
+      'FILE_CLASSIFICATION': SupportTypesUtil.getFileClassification(decryptContent.fileMetaInfo?.fileType),
       'CALLER_PKGNAME': decryptContent.openDlpFileData?.callerBundleName ?? '',
       'DEV_MODE': DlpFileOpenReportUtils.getDevModeState(),
       'FILE_INFO': DlpFileOpenReportUtils.getFileInfoString(decryptContent),

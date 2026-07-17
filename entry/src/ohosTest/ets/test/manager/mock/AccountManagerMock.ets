@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import DomainAccountInfo from '../../../../../main/ets/bean/data/DomainAccountInfo';
-import DomainAccountResponse from '../../../../../main/ets/bean/response/DomainAccountResponse';
+import DomainAccountInfo from '../../../../../main/ets/common/bean/data/DomainAccountInfo';
+import DomainAccountResponse from '../../../../../main/ets/common/bean/response/DomainAccountResponse';
 import Constants from '../../../../../main/ets/common/constants/constant';
 import { HiLog } from '../../../../../main/ets/common/base/HiLog';
 

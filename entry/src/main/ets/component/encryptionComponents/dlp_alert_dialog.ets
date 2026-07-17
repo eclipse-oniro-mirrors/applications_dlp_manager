@@ -1,0 +1,138 @@
+/*
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import Constants from '../../common/constants/constant';
+import common from '@ohos.app.ability.common';
+import { SystemUtils } from '../../utils/systemUtils';
+import { HiLog } from '../../common/base/HiLog';
+import { DLPMaterialUtil } from '../../utils/DLPMaterialUtil';
+import { MaterialType } from '../../common/enum/MaterialEnum';
+
+const TAG = '[DLPManager_dialog]';
+
+@CustomDialog
+struct DlpAlertDialog {
+  controller?: CustomDialogController
+  title?: string | Resource
+  message?: string | Resource
+  cancel?: Resource
+  ok?: Resource
+  action?: () => void
+
+  async terminateDialog() {
+    const ctx: common.UIAbilityContext | undefined = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    if (!ctx) {
+      HiLog.error(TAG, 'Get context failed.');
+      return;
+    }
+    try {
+      ctx.terminateSelf();
+    } catch (error) {
+      HiLog.wrapError(TAG, error, 'terminateSelf failed.');
+    }
+  }
+
+  build() {
+    Column() {
+      if (this.title) {
+        Row() {
+          Text(this.title)
+            .lineHeight(Constants.DA_TEXT_LINE_HEIGHT)
+            .width(Constants.DU_WIDTH_FULL)
+            .fontSize($r('sys.float.ohos_id_text_size_dialog_tittle'))
+            .fontColor($r('sys.color.ohos_id_color_text_primary'))
+            .fontWeight(FontWeight.Bold)
+            .align(Alignment.Start)
+        }
+        .width(Constants.HEADER_COLUMN_WIDTH)
+        .height(this.title ? Constants.DA_ROW_HEIGHT : '')
+        .padding({
+          left: Constants.HEADER_COLUMN_PADDING_LEFT,
+          right: Constants.HEADER_COLUMN_PADDING_RIGHT
+        })
+      }
+      Row() {
+        Text(this.message)
+          .fontSize($r('sys.float.ohos_id_text_size_body1'))
+          .fontColor($r('sys.color.ohos_id_color_text_primary'))
+          .fontWeight(FontWeight.Regular)
+          .textAlign(TextAlign.Start)
+      }
+      .width(this.title ? Constants.HEADER_TEXT_WIDTH : '')
+      .align(Alignment.Center)
+      .padding({
+        left: Constants.HEADER_COLUMN_PADDING_LEFT,
+        right: Constants.HEADER_COLUMN_PADDING_RIGHT,
+        top: this.title ?
+          Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP : Constants.ENCRYPTION_MESSAGE_ALERT_MESSAGE_TOP1
+      })
+
+      Flex({ direction: FlexDirection.Row }) {
+        Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
+          .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
+          .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+          .width(this.ok ? Constants.HEADER_TEXT_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_BUTTON)
+          .focusable(false)
+          .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+          .controlSize(ControlSize.NORMAL)
+          .onClick(async (event) => {
+            this.controller?.close()
+            if (this.action != null) {
+              this.action();
+            } else {
+              this.terminateDialog();
+            }
+          })
+          .margin({
+            right: !this.ok && SystemUtils.isRTL() ?
+              Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+            left: this.ok && SystemUtils.isRTL() ?
+              Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+          });
+        if (this.ok) {
+          Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
+            .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
+            .width(Constants.HEADER_TEXT_WIDTH)
+            .focusable(false)
+            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
+            .controlSize(ControlSize.NORMAL)
+            .onClick(async (event) => {
+              this.terminateDialog();
+            })
+            .margin({
+              right: SystemUtils.isRTL() ?
+                Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
+              left: SystemUtils.isRTL() ?
+                Constants.ADD_STAFF_ITEM_MARGIN_LEFT : Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN,
+            });
+        }
+      }
+      .margin({
+        left: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
+        right: this.ok ? Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS_PADDING,
+        bottom: Constants.ENCRYPTION_BUTTON_MARGIN_BOTTOM,
+        top: Constants.ENCRYPTION_BUTTON_TO_BUTTON_WIDTH
+      })
+    }
+    .width(Constants.ENCRYPTION_MESSAGE_DIALOG_TIPS)
+    .borderRadius($r('sys.float.ohos_id_corner_radius_dialog'))
+    .alignItems(HorizontalAlign.Center)
+    .backgroundColor($r('sys.color.ohos_id_color_dialog_bg'))
+    .shadow(ShadowStyle.OUTER_DEFAULT_MD)
+    .backgroundBlurStyle(BlurStyle.COMPONENT_ULTRA_THICK);
+  }
+}
+
+export { DlpAlertDialog };

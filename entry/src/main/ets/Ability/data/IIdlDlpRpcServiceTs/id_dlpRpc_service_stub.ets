@@ -28,7 +28,7 @@ import {
   linkSetCallback
 } from './i_id_dlpRpc_service';
 import IIdDlpRpcService from './i_id_dlpRpc_service';
-import IDLDLPProperty from '../../../common/dlpClass';
+import IDLDLPProperty from '../../../common/bean/data/dlpClass';
 import { HiLog } from '../../../common/base/HiLog';
 import Constants from '../../../common/constants/constant';
 

@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-import DomainAccountInfo from '../bean/data/DomainAccountInfo';
-import DomainAccountResponse from '../bean/response/DomainAccountResponse';
+import DomainAccountInfo from '../common/bean/data/DomainAccountInfo';
+import DomainAccountResponse from '../common/bean/response/DomainAccountResponse';
 import CredConnectServiceDomain from '../rpc/CredConnectServiceDomain';
-import AppStorageConstant from '../common/AppStorageConstant';
+import AppStorageConstant from '../common/constants/AppStorageConstant';
 import { HiLog } from '../common/base/HiLog';
-import { getOsAccountInfo } from '../common/FileUtils/utils';
+import { getOsAccountInfo } from '../utils/utils';
 import DomainAccountConvertor from '../convertor/DomainAccountConvertor';
 import account_osAccount from '@ohos.account.osAccount';
-import CommonUtil from '../common/base/CommonUtil';
+import CommonUtil from '../utils/CommonUtil';
 import { common } from '@kit.AbilityKit';
 import Constants from '../common/constants/constant';
 

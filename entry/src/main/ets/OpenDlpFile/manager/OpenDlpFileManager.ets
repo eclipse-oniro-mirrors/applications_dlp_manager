@@ -19,7 +19,7 @@ import { ResultMsg } from '../../common/base/ResultMsg';
 import DecryptContent from '../data/DecryptContent';
 import { ArkTSUtils, LinkedList } from '@kit.ArkTS';
 import Constants from '../../common/constants/constant';
-import FileUtils from '../../common/FileUtils/FileUtils';
+import FileUtils from '../../utils/FileUtils';
 
 const TAG: string = 'OpenDlpFileManager';
 

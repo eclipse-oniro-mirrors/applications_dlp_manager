@@ -27,11 +27,11 @@ import {
 } from '@ohos/hypium';
 import AccountManager from '../../../../main/ets/manager/AccountManager';
 import AccountManagerMock from './mock/AccountManagerMock';
-import AppStorageConstant from '../../../../main/ets/common/AppStorageConstant';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import AppStorageConstant from '../../../../main/ets/common/constants/AppStorageConstant';
+import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
 import common from '@ohos.app.ability.common';
 import CredConnectServiceDomain from '../../../../main/ets/rpc/CredConnectServiceDomain';
-import DomainAccountInfo from '../../../../main/ets/bean/data/DomainAccountInfo';
+import DomainAccountInfo from '../../../../main/ets/common/bean/data/DomainAccountInfo';
 
 export default function AccountManagerTest() {
   describe('AccountManagerTest', () => {
@@ -56,7 +56,7 @@ export default function AccountManagerTest() {
     })
 
     it('AccountManagerTest_connectAbility', 0, () => {
-      const context = AppStorageMgr.getApplicationContext() as common.UIAbilityContext;
+      const context = AppStorageUtil.getApplicationContext() as common.UIAbilityContext;
       AccountManager.connectAbility(context);
       expect(context).not().assertNull();
     })
@@ -71,7 +71,7 @@ export default function AccountManagerTest() {
       const mockGetAccountInfo = mocker.mockFunc(AccountManager, AccountManager.getAccountInfo);
       when(mockGetAccountInfo)(ArgumentMatchers.any).afterReturn(undefined);
 
-      AppStorageMgr.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, undefined);
+      AppStorageUtil.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, undefined);
       const ret = await AccountManager.getDomainAccountByAccountName('test');
       expect(ret.accountName).assertEqual(undefined);
 
@@ -79,7 +79,7 @@ export default function AccountManagerTest() {
     })
 
     it('AccountManagerTest_getDomainAccountByAccountName_connect_undefined', 0, async () => {
-      AppStorageMgr.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, undefined);
+      AppStorageUtil.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, undefined);
       const ret = await AccountManager.getDomainAccountByAccountName('test');
       expect(ret.accountName).assertEqual(undefined);
     })
@@ -105,10 +105,10 @@ export default function AccountManagerTest() {
     })
 
     it('AccountManagerTest_getDomainAccountByAccountName_success', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.UIAbilityContext;
+      const context = AppStorageUtil.getApplicationContext() as common.UIAbilityContext;
       const connection = new CredConnectServiceDomain(context)
       expect(connection).not().assertEqual(undefined);
-      AppStorageMgr.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, connection);
+      AppStorageUtil.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, connection);
 
       const mocker: MockKit = new MockKit();
       const response = AccountManagerMock.getDomainAccountResponseSuccess();
@@ -118,7 +118,7 @@ export default function AccountManagerTest() {
       const ret = await AccountManager.getDomainAccountByAccountName('test');
       expect(ret.accountName).assertEqual('test');
       connection.disconnectServiceAbility();
-      AppStorageMgr.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, undefined);
+      AppStorageUtil.setOrCreate(AppStorageConstant.CRED_CONNECTION_DOMAIN, undefined);
 
       mocker.ignoreMock(connection, connection.getDomainAccountInfo);
     })

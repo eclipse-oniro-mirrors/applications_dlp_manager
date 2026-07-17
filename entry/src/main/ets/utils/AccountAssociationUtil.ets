@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import Constants from '../constants/constant';
-import { HiLog } from '../base/HiLog';
-import { decodeByBase64, getSha256, isInvalidStr, uint8ArrayToHexString } from '../FileUtils/utils';
+import Constants from '../common/constants/constant';
+import { HiLog } from '../common/base/HiLog';
+import { decodeByBase64, getSha256, isInvalidStr, uint8ArrayToHexString } from './utils';
 
 const TAG: string = 'AssocUtil';
 

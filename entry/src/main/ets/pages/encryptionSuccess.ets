@@ -27,12 +27,13 @@ import {
   directionStatus,
   getTime,
   removeDirectionStatus,
-} from '../common/FileUtils/utils';
+} from '../utils/utils';
 import GlobalContext from '../common/base/GlobalContext';
 import { HiLog } from '../common/base/HiLog';
-import { SystemUtils } from '../common/systemUtils';
+import { SystemUtils } from '../utils/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
-import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
+import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'EncSucc';
 let abilityResult: ability.AbilityResult = {

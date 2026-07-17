@@ -36,21 +36,22 @@ import {
   isValidPath,
   sendDlpManagerFileConfiguration,
   removeDirectionStatus
-} from '../common/FileUtils/utils';
-import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
+} from '../utils/utils';
+import { DlpAlertDialog } from '../component/encryptionComponents/dlp_alert_dialog';
 import GlobalContext from '../common/base/GlobalContext';
-import { AccountTipsConfig } from '../component/AccountTipsConfig';
+import { AccountTipsConfigUtil } from '../utils/AccountTipsConfigUtil';
 import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
 import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import { HiLog } from '../common/base/HiLog';
-import { SystemUtils } from '../common/systemUtils';
-import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
+import { SystemUtils } from '../utils/systemUtils';
+import FileUtils, { FileMsg } from '../utils/FileUtils';
 import AccountManager from '../manager/AccountManager';
-import CommonUtil from '../common/base/CommonUtil';
+import CommonUtil from '../utils/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import { promptAction } from '@kit.ArkUI';
-import FileUtil from '../common/external/FileUtil';
-import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
+import FileUtil from '../utils/external/FileUtil';
+import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'ModEnc';
 
@@ -404,7 +405,7 @@ struct changeEncryption {
         'staffDataArrayEdit': this.staffDataArrayEdit,
       } as Record<string, AuthAccount[]>;
     } else { // ability
-      await AccountTipsConfig.getConfigTips();
+      await AccountTipsConfigUtil.getConfigTips();
       await this.getTextContent();
 
       this.routerData = {
@@ -435,7 +436,7 @@ struct changeEncryption {
       let match = result?.getData().find(
         item => accountName.toLocaleUpperCase() === item.accountName.toLocaleUpperCase());
       if (match) {
-        data.textContent = match[AccountTipsConfig.showContentKey];
+        data.textContent = match[AccountTipsConfigUtil.showContentKey];
       }
     });
   }

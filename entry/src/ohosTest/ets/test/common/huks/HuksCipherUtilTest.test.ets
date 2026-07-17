@@ -15,8 +15,8 @@
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
 import { huks } from '@kit.UniversalKeystoreKit';
-import HuksCipherUtils from '../../../../../main/ets/common/huks/HuksCipherUtil';
-import { stringToUint8Array } from '../../../../../main/ets/common/FileUtils/utils';
+import HuksCipherUtils from '../../../../../main/ets/utils/HuksCipherUtil';
+import { stringToUint8Array } from '../../../../../main/ets/utils/utils';
 
 export default function HuksCipherUtilTest() {
   describe('HuksCipherUtilTest', () => {

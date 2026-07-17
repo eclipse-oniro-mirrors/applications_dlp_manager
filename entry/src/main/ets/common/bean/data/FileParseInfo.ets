@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { FileParseType } from '../../enum/FileEnum';
 
-export enum FileParseType {
-  ZIP = 1,
-  RAW = 2
+export interface FileParseInfo {
+  parseType: FileParseType,
+  fileSize: number
 }

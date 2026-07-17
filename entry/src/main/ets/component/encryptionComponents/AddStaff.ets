@@ -15,14 +15,14 @@
 
 import { staffItem } from './staff';
 import Constants from '../../common/constants/constant';
-import { AccountTipsConfig } from '../AccountTipsConfig';
+import { AccountTipsConfigUtil } from '../../utils/AccountTipsConfigUtil';
 import { HiLog } from '../../common/base/HiLog';
-import CommonUtil from '../../common/base/CommonUtil';
+import CommonUtil from '../../utils/CommonUtil';
 import AccountManager from '../../manager/AccountManager';
-import DomainAccountResponse from '../../bean/response/DomainAccountResponse';
-import AppStorageConstant from '../../common/AppStorageConstant';
+import DomainAccountResponse from '../../common/bean/response/DomainAccountResponse';
+import AppStorageConstant from '../../common/constants/AppStorageConstant';
 import { common } from '@kit.AbilityKit';
-import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
+import DomainAccountInfo from '../../common/bean/data/DomainAccountInfo';
 import EncryptProtectionShowCodeEnum from '../../common/enum/EncryptProtectionShowCodeEnum';
 import EncryptProtectionHelper from '../helper/EncryptProtectionHelper';
 
@@ -243,8 +243,8 @@ struct AddStaff {
 
   async aboutToAppear() {
     AccountManager.connectAbility(getContext(this) as common.UIAbilityContext);
-    await AccountTipsConfig.getConfigTips();
-    this.textContent = AccountTipsConfig.showContentKey;
+    await AccountTipsConfigUtil.getConfigTips();
+    this.textContent = AccountTipsConfigUtil.showContentKey;
     if (this.staffArray.length) {
       setTimeout(() => {
         this.onDataChange();

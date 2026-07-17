@@ -24,7 +24,7 @@ import osAccount from '@ohos.account.osAccount';
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
 import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
-import { DlpAlertDialog } from '../common/components/dlp_alert_dialog';
+import { DlpAlertDialog } from '../component/encryptionComponents/dlp_alert_dialog';
 import {
   PermissionType,
   getOsAccountInfo,
@@ -40,7 +40,7 @@ import {
   isInvalidStr,
   getFileSizeByUri,
   removeDirectionStatus
-} from '../common/FileUtils/utils';
+} from '../utils/utils';
 import Constants from '../common/constants/constant';
 import {
   permissionTypeSelect,
@@ -49,15 +49,16 @@ import {
 } from '../component/encryptionComponents/permission_type_select';
 import { AddStaff } from '../component/encryptionComponents/AddStaff';
 import GlobalContext from '../common/base/GlobalContext';
-import IDLDLPProperty from '../common/dlpClass';
-import { IAuthUser } from '../common/dlpClass';
+import IDLDLPProperty from '../common/bean/data/dlpClass';
+import { IAuthUser } from '../common/bean/data/dlpClass';
 import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import { HiLog } from '../common/base/HiLog';
-import FileUtils, { FileMsg } from '../common/FileUtils/FileUtils';
-import { SystemUtils } from '../common/systemUtils';
+import FileUtils, { FileMsg } from '../utils/FileUtils';
+import { SystemUtils } from '../utils/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
-import FileUtil from '../common/external/FileUtil';
-import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
+import FileUtil from '../utils/external/FileUtil';
+import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {

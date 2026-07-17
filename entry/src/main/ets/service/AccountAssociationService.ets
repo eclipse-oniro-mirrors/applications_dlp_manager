@@ -14,11 +14,11 @@
  */
 
 import AccountAssociationManager from '../manager/AccountAssociationManager';
-import AuthorizedAccount from '../bean/data/AuthorizedAccount';
-import { getOsAccountInfo } from '../common/FileUtils/utils';
+import AuthorizedAccount from '../common/bean/data/AuthorizedAccount';
+import { getOsAccountInfo } from '../utils/utils';
 import { HiLog } from '../common/base/HiLog';
 import { osAccount } from '@kit.BasicServicesKit';
-import Singleton from '../common/Singleton';
+import Singleton from '../common/base/Singleton';
 
 const TAG: string = 'AssociationSer';
 

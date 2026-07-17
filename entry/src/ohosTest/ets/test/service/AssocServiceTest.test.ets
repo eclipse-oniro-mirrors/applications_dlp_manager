@@ -27,11 +27,11 @@ import {
 } from '@ohos/hypium';
 import AccountAssociationManager from '../../../../main/ets/manager/AccountAssociationManager';
 import AccountAssociationService from '../../../../main/ets/service/AccountAssociationService';
-import AppStorageMgr from '../../../../main/ets/common/AppStorageMgr';
+import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
 import Constants from '../../../../main/ets/common/constants/constant';
-import FileUtil from '../../../../main/ets/common/external/FileUtil';
+import FileUtil from '../../../../main/ets/utils/external/FileUtil';
 import { HiLog } from '../../../../main/ets/common/base/HiLog';
-import { isInvalidStr } from '../../../../main/ets/common/FileUtils/utils';
+import { isInvalidStr } from '../../../../main/ets/utils/utils';
 
 const TAG: string = 'AssocSerTest';
 
@@ -58,7 +58,7 @@ export default function AssocServiceTest() {
     })
 
     it('AssocServiceTest_getAndSetAuthorizedAccount', 0, async () => {
-      const ctx = AppStorageMgr.getApplicationContext();
+      const ctx = AppStorageUtil.getApplicationContext();
       if (!ctx) {
         HiLog.error(TAG, 'Get application context failed.');
         return;

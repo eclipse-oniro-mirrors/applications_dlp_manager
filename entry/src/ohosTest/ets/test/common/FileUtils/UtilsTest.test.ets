@@ -54,14 +54,14 @@ import {
   stringToUint8Array,
   terminateSelfWithResult,
   toggleShow
-} from '../../../../../main/ets/common/FileUtils/utils';
+} from '../../../../../main/ets/utils/utils';
 import account_osAccount from '@ohos.account.osAccount';
 import osAccount from '@ohos.account.osAccount';
 import { distributedAccount } from '@kit.BasicServicesKit';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import Want from '@ohos.app.ability.Want';
 import Constants from '../../../../../main/ets/common/constants/constant';
-import AppStorageMgr from '../../../../../main/ets/common/AppStorageMgr';
+import AppStorageUtil from '../../../../../main/ets/utils/AppStorageUtil';
 import { common } from '@kit.AbilityKit';
 import { UIContext } from '@kit.ArkUI';
 
@@ -283,13 +283,13 @@ export default function UtilsTest() {
     it('UtilsTest_getTime', 0, async () => {
       let res = getTime();
 
-      AppStorageMgr.setOrCreate('permanent', true);
+      AppStorageUtil.setOrCreate('permanent', true);
       getTime();
-      AppStorageMgr.setOrCreate('permanent', undefined);
+      AppStorageUtil.setOrCreate('permanent', undefined);
 
-      AppStorageMgr.setOrCreate('validity', 1);
+      AppStorageUtil.setOrCreate('validity', 1);
       getTime();
-      AppStorageMgr.setOrCreate('validity', undefined);
+      AppStorageUtil.setOrCreate('validity', undefined);
 
       expect(res).not().assertNull();
     })
@@ -357,7 +357,7 @@ export default function UtilsTest() {
     })
 
     it('UtilsTest_getAccountTypeAndRealFileType', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       let res = getAccountTypeAndRealFileType(context, 1);
       expect(res).not().assertNull();
     })
@@ -369,12 +369,12 @@ export default function UtilsTest() {
 
     it('UtilsTest_checkNetworkStatus', 0, async () => {
       checkNetworkStatus();
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       expect(context).not().assertNull();
     })
 
     it('UtilsTest_showToast', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.UIAbilityContext;
+      const context = AppStorageUtil.getApplicationContext() as common.UIAbilityContext;
       try {
         let uiContext = UIContext.createUIContextWithoutWindow(context) as UIContext;
         showToast(uiContext, 'err');
@@ -389,7 +389,7 @@ export default function UtilsTest() {
 
 
     it('UtilsTest_logErrorShowToast', 0, async () => {
-      const context = AppStorageMgr.getApplicationContext() as common.UIAbilityContext;
+      const context = AppStorageUtil.getApplicationContext() as common.UIAbilityContext;
       logErrorShowToast(context, 'err', 'err');
       expect(context).not().assertNull();
     })

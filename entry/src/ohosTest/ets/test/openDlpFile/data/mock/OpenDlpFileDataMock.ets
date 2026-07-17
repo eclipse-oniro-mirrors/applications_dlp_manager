@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { FileParseType } from '../../../../../../main/ets/bean/data/FileParseType';
 import { HiLog } from '../../../../../../main/ets/common/base/HiLog';
 import OpenDlpFileData from '../../../../../../main/ets/OpenDlpFile/data/OpenDlpFileData';
 import Want from '@ohos.app.ability.Want';
+import { FileParseType } from '../../../../../../main/ets/common/enum/FileEnum';
 
 const TAG: string = 'OpenFileMock';
 

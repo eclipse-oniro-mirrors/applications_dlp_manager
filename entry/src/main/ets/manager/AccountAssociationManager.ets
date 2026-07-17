@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-import AccountAssociation from '../bean/data/AccountAssociation';
-import AccountAssociationUtil from '../common/AssocUtil/AccountAssociationUtil';
-import AppStorageMgr from '../common/AppStorageMgr';
-import AuthorizedAccount from '../bean/data/AuthorizedAccount';
+import AccountAssociation from '../common/bean/data/AccountAssociation';
+import AccountAssociationUtil from '../utils/AccountAssociationUtil';
+import AppStorageUtil from '../utils/AppStorageUtil';
+import AuthorizedAccount from '../common/bean/data/AuthorizedAccount';
 import Constants from '../common/constants/constant';
-import { getCurrentTime, isInvalidStr } from '../common/FileUtils/utils';
+import { getCurrentTime, isInvalidStr } from '../utils/utils';
 import { HiLog } from '../common/base/HiLog';
-import HuksCipherUtils from '../common/huks/HuksCipherUtil';
-import StorageUtil from '../common/StorageUtil';
+import HuksCipherUtils from '../utils/HuksCipherUtil';
+import StorageUtil from '../utils/StorageUtil';
 import AssociationDecryptValidator from '../validator/AccountAssociation/AssociationDecryptValidator';
 import AssociationEncryptValidator from '../validator/AccountAssociation/AssociationEncryptValidator';
 
@@ -35,7 +35,7 @@ export default class AccountAssociationManager {
   }
 
   public static getInstance(): AccountAssociationManager | null {
-    const appContext = AppStorageMgr.getApplicationContext();
+    const appContext = AppStorageUtil.getApplicationContext();
     if (!appContext) {
       HiLog.error(TAG, 'Get Application Context failed.');
       return null;

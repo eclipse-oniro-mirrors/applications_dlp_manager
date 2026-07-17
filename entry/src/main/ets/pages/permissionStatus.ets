@@ -17,10 +17,11 @@ import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSessi
 import ability from '@ohos.ability.ability';
 import Constants from '../common/constants/constant';
 import GlobalContext from '../common/base/GlobalContext';
-import { directionStatus, removeDirectionStatus } from '../common/FileUtils/utils';
+import { directionStatus, removeDirectionStatus } from '../utils/utils';
 import common from '@ohos.app.ability.common';
 import { HiLog } from '../common/base/HiLog';
-import { DLPMaterialUtil, MaterialType } from '../utils/DLPMaterialUtil';
+import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
+import { MaterialType } from '../common/enum/MaterialEnum';
 
 const TAG = 'PermStat';
 

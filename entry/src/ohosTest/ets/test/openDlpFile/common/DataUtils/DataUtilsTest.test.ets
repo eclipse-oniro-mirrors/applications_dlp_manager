@@ -25,7 +25,7 @@ import {
   MockKit,
   when
 } from '@ohos/hypium'
-import AppStorageMgr from '../../../../../../main/ets/common/AppStorageMgr';
+import AppStorageUtil from '../../../../../../main/ets/utils/AppStorageUtil';
 import common from '@ohos.app.ability.common';
 import Constants from '../../../../../../main/ets/common/constants/constant';
 import { HiLog } from '../../../../../../main/ets/common/base/HiLog';
@@ -126,7 +126,7 @@ export default function DataUtilsTest() {
 
       const bundleName = 'test';
       const sandboxAppIndex = 1001;
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       await clearDlpInfoBatch(bundleName, sandboxAppIndex, context);
       expect(bundleName).not().assertNull();
 
@@ -142,7 +142,7 @@ export default function DataUtilsTest() {
 
       const bundleName = 'test';
       const sandboxAppIndex = 1001;
-      const context = AppStorageMgr.getApplicationContext() as common.ServiceExtensionContext;
+      const context = AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
       await clearDlpInfoBatch(bundleName, sandboxAppIndex, context);
       expect(bundleName).not().assertNull();
 

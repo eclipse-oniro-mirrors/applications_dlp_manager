@@ -16,16 +16,17 @@
 import { BusinessError } from '@ohos.base';
 import common from '@ohos.app.ability.common';
 import Constants from '../../common/constants/constant';
-import CounterLock from '../../common/CounterLock';
+import CounterLock from '../../common/base/CounterLock';
 import GlobalContext from '../../common/base/GlobalContext';
 import deviceInfo from '@ohos.deviceInfo';
 import { HiLog } from '../../common/base/HiLog';
 import TerminateManager from './TerminateManager';
 import { UIContext } from '@kit.ArkUI';
-import UIContextUtil from '../../common/UIContextUtil';
+import UIContextManager from '../../manager/UIContextManager';
 import { OpenDlpFileError } from '../common/OpenDlpFileError/OpenDlpFileError';
-import { getAccountNameFromErrMsg } from '../../common/FileUtils/utils';
-import { DLPMaterialUtil, MaterialType } from '../../utils/DLPMaterialUtil';
+import { getAccountNameFromErrMsg } from '../../utils/utils';
+import { DLPMaterialUtil } from '../../utils/DLPMaterialUtil';
+import { MaterialType } from '../../common/enum/MaterialEnum';
 
 const TAG = 'AlertManager';
 
@@ -39,7 +40,7 @@ export class AlertManager {
     try {
       const resource = AlertManager.getToastMessage(error);
       const toastMessage = await context.resourceManager.getStringValue(resource.id);
-      const uiContext = UIContextUtil.getInstance().getUIContext(context);
+      const uiContext = UIContextManager.getInstance().getUIContext(context);
       if (!uiContext) {
         HiLog.error(TAG, 'Get UIContext failed.');
         return;

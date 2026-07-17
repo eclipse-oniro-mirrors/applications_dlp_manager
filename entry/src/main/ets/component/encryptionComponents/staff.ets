@@ -15,13 +15,14 @@
 
 import common from '@ohos.app.ability.common';
 import Constants from '../../common/constants/constant';
-import { AccountTips, AccountTipsConfig } from '../AccountTipsConfig';
-import { DlpAlertDialog } from '../../common/components/dlp_alert_dialog';
+import { AccountTips, AccountTipsConfigUtil } from '../../utils/AccountTipsConfigUtil';
+import { DlpAlertDialog } from './dlp_alert_dialog';
 import { HiLog } from '../../common/base/HiLog';
-import { SystemUtils } from '../../common/systemUtils';
+import { SystemUtils } from '../../utils/systemUtils';
 import AccountManager from '../../manager/AccountManager';
-import DomainAccountInfo from '../../bean/data/DomainAccountInfo';
-import { DLPMaterialUtil, MaterialType } from '../../utils/DLPMaterialUtil';
+import DomainAccountInfo from '../../common/bean/data/DomainAccountInfo';
+import { DLPMaterialUtil } from '../../utils/DLPMaterialUtil';
+import { MaterialType } from '../../common/enum/MaterialEnum';
 
 const TAG = 'staff';
 
@@ -67,7 +68,7 @@ struct staffItem {
       ForEach(this.accountTipsArray, (item: AccountTips) => {
         if (item.isShow) {
           Row() {
-            if (AccountTipsConfig.isSysLanguage()) {
+            if (AccountTipsConfigUtil.isSysLanguage()) {
               Text(item.description?.replace('%s', item.value)).tipsTextStyle()
             } else {
               Text(item.descriptionEn?.replace('%s', item.value)).tipsTextStyle()
@@ -169,7 +170,7 @@ struct staffItem {
     .onClick(async () => {
       try {
         let accountInfo: DomainAccountInfo = await AccountManager.getDomainAccountByAccountName(this.authAccount);
-        this.accountTipsArray = await AccountTipsConfig.getConfigTips();
+        this.accountTipsArray = await AccountTipsConfigUtil.getConfigTips();
         this.handlePopupTips = !this.handlePopupTips;
         this.accountTipsArray?.forEach((item: AccountTips) => {
           item.value = accountInfo[item.key];

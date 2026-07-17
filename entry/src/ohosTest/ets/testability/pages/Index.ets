@@ -14,7 +14,8 @@
  */
 
 import hilog from '@ohos.hilog';
-import { DLPMaterialUtil, MaterialType } from '../../../../main/ets/utils/DLPMaterialUtil';
+import { MaterialType } from '../../../../main/ets/common/enum/MaterialEnum';
+import { DLPMaterialUtil } from '../../../../main/ets/utils/DLPMaterialUtil';
 
 @Entry
 @Component

@@ -14,7 +14,7 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@ohos/hypium';
-import { AccountTips, AccountTipsConfig } from '../../../../main/ets/component/AccountTipsConfig';
+import { AccountTips, AccountTipsConfigUtil } from '../../../../main/ets/utils/AccountTipsConfigUtil';
 import EncryptProtectionHelper from '../../../../main/ets/component/helper/EncryptProtectionHelper';
 import { HiLog } from '../../../../main/ets/common/base/HiLog';
 import Constants from '../../../../main/ets/common/constants/constant';
@@ -65,7 +65,7 @@ export default function ComponentTest() {
     it('AccountTipsConfig', 0, async () => {
       let ret: AccountTips[] = [];
       try {
-        ret = await AccountTipsConfig.getConfigTips();
+        ret = await AccountTipsConfigUtil.getConfigTips();
       } catch (err) {
         HiLog.wrapError(TAG, err, 'Get config tips failed.');
         ret = [];

@@ -15,7 +15,7 @@
 
 import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from '@ohos/hypium';
 import i18n from '@ohos.i18n';
-import { SystemUtils } from '../../../../main/ets/common/systemUtils';
+import { SystemUtils } from '../../../../main/ets/utils/systemUtils';
 
 export default function SystemUtilsTest() {
   describe('SystemUtilsTest', () => {

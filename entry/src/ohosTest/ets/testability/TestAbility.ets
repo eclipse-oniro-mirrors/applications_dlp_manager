@@ -15,8 +15,8 @@
 
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import AbilityDelegatorRegistry from '@ohos.app.ability.abilityDelegatorRegistry';
-import AppStorageConstant from '../../../main/ets/common/AppStorageConstant';
-import AppStorageMgr from '../../../main/ets/common/AppStorageMgr';
+import AppStorageConstant from '../../../main/ets/common/constants/AppStorageConstant';
+import AppStorageUtil from '../../../main/ets/utils/AppStorageUtil';
 import { HiLog } from '../../../main/ets/common/base/HiLog';
 import { Hypium } from '@ohos/hypium';
 import testsuite from '../test/List.test';
@@ -29,7 +29,7 @@ const TAG: string = 'TestAbility';
 export default class TestAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     HiLog.info(TAG, 'TestAbility onCreate');
-    AppStorageMgr.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, this.context, true);
+    AppStorageUtil.setOrCreate(AppStorageConstant.APPLICATION_CONTEXT, this.context, true);
     let abilityDelegator = AbilityDelegatorRegistry.getAbilityDelegator();
     let abilityDelegatorArguments = AbilityDelegatorRegistry.getArguments();
     HiLog.info(TAG, 'Start run testcase!');
