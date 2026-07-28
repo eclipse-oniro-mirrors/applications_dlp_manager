@@ -49,7 +49,7 @@ import AccountManager from '../manager/AccountManager';
 import CommonUtil from '../utils/CommonUtil';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import { promptAction } from '@kit.ArkUI';
-import FileUtil from '../utils/external/FileUtil';
+import FileUtil from '../utils/FsUtil';
 import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
 import { MaterialType } from '../common/enum/MaterialEnum';
 

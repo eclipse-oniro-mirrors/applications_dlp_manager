@@ -43,7 +43,7 @@ import FileUtils from '../utils/FileUtils';
 import AccountManager from '../manager/AccountManager';
 import IdDlpRpcServiceProxy from './data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
 import common from '@ohos.app.ability.common';
-import FileUtil from '../utils/external/FileUtil';
+import FileUtil from '../utils/FsUtil';
 import CommonUtil from '../utils/CommonUtil';
 
 const TAG = 'MainEx';

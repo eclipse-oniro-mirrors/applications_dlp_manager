@@ -56,7 +56,7 @@ import { HiLog } from '../common/base/HiLog';
 import FileUtils, { FileMsg } from '../utils/FileUtils';
 import { SystemUtils } from '../utils/systemUtils';
 import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_service_proxy';
-import FileUtil from '../utils/external/FileUtil';
+import FileUtil from '../utils/FsUtil';
 import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
 import { MaterialType } from '../common/enum/MaterialEnum';
 

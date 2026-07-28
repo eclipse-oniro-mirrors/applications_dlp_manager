@@ -26,7 +26,7 @@ import {
   when
 } from '@ohos/hypium';
 import CommonUtil from '../../../../../main/ets/utils/CommonUtil';
-import FileUtil from '../../../../../main/ets/utils/external/FileUtil';
+import FileUtil from '../../../../../main/ets/utils/FsUtil';
 
 export default function FileUtilTest() {
   describe('FileUtilTest', () => {
