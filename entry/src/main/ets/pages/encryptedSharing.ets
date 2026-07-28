@@ -45,7 +45,7 @@ import { systemDateTime } from '@kit.BasicServicesKit';
 import taskpool from '@ohos.taskpool';
 import UIExtensionContentSession from '@ohos.app.ability.UIExtensionContentSession';
 import Want from '@ohos.app.ability.Want';
-import FileUtil from '../utils/external/FileUtil';
+import FileUtil from '../utils/FsUtil';
 import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
 import { MaterialType } from '../common/enum/MaterialEnum';
 

@@ -18,7 +18,7 @@ import rpc from '@ohos.rpc';
 import Constant from '../common/constants/constant';
 import fs from '@ohos.file.fs';
 import { BusinessError } from '@ohos.base';
-import FileUtil from '../utils/external/FileUtil';
+import FileUtil from '../utils/FsUtil';
 
 const TAG = 'CleanDLPFileInCacheServiceStub';
 

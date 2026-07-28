@@ -17,7 +17,7 @@ import { HiLog } from '../../common/base/HiLog';
 import { DecryptState, OpenDlpFileManager } from './OpenDlpFileManager';
 import DecryptContent from '../data/DecryptContent';
 import Constants from '../../common/constants/constant';
-import FileUtil from '../../utils/external/FileUtil';
+import FileUtil from '../../utils/FsUtil';
 import { common } from '@kit.AbilityKit';
 import TerminateManager from './TerminateManager';
 import FileUtils from '../../utils/FileUtils';

@@ -29,7 +29,7 @@ import AccountAssociationManager from '../../../../main/ets/manager/AccountAssoc
 import AccountAssociationService from '../../../../main/ets/service/AccountAssociationService';
 import AppStorageUtil from '../../../../main/ets/utils/AppStorageUtil';
 import Constants from '../../../../main/ets/common/constants/constant';
-import FileUtil from '../../../../main/ets/utils/external/FileUtil';
+import FileUtil from '../../../../main/ets/utils/FsUtil';
 import { HiLog } from '../../../../main/ets/common/base/HiLog';
 import { isInvalidStr } from '../../../../main/ets/utils/utils';
 

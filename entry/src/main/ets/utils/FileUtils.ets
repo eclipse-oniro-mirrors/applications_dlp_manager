@@ -14,7 +14,7 @@
  */
 
 import { HiLog } from '../common/base/HiLog';
-import FileUtil from './external/FileUtil';
+import FileUtil from './FsUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import fs from '@ohos.file.fs';
 import CommonUtil from './CommonUtil';

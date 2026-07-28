@@ -24,7 +24,7 @@ import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import dlpPermission from '@ohos.dlpPermission';
 import emitter from '@ohos.events.emitter';
 import fileUri from '@ohos.file.fileuri';
-import FileUtil from './external/FileUtil';
+import FileUtil from './FsUtil';
 import FileUtils from './FileUtils';
 import fs from '@ohos.file.fs';
 import GlobalContext from '../common/base/GlobalContext';

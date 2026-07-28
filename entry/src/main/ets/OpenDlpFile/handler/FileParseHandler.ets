@@ -21,7 +21,7 @@ import { checkValidAccountType, getFileFd } from '../../utils/utils';
 import { HiLog } from '../../common/base/HiLog';
 import { zlib } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';
-import FileUtil from '../../utils/external/FileUtil';
+import FileUtil from '../../utils/FsUtil';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import FileMetaInfo from '../../common/bean/data/FileMetaInfo';
 import GlobalContext from '../../common/base/GlobalContext';
