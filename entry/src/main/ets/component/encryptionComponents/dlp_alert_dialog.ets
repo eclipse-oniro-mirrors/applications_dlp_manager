@@ -103,7 +103,8 @@ struct DlpAlertDialog {
           });
         if (this.ok) {
           Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
-            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
+            .backgroundColor($r('sys.color.comp_background_tertiary'))
+            .fontColor($r('sys.color.font_emphasize'))
             .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
             .width(Constants.HEADER_TEXT_WIDTH)
             .focusable(false)
