@@ -324,8 +324,8 @@ struct PermissionStatus {
 
               Row() {
                 Button($r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
-                  .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
                   .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+                  .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
                   .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                   .width(Constants.ENCRYPTION_PERMISSION_STATUS_WIDTH)
                   .controlSize(ControlSize.NORMAL)
