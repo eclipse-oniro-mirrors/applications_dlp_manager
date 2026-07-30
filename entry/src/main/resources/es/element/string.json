@@ -51,7 +51,7 @@
         },
         {
             "name":"EncryptedSharing",
-            "value":"Compartir de forma cifrada",
+            "value":"Elementos cifrados compartidos",
             "attr":{
                 "priority":"translate"
             }
