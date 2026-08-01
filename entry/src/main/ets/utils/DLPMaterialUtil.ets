@@ -63,4 +63,5 @@ export class DLPMaterialUtil {
 
   public static getEdgeLightMode(): EdgeLightMode | undefined {
     return DLPMaterialUtil.isSystemMaterialSupported ? EdgeLightMode.EDGELIGHT_AUTO : undefined;
+  }
 }
