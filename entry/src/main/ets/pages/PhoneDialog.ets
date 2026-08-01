@@ -70,8 +70,7 @@ struct Index {
       this.cancelAction();
     },
     systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-    edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
-    distortionMode: DLPMaterialUtil.getDistortionMode()
+    edgeLightMode: DLPMaterialUtil.getEdgeLightMode()
   })
 
   getExternalResourceString(bundle: string, module: string, resourceName: string): string {
@@ -115,8 +114,7 @@ struct Index {
           this.cancelAction();
         },
         systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-        edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
-        distortionMode: DLPMaterialUtil.getDistortionMode()
+        edgeLightMode: DLPMaterialUtil.getEdgeLightMode()
       });
     }
   }
