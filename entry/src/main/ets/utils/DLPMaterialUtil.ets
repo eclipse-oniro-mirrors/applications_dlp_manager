@@ -15,8 +15,8 @@
 
 import { uiMaterial } from '@kit.ArkUI';
 import { MaterialType } from '../common/enum/MaterialEnum';
-import { hdsMaterial } from '@kit.UIDesignkit'
-import { HiLog } from '../common/base/HiLog'
+import { hdsMaterial } from '@kit.UIDesignKit';
+import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'DLPMaterialUtil';
 
@@ -56,10 +56,10 @@ export class DLPMaterialUtil {
       DLPMaterialUtil.isSystemMaterialSupported = hdsMaterial.isSystemMaterialSupported();
       DLPMaterialUtil.isHighMidTierDevice = hdsMaterial.getSystemMaterialTypes().length > 0;
     } catch (err) {
-      Hilog.wrapError(TAG, err, 'MaterialUtil init failed.');
+      HiLog.wrapError(TAG, err, 'MaterialUtil init failed.');
     } finally {
-      Hilog.info(TAG, `isSystemMaterialSupported: ${DLPMaterialUtil.isSystemMaterialSupported},` + 
-          `isHighMidTierDevice: ${DLPMaterialUtil.isHighMidTierDevice},`);
+      HiLog.info(TAG, `isSystemMaterialSupported: ${DLPMaterialUtil.isSystemMaterialSupported},` + 
+          `isHighMidTierDevice: ${DLPMaterialUtil.isHighMidTierDevice}`);
     }
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.TOAST, DLPMaterialUtil.TOAST_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.BUTTON, DLPMaterialUtil.BUTTON_MATERIAL);
