@@ -58,8 +58,8 @@ export class DLPMaterialUtil {
     } catch (err) {
       HiLog.wrapError(TAG, err, 'MaterialUtil init failed.');
     } finally {
-      HiLog.info(TAG, `isSystemMaterialSupported: ${DLPMaterialUtil.isSystemMaterialSupported},` + 
-          `isHighMidTierDevice: ${DLPMaterialUtil.isHighMidTierDevice}`);
+      HiLog.info(TAG, `isSystemMaterialSupported: ${DLPMaterialUtil.isSystemMaterialSupported},`+ 
+        `isHighMidTierDevice: ${DLPMaterialUtil.isHighMidTierDevice}`);
     }
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.TOAST, DLPMaterialUtil.TOAST_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.BUTTON, DLPMaterialUtil.BUTTON_MATERIAL);
