@@ -61,9 +61,6 @@ struct Index {
     }),
     autoCancel: false,
     maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
-    systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-    edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
-    distortionMode: DistortionMode.DISTORTION_AUTO
   });
 
   async terminateDialog(context: common.UIAbilityContext | common.UIExtensionContext | undefined,
