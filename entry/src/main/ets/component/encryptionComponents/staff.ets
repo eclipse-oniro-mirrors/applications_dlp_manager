@@ -106,7 +106,6 @@ struct staffItem {
       showInSubWindow: true,
       systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
       edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
-      distortionMode: DLPMaterialUtil.getDistortionMode()
     });
     this.dlpAlertDialog.open();
   }
