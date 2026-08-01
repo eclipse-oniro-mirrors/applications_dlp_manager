@@ -15,7 +15,7 @@
 
 import { uiMaterial } from '@kit.ArkUI';
 import { MaterialType } from '../common/enum/MaterialEnum';
-import { hdsMaterial } from '@kit.UIDesignKit';
+import { deviceInfo } from '@kit.BasicServicesKit';
 import { HiLog } from '../common/base/HiLog';
 
 const TAG = 'DLPMaterialUtil';
@@ -24,10 +24,8 @@ export class DLPMaterialUtil {
   private constructor() {
   }
 
-  // 当前设备是否支持中高端机的材质效果
-  public static isHighMidTierDevice: boolean = false;
-  // 当前设备是否支持新材质设计
-  public static isSystemMaterialSupported: boolean = false;
+  // 当前设备是否为RK开发板
+  public static isRKdevice: boolean = false;
 
   private static readonly MATERIAL_CONFIG: Map<string, uiMaterial.Material> = new Map<string, uiMaterial.Material>();
 
@@ -53,13 +51,13 @@ export class DLPMaterialUtil {
   });
   static {
     try {
-      DLPMaterialUtil.isSystemMaterialSupported = hdsMaterial.isSystemMaterialSupported();
-      DLPMaterialUtil.isHighMidTierDevice = hdsMaterial.getSystemMaterialTypes().length > 0;
+      const hardwareModel = deviceInfo.hardwareModel.toLowerCase();
+      const chipType = deviceInfo.chipType?.toLowerCase() ?? '';
+      DLPMaterialUtil.isRKdevice = hardwareModel.includes('rk') || chipType.includes('rk');
     } catch (err) {
       HiLog.wrapError(TAG, err, 'MaterialUtil init failed.');
     } finally {
-      HiLog.info(TAG, `isSystemMaterialSupported: ${DLPMaterialUtil.isSystemMaterialSupported},`+
-        `isHighMidTierDevice: ${DLPMaterialUtil.isHighMidTierDevice}`);
+      HiLog.info(TAG, `isRKdevice: ${DLPMaterialUtil.isRKdevice}.`);
     }
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.TOAST, DLPMaterialUtil.TOAST_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.BUTTON, DLPMaterialUtil.BUTTON_MATERIAL);
@@ -70,7 +68,7 @@ export class DLPMaterialUtil {
   }
 
   public static getMaterial(type: MaterialType): uiMaterial.Material | undefined {
-    if (!DLPMaterialUtil.isHighMidTierDevice) {
+    if (DLPMaterialUtil.isRKdevice) {
       return undefined;
     }
     return DLPMaterialUtil.MATERIAL_CONFIG.get(type);
