@@ -68,9 +68,7 @@ export class DLPMaterialUtil {
   }
 
   public static getMaterial(type: MaterialType): uiMaterial.Material | undefined {
-    if (DLPMaterialUtil.isRKdevice) {
-      return undefined;
-    }
-    return DLPMaterialUtil.MATERIAL_CONFIG.get(type);
+    HiLog.info(TAG, `isRKdevice: ${DLPMaterialUtil.isRKdevice}.`);
+    return undefined;
   }
 }
