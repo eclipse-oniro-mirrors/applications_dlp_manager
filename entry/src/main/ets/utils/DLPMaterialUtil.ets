@@ -15,6 +15,8 @@
 
 import { uiMaterial } from '@kit.ArkUI';
 import { MaterialType } from '../common/enum/MaterialEnum';
+import { hdsMaterial } from '@kit.UIDesginkit'
+import { Hilog } from '../common/base/Hilog'
 
 const TAG = 'DLPMaterialUtil';
 
@@ -22,13 +24,20 @@ export class DLPMaterialUtil {
   private constructor() {
   }
 
+  // 当前设备是否支持中高端机的材质效果
+  public static isHigMidTierDevice: boolean = false;
+  // 当前设备是否支持新材质设计
+  public static isSystemMaterialSupported: boolean = false;
+
   private static readonly MATERIAL_CONFIG: Map<string, uiMaterial.Material> = new Map<string, uiMaterial.Material>();
 
   private static readonly TOAST_MATERIAL: uiMaterial.Material = new uiMaterial.ImmersiveMaterial({
     style: uiMaterial.ImmersiveStyle.THICK
   });
   private static readonly BUTTON_MATERIAL: uiMaterial.Material = new uiMaterial.ImmersiveMaterial({
-    style: uiMaterial.ImmersiveStyle.THIN
+    style: uiMaterial.ImmersiveStyle.THIN,
+    interactive: true,
+    lightEffect: { color: undefined },
   });
   private static readonly DIALOG_MATERIAL: uiMaterial.Material = new uiMaterial.ImmersiveMaterial({
     style: uiMaterial.ImmersiveStyle.ULTRA_THICK
@@ -43,6 +52,15 @@ export class DLPMaterialUtil {
     style: uiMaterial.ImmersiveStyle.THICK
   });
   static {
+    try {
+      DLPMaterialUtil.isSystemMaterialSupported = hdsMaterial.isSystemMaterialSupported();
+      DLPMaterialUtil.isHigMidTierDevice = hdsMaterial.getSystemMaterialTypes().length() > 0;
+    } catch (err) {
+      Hilog.wrapError(TAG, err, 'MaterialUtil init failed.');
+    } finally {
+      Hilog.info(TAG, `isSystemMaterialSupported: ${DLPMaterialUtil.isSystemMaterialSupported},` + 
+          `isHigMidTierDevice: ${DLPMaterialUtil.isHigMidTierDevice},`);
+    }
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.TOAST, DLPMaterialUtil.TOAST_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.BUTTON, DLPMaterialUtil.BUTTON_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.DIALOG, DLPMaterialUtil.DIALOG_MATERIAL);
@@ -52,6 +70,9 @@ export class DLPMaterialUtil {
   }
 
   public static getMaterial(type: MaterialType): uiMaterial.Material | undefined {
+    if (!DLPMaterialUtil.isSystemMaterialSupported) {
+      return undefined;
+    }
     return DLPMaterialUtil.MATERIAL_CONFIG.get(type);
   }
 }
