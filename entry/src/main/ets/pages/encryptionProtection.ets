@@ -196,8 +196,7 @@ struct DlpDialog {
       maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
       showInSubWindow: true,
       systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-      edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
-      distortionMode: DLPMaterialUtil.getDistortionMode()
+      edgeLightMode: DLPMaterialUtil.getEdgeLightMode()
     })
     this.dlpAlertDialog.open();
   }
@@ -214,8 +213,7 @@ struct DlpDialog {
       maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
       showInSubWindow: true,
       systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-      edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
-      distortionMode: DLPMaterialUtil.getDistortionMode()
+      edgeLightMode: DLPMaterialUtil.getEdgeLightMode()
     })
     this.dlpAlertDialog.open();
   }
