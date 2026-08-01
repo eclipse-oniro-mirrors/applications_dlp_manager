@@ -58,7 +58,7 @@ export class DLPMaterialUtil {
     return DLPMaterialUtil.isSystemMaterialSupported ? DLPMaterialUtil.MATERIAL_CONFIG.get(type) : undefined;
   }
 
-  public static getDistortionMode(): DistortionMode | undefined {
-    return DLPMaterialUtil.isSystemMaterialSupported ? DistortionMode.DISTORTION_AUTO : undefined;
+  public static getEdgeLightMode(): EdgeLightMode | undefined {
+    return DLPMaterialUtil.isSystemMaterialSupported ? EdgeLightMode.EDGELIGHT_AUTO : undefined;
   }
 }
