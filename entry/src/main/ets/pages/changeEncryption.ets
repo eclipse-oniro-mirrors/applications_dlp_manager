@@ -169,7 +169,8 @@ struct changeEncryption {
       maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
       showInSubWindow: true,
       systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-      edgeLightMode: DLPMaterialUtil.getEdgeLightMode()
+      edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
+      distortionMode: DLPMaterialUtil.getDistortionMode()
     });
     this.dlpAlertDialog.open();
   }
