@@ -15,8 +15,8 @@
 
 import { uiMaterial } from '@kit.ArkUI';
 import { MaterialType } from '../common/enum/MaterialEnum';
-import { hdsMaterial } from '@kit.UIDesginkit'
-import { Hilog } from '../common/base/Hilog'
+import { hdsMaterial } from '@kit.UIDesignkit'
+import { HiLog } from '../common/base/HiLog'
 
 const TAG = 'DLPMaterialUtil';
 
@@ -25,7 +25,7 @@ export class DLPMaterialUtil {
   }
 
   // 当前设备是否支持中高端机的材质效果
-  public static isHigMidTierDevice: boolean = false;
+  public static isHighMidTierDevice: boolean = false;
   // 当前设备是否支持新材质设计
   public static isSystemMaterialSupported: boolean = false;
 
@@ -54,12 +54,12 @@ export class DLPMaterialUtil {
   static {
     try {
       DLPMaterialUtil.isSystemMaterialSupported = hdsMaterial.isSystemMaterialSupported();
-      DLPMaterialUtil.isHigMidTierDevice = hdsMaterial.getSystemMaterialTypes().length() > 0;
+      DLPMaterialUtil.isHighMidTierDevice = hdsMaterial.getSystemMaterialTypes().length > 0;
     } catch (err) {
       Hilog.wrapError(TAG, err, 'MaterialUtil init failed.');
     } finally {
       Hilog.info(TAG, `isSystemMaterialSupported: ${DLPMaterialUtil.isSystemMaterialSupported},` + 
-          `isHigMidTierDevice: ${DLPMaterialUtil.isHigMidTierDevice},`);
+          `isHighMidTierDevice: ${DLPMaterialUtil.isHighMidTierDevice},`);
     }
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.TOAST, DLPMaterialUtil.TOAST_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.BUTTON, DLPMaterialUtil.BUTTON_MATERIAL);
@@ -70,7 +70,7 @@ export class DLPMaterialUtil {
   }
 
   public static getMaterial(type: MaterialType): uiMaterial.Material | undefined {
-    if (!DLPMaterialUtil.isSystemMaterialSupported) {
+    if (!DLPMaterialUtil.isHighMidTierDevice) {
       return undefined;
     }
     return DLPMaterialUtil.MATERIAL_CONFIG.get(type);
