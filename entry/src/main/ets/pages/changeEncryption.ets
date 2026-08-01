@@ -169,8 +169,8 @@ struct changeEncryption {
       maskColor: Constants.TRANSPARENT_BACKGROUND_COLOR,
       showInSubWindow: true,
       systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-      edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
-      distortionMode: DistortionMode.DISTORTION_AUTO
+      edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
+      distortionMode: DLPMaterialUtil.getDistortionMode()
     });
     this.dlpAlertDialog.open();
   }
@@ -907,8 +907,8 @@ struct changeEncryption {
 
                 Flex({ direction: FlexDirection.Row }) {
                   Button($r('app.string.unencrypted'), { type: ButtonType.Capsule, stateEffect: true })
-                    .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
+                    .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .controlSize(ControlSize.NORMAL)
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
@@ -929,8 +929,8 @@ struct changeEncryption {
                         Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
                     })
                   Button($r('app.string.change_encryption'), { type: ButtonType.Capsule, stateEffect: true })
-                    .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
+                    .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
                     .width(Constants.HEADER_TEXT_WIDTH)
                     .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
                     .controlSize(ControlSize.NORMAL)
