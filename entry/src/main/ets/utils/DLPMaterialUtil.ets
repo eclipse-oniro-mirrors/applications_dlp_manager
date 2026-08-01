@@ -68,6 +68,8 @@ export class DLPMaterialUtil {
   }
 
   public static getMaterial(type: MaterialType): uiMaterial.Material | undefined {
+    HiLog.info(TAG, `isRKdevice: ${deviceInfo.hardwareModel.toLowerCase()}.`);
+    HiLog.info(TAG, `isRKdevice: ${deviceInfo.chipType?.toLowerCase()}.`);
     HiLog.info(TAG, `isRKdevice: ${DLPMaterialUtil.isRKdevice}.`);
     return undefined;
   }
