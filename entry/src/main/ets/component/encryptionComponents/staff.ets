@@ -105,7 +105,7 @@ struct staffItem {
       customStyle: true,
       showInSubWindow: true,
       systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-      edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
+      edgeLightMode: DLPMaterialUtil.getEdgeLightMode()
     });
     this.dlpAlertDialog.open();
   }
