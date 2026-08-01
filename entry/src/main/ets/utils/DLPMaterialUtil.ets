@@ -15,8 +15,6 @@
 
 import { uiMaterial } from '@kit.ArkUI';
 import { MaterialType } from '../common/enum/MaterialEnum';
-import { deviceInfo } from '@kit.BasicServicesKit'
-import { HiLog } from '../common/base/HiLog'
 
 const TAG = 'DLPMaterialUtil';
 
