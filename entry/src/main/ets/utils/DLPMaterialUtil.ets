@@ -55,17 +55,10 @@ export class DLPMaterialUtil {
   }
 
   public static getMaterial(type: MaterialType): uiMaterial.Material | undefined {
-    HiLog.info(TAG, `isSystemMaterialSupported: ${ DLPMaterialUtil.isSystemMaterialSupported}`);
     return DLPMaterialUtil.isSystemMaterialSupported ? DLPMaterialUtil.MATERIAL_CONFIG.get(type) : undefined;
   }
 
   public static getDistortionMode(): DistortionMode | undefined {
-    HiLog.info(TAG, `isSystemMaterialSupported: ${ DLPMaterialUtil.isSystemMaterialSupported}`);
     return DLPMaterialUtil.isSystemMaterialSupported ? DistortionMode.DISTORTION_AUTO : undefined;
-  }
-
-  public static getEdgeLightMode(): EdgeLightMode | undefined {
-    HiLog.info(TAG, `isSystemMaterialSupported: ${ DLPMaterialUtil.isSystemMaterialSupported}`);
-    return DLPMaterialUtil.isSystemMaterialSupported ? EdgeLightMode.EDGELIGHT_AUTO : undefined;
   }
 }
