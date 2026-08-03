@@ -15,12 +15,19 @@
 
 import { uiMaterial } from '@kit.ArkUI';
 import { MaterialType } from '../common/enum/MaterialEnum';
+import {deviceInfo} from '@kit.BasicServicesKit'
+import {HiLog} from '../common/base/HiLog'
 
 const TAG = 'DLPMaterialUtil';
 
 export class DLPMaterialUtil {
   private constructor() {
   }
+
+  // 当前设置是否支持新材质
+  public static isSystemMaterialSupported: boolean = false;
+
+  public static unSupportedDeviceList: Array<string> = ['rk3568']
 
   private static readonly MATERIAL_CONFIG: Map<string, uiMaterial.Material> = new Map<string, uiMaterial.Material>();
 
@@ -43,6 +50,17 @@ export class DLPMaterialUtil {
     style: uiMaterial.ImmersiveStyle.THICK
   });
   static {
+    try {
+      const hardwareModel = deviceInfo.hardwareModel.toLowerCase();
+      const chipType = deviceInfo.chipType?.toLowerCase() ?? '';
+      DLPMaterialUtil.isSystemMaterialSupported = DLPMaterialUtil.unSupportedDeviceList.includes(hardwareModel) ||
+        DLPMaterialUtil.unSupportedDeviceList.includes(chipType);
+      DLPMaterialUtil.isSystemMaterialSupported = !DLPMaterialUtil.isSystemMaterialSupported;
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'MaterialUtil init failed.');
+    } finally {
+      HiLog.info(TAG, `isSystemMaterialSupported: ${ DLPMaterialUtil.isSystemMaterialSupported}`);
+    }
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.TOAST, DLPMaterialUtil.TOAST_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.BUTTON, DLPMaterialUtil.BUTTON_MATERIAL);
     DLPMaterialUtil.MATERIAL_CONFIG.set(MaterialType.DIALOG, DLPMaterialUtil.DIALOG_MATERIAL);
@@ -52,6 +70,14 @@ export class DLPMaterialUtil {
   }
 
   public static getMaterial(type: MaterialType): uiMaterial.Material | undefined {
-    return DLPMaterialUtil.MATERIAL_CONFIG.get(type);
+    return DLPMaterialUtil.isSystemMaterialSupported ? DLPMaterialUtil.MATERIAL_CONFIG.get(type) : undefined;
+  }
+
+  public static getDistortionMode(): DistortionMode | undefined {
+    return DLPMaterialUtil.isSystemMaterialSupported ? DistortionMode.DISTORTION_AUTO : undefined;
+  }
+
+  public static getEdgeLightMode(): EdgeLightMode | undefined {
+    return DLPMaterialUtil.isSystemMaterialSupported ? EdgeLightMode.EDGELIGHT_AUTO : undefined;
   }
 }

@@ -41,8 +41,8 @@ struct Index {
     customStyle: false,
     alignment: DialogAlignment.Center,
     systemMaterial: DLPMaterialUtil.getMaterial(MaterialType.DIALOG),
-    edgeLightMode: EdgeLightMode.EDGELIGHT_AUTO,
-    distortionMode: DistortionMode.DISTORTION_AUTO
+    edgeLightMode: DLPMaterialUtil.getEdgeLightMode(),
+    distortionMode: DLPMaterialUtil.getDistortionMode()
   });
   private handleShowDialog = (eventData: emitter.EventData) => {
     HiLog.info(TAG, 'receive SHOW_DIALOG_EVENT');
