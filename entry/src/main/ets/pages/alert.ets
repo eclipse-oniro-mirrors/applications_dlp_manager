@@ -266,7 +266,7 @@ struct Index {
     Column() {
       Text() {
         Span(this.message)
-      }
+      }.textAlign(TextAlign.Center)
     }
     .width(Constants.HEADER_TEXT_WIDTH)
     .align(this.title ? Alignment.Start : Alignment.Center)
