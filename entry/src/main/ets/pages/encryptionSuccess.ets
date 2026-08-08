@@ -625,7 +625,7 @@ struct encryptionSuccess {
 
               Row() {
                 Button($r('app.string.finished'), { type: ButtonType.Capsule, stateEffect: true })
-                  .backgroundColor($r('sys.color.com_background_tertiary'))
+                  .backgroundColor($r('sys.color.comp_background_tertiary'))
                   .fontColor($r('sys.color.font_emphasize'))
                   .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
                   .fontWeight(FontWeight.Medium)
