@@ -80,8 +80,8 @@ struct DlpAlertDialog {
 
       Flex({ direction: FlexDirection.Row }) {
         Button(this.cancel ? this.cancel : $r('app.string.da_button'), { type: ButtonType.Capsule, stateEffect: true })
-          .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
           .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+          .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
           .width(this.ok ? Constants.HEADER_TEXT_WIDTH : Constants.ENCRYPTION_MESSAGE_DIALOG_BUTTON)
           .focusable(false)
           .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
@@ -102,10 +102,10 @@ struct DlpAlertDialog {
           });
         if (this.ok) {
           Button(this.ok, { type: ButtonType.Capsule, stateEffect: true })
+            .backgroundColor($r('sys.color.font_on_primary'))
             .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
             .width(Constants.HEADER_TEXT_WIDTH)
             .focusable(false)
-            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .controlSize(ControlSize.NORMAL)
             .onClick(async (event) => {
               this.terminateDialog();
