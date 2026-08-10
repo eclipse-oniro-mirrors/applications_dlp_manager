@@ -841,9 +841,9 @@ struct encryptedSharing {
 
         Column() {
           Button($r('app.string.Share_Confirms'), { type: ButtonType.Capsule, stateEffect: true })
+            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
             .enabled(this.isConfirmButtonEnabled)
-            .backgroundColor($r('sys.color.ohos_id_color_text_primary_activated'))
             .width(Constants.SHARE_BUTTON_WIDTH)
             .controlSize(ControlSize.NORMAL)
             .onClick(() => {

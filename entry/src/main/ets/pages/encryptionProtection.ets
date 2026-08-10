@@ -933,8 +933,8 @@ struct DlpDialog {
 
           Flex({ direction: FlexDirection.Row }) {
             Button($r('app.string.ban'), { type: ButtonType.Capsule, stateEffect: true })
-              .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+              .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(true)
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
@@ -974,8 +974,8 @@ struct DlpDialog {
                   Constants.ENCRYPTION_PROTECTION_BUTTON_MARGIN : Constants.ADD_STAFF_ITEM_MARGIN_LEFT,
               })
             Button($r('app.string.sure'), { type: ButtonType.Capsule, stateEffect: true })
-              .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
               .backgroundColor($r('sys.color.ohos_id_color_button_normal'))
+              .systemMaterial(DLPMaterialUtil.getMaterial(MaterialType.BUTTON))
               .width(Constants.HEADER_TEXT_WIDTH)
               .focusable(true)
               .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
