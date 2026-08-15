@@ -256,7 +256,7 @@ export default class SandboxManager {
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
         'ohos.dlp.params.securityFlag': decryptContent.authPerm ===
         dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
-        "ohos.dlp.params.customFlag": decryptContent.authPerm ===
+        'ohos.dlp.params.customFlag': decryptContent.authPerm ===
         dlpPermission.DLPFileAccess.READ_ONLY ? Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL,
         'ohos.dlp.params.waterMarkConfig': decryptContent.fileMetaInfo.waterMarkConfig,
         'ohos.dlp.params.countdown': decryptContent.fileMetaInfo.countdown && !isOwner ?
