@@ -358,6 +358,7 @@ export default class Constants {
   public static readonly PARAMS_DLP_CONNECTION_PLUGIN_ID: string = 'dlpConnectionPluginId';
   public static readonly PARAMS_MODULE_NAME: string = 'ohos.dlp.params.moduleName';
   public static readonly PARAMS_ABILITY_NAME: string = 'ohos.dlp.params.abilityName';
+  public static readonly PARAMS_CUSTOM_DLP: string = 'ohos.dlp.params.customFlag';
 
   // event
   public static readonly SHOW_DIALOG_EVENT: string = 'SHOW_DIALOG_EVENT';

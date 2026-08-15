@@ -48,6 +48,11 @@ export default class ViewAbility extends ServiceExtensionAbility {
 
   async onRequest(want: Want, startId: number): Promise<void> {
     HiLog.info(TAG, `enter onRequest startId: ${startId}`);
+    const isCustomDlp = FileUtils.getParamOrDefault(want?.parameters ?? undefined, Constants.PARAMS_CUSTOM_DLP, false);
+    if (isCustomDlp) {
+      HiLog.info(TAG, 'customDlp is true, skip processing');
+      return;
+    }
     AppStorage.setOrCreate('viewContext', this.context);
     let callerBundleName: string =
       FileUtils.getParamOrDefault(want?.parameters ?? undefined, Constants.PARAMS_CALLER_BUNDLE_NAME, '');
