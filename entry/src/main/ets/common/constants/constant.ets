@@ -222,6 +222,9 @@ export default class Constants {
   public static STAFF_FONT_SIZE = 10;
   public static STAFF_FONT_PADDING = 1;
 
+  public static DLP_MANAGER_READ_ONLY = 38;
+  public static DLP_MANAGER_FULL_CONTROL = 37;
+  
   // encryptionShare
   public static INTERNATIONAL_DIALING_CODE = '0086';
   public static CONTACTS_PICKER_WIDTH = '100%';
@@ -358,6 +361,7 @@ export default class Constants {
   public static readonly PARAMS_DLP_CONNECTION_PLUGIN_ID: string = 'dlpConnectionPluginId';
   public static readonly PARAMS_MODULE_NAME: string = 'ohos.dlp.params.moduleName';
   public static readonly PARAMS_ABILITY_NAME: string = 'ohos.dlp.params.abilityName';
+  public static readonly PARAMS_CUSTOM_DLP: string = 'ohos.dlp.params.customFlag';
 
   // event
   public static readonly SHOW_DIALOG_EVENT: string = 'SHOW_DIALOG_EVENT';
