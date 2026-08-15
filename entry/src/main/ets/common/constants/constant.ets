@@ -222,6 +222,9 @@ export default class Constants {
   public static STAFF_FONT_SIZE = 10;
   public static STAFF_FONT_PADDING = 1;
 
+  public static DLP_MANAGER_READ_ONLY = 38;
+  public static DLP_MANAGER_FULL_CONTROL = 37;
+  
   // encryptionShare
   public static INTERNATIONAL_DIALING_CODE = '0086';
   public static CONTACTS_PICKER_WIDTH = '100%';
