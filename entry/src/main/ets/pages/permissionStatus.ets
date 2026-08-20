@@ -331,12 +331,16 @@ struct PermissionStatus {
                   .controlSize(ControlSize.NORMAL)
                   .onClick(() => {
                     if (this.session !== undefined) {
-                      this.session.terminateSelfWithResult({
-                        'resultCode': 0,
-                        'want': {
-                          'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
-                        },
-                      });
+                      try {
+                        this.session.terminateSelfWithResult({
+                          'resultCode': 0,
+                          'want': {
+                            'bundleName': Constants.DLP_MANAGER_BUNDLE_NAME,
+                          },
+                        });
+                      } catch (error) {
+                        HiLog.wrapError(TAG, error, 'terminateSelfWithResult failed.');
+                      }
                     } else {
                       if (GlobalContext.load('fileOpenHistoryFromMain')) {
                         (GlobalContext.load('fileOpenHistoryFromMain') as Map<string, Object>).delete(GlobalContext.load('uri') as string)

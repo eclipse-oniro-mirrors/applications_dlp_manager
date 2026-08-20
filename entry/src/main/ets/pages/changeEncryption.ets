@@ -265,7 +265,7 @@ struct changeEncryption {
       HiLog.error(TAG, 'Picker save uri is invalid.');
       return;
     }
-    let uriInfo: fileUri.FileUri | undefined = undefined;
+    let uriInfo: fileUri.FileUri = new fileUri.FileUri('');
     let file: fs.File | undefined = undefined;
     try {
       uriInfo = new fileUri.FileUri(plainUri);
