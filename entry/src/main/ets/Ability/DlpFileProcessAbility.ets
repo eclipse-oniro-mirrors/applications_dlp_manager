@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -159,10 +159,11 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
 
   async openDlpFile(srcUri: string, callerAppId: string, callback: openDlpFileCallback): Promise<void> {
     HiLog.info(TAG, `openDlpFile start: ${FileUtils.getAnonymizedFilenameByUri(srcUri)}`);
-    let inFile = await fs.open(srcUri, fs.OpenMode.READ_WRITE);
+    let inFile: fs.File | undefined = undefined;
     let dlpFile: dlpPermission.DLPFile;
     let authUserListNew: IAuthUser[] = [];
     try {
+      inFile = await fs.open(srcUri, fs.OpenMode.READ_WRITE);
       dlpFile = await dlpPermission.openDLPFile(inFile.fd, callerAppId);
       dlpFile.dlpProperty.authUserList?.forEach(item => {
         authUserListNew.push(
