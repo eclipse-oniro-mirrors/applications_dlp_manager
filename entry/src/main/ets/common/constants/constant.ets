@@ -336,6 +336,7 @@ export default class Constants {
   public static readonly HEAD_LENGTH_IN_U32 = 20;
   public static readonly CERT_OFFSET = 16;
   public static readonly CERT_SIZE = 6;
+  public static readonly MAX_CERT_SIZE = 80 * 1024 * 1024;
   public static readonly CERT_OFFSET_4GB: number = 4 * 1024 * 1024 * 1024;
   public static readonly NUMBER_ONE = 1;
   public static readonly NUMBER_TWO = 2;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import Result from '../../common/base/Result'
-import { ResultMsg } from '../../common/base/ResultMsg'
+import Result from '../../common/base/Result';
+import { ResultMsg } from '../../common/base/ResultMsg';
 import Constants from '../../common/constants/constant';
 import fs, { ReadOptions } from '@ohos.file.fs';
 import { checkValidAccountType, getFileFd } from '../../utils/utils';
@@ -191,6 +191,16 @@ interface DlpGeneralInfo {
 
 interface CertInfo {
   accountType: dlpPermission.AccountType
+}
+
+interface CertValidInfo {
+  certSize: number;
+  certOffset: number;
+}
+
+interface ContactAccountValidInfo {
+  contactAccountSize: number;
+  contactAccountOffset: number;
 }
 
 abstract class FileParseBase {
@@ -379,10 +389,29 @@ class RawParse extends FileParseBase {
     this.parseType = FileParseType.RAW;
   }
 
-  async parseDlpGeneralInfo(buf: Uint32Array, file: fs.File): Promise<DlpGeneralInfo> {
-    let contactAccount = new ArrayBuffer(buf[Constants.CONTACT_ACCOUNT_SIZE]);
+  private checkContactAccountInfo(buf: Uint32Array): ContactAccountValidInfo | null {
+    const contactAccountSize = buf[Constants.CONTACT_ACCOUNT_SIZE];
+    if (contactAccountSize < 0 || contactAccountSize > this.fileSize) {
+      HiLog.error(TAG, 'Invalid contact account size.');
+      return null;
+    }
+    if (contactAccountSize > 0) {
+      const contactAccountOffset = buf[Constants.CONTACT_ACCOUNT_OFFSET];
+      if (contactAccountOffset < 0 || contactAccountOffset + contactAccountSize > this.fileSize) {
+        HiLog.error(TAG, 'Invalid contact account offset.');
+        return null;
+      }
+    }
+    return {
+      contactAccountSize: contactAccountSize,
+      contactAccountOffset: contactAccountSize > 0 ? buf[Constants.CONTACT_ACCOUNT_OFFSET] : 0
+    };
+  }
+
+  parseDlpGeneralInfo(buf: Uint32Array, file: fs.File, contactInfo: ContactAccountValidInfo): DlpGeneralInfo {
+    let contactAccount = new ArrayBuffer(contactInfo.contactAccountSize);
     let option: ReadOptions =
-      { offset: buf[Constants.CONTACT_ACCOUNT_OFFSET], length: buf[Constants.CONTACT_ACCOUNT_SIZE] };
+      { offset: contactInfo.contactAccountOffset, length: contactInfo.contactAccountSize };
     fs.readSync(file.fd, contactAccount, option);
     const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
     const contactString: string = textDecoder.decodeToString(new Uint8Array(contactAccount), { stream: false });
@@ -411,7 +440,7 @@ class RawParse extends FileParseBase {
     waterMarkConfig = new Int32Array(flag)[0] === 1 ? true : false;
 
     let countdown: number = -1;
-    option = {offset: this.fileSize - Constants.COUNTDOWN_SIZE, length: Constants.INT32_SIZE};
+    option = { offset: this.fileSize - Constants.COUNTDOWN_SIZE, length: Constants.INT32_SIZE };
     fs.readSync(file.fd, flag, option);
     let view = new DataView(flag);
     countdown = view.getInt32(0, true);
@@ -421,15 +450,41 @@ class RawParse extends FileParseBase {
       fileType = fileType - Constants.COUNTDOWN_FILE_TYPE;
     }
 
-    const dlpGeneralInfo: DlpGeneralInfo = {
+    return {
       contactAccount: contactString ?? '',
       realFileType: NUM_TO_TYPE_MAP.has(fileType) ? NUM_TO_TYPE_MAP.get(fileType) as string : '',
       fileId: fileIdString ?? '',
       allowedOpenCount: allowedOpenCount,
       waterMarkConfig: waterMarkConfig,
       countdown: countdown,
+    };
+  }
+
+  private checkValidCertInfo(buf: Uint32Array): CertValidInfo | null {
+    const certSize = buf[Constants.CERT_SIZE];
+    if (certSize <= 0 || certSize > Constants.MAX_CERT_SIZE) {
+      HiLog.error(TAG, 'Invalid cert size.');
+      return null;
     }
-    return dlpGeneralInfo;
+    const certOffset = Constants.CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
+    if (certOffset < 0 || certOffset + certSize > this.fileSize) {
+      HiLog.error(TAG, 'Invalid cert offset.');
+      return null;
+    }
+    return { certSize: certSize, certOffset: certOffset };
+  }
+
+  private getMetaInfo(accountType: number, dlpGeneralInfo: DlpGeneralInfo): FileMetaInfo {
+    return {
+      accountType: accountType,
+      fileType: dlpGeneralInfo.realFileType,
+      ownerAccount: dlpGeneralInfo.contactAccount,
+      fileSize: this.fileSize,
+      fileId: dlpGeneralInfo.fileId,
+      allowedOpenCount: dlpGeneralInfo.allowedOpenCount,
+      waterMarkConfig: dlpGeneralInfo.waterMarkConfig,
+      countdown: dlpGeneralInfo.countdown,
+    };
   }
 
   async parse(uri: string, ctxFilesDir: string): Promise<Result<FileMetaInfo>> {
@@ -443,9 +498,14 @@ class RawParse extends FileParseBase {
       fs.readSync(file.fd, data, option);
 
       let buf = new Uint32Array(data, 0, Constants.HEAD_LENGTH_IN_U32);
-      let cert = new ArrayBuffer(buf[Constants.CERT_SIZE]);
-      let certOffset = Constants.CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
-      option = { offset: certOffset, length: buf[Constants.CERT_SIZE] };
+      const certValidInfo = this.checkValidCertInfo(buf);
+      if (!certValidInfo) {
+        HiLog.error(TAG, 'checkValidCertInfo invalid');
+        return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
+      }
+
+      let cert = new ArrayBuffer(certValidInfo.certSize);
+      option = { offset: certValidInfo.certOffset, length: certValidInfo.certSize };
       fs.readSync(file.fd, cert, option);
 
       const textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
@@ -458,17 +518,13 @@ class RawParse extends FileParseBase {
       }
       GlobalContext.store('accountType', accountType);
 
-      const dlpGeneralInfo: DlpGeneralInfo = await this.parseDlpGeneralInfo(buf, file);
-      this.metaInfo = {
-        accountType: accountType,
-        fileType: dlpGeneralInfo.realFileType,
-        ownerAccount: dlpGeneralInfo.contactAccount,
-        fileSize: this.fileSize,
-        fileId: dlpGeneralInfo.fileId,
-        allowedOpenCount: dlpGeneralInfo.allowedOpenCount,
-        waterMarkConfig: dlpGeneralInfo.waterMarkConfig,
-        countdown: dlpGeneralInfo.countdown,
-      };
+      const contactInfo = this.checkContactAccountInfo(buf);
+      if (!contactInfo) {
+        HiLog.error(TAG, 'checkContactAccountInfo invalid');
+        return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE);
+      }
+      const dlpGeneralInfo: DlpGeneralInfo = this.parseDlpGeneralInfo(buf, file, contactInfo);
+      this.metaInfo = this.getMetaInfo(accountType, dlpGeneralInfo);
       return ResultMsg.buildSuccess(this.metaInfo);
     } catch (error) {
       HiLog.wrapError(TAG, error, 'Error parse rawfile');
