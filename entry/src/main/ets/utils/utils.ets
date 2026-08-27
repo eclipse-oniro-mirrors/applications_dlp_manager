@@ -611,9 +611,26 @@ async function handleZipFile(context: common.ServiceExtensionContext | common.UI
 }
 
 async function handleNonZipFile(fd: number, buf: Uint32Array): Promise<Result<DLPGeneralInfo>> {
-  let cert = new ArrayBuffer(buf[Constants.CERT_SIZE]);
-  let certOffset = Constants.CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
-  const option: ChangeOption = { offset: certOffset, length: buf[Constants.CERT_SIZE] };
+  const certSize = buf[Constants.CERT_SIZE];
+  let fileSize = 0;
+  try {
+    const fileInfo = fs.statSync(fd);
+    fileSize = fileInfo.size;
+  } catch (err) {
+    HiLog.wrapError(TAG, err, 'statSync failed.');
+    return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
+  }
+  if (certSize <= 0 || certSize > Constants.MAX_CERT_SIZE) {
+    HiLog.error(TAG, 'Invalid cert size.');
+    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE, 'Invalid cert size.');
+  }
+  const certOffset = Constants.CERT_OFFSET_4GB * buf[Constants.CERT_OFFSET + 1] + buf[Constants.CERT_OFFSET];
+  if (certOffset < 0 || certOffset + certSize > fileSize) {
+    HiLog.error(TAG, 'Invalid cert offset.');
+    return ResultMsg.getErrMsg(Constants.ERR_JS_NOT_DLP_FILE, 'Invalid cert offset.');
+  }
+  let cert = new ArrayBuffer(certSize);
+  const option: ChangeOption = { offset: certOffset, length: certSize };
   try {
     fs.readSync(fd, cert, option);
     let textDecoder: util.TextDecoder = util.TextDecoder.create('utf-8');
