@@ -26,20 +26,21 @@ import common from '@ohos.app.ability.common';
 import { EncryptingPanel } from '../component/encryptionComponents/encrypting';
 import { DlpAlertDialog } from '../component/encryptionComponents/dlp_alert_dialog';
 import {
-  PermissionType,
-  getOsAccountInfo,
-  checkDomainAccountInfo,
-  getUserId,
-  removeDuplicate,
-  directionStatus,
+  anonymizeUid,
+  anonymizeUidByAuthUsers,
   AuthAccount,
-  getFileUriByPath,
-  sendDlpFileCreateProperties,
-  sendDlpManagerFileConfiguration,
-  isValidPath,
-  isInvalidStr,
+  checkDomainAccountInfo,
+  directionStatus,
   getFileSizeByUri,
-  removeDirectionStatus
+  getFileUriByPath,
+  getOsAccountInfo,
+  getUserId,
+  isInvalidStr,
+  isValidPath,
+  PermissionType,
+  removeDirectionStatus,
+  removeDuplicate,
+  sendDlpManagerFileConfiguration
 } from '../utils/utils';
 import Constants from '../common/constants/constant';
 import {
@@ -49,8 +50,7 @@ import {
 } from '../component/encryptionComponents/permission_type_select';
 import { AddStaff } from '../component/encryptionComponents/AddStaff';
 import GlobalContext from '../common/base/GlobalContext';
-import IDLDLPProperty from '../common/bean/data/dlpClass';
-import { IAuthUser } from '../common/bean/data/dlpClass';
+import IDLDLPProperty, { IAuthUser } from '../common/bean/data/dlpClass';
 import { AlertManager } from '../OpenDlpFile/manager/AlertManager';
 import { HiLog } from '../common/base/HiLog';
 import FileUtils, { FileMsg } from '../utils/FileUtils';
@@ -59,6 +59,10 @@ import IdDlpRpcServiceProxy from '../Ability/data/IIdlDlpRpcServiceTs/id_dlpRpc_
 import FileUtil from '../utils/FsUtil';
 import { DLPMaterialUtil } from '../utils/DLPMaterialUtil';
 import { MaterialType } from '../common/enum/MaterialEnum';
+import { DlpFileCreateReportInfo } from '../common/bean/data/DlpFileCreateReportInfo';
+import DlpFileCreateReport from '../utils/DlpFileCreateReport';
+import { FileClassification } from '../common/enum/FileEnum';
+import { systemDateTime } from '@kit.BasicServicesKit';
 
 const TAG = 'Encrypt';
 let abilityResult: ability.AbilityResult = {
@@ -260,6 +264,29 @@ struct DlpDialog {
     } catch (err) {
       HiLog.wrapError(TAG, err, 'sendDlpFileCreateEvent failed');
     }
+  }
+
+  async buildReportInfo(startTime: number): Promise<DlpFileCreateReportInfo> {
+    let reportInfo = new DlpFileCreateReportInfo();
+    reportInfo.accountType = dlpPermission.AccountType.DOMAIN_ACCOUNT;
+    try {
+      reportInfo.userId = await getUserId();
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'getUserId failed in buildReportInfo.');
+    }
+    reportInfo.expireTime = this.selectedIndex === 0 ? 0 : this.reconfigurationTime(new Date(this.validity)).getTime();
+    if (this.selectedPermissionTypeEdit.data === 'all') {
+      reportInfo.permissionType = dlpPermission.DLPFileAccess.CONTENT_EDIT;
+    } else if (this.selectedPermissionTypeReadOnly.data === 'all') {
+      reportInfo.permissionType = dlpPermission.DLPFileAccess.READ_ONLY;
+    }
+    reportInfo.fileClassification = FileClassification.DOCUMENT;
+    reportInfo.authorizerAccountId = anonymizeUid(this.dlpProperty.ownerAccount) ?? '-1';
+    reportInfo.recipientAccountId = JSON.stringify(anonymizeUidByAuthUsers(this.dlpProperty.authUserList)) ?? '-1';
+    reportInfo.setFileSize(AppStorage.get<number>('hiFileSize') ?? -1);
+    reportInfo.setFileTypes([AppStorage.get<string>('hiFileType') ?? '']);
+    reportInfo.encryptionCost = systemDateTime.getTime(false) - startTime;
+    return reportInfo;
   }
 
   async catchProcess() {
@@ -500,7 +527,9 @@ struct DlpDialog {
       HiLog.error(TAG, 'dlpRpcProxy null');
       return;
     }
+    const startTime: number = systemDateTime.getTime(false);
     this.dlpRpcProxy.genDlpFile(srcFileUri, uri, _dlp, async (err: number) => {
+      const reportInfo = await this.buildReportInfo(startTime);
       if (err !== 0) {
         if (err === 100) {
           this.showErrorDialog($r('app.string.TITLE_APP_ERROR'), $r('app.string.File_cannot_be_opened'));
@@ -508,16 +537,14 @@ struct DlpDialog {
           return;
         }
         await FileUtil.unlink(uriInfo.path);
-        await this.sendDlpFileCreateFault(102, (err.toString())); // 102: DLP_FILE_CREATE_ERROR
+        reportInfo.hiCode = Constants.DLP_FILE_CREATE_ERROR;
+        DlpFileCreateReport.reportDlpFileCreateFault(reportInfo, `Code is ${err}`);
         this.genDlpFileShowErrorDialog({ code: err } as BusinessError);
         this.processing = false;
         return;
       } else {
-        await this.sendDlpFileCreateEvent(201); // 201: DLP_FILE_CREATE_SUCCESS
-        let dstFileSize: number = await getFileSizeByUri(uri);
-        AppStorage.setOrCreate('hiPolicySizeEnc', dstFileSize);
-        AppStorage.setOrCreate('hiCode', 201);
-        sendDlpFileCreateProperties(dlpPermission.AccountType.DOMAIN_ACCOUNT); // 201: DLP_FILE_CREATE_SUCCESS
+        reportInfo.hiCode = Constants.DLP_FILE_CREATE_SUCCESS;
+        DlpFileCreateReport.reportDlpFileCreateSuccess(reportInfo);
         GlobalContext.store('dlpFileName', uriInfo.name);
         GlobalContext.store('dlpProperty', _dlp);
         GlobalContext.store('uri', uri);

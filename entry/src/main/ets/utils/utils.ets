@@ -872,6 +872,13 @@ function getCostTime(startTime: number | undefined): number | undefined {
   return systemDateTime.getTime(false) - startTime;
 }
 
+function anonymizeUidByAuthUsers(authUsers: dlpPermission.AuthUser[]): string[] {
+  if (!authUsers || authUsers.length === 0) {
+    return [];
+  }
+  return authUsers.map(authUser => anonymizeUid(authUser.authAccount) ?? '');
+}
+
 function anonymizeUid(uid: string): string | undefined {
   if (isInvalidStr(uid)) {
     HiLog.error(TAG, 'The uid is invalid.');
@@ -983,6 +990,7 @@ export {
   uint8ArrayToString,
   uint8ArrayToHexString,
   getCostTime,
+  anonymizeUidByAuthUsers,
   anonymizeUid,
   getFormatTimestamp,
   getAccountNameFromErrMsg,

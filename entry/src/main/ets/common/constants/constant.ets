@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -162,7 +162,9 @@ export default class Constants {
   public static ERR_JS_ACCOUNT_NOT_FOUND = 12300003;
   public static ERR_JS_NETWORK_INVALID = 12300013;
   public static ERR_JS_APP_NOT_EXIST = 16000001;
+  public static DLP_FILE_CREATE_ERROR = 102;
   public static DLP_FILE_PARSE_ERROR = 103;
+  public static DLP_FILE_CREATE_SUCCESS = 201;
   public static DLP_INSTALL_SANDBOX_SUCCESS = 202;
   public static DLP_START_SANDBOX_ERROR = 105;
   public static DLP_START_SANDBOX_SUCCESS = 203; // 打开成功，未设置查看次数

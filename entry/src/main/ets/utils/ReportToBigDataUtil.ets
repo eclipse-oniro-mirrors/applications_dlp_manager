@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import { HiLog } from '../common/base/HiLog';
 import { getDLPInfo } from './utils';
 import Constants from '../common/constants/constant';
@@ -29,7 +30,7 @@ interface DlpBundleInfo {
 
 export class ReportToBigDataUtil {
   private static readonly DLP_UE_DOMAIN: string = 'DLP_UE';
-  private static readonly DLP_DOMAIN: string = 'DLP';
+  private static readonly DLP_DFT_DOMAIN: string = 'DLP';
   private static currentBundleInfo: DlpBundleInfo | undefined = undefined;
 
   private static async loadBundleInfo(): Promise<DlpBundleInfo> {
@@ -73,26 +74,28 @@ export class ReportToBigDataUtil {
       eventType: eventType,
       params: eventMsg
     }
-    hiSysEvent.write(info, (err, val) => {
-      if (err) {
-        HiLog.wrapError(TAG, err, 'report failed');
-      } else {
-        let msg: string[] = [];
-        msg.push(`domain: ${info.domain}`);
-        msg.push(`eventId: ${info.name}`);
-        msg.push(`eventType: ${info.eventType}`);
-        msg.push(eventMsg ? `eventMsg: ${JSON.stringify(info.params)}` : '');
-        HiLog.info(TAG, msg.join(' '));
-      }
-    });
+    try {
+      hiSysEvent.write(info, (err, val) => {
+        if (err) {
+          HiLog.wrapError(TAG, err, 'report failed');
+        } else {
+          let msg: string[] = [];
+          msg.push(`domain: ${info.domain}`);
+          msg.push(`eventId: ${info.name}`);
+          msg.push(`eventType: ${info.eventType}`);
+          msg.push(eventMsg ? `eventMsg: ${JSON.stringify(info.params)}` : '');
+          HiLog.info(TAG, msg.join(' '));
+        }
+      });
+    } catch (err) {
+      HiLog.wrapError(TAG, err, 'Report event failed.');
+    }
   }
 }
 
 export class BigDataConstants {
-  public static readonly DLP_FILE_OPEN: string = 'DLP_FILE_OPEN';
   public static readonly DLP_FILE_OPEN_EVENT: string = 'DLP_FILE_OPEN_EVENT';
   public static readonly DLP_MANAGER_ACCOUNT_LOGIN: string = 'DLP_MANAGER_ACCOUNT_LOGIN';
   public static readonly DLP_MANAGER_FILE_CONFIGURATION: string = 'DLP_MANAGER_FILE_CONFIGURATION';
   public static readonly DLP_FILE_CREATE_EVENT: string = 'DLP_FILE_CREATE_EVENT';
-  public static readonly DLP_FILE_CREATE: string = 'DLP_FILE_CREATE';
 }
