@@ -383,6 +383,8 @@ export default function UtilsTest() {
         AppStorage.setOrCreate(Constants.FONT_SIZE_SCALE_KEY, undefined);
       } catch (error) {
         HiLog.wrapError(TAG, error, 'createUIContextWithoutWindow failed.');
+      } finally {
+        UIContext.destroyUIContextWithoutWindow();
       }
       expect(context).not().assertNull();
     })
