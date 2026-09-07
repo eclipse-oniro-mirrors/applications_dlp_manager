@@ -42,6 +42,7 @@ import UtilsTest from './common/FileUtils/UtilsTest.test'
 import ViewProcessorTest from './openDlpFile/ViewProcessorTest.test';
 import AccountAssociationUtilTest from './common/AccountAssociationUtilTest.test';
 import DLPMaterialUtilTest from './common/DLPMaterialUtilTest.test';
+import RawParseTest from './openDlpFile/handler/RawParseTest.test';
 
 export default function testsuite() {
   AssocConvertorTest();
@@ -73,4 +74,5 @@ export default function testsuite() {
   AccountManagerTest();
   AccountAssociationUtilTest();
   DLPMaterialUtilTest();
+  RawParseTest();
 }
