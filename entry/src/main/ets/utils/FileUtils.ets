@@ -107,7 +107,7 @@ export default class FileUtils {
       return '****';
     }
     const anonymized = fileName.substring(0, FileUtils.FILE_NAME_ANONYMIZED_SUFFIX_LENGTH) +
-    '*'.repeat(fileName.length - FileUtils.FILE_NAME_ANONYMIZED_SUFFIX_LENGTH);
+      '*'.repeat(fileName.length - FileUtils.FILE_NAME_ANONYMIZED_SUFFIX_LENGTH);
     return anonymized;
   }
 
@@ -119,7 +119,7 @@ export default class FileUtils {
       return fileId;
     }
     const anonymized = '*'.repeat(fileId.length - FileUtils.FILE_ID_ANONYMIZED_SUFFIX_LENGTH) +
-    fileId.substring(fileId.length - FileUtils.FILE_ID_ANONYMIZED_SUFFIX_LENGTH);
+      fileId.substring(fileId.length - FileUtils.FILE_ID_ANONYMIZED_SUFFIX_LENGTH);
     return anonymized;
   }
 
@@ -129,6 +129,23 @@ export default class FileUtils {
     }
     const strArray: string[] = uri.split('/');
     return FileUtils.anonymizedFileName(strArray[strArray.length - 1]);
+  }
+
+  /**
+   * 对cacheKey进行打码，用于日志打印
+   * cacheKey可能是fileId或URI，保留首尾各16位用于问题分析，中间用****替代
+   * @param cacheKey 缓存key
+   * @returns 打码后的字符串
+   */
+  public static anonymizeCacheKey(cacheKey: string): string {
+    if (CommonUtil.isEmptyStr(cacheKey)) {
+      return '';
+    }
+    const keepLen = 16;
+    if (cacheKey.length <= keepLen * 2) {
+      return '****';
+    }
+    return cacheKey.substring(0, keepLen) + '****' + cacheKey.substring(cacheKey.length - keepLen);
   }
 
   static getFileSuffixByFileName(fileName: string): string {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,10 +22,11 @@ import ClearDlpCacheStub from '../rpc/ClearDlpCache/ClearDlpCacheStub';
 const TAG = 'ClearDlpCacheAbility';
 
 export default class ClearDlpCacheAbility extends ServiceExtensionAbility {
-  private serviceImpl: ClearDlpCacheStub = new ClearDlpCacheStub(TAG);
+  private serviceImpl: ClearDlpCacheStub | null = null;
 
   onCreate(want: Want): void {
     HiLog.info(TAG, 'ClearDlpCacheAbility onCreate');
+    this.serviceImpl = new ClearDlpCacheStub(TAG, this.context);
   }
 
   onRequest(): void {
@@ -34,7 +35,7 @@ export default class ClearDlpCacheAbility extends ServiceExtensionAbility {
 
   onConnect(want: Want): rpc.RemoteObject | Promise<rpc.RemoteObject> {
     HiLog.info(TAG, 'ClearDlpCacheAbility onConnect');
-    return this.serviceImpl;
+    return this.serviceImpl!;
   }
 
   onDisconnect(): void {

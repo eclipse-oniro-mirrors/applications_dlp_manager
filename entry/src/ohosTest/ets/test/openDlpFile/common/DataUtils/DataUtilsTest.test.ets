@@ -79,7 +79,9 @@ export default function DataUtilsTest() {
 
     it('DataUtilsTest_clearDlpInfoByUri_error', 0, async () => {
       const uri = 'file://test.txt.dlp';
-      await clearDlpInfoByUri(uri, 1001);
+      const context: common.ServiceExtensionContext =
+        AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
+      await clearDlpInfoByUri(uri, 1001, context);
       expect(uri).not().assertNull();
       HiLog.info(TAG, 'DataUtilsTest_clearDlpInfoByUri_error ends.');
     })
@@ -102,7 +104,9 @@ export default function DataUtilsTest() {
       when(mockRemoveAllByUri)(ArgumentMatchers.any).afterReturn(mockRemoveAllByUriRet);
 
       const uri = 'file://test.txt.dlp';
-      await clearDlpInfoByUri(uri, 1001);
+      const context: common.ServiceExtensionContext =
+        AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
+      await clearDlpInfoByUri(uri, 1001, context);
       expect(uri).not().assertNull();
 
       mocker.ignoreMock(manager, manager.getHasDecryptedContent);

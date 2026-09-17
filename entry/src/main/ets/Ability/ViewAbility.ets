@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@ import { StartFileManager } from '../OpenDlpFile/manager/StartFileManager';
 import FileUtils from '../utils/FileUtils';
 import FileIdHandler from '../OpenDlpFile/handler/FileIdHandler';
 import TerminateManager from '../OpenDlpFile/manager/TerminateManager';
+import PermStatusNotifyManager from '../manager/PermStatusNotifyManager';
 
 const TAG = 'View';
 
@@ -55,6 +56,7 @@ export default class ViewAbility extends ServiceExtensionAbility {
       return;
     }
     AppStorage.setOrCreate('viewContext', this.context);
+    PermStatusNotifyManager.setStoredContext(this.context);
     let callerBundleName: string =
       FileUtils.getParamOrDefault(want?.parameters ?? undefined, Constants.PARAMS_CALLER_BUNDLE_NAME, '');
     if (callerBundleName === Constants.SHARE_BUNDLE) {
