@@ -20,7 +20,6 @@ import Constants from '../common/constants/constant';
 import FileUtils from '../utils/FileUtils';
 
 const TAG = 'PermStatusNotifyManager';
-const DLP_CREDMGR_BUNDLE = 'com.huawei.hmos.dlpcredmgr';
 
 export default class PermStatusNotifyManager {
   private static storedContext: common.ServiceExtensionContext | null = null;
@@ -49,7 +48,7 @@ export default class PermStatusNotifyManager {
     }
 
     const want: Want = {
-      bundleName: DLP_CREDMGR_BUNDLE,
+      bundleName: Constants.DLP_CREDMGR_BUNDLE_NAME,
       abilityName: Constants.DLP_CREDMGR_DATA_ABILITY_NAME,
       parameters: parameters
     };
