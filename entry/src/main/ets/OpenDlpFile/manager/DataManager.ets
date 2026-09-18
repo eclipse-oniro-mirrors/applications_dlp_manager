@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,8 @@ import FileUtil from '../../utils/FsUtil';
 import { common } from '@kit.AbilityKit';
 import TerminateManager from './TerminateManager';
 import FileUtils from '../../utils/FileUtils';
+import { dlpPermission } from '@kit.DataProtectionKit';
+import PermStatusNotifyManager from '../../manager/PermStatusNotifyManager';
 
 const TAG = 'DataManager';
 
@@ -40,7 +42,8 @@ async function clearDlpInfoByCancelSandbox(decryptContent: DecryptContent): Prom
   FileUtil.closeSync(decryptContent.dlpFd);
 }
 
-async function clearDlpInfoByUri(uri: string, callerTokenId: number): Promise<void> {
+async function clearDlpInfoByUri(uri: string, callerTokenId: number,
+  context: common.ServiceExtensionContext): Promise<void> {
   HiLog.info(TAG, `start clearDlpInfoByUri uri ${FileUtils.getAnonymizedFilenameByUri(uri)}`);
   const manager = OpenDlpFileManager.getInstance();
   const getRet = manager.getHasDecryptedContentByUriAndTokenId(uri, callerTokenId);
@@ -49,6 +52,7 @@ async function clearDlpInfoByUri(uri: string, callerTokenId: number): Promise<vo
     return;
   }
   const decryptContent = getRet.result;
+  await notifyPermStatusIfNeeded(decryptContent, context);
   await deleteDecryptData(decryptContent);
   await deleteDlpLinkFile(decryptContent);
   await closeDlpFile(decryptContent);
@@ -77,6 +81,7 @@ async function clearDlpInfoBatch(bundleName: string, sandboxAppIndex: number,
   const decryptContents = rmRet.result;
   for (const decryptContent of decryptContents) {
     HiLog.debug(TAG, `clearDlpInfoByCancelSandbox fileName ${FileUtils.anonymizedFileName(decryptContent.fileName)}`);
+    await notifyPermStatusIfNeeded(decryptContent, context);
     await clearDlpInfoByCancelSandbox(decryptContent);
   }
 
@@ -135,6 +140,35 @@ async function clearIsDecrypting(decryptContent: DecryptContent): Promise<void> 
       }
     }
   }
+}
+
+/**
+ * 文件关闭时检查是否需要通知DlpCredentialMgr权限状态变化
+ * 仅CLOUD_ACCOUNT类型的文件，且allowedOpenCount>0（仅可查看一次或限时查看）时才通知
+ * owner不受查看次数限制，无需通知
+ * 仅可查看一次: allowedOpenCount>0, countdown=0
+ * 限时查看: allowedOpenCount>0, countdown>0
+ */
+async function notifyPermStatusIfNeeded(decryptContent: DecryptContent,
+  context: common.ServiceExtensionContext): Promise<void> {
+  if (decryptContent.fileMetaInfo.accountType !== dlpPermission.AccountType.CLOUD_ACCOUNT) {
+    return;
+  }
+  const allowedOpenCount = decryptContent.fileMetaInfo.allowedOpenCount;
+  if (allowedOpenCount === undefined || allowedOpenCount <= 0) {
+    return;
+  }
+  // owner不受查看次数限制，不需要通知权限状态变化
+  const isOwner: boolean = decryptContent.fileMetaInfo.ownerAccount === decryptContent.distributedInfoName;
+  if (isOwner) {
+    return;
+  }
+  // 根据countdown区分仅可查看一次和限时查看
+  const permStatus: number = decryptContent.fileMetaInfo.countdown > 0 ?
+    Constants.PERM_STATUS_LAST_VIEW_COUNTDOWN : Constants.PERM_STATUS_LAST_VIEW_ONCE;
+  const fileId: string = decryptContent.fileMetaInfo.fileId ?? '';
+  const cacheKey = fileId || decryptContent.openDlpFileData.uri;
+  await PermStatusNotifyManager.savePermStatus(context, cacheKey, permStatus, true);
 }
 
 export { clearDlpInfoByError, clearDlpInfoBatch, closeDlpFile, clearDlpInfoByUri };

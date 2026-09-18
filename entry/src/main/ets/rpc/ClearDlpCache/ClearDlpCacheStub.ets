@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,16 @@ import { HiLog } from '../../common/base/HiLog';
 import Constants from '../../common/constants/constant';
 import { clearDlpInfoByUri } from '../../OpenDlpFile/manager/DataManager';
 import Constant from '../../common/constants/constant';
+import { common } from '@kit.AbilityKit';
 
 const TAG = 'ClearDlpCacheStub';
 
 export default class ClearDlpCacheStub extends rpc.RemoteObject {
-  constructor(des: string) {
+  private context: common.ServiceExtensionContext | null = null;
+
+  constructor(des: string, context?: common.ServiceExtensionContext) {
     super(des);
+    this.context = context ?? null;
   }
 
   private isDlpHap(tokenId: number): boolean {
@@ -69,7 +73,7 @@ export default class ClearDlpCacheStub extends rpc.RemoteObject {
           return false;
         }
         const callerTokenId = rpc.IPCSkeleton.getCallingTokenId();
-        await clearDlpInfoByUri(uri, callerTokenId);
+        await clearDlpInfoByUri(uri, callerTokenId, this.context!);
         try {
           reply.writeInt(Constant.INTERFACE_SUCCESS);
         } catch (error) {

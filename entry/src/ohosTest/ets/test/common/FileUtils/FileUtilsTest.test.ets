@@ -81,5 +81,27 @@ export default function FileUtilsTest() {
       let type = FileUtils.getExtractRealType(testUri);
       expect(type).not().assertNull();
     })
+
+    it('FileUtilsTest_anonymizeCacheKey_empty', 0, () => {
+      const result: string = FileUtils.anonymizeCacheKey('');
+      expect(result).assertEqual('');
+    })
+
+    it('FileUtilsTest_anonymizeCacheKey_short', 0, () => {
+      const result: string = FileUtils.anonymizeCacheKey('shortkey');
+      expect(result).assertEqual('****');
+    })
+
+    it('FileUtilsTest_anonymizeCacheKey_boundary', 0, () => {
+      const key32: string = 'a'.repeat(32);
+      const result: string = FileUtils.anonymizeCacheKey(key32);
+      expect(result).assertEqual('****');
+    })
+
+    it('FileUtilsTest_anonymizeCacheKey_long', 0, () => {
+      const key40: string = 'a'.repeat(16) + 'b'.repeat(8) + 'c'.repeat(16);
+      const result: string = FileUtils.anonymizeCacheKey(key40);
+      expect(result).assertEqual('aaaaaaaaaaaaaaaa****cccccccccccccccc');
+    })
   })
 }

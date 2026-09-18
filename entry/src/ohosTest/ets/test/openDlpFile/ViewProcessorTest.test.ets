@@ -36,8 +36,11 @@ import OpenDlpFileData from '../../../../main/ets/OpenDlpFile/data/OpenDlpFileDa
 import OpenDlpFileDataMock from './data/mock/OpenDlpFileDataMock';
 import { OpenDlpFileProcessor } from '../../../../main/ets/OpenDlpFile/ViewProcessor/ViewProcessor';
 import Result from '../../../../main/ets/common/base/Result';
+import { ResultMsg } from '../../../../main/ets/common/base/ResultMsg';
 import TerminateManager from '../../../../main/ets/OpenDlpFile/manager/TerminateManager';
 import { FileParseType } from '../../../../main/ets/common/enum/FileEnum';
+import { dlpPermission } from '@kit.DataProtectionKit';
+import OpeningDialogManager from '../../../../main/ets/OpenDlpFile/manager/OpeningDialogManager';
 
 abstract class FileParseBase {
   protected metaInfo?: FileMetaInfo;
@@ -149,6 +152,135 @@ export default function ViewProcessorTest() {
       expect(ret).not().assertNull();
 
       mocker.ignoreMock(FileParseFactory, FileParseFactory.createFileParse);
+    })
+
+    it('ViewProcessorTest_processErrcode_withContext_cloudAccount', 0, async () => {
+      const processor = new OpenDlpFileProcessor();
+      const error: BusinessError = {
+        code: Constants.ERR_JS_USER_NO_PERMISSION_2C,
+        name: '',
+        message: 'no permission'
+      };
+      const fileMetaInfo: FileMetaInfo = {
+        accountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
+        fileType: 'txt',
+        ownerAccount: 'owner',
+        fileSize: 100,
+        fileId: 'fileId123',
+        allowedOpenCount: 0,
+        waterMarkConfig: false,
+        countdown: 0
+      };
+      const want: Want = {
+        bundleName: 'com.test.bundle',
+        abilityName: 'ViewAbility',
+        parameters: {
+          'uri': 'file://path/to/dlp/file.dlp',
+          'callerBundleName': 'com.test.caller',
+          'requestId': 'req_cloud_001',
+        }
+      };
+      const openDlpFileData = new OpenDlpFileData(want, 1);
+      const decryptContent = new DecryptContent(fileMetaInfo, openDlpFileData);
+      const context: common.ServiceExtensionContext =
+        AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
+      const mocker: MockKit = new MockKit();
+      const mockStart: Function = mocker.mockFunc(context, context.startServiceExtensionAbility);
+      when(mockStart)(ArgumentMatchers.any).afterReturn(Promise.resolve());
+      const mockHandleError: Function =
+        mocker.mockFunc(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().startHandleError);
+      when(mockHandleError)()
+        .afterReturn(ResultMsg.buildSuccess<boolean>());
+      const result = await processor.processErrcode(error, decryptContent, context);
+      expect(result).not().assertNull();
+      mocker.ignoreMock(context, context.startServiceExtensionAbility);
+      mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().startHandleError);
+    })
+
+    it('ViewProcessorTest_processErrcode_withContext_cloudAccount_countdown', 0, async () => {
+      const processor = new OpenDlpFileProcessor();
+      const error: BusinessError = {
+        code: Constants.ERR_JS_DLP_ALLOWED_OPEN_COUNT_INVALID,
+        name: '',
+        message: 'count invalid'
+      };
+      const fileMetaInfo: FileMetaInfo = {
+        accountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
+        fileType: 'txt',
+        ownerAccount: 'owner',
+        fileSize: 100,
+        fileId: 'fileId456',
+        allowedOpenCount: 1,
+        waterMarkConfig: false,
+        countdown: 10
+      };
+      const want: Want = {
+        bundleName: 'com.test.bundle',
+        abilityName: 'ViewAbility',
+        parameters: {
+          'uri': 'file://path/to/dlp/file2.dlp',
+          'callerBundleName': 'com.test.caller',
+          'requestId': 'req_cloud_002',
+        }
+      };
+      const openDlpFileData = new OpenDlpFileData(want, 1);
+      const decryptContent = new DecryptContent(fileMetaInfo, openDlpFileData);
+      const context: common.ServiceExtensionContext =
+        AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
+      const mocker: MockKit = new MockKit();
+      const mockStart: Function = mocker.mockFunc(context, context.startServiceExtensionAbility);
+      when(mockStart)(ArgumentMatchers.any).afterReturn(Promise.resolve());
+      const mockHandleError: Function =
+        mocker.mockFunc(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().startHandleError);
+      when(mockHandleError)()
+        .afterReturn(ResultMsg.buildSuccess<boolean>());
+      const result = await processor.processErrcode(error, decryptContent, context);
+      expect(result).not().assertNull();
+      mocker.ignoreMock(context, context.startServiceExtensionAbility);
+      mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().startHandleError);
+    })
+
+    it('ViewProcessorTest_processErrcode_withContext_cloudAccount_noCountdown', 0, async () => {
+      const processor = new OpenDlpFileProcessor();
+      const error: BusinessError = {
+        code: Constants.ERR_JS_DLP_ALLOWED_OPEN_COUNT_INVALID,
+        name: '',
+        message: 'count invalid'
+      };
+      const fileMetaInfo: FileMetaInfo = {
+        accountType: dlpPermission.AccountType.CLOUD_ACCOUNT,
+        fileType: 'txt',
+        ownerAccount: 'owner',
+        fileSize: 100,
+        fileId: 'fileId789',
+        allowedOpenCount: 1,
+        waterMarkConfig: false,
+        countdown: 0
+      };
+      const want: Want = {
+        bundleName: 'com.test.bundle',
+        abilityName: 'ViewAbility',
+        parameters: {
+          'uri': 'file://path/to/dlp/file3.dlp',
+          'callerBundleName': 'com.test.caller',
+          'requestId': 'req_cloud_003',
+        }
+      };
+      const openDlpFileData = new OpenDlpFileData(want, 1);
+      const decryptContent = new DecryptContent(fileMetaInfo, openDlpFileData);
+      const context: common.ServiceExtensionContext =
+        AppStorageUtil.getApplicationContext() as common.ServiceExtensionContext;
+      const mocker: MockKit = new MockKit();
+      const mockStart: Function = mocker.mockFunc(context, context.startServiceExtensionAbility);
+      when(mockStart)(ArgumentMatchers.any).afterReturn(Promise.resolve());
+      const mockHandleError: Function =
+        mocker.mockFunc(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().startHandleError);
+      when(mockHandleError)()
+        .afterReturn(ResultMsg.buildSuccess<boolean>());
+      const result = await processor.processErrcode(error, decryptContent, context);
+      expect(result).not().assertNull();
+      mocker.ignoreMock(context, context.startServiceExtensionAbility);
+      mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().startHandleError);
     })
   })
 }

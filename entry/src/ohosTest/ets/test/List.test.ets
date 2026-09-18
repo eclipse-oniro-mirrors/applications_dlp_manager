@@ -14,6 +14,7 @@
  */
 
 import AccountManagerTest from './manager/AccountManagerTest.test';
+import PermStatusNotifyManagerTest from './manager/PermStatusNotifyManagerTest.test';
 import AssocConvertorTest from './convertor/AssocConvertorTest.test';
 import AssocServiceTest from './service/AssocServiceTest.test';
 import AssocValidatorTest from './validator/AssocValidatorTest.test';
@@ -72,6 +73,7 @@ export default function testsuite() {
   StubTest();
   ComponentTest();
   AccountManagerTest();
+  PermStatusNotifyManagerTest();
   AccountAssociationUtilTest();
   DLPMaterialUtilTest();
   RawParseTest();

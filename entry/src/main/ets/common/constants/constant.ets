@@ -302,6 +302,11 @@ export default class Constants {
   public static readonly COMMAND_GET_DOMAIN_ACCOUNT_INFO = 3;
   public static readonly COMMAND_BATCH_REFRESH = 4;
   public static readonly COMMAND_USER_CANCEL_DECRYPT = 5;
+  public static readonly COMMAND_UPDATE_FILE_PERMISSION_STATUS = 6;
+
+  public static readonly PERM_STATUS_NO_PERMISSION = 0;
+  public static readonly PERM_STATUS_LAST_VIEW_ONCE = 1;
+  public static readonly PERM_STATUS_LAST_VIEW_COUNTDOWN = 2;
 
   public static readonly COMMAND_CLEAR_DLP_CACHE = 1;
 

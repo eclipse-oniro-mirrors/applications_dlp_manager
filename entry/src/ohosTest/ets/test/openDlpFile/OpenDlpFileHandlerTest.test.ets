@@ -200,7 +200,7 @@ export default function OpenDlpFileHandlerTest() {
 
       const mocker = new MockKit();
       const mock: Function =
-        mocker.mockFunc(OpeningDialogManager.getInstance(), TerminateManager.getInstance().getCanStartAbility);
+        mocker.mockFunc(TerminateManager.getInstance(), TerminateManager.getInstance().getCanStartAbility);
       when(mock)(ArgumentMatchers.any).afterReturn(false);
 
       const mock2: Function =
@@ -223,7 +223,7 @@ export default function OpenDlpFileHandlerTest() {
       ret = await OpeningDialogManager.getInstance().startSandbox(content);
       expect(ret.errcode).assertEqual(0);
 
-      mocker.ignoreMock(OpeningDialogManager.getInstance(), TerminateManager.getInstance().getCanStartAbility);
+      mocker.ignoreMock(TerminateManager.getInstance(), TerminateManager.getInstance().getCanStartAbility);
       mocker.ignoreMock(OpeningDialogManager.getInstance(), OpeningDialogManager.getInstance().getNeedStartAbility);
     })
 

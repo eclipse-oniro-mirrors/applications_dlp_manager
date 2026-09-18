@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,17 +26,19 @@ import { DecryptState, OpenDlpFileManager } from '../manager/OpenDlpFileManager'
 import { hiTraceMeter } from '@kit.PerformanceAnalysisKit';
 import { HiLog } from '../../common/base/HiLog';
 import { clearDlpInfoByError } from '../manager/DataManager';
-import CredConnectService from '../../rpc/CredConnectService';
+import PermStatusNotifyManager from '../../manager/PermStatusNotifyManager';
 import OpeningDialogManager from '../manager/OpeningDialogManager';
 import { BusinessError } from '@ohos.base';
 import { DlpFileOpenReport } from '../common/DlpFileOpenReport';
-import SandboxManager from '../manager/SandboxManager';
 import { commonEventManager } from '@kit.BasicServicesKit';
 import { uriPermissionManager, wantConstant } from '@kit.AbilityKit';
 import TerminateManager from '../manager/TerminateManager';
+import { dlpPermission } from '@kit.DataProtectionKit';
+import CredConnectService from '../../rpc/CredConnectService';
+import FileUtils from '../../utils/FileUtils';
 
 const TAG: string = 'OpenDlpFileProcessor';
-const COMMON_ENTERPRISE_EVENT: string =  'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
+const COMMON_ENTERPRISE_EVENT: string = 'usual.event.ENTERPRISE_OPEN_DLP_RESULT';
 const ENTERPRISE_ACCOUNT: number = 4;
 const HIPREVIEW_HIGH = 'com.huawei.hmos.hipreview';
 const HIPREVIEW_LOW = 'com.huawei.hmos.hipreviewext';
@@ -49,7 +51,7 @@ export class OpenDlpFileProcessor {
       HiLog.error(TAG, 'processOpenDlpFile error');
       await OpeningDialogManager.getInstance().hideOpeningDialogByFailed(proRet.result?.openDlpFileData.requestId);
       const err = { code: proRet.errcode, message: proRet.errmsg ? proRet.errmsg : '' } as BusinessError;
-      return await this.processErrcode(err, proRet.result);
+      return await this.processErrcode(err, proRet.result, context);
     }
     HiLog.debug(TAG, 'processOpenDlpFile success');
     return ResultMsg.buildSuccess();
@@ -186,7 +188,8 @@ export class OpenDlpFileProcessor {
     return ResultMsg.buildSuccess(getStatusRet.result.state);
   }
 
-  public async processErrcode(error: BusinessError, decryptContent?: DecryptContent): Promise<Result<void>> {
+  public async processErrcode(error: BusinessError, decryptContent?: DecryptContent,
+    context?: common.ServiceExtensionContext): Promise<Result<void>> {
     if (decryptContent) {
       clearDlpInfoByError(decryptContent);
       this.sendDlpFileOpenFault(error, decryptContent);
@@ -197,7 +200,7 @@ export class OpenDlpFileProcessor {
         code: 1,
         data: '',
         subscriberPermissions: ['ohos.permission.ENTERPRISE_ACCESS_DLP_FILE'],
-        parameters: {'uri': decryptContent.openDlpFileData.uri, 'errcode': error.code, 'errMessage': error.message},
+        parameters: { 'uri': decryptContent.openDlpFileData.uri, 'errcode': error.code, 'errMessage': error.message },
       };
       commonEventManager.publish(COMMON_ENTERPRISE_EVENT, options, (err: BusinessError) => {
         if (err) {
@@ -205,6 +208,24 @@ export class OpenDlpFileProcessor {
         }
       });
       return ResultMsg.buildSuccess();
+    }
+    // CLOUD_ACCOUNT权限状态变化时通知DlpCredentialMgr
+    if (decryptContent?.fileMetaInfo.accountType === dlpPermission.AccountType.CLOUD_ACCOUNT && context) {
+      const fileId: string = decryptContent.fileMetaInfo.fileId ?? '';
+      if (error.code === Constants.ERR_JS_USER_NO_PERMISSION_2C) {
+        // 无权限查看
+        this.notifyPermissionStatus(decryptContent.openDlpFileData.uri, Constants.PERM_STATUS_NO_PERMISSION, context,
+          fileId);
+      } else if (error.code === Constants.ERR_JS_DLP_ALLOWED_OPEN_COUNT_INVALID) {
+        // 仅可查看一次或限时查看的文件已用完查看次数
+        if (decryptContent.fileMetaInfo.countdown > 0) {
+          this.notifyPermissionStatus(decryptContent.openDlpFileData.uri, Constants.PERM_STATUS_LAST_VIEW_COUNTDOWN,
+            context, fileId);
+        } else {
+          this.notifyPermissionStatus(decryptContent.openDlpFileData.uri, Constants.PERM_STATUS_LAST_VIEW_ONCE, context,
+            fileId);
+        }
+      }
     }
     // 不需要拉起“正在打开”的动效，可以直接进行错误处理（错误处理，情况一）
     await OpeningDialogManager.getInstance().startHandleError(decryptContent?.openDlpFileData?.requestId ?? '', error);
@@ -215,6 +236,18 @@ export class OpenDlpFileProcessor {
     HiLog.info(TAG, 'begin batchRefresh');
     const connectService: CredConnectService = new CredConnectService(context);
     connectService.connectServiceShareAbility(Constants.COMMAND_BATCH_REFRESH);
+  }
+
+  /**
+   * 通过DataShare通知DlpCredentialMgr更新文件权限状态
+   */
+  private notifyPermissionStatus(uri: string, permStatus: number, context: common.ServiceExtensionContext,
+    fileId?: string): void {
+    HiLog.info(TAG,
+      `notifyPermissionStatus permStatus: ${permStatus}, fileId: ${FileUtils.anonymizeCacheKey(fileId ?? '')}`);
+    const cacheKey = fileId || uri;
+    // 文件打开失败时需要通知dlpcredentialmgr的设置页UI刷新，因为用户可能停留在FileListPage等待结果
+    PermStatusNotifyManager.savePermStatus(context, cacheKey, permStatus, true);
   }
 
   private sendDlpFileOpenFault(error: BusinessError, decryptContent: DecryptContent): void {
@@ -231,7 +264,7 @@ export class OpenDlpFileProcessor {
 function grantForHiPreview(decryptContent: DecryptContent) {
   const bindAppIndex = decryptContent.appInfo.bindAppIndex;
   if (decryptContent.openDlpFileData.sandboxBundleName === HIPREVIEW_HIGH &&
-  bindAppIndex && bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
+    bindAppIndex && bindAppIndex > HIPREVIEW_SANDBOX_LOW_BOUND) {
     const flag = wantConstant.Flags.FLAG_AUTH_READ_URI_PERMISSION;
     if (decryptContent.linkUri.includes('*')) {
       HiLog.error(TAG, 'linkUri name include *');
