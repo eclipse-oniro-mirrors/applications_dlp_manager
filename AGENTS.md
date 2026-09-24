@@ -279,13 +279,6 @@
 
 注意：构建前需将 `AppScope/app.json` 重命名为 `app.json5`，将 `entry/src/main/module.json` 重命名为 `module.json5`。安装前需卸载预装的 DLP Manager。
 
-### 构建方式 3 - 设备端运行测试
-
-```sh
-# 单元测试（基于 @ohos/hypium）
-aa test -b com.ohos.dlpmanager -m entry -s unittest /ets/testrunner/OpenHarmonyTestRunner
-```
-
 ### 静态检查
 修改 ArkTS/TS 文件后，执行本地代码检查，确认无新增告警再提交。
 
@@ -426,7 +419,6 @@ aa test -b com.ohos.dlpmanager -m entry -s unittest /ets/testrunner/OpenHarmonyT
 - 关闭或弱化 ExtensionAbility 的 exported 限制（`MainAbilityEx` 和 `EncryptedSharingAbility` 为 exported=true，其余为 false）
 - 在未校验的情况下直接使用跨进程传递的 URI、文件路径、Parcel 数据或字符串入参
 - 将密钥明文、密钥材料、证书内容、口令等敏感信息写入非安全日志或 HiSysEvent
-- 在 `GlobalContext` 中存储敏感信息（基于 `globalThis`，非类型安全，可被其他组件访问）
 - 在 `pages/` 或 `component/` 中直接调用 HUKS 或 `@ohos.dlpPermission` SDK，必须通过 `utils/HuksCipherUtil.ets` 或 RPC 服务
 - 修改 `entry/src/main/module.json` 中已声明的 10 个权限的授予方式（`ohos.permission.ACCESS_DLP_FILE`、`GET_LOCAL_ACCOUNTS`、`START_ABILITIES_FROM_BACKGROUND`、`GET_BUNDLE_INFO`、`GET_NETWORK_INFO`、`START_DLP_CRED`、`START_SYSTEM_DIALOG`、`EXEMPT_PRIVACY_SECURITY_CENTER`、`REPORT_SECURITY_EVENT`、`FILE_ACCESS_MANAGER`）
 
