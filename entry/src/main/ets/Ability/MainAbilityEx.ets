@@ -49,6 +49,7 @@ import CommonUtil from '../utils/CommonUtil';
 const TAG = 'MainEx';
 
 let direction: number = -1;
+let atomicDlpFileAccess: number = 4;
 const DLP_FILE_PROCESS_ABILITY_NAME = 'DlpFileProcessAbility';
 
 export default class MainAbility extends UIExtensionAbility {
@@ -157,7 +158,7 @@ export default class MainAbility extends UIExtensionAbility {
     AppStorage.setOrCreate<string>('contactAccount', GlobalContext.load('dlpProperty').contactAccount);
     AppStorage.setOrCreate('validity', GlobalContext.load('dlpProperty').expireTime)
     if (this.authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
-      this.authPerm > dlpPermission.DLPFileAccess.FULL_CONTROL) {
+      this.authPerm > atomicDlpFileAccess) {
       this.gotoAlertPage(session, { code: Constants.ERR_JS_APP_INSIDE_ERROR } as BusinessError);
       return;
     }
