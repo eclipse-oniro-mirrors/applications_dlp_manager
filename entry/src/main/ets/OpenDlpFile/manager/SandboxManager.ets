@@ -29,6 +29,10 @@ import FileUtils from '../../utils/FileUtils';
 import { SecurityEventIdConstants } from '../../utils/ReportSecurityEventUtil';
 
 const TAG = 'StartSandboxHandler';
+const ATOMIC_CONTROL = 4;
+const ATOMIC_SCREENSHOT = 0x08;
+const ATOMIC_PRINT = 0x10;
+const ATOMIC_APP_PERMISSION = 0x20;
 
 const suffixMimeTypeMap: Map<string, string> = new Map([
   ['txt', 'text/plain'],
@@ -228,6 +232,21 @@ export default class SandboxManager {
       HiLog.wrapError(TAG, error, 'decodeURIComponent fileName failed.');
       fileName = decryptContent.fileName;
     }
+    const isAtomicControl = decryptContent.authPerm === ATOMIC_CONTROL as dlpPermission.DLPFileAccess;
+    const atomicAccess = decryptContent.atomicDlpFileAccess;
+    let securityFlag: boolean;
+    let customFlag: number;
+    if (isAtomicControl) {
+      securityFlag = (atomicAccess & ATOMIC_SCREENSHOT) !== ATOMIC_SCREENSHOT;
+      const hasPrint = (atomicAccess & ATOMIC_PRINT) === ATOMIC_PRINT;
+      const hasAppPermission = (atomicAccess & ATOMIC_APP_PERMISSION) === ATOMIC_APP_PERMISSION;
+      customFlag = (!hasPrint && !hasAppPermission) ?
+        Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
+    } else {
+      securityFlag = decryptContent.authPerm === dlpPermission.DLPFileAccess.READ_ONLY;
+      customFlag = decryptContent.authPerm === dlpPermission.DLPFileAccess.READ_ONLY ?
+        Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
+    }
     const dlpWant: Want = {
       parameters: {
         'linkFileName': {
@@ -254,16 +273,14 @@ export default class SandboxManager {
         'ohos.dlp.params.index': decryptContent.appInfo.appIndex,
         'ohos.dlp.params.bindindex': decryptContent.appInfo.bindAppIndex ?? -1,
         'ohos.dlp.params.moduleName': decryptContent.openDlpFileData.sandboxModuleName,
-        'ohos.dlp.params.securityFlag': decryptContent.authPerm ===
-        dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
-        'ohos.dlp.params.customFlag': decryptContent.authPerm ===
-        dlpPermission.DLPFileAccess.READ_ONLY ? Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL,
+        'ohos.dlp.params.securityFlag': securityFlag,
+        'ohos.dlp.params.customFlag': customFlag,
         'ohos.dlp.params.waterMarkConfig': decryptContent.fileMetaInfo.waterMarkConfig,
         'ohos.dlp.params.countdown': decryptContent.fileMetaInfo.countdown && !isOwner ?
           decryptContent.fileMetaInfo.countdown : 0,
         'ohos.dlp.params.needRefreshCountdown': !decryptContent.hasDecrypted,
-        'ohos.dlp.params.bindSecurityFlag': decryptContent.authPerm ===
-        dlpPermission.DLPFileAccess.READ_ONLY ? true : false,
+        'ohos.dlp.params.bindSecurityFlag': securityFlag,
+        'ohos.dlp.params.bindCustomFlag': customFlag,
       }
     };
     return dlpWant;

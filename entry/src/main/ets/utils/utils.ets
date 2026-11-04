@@ -203,6 +203,21 @@ function getAuthPermForEnterprise(dlpProperty: dlpPermission.DLPProperty): dlpPe
   return perm;
 }
 
+interface AuthUserWithAtomic extends dlpPermission.AuthUser {
+  atomicDlpFileAccess?: number;
+}
+
+function getAtomicDlpFileAccessForEnterprise(dlpProperty: dlpPermission.DLPProperty): number {
+  let authUserList = dlpProperty.authUserList ?? [];
+  if (authUserList.length > 0) {
+    let authUser = authUserList[0] as AuthUserWithAtomic;
+    if (authUser.atomicDlpFileAccess !== undefined) {
+      return Number(authUser.atomicDlpFileAccess);
+    }
+  }
+  return 0;
+}
+
 function terminateSelfWithResult(resultCode: number, result: string): void {
   let abilityResult: ability.AbilityResult = {
     resultCode: resultCode,
@@ -968,6 +983,7 @@ export {
   getUserId,
   getAuthPerm,
   getAuthPermForEnterprise,
+  getAtomicDlpFileAccessForEnterprise,
   terminateSelfWithResult,
   judgeIsSandBox,
   getFileFd,
