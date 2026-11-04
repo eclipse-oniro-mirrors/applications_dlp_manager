@@ -14,7 +14,8 @@
  */
 
 import { HiLog } from '../../common/base/HiLog';
-import { defaultAppInfo, defaultDlpFile, getAuthPerm, getAuthPermForEnterprise } from '../../utils/utils';
+import { defaultAppInfo, defaultDlpFile, getAuthPerm, getAuthPermForEnterprise,
+  getAtomicDlpFileAccessForEnterprise } from '../../utils/utils';
 import Constants from '../../common/constants/constant';
 import { dlpPermission } from '@kit.DataProtectionKit';
 import Result from '../../common/base/Result';
@@ -27,7 +28,7 @@ import FileUtils from '../../utils/FileUtils';
 import CommonUtil from '../../utils/CommonUtil';
 
 const TAG: string = 'DecryptContent';
-const atomicDlpFileAccess: number = 4;
+const ATOMIC_CONTROL: number = 4;
 export default class DecryptContent {
   private _fileMetaInfo: FileMetaInfo;
   private _openDlpFileData: OpenDlpFileData;
@@ -46,6 +47,7 @@ export default class DecryptContent {
   private _linkFileWriteable: boolean = false;
   private _uriInfo: fileUri.FileUri = new fileUri.FileUri('');
   private _hasDecrypted: boolean = false;
+  private _atomicDlpFileAccess: number = 0;
 
   constructor(fileMetaInfo: FileMetaInfo, openDlpFileData: OpenDlpFileData) {
     this._fileMetaInfo = fileMetaInfo;
@@ -72,6 +74,7 @@ export default class DecryptContent {
     clone.linkFileWriteable = this._linkFileWriteable;
     clone.uriInfo = this._uriInfo;
     clone.hasDecrypted = this._hasDecrypted;
+    clone.atomicDlpFileAccess = this._atomicDlpFileAccess;
     return clone;
   }
 
@@ -211,6 +214,14 @@ export default class DecryptContent {
     return this._hasDecrypted;
   }
 
+  public set atomicDlpFileAccess(value: number) {
+    this._atomicDlpFileAccess = value;
+  }
+
+  public get atomicDlpFileAccess(): number {
+    return this._atomicDlpFileAccess;
+  }
+
   public generateLinkFileName(): Result<string> {
     let timestamp = new Date().getTime();
     let splitNames = this._fileName.split('.');
@@ -253,11 +264,12 @@ export default class DecryptContent {
       this._authPerm = getAuthPerm(this._accountName ?? '', this._dlpFile.dlpProperty);
     } else if (this._fileMetaInfo.accountType === dlpPermission.AccountType.ENTERPRISE_ACCOUNT) {
       this._authPerm = getAuthPermForEnterprise(this._dlpFile.dlpProperty);
+      this._atomicDlpFileAccess = getAtomicDlpFileAccessForEnterprise(this._dlpFile.dlpProperty);
     } else {
       this._authPerm = dlpPermission.DLPFileAccess.READ_ONLY;
     }
     if (this._authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
-      this._authPerm > atomicDlpFileAccess) {
+      this._authPerm > ATOMIC_CONTROL) {
       HiLog.error(TAG, 'get authPerm error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }
