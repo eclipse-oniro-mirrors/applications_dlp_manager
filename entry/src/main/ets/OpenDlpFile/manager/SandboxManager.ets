@@ -176,6 +176,11 @@ const suffixMimeTypeMap: Map<string, string> = new Map([
   ['java', 'text/x-java'],
 ]);
 
+interface DlpSecurityFlags {
+  securityFlag: boolean;
+  customFlag: number;
+}
+
 export default class SandboxManager {
   private static instance: SandboxManager;
 
@@ -220,10 +225,7 @@ export default class SandboxManager {
     return want;
   }
 
-  private getDlpSecurityFlags(decryptContent: DecryptContent): {
-    securityFlag: boolean;
-    customFlag: number;
-  } {
+  private getDlpSecurityFlags(decryptContent: DecryptContent): DlpSecurityFlags {
     const isAtomicControl = decryptContent.authPerm === dlpPermission.DLPFileAccess.ATOMIC_CONTROL;
     if (isAtomicControl) {
       const atomicAccess = decryptContent.atomicDlpFileAccess;
@@ -235,13 +237,15 @@ export default class SandboxManager {
         dlpPermission.DlpAtomicPermissionType.ATOMIC_APP_PERMISSION;
       const customFlag = (!hasPrint && !hasAppPermission) ?
         Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
-      return { securityFlag, customFlag };
+      const result: DlpSecurityFlags = { securityFlag, customFlag };
+      return result;
     }
 
     const securityFlag = decryptContent.authPerm === dlpPermission.DLPFileAccess.READ_ONLY;
     const customFlag = securityFlag ?
       Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
-    return { securityFlag, customFlag };
+    const result: DlpSecurityFlags = { securityFlag, customFlag };
+    return result;
   }
 
   private buildDlpWant(decryptContent: DecryptContent, isOwner: boolean): Want {
@@ -252,7 +256,9 @@ export default class SandboxManager {
       HiLog.wrapError(TAG, error, 'decodeURIComponent fileName failed.');
       fileName = decryptContent.fileName;
     }
-    const { securityFlag, customFlag } = this.getDlpSecurityFlags(decryptContent);
+    const dlpSecurityFlags: DlpSecurityFlags = this.getDlpSecurityFlags(decryptContent);
+    const securityFlag: boolean = dlpSecurityFlags.securityFlag;
+    const customFlag: number = dlpSecurityFlags.customFlag;
     const dlpWant: Want = {
       parameters: {
         'linkFileName': {
