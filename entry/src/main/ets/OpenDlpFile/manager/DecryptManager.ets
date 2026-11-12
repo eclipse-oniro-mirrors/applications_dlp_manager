@@ -306,7 +306,7 @@ export default class DecryptHandler {
       const dlpFile = await this.executeDecryption(callerAppId, decryptContent, timeoutData.timeoutPromise);
       HiLog.info(TAG, 'dlpPermission.openDLPFile success');
       const areaCode: number = dlpFile.dlpProperty['areaCode'] ?? Constants.AREA_CODE_CHINA;
-      HiLog.info(TAG, `openDlpFile areaCode: ${areaCode}`);
+      HiLog.info(TAG, 'openDLPFile areaCode.');
       // 解密成功删除
       FileIdHandler.getInstance().deleteFileId(decryptContent.openDlpFileData.requestId,
         decryptContent.fileMetaInfo.fileId);
