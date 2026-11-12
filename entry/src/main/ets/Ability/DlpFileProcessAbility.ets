@@ -165,7 +165,7 @@ class DlpRpcServiceStub extends IdlDlpRpcServiceStub {
     try {
       inFile = await fs.open(srcUri, fs.OpenMode.READ_WRITE);
       dlpFile = await dlpPermission.openDLPFile(inFile.fd, callerAppId);
-      const areaCode = dlpFile.dlpProperty['areaCode'] ?? Constants.AREA_CODE_CHINA;
+      const areaCode: number = dlpFile.dlpProperty['areaCode'] ?? Constants.AREA_CODE_CHINA;
       HiLog.info(TAG, `openDlpFile areaCode: ${areaCode}`);
       dlpFile.dlpProperty.authUserList?.forEach(item => {
         authUserListNew.push(
