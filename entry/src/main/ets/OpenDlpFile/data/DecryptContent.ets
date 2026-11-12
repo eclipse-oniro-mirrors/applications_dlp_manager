@@ -28,7 +28,6 @@ import FileUtils from '../../utils/FileUtils';
 import CommonUtil from '../../utils/CommonUtil';
 
 const TAG: string = 'DecryptContent';
-const ATOMIC_CONTROL: number = 4;
 export default class DecryptContent {
   private _fileMetaInfo: FileMetaInfo;
   private _openDlpFileData: OpenDlpFileData;
@@ -269,7 +268,7 @@ export default class DecryptContent {
       this._authPerm = dlpPermission.DLPFileAccess.READ_ONLY;
     }
     if (this._authPerm < dlpPermission.DLPFileAccess.READ_ONLY ||
-      this._authPerm > ATOMIC_CONTROL) {
+      this._authPerm > dlpPermission.DLPFileAccess.ATOMIC_CONTROL) {
       HiLog.error(TAG, 'get authPerm error');
       return ResultMsg.getErrMsg(Constants.ERR_CODE_OPEN_FILE_ERROR);
     }

@@ -29,10 +29,6 @@ import FileUtils from '../../utils/FileUtils';
 import { SecurityEventIdConstants } from '../../utils/ReportSecurityEventUtil';
 
 const TAG = 'StartSandboxHandler';
-const ATOMIC_CONTROL = 4;
-const ATOMIC_SCREENSHOT = 0x08;
-const ATOMIC_PRINT = 0x10;
-const ATOMIC_APP_PERMISSION = 0x20;
 
 const suffixMimeTypeMap: Map<string, string> = new Map([
   ['txt', 'text/plain'],
@@ -180,6 +176,11 @@ const suffixMimeTypeMap: Map<string, string> = new Map([
   ['java', 'text/x-java'],
 ]);
 
+interface DlpSecurityFlags {
+  securityFlag: boolean;
+  customFlag: number;
+}
+
 export default class SandboxManager {
   private static instance: SandboxManager;
 
@@ -224,6 +225,29 @@ export default class SandboxManager {
     return want;
   }
 
+  private getDlpSecurityFlags(decryptContent: DecryptContent): DlpSecurityFlags {
+    const isAtomicControl = decryptContent.authPerm === dlpPermission.DLPFileAccess.ATOMIC_CONTROL;
+    if (isAtomicControl) {
+      const atomicAccess = decryptContent.atomicDlpFileAccess;
+      const securityFlag = (atomicAccess & dlpPermission.DlpAtomicPermissionType.ATOMIC_SCREENSHOT) !==
+        dlpPermission.DlpAtomicPermissionType.ATOMIC_SCREENSHOT;
+      const hasPrint = (atomicAccess & dlpPermission.DlpAtomicPermissionType.ATOMIC_PRINT) ===
+        dlpPermission.DlpAtomicPermissionType.ATOMIC_PRINT;
+      const hasAppPermission = (atomicAccess & dlpPermission.DlpAtomicPermissionType.ATOMIC_APP_PERMISSION) ===
+        dlpPermission.DlpAtomicPermissionType.ATOMIC_APP_PERMISSION;
+      const customFlag = (!hasPrint && !hasAppPermission) ?
+        Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
+      const result: DlpSecurityFlags = { securityFlag, customFlag };
+      return result;
+    }
+
+    const securityFlag = decryptContent.authPerm === dlpPermission.DLPFileAccess.READ_ONLY;
+    const customFlag = securityFlag ?
+      Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
+    const result: DlpSecurityFlags = { securityFlag, customFlag };
+    return result;
+  }
+
   private buildDlpWant(decryptContent: DecryptContent, isOwner: boolean): Want {
     let fileName = '';
     try {
@@ -232,21 +256,9 @@ export default class SandboxManager {
       HiLog.wrapError(TAG, error, 'decodeURIComponent fileName failed.');
       fileName = decryptContent.fileName;
     }
-    const isAtomicControl = decryptContent.authPerm === ATOMIC_CONTROL as dlpPermission.DLPFileAccess;
-    const atomicAccess = decryptContent.atomicDlpFileAccess;
-    let securityFlag: boolean;
-    let customFlag: number;
-    if (isAtomicControl) {
-      securityFlag = (atomicAccess & ATOMIC_SCREENSHOT) !== ATOMIC_SCREENSHOT;
-      const hasPrint = (atomicAccess & ATOMIC_PRINT) === ATOMIC_PRINT;
-      const hasAppPermission = (atomicAccess & ATOMIC_APP_PERMISSION) === ATOMIC_APP_PERMISSION;
-      customFlag = (!hasPrint && !hasAppPermission) ?
-        Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
-    } else {
-      securityFlag = decryptContent.authPerm === dlpPermission.DLPFileAccess.READ_ONLY;
-      customFlag = decryptContent.authPerm === dlpPermission.DLPFileAccess.READ_ONLY ?
-        Constants.DLP_MANAGER_READ_ONLY : Constants.DLP_MANAGER_FULL_CONTROL;
-    }
+    const dlpSecurityFlags: DlpSecurityFlags = this.getDlpSecurityFlags(decryptContent);
+    const securityFlag: boolean = dlpSecurityFlags.securityFlag;
+    const customFlag: number = dlpSecurityFlags.customFlag;
     const dlpWant: Want = {
       parameters: {
         'linkFileName': {
