@@ -407,4 +407,6 @@ export default class Constants {
   // dlp hap tokenId flag bit position
   public static DLP_HAP_TOKEN_FLAG_POSITION = 1 << 26;
   public static DLP_HAP_TOKEN_FLAG_COMPARE = 0;
+
+  public static readonly AREA_CODE_CHINA = 1;
 }
